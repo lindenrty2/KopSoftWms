@@ -27,6 +27,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(IsNullable = true)]
         public long? StockOutId { get; set; }
 
         /// <summary>
@@ -34,6 +35,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(IsNullable = true)]
         public long? CarrierId { get; set; }
 
         /// <summary>
@@ -41,6 +43,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(IsNullable = true)]
         public DateTime? DeliveryDate { get; set; }
 
         /// <summary>
@@ -48,6 +51,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(Length = 50, IsNullable = true)]
         public string TrackingNo { get; set; }
 
         /// <summary>
@@ -55,6 +59,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(Length = 255, IsNullable = true)]
         public string Remark { get; set; }
 
         /// <summary>
@@ -62,13 +67,15 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
-        public byte? IsDel { get; set; }
+        [SugarColumn()]
+        public byte IsDel { get; set; }
 
         /// <summary>
         /// Desc:创建人
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(IsNullable = true)]
         public long? CreateBy { get; set; }
 
         /// <summary>
@@ -76,12 +83,14 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(IsNullable = true)]
         public DateTime? CreateDate { get; set; }
 
         /// <summary>
         /// Desc:修改人
         /// Default:
         /// Nullable:True
+        [SugarColumn(IsNullable = true)]
         /// </summary>
         public long? ModifiedBy { get; set; }
 
@@ -90,6 +99,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(IsNullable = true)]
         public DateTime? ModifiedDate { get; set; }
     }
 }

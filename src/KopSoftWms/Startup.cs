@@ -22,6 +22,11 @@ using MediatR;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
+using YL.Core.Entity;
+using System.Linq;
+using Newtonsoft.Json;
+using Microsoft.Extensions.Logging;
+using NLog;
 
 namespace YL
 {
@@ -99,6 +104,54 @@ namespace YL
             ServiceExtension.RegisterAssembly(services, "Repository");
             var bulid = services.BuildServiceProvider();
             ServiceResolve.SetServiceResolve(bulid);
+
+
+            InitDataBase(sqlSugarConfig.Item1, sqlSugarConfig.Item2);
+        }
+
+        private static void InitDataBase(DbType dbType,string connStr)
+        {
+            Logger logger = LogManager.GetLogger("Startup");
+            try
+            {
+                logger.Log(NLog.LogLevel.Info, "数据库整备开始");
+                SqlSugarClient db = new SqlSugarClient(new ConnectionConfig()
+                {
+                    DbType = dbType,
+                    ConnectionString = connStr,
+                    InitKeyType = InitKeyType.Attribute,
+                    IsAutoCloseConnection = true,
+                });
+                db.MappingTables = SqlSugarConfig.listTable;
+                Type[] entityTypes = typeof(BaseEntity).Assembly.GetTypes().Where(x => x.Namespace == "YL.Core.Entity" && x.Name != typeof(BaseEntity).Name ).ToArray();
+                foreach (Type type in entityTypes)
+                {
+                    db.CodeFirst.InitTables(type);
+                }
+                InitTableData<Sys_dept>(db, "Sys_dept.json");
+                InitTableData<Sys_dict>(db, "Sys_dict.json");
+                InitTableData<Sys_menu>(db, "Sys_menu.json");
+                InitTableData<Sys_role>(db, "Sys_role.json");
+                InitTableData<Sys_rolemenu>(db, "Sys_rolemenu.json");
+                InitTableData<Sys_serialnum>(db, "Sys_serialnum.json");
+                InitTableData<Sys_user>(db, "Sys_user.json");
+
+                db.Close();
+                logger.Log(NLog.LogLevel.Info, "数据库整备结束");
+            }
+            catch(Exception ex)
+            {
+                logger.Log(NLog.LogLevel.Error, ex, "数据库整备失败");
+            }
+        }
+
+        protected static void InitTableData<T>(SqlSugarClient sqlClient,string fileName) where T : class, new()
+        {
+            if (sqlClient.Queryable<T>().Any()) return;
+            string fullPath = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory() , "DataBase",fileName);
+            string value = System.IO.File.ReadAllText(fullPath);
+            T[] datas = JsonConvert.DeserializeObject<T[]>(value);
+            sqlClient.Insertable(datas).ExecuteCommand();
         }
 
         /// <summary>

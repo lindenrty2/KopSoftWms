@@ -11,7 +11,7 @@
             /// 10*(2-1)
             /// 页码*页面显示行数=offset
             /// </summary>
-            public int offset { get; set; }
+            public int offset { get; set; } = 0;
 
             /// <summary>
             /// 页面显示行数
@@ -21,18 +21,18 @@
             /// <summary>
             /// 排序字段
             /// </summary>
-            public string sort { get; set; }
+            public string sort { get; set; } = "";
 
             /// <summary>
             /// 排序方式
             /// </summary>
-            public string order { get; set; }
+            public string order { get; set; } = "";
 
-            public string search { get; set; }
-            public string _ { get; set; }
-            public string datemin { get; set; }
-            public string datemax { get; set; }
-            public string keyword { get; set; }
+            public string search { get; set; } = "";
+
+            public string datemin { get; set; } = "";
+            public string datemax { get; set; } = "";
+            public string keyword { get; set; } = "";
         }
 
         public static object GridData(object data, int total)

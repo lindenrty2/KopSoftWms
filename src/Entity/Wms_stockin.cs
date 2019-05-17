@@ -29,6 +29,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(Length = 32, IsNullable = true)]
         public string StockInNo { get; set; }
 
         /// <summary>
@@ -36,6 +37,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(IsNullable = true)]
         public long? StockInType { get; set; }
 
         /// <summary>
@@ -43,6 +45,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(IsNullable = true)]
         public long? SupplierId { get; set; }
 
         /// <summary>
@@ -50,6 +53,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(Length = 32, IsNullable = true)]
         public string OrderNo { get; set; }
 
         /// <summary>
@@ -57,6 +61,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(IsNullable = true)]
         public byte? StockInStatus { get; set; }
 
         /// <summary>
@@ -64,6 +69,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(Length = 255, IsNullable = true)]
         public string Remark { get; set; }
 
         /// <summary>
@@ -71,13 +77,15 @@ namespace YL.Core.Entity
         /// Default:1
         /// Nullable:True
         /// </summary>
-        public byte? IsDel { get; set; }
+        [SugarColumn()]
+        public byte IsDel { get; set; }
 
         /// <summary>
         /// Desc:创建人
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(IsNullable = true)]
         public long? CreateBy { get; set; }
 
         /// <summary>
@@ -85,6 +93,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(IsNullable = true)]
         public DateTime? CreateDate { get; set; }
 
         /// <summary>
@@ -92,6 +101,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(IsNullable = true)]
         public long? ModifiedBy { get; set; }
 
         /// <summary>
@@ -99,6 +109,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(IsNullable = true)]
         public DateTime? ModifiedDate { get; set; }
     }
 }

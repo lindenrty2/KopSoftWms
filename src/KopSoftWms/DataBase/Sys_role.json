@@ -1,0 +1,46 @@
+[
+  {
+    "RoleId": 494712986628259840,
+    "RoleName": "系统管理员",
+    "RoleType": "admin",
+    "IsDel": 1,
+    "Remark": "系统管理员",
+    "CreateBy": 491786087098744832,
+    "CreateDate": "2018-09-27 11:32:43",
+    "ModifiedBy": 504990858139926528,
+    "ModifiedDate": "2019-03-03 20:46:05"
+  },
+  {
+    "RoleId": 518052696645697536,
+    "RoleName": "工艺工程师",
+    "RoleType": "#",
+    "IsDel": 1,
+    "Remark": "工艺工程师",
+    "CreateBy": 504990858139926528,
+    "CreateDate": "2018-11-30 21:16:34",
+    "ModifiedBy": null,
+    "ModifiedDate": null
+  },
+  {
+    "RoleId": 518052825163366400,
+    "RoleName": "仓库管理员",
+    "RoleType": "#",
+    "IsDel": 1,
+    "Remark": "仓库管理员",
+    "CreateBy": 504990858139926528,
+    "CreateDate": "2018-11-30 21:17:04",
+    "ModifiedBy": 504990858139926528,
+    "ModifiedDate": "2018-12-19 13:53:39"
+  },
+  {
+    "RoleId": 518052895468290048,
+    "RoleName": "设备工程师",
+    "RoleType": "#",
+    "IsDel": 1,
+    "Remark": "设备工程师",
+    "CreateBy": 504990858139926528,
+    "CreateDate": "2018-11-30 21:17:21",
+    "ModifiedBy": null,
+    "ModifiedDate": null
+  }
+]

@@ -20,21 +20,25 @@ namespace KopSoftWms.Controllers
         private readonly ISys_userServices _userServices;
         private readonly ISys_logServices _logServices;
         private readonly ISys_roleServices _roleServices;
+        private readonly IWms_warehouseServices _warehouseServices;
         private readonly IMemoryCache _cache;
         private readonly IMediator _mediator;
 
         public HomeController(ISys_logServices logServices,
             ISys_userServices sysUserServices,
-            ISys_roleServices roleServices, IMemoryCache cache, IMediator mediator)
+            ISys_roleServices roleServices,
+            IWms_warehouseServices warehouseServices,
+            IMemoryCache cache, IMediator mediator)
         {
             _logServices = logServices;
             _userServices = sysUserServices;
             _roleServices = roleServices;
+            _warehouseServices = warehouseServices;
             _cache = cache;
             _mediator = mediator;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string type = "sys",long storeId = 0)
         {
             //TempData["returnUrl"] = returnUrl;
             _userServices.Login(UserDtoCache.UserId, GetIp());
@@ -65,9 +69,15 @@ namespace KopSoftWms.Controllers
             ViewBag.headimg = UserDtoCache.HeadImg;
 
             //菜单
-            var menus = _roleServices.GetMenu(UserDtoCache.RoleId.Value);
-            GetMemoryCache.Set("menu", menus);
+            var menus = _roleServices.GetMenu(UserDtoCache.RoleId.Value, type + "_menu");
+            GetMemoryCache.Set(type + "menu", menus);
+            ViewData["type"] = type;
             ViewData["menu"] = menus;
+
+            var stores = _warehouseServices.Queryable().ToList().ToArray();
+            ViewData["stores"] = stores;
+            ViewData["currentStoreId"] = storeId;
+
             return View();
         }
 

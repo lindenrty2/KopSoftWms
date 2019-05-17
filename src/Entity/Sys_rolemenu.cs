@@ -1,5 +1,6 @@
 ﻿using SqlSugar;
 using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace YL.Core.Entity
 {
@@ -18,7 +19,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:False
         /// </summary>
-        [SugarColumn(IsPrimaryKey = true)]
+        [SugarColumn(IsPrimaryKey = true)] 
         public long RoleMenuId { get; set; }
 
         /// <summary>
@@ -26,6 +27,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(IsNullable = true)]
         public long? RoleId { get; set; }
 
         /// <summary>
@@ -33,6 +35,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(IsNullable = true)]
         public long? MenuId { get; set; }
 
         /// <summary>
@@ -40,13 +43,15 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(IsNullable = true)]
         public long? CreateBy { get; set; }
 
         /// <summary>
         /// Desc:创建时间
         /// Default:DateTime.Now
         /// Nullable:True
-        /// </summary>
+        /// </summary> 
+        [SugarColumn(IsNullable = true)]
         public DateTime? CreateDate { get; set; }
 
         /// <summary>
@@ -54,13 +59,15 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(IsNullable = true)]
         public long? ModifiedBy { get; set; }
 
         /// <summary>
         /// Desc:修改时间
         /// Default:
         /// Nullable:True
-        /// </summary>
+        /// </summary> 
+        [SugarColumn(IsNullable = true)]
         public DateTime? ModifiedDate { get; set; }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using SqlSugar;
 using System.Text;
+using YL.Core.Entity;
 using YL.Utils.Configs;
 
 namespace YL

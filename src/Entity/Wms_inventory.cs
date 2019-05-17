@@ -29,6 +29,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(IsNullable = true)]
         public long? MaterialId { get; set; }
 
         /// <summary>
@@ -36,6 +37,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(IsNullable = true)]
         public long? StoragerackId { get; set; }
 
         /// <summary>
@@ -43,6 +45,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(IsNullable = true)]
         public decimal? Qty { get; set; }
 
         /// <summary>
@@ -50,6 +53,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(Length = 255, IsNullable = true)]
         public string Remark { get; set; }
 
         /// <summary>
@@ -57,6 +61,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:False
         /// </summary>
+        [SugarColumn()]
         public byte IsDel { get; set; }
 
         /// <summary>
@@ -64,6 +69,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(IsNullable = true)]
         public long? CreateBy { get; set; }
 
         /// <summary>
@@ -71,6 +77,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(IsNullable = true)]
         public DateTime? CreateDate { get; set; }
 
         /// <summary>
@@ -78,6 +85,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(IsNullable = true)]
         public long? ModifiedBy { get; set; }
 
         /// <summary>
@@ -85,6 +93,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(IsNullable = true)]
         public DateTime? ModifiedDate { get; set; }
     }
 }

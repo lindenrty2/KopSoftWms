@@ -1,0 +1,167 @@
+[
+  {
+    "DeptId": 492573722524254208,
+    "DeptNo": null,
+    "DeptName": "技术一部",
+    "IsDel": 1,
+    "Remark": "负责机台1",
+    "CreateBy": 491786087098744832,
+    "CreateDate": "2018-09-22 09:36:33",
+    "ModifiedBy": 491786087098744832,
+    "ModifiedDate": "2018-09-22 10:01:39"
+  },
+  {
+    "DeptId": 492616866888417280,
+    "DeptNo": null,
+    "DeptName": "技术二部",
+    "IsDel": 1,
+    "Remark": "负责机台2",
+    "CreateBy": 491786087098744832,
+    "CreateDate": "2018-09-21 16:42:56",
+    "ModifiedBy": 491786087098744832,
+    "ModifiedDate": "2018-09-22 15:49:11"
+  },
+  {
+    "DeptId": 492617342476353536,
+    "DeptNo": null,
+    "DeptName": "技术三部",
+    "IsDel": 1,
+    "Remark": "负责机台3",
+    "CreateBy": 491786087098744832,
+    "CreateDate": "2018-09-21 16:44:19",
+    "ModifiedBy": 491786087098744832,
+    "ModifiedDate": "2018-09-22 15:48:28"
+  },
+  {
+    "DeptId": 492967145194389504,
+    "DeptNo": null,
+    "DeptName": "技术四部",
+    "IsDel": 1,
+    "Remark": "负责机台4",
+    "CreateBy": 491786087098744832,
+    "CreateDate": "2018-09-22 15:55:26",
+    "ModifiedBy": 491786087098744832,
+    "ModifiedDate": "2018-09-23 10:45:55"
+  },
+  {
+    "DeptId": 493259536275079168,
+    "DeptNo": "4",
+    "DeptName": "技术五部",
+    "IsDel": 1,
+    "Remark": "机台5",
+    "CreateBy": 491786087098744832,
+    "CreateDate": "2018-09-23 11:15:10",
+    "ModifiedBy": 504990858139926528,
+    "ModifiedDate": "2019-02-17 17:06:23"
+  },
+  {
+    "DeptId": 518051525495357440,
+    "DeptNo": "kt004",
+    "DeptName": "销售部门",
+    "IsDel": 1,
+    "Remark": "销售部门",
+    "CreateBy": 504990858139926528,
+    "CreateDate": "2018-11-30 21:11:54",
+    "ModifiedBy": 504990858139926528,
+    "ModifiedDate": "2018-12-22 19:42:25"
+  },
+  {
+    "DeptId": 518051575634067456,
+    "DeptNo": "kt003",
+    "DeptName": "采购部门",
+    "IsDel": 1,
+    "Remark": "采购部门",
+    "CreateBy": 504990858139926528,
+    "CreateDate": "2018-11-30 21:12:06",
+    "ModifiedBy": 504990858139926528,
+    "ModifiedDate": "2018-12-22 19:42:13"
+  },
+  {
+    "DeptId": 518053174372728832,
+    "DeptNo": "kt002",
+    "DeptName": "制造一部",
+    "IsDel": 1,
+    "Remark": "制造一部",
+    "CreateBy": 504990858139926528,
+    "CreateDate": "2018-11-30 21:18:28",
+    "ModifiedBy": 504990858139926528,
+    "ModifiedDate": "2018-12-22 19:42:00"
+  },
+  {
+    "DeptId": 518053238646243328,
+    "DeptNo": "kt001",
+    "DeptName": "制造二部",
+    "IsDel": 1,
+    "Remark": "制造二部",
+    "CreateBy": 504990858139926528,
+    "CreateDate": "2018-11-30 21:18:43",
+    "ModifiedBy": 504990858139926528,
+    "ModifiedDate": "2018-12-22 19:41:49"
+  },
+  {
+    "DeptId": 528063722858479616,
+    "DeptNo": "RD",
+    "DeptName": "RD",
+    "IsDel": 1,
+    "Remark": null,
+    "CreateBy": 504990858139926528,
+    "CreateDate": "2018-12-28 12:16:42",
+    "ModifiedBy": null,
+    "ModifiedDate": null
+  },
+  {
+    "DeptId": 550212648847802368,
+    "DeptNo": "12",
+    "DeptName": "12",
+    "IsDel": 0,
+    "Remark": "12",
+    "CreateBy": 504990858139926528,
+    "CreateDate": "2019-02-27 15:08:36",
+    "ModifiedBy": 504990858139926528,
+    "ModifiedDate": "2019-02-27 17:01:57"
+  },
+  {
+    "DeptId": 550244912524689408,
+    "DeptNo": "333",
+    "DeptName": "333",
+    "IsDel": 0,
+    "Remark": "333344",
+    "CreateBy": 504990858139926528,
+    "CreateDate": "2019-02-27 17:16:49",
+    "ModifiedBy": 504990858139926528,
+    "ModifiedDate": "2019-02-27 17:27:40"
+  },
+  {
+    "DeptId": 550312768192905216,
+    "DeptNo": "YBS",
+    "DeptName": "饮冰室",
+    "IsDel": 1,
+    "Remark": "YBS",
+    "CreateBy": 504990858139926528,
+    "CreateDate": "2019-02-27 21:46:27",
+    "ModifiedBy": 491786087098744832,
+    "ModifiedDate": "2019-02-27 22:16:15"
+  },
+  {
+    "DeptId": 551031800911101952,
+    "DeptNo": "T001",
+    "DeptName": "天心堂",
+    "IsDel": 0,
+    "Remark": "天心堂",
+    "CreateBy": 504990858139926528,
+    "CreateDate": "2019-03-01 21:23:38",
+    "ModifiedBy": 504990858139926528,
+    "ModifiedDate": "2019-03-01 21:24:18"
+  },
+  {
+    "DeptId": 552087637804974080,
+    "DeptNo": "89",
+    "DeptName": "89",
+    "IsDel": 1,
+    "Remark": "89",
+    "CreateBy": 504990858139926528,
+    "CreateDate": "2019-03-04 19:14:01",
+    "ModifiedBy": null,
+    "ModifiedDate": null
+  }
+]

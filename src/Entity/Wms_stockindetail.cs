@@ -27,6 +27,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(IsNullable = true)]
         public long? StockInId { get; set; }
 
         /// <summary>
@@ -34,6 +35,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(IsNullable = true)]
         public byte? Status { get; set; }
 
         /// <summary>
@@ -41,6 +43,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(IsNullable = true)]
         public long? MaterialId { get; set; }
 
         /// <summary>
@@ -48,6 +51,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(Length = 18, IsNullable = true)]
         public decimal? PlanInQty { get; set; }
 
         /// <summary>
@@ -55,6 +59,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(Length = 18, IsNullable = true)]
         public decimal? ActInQty { get; set; }
 
         /// <summary>
@@ -62,6 +67,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(IsNullable = true)]
         public long? StoragerackId { get; set; }
 
         /// <summary>
@@ -69,6 +75,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(IsNullable = true)]
         public long? AuditinId { get; set; }
 
         /// <summary>
@@ -76,6 +83,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(IsNullable = true)]
         public DateTime? AuditinTime { get; set; }
 
         /// <summary>
@@ -83,13 +91,15 @@ namespace YL.Core.Entity
         /// Default:1
         /// Nullable:True
         /// </summary>
-        public byte? IsDel { get; set; }
+        [SugarColumn()]
+        public byte IsDel { get; set; }
 
         /// <summary>
         /// Desc:
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(Length = 255, IsNullable = true)]
         public string Remark { get; set; }
 
         /// <summary>
@@ -97,6 +107,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(IsNullable = true)]
         public long? CreateBy { get; set; }
 
         /// <summary>
@@ -104,6 +115,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(IsNullable = true)]
         public DateTime? CreateDate { get; set; }
 
         /// <summary>
@@ -111,6 +123,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(IsNullable = true)]
         public long? ModifiedBy { get; set; }
 
         /// <summary>
@@ -118,6 +131,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(IsNullable = true)]
         public DateTime? ModifiedDate { get; set; }
     }
 }

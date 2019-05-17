@@ -78,7 +78,7 @@ namespace YL.Core.Orm.SqlSugar
         /// </summary>
         public static readonly MappingTableList listTable = new MappingTableList()
         {
-           new MappingTable() { EntityName="Sys_menu",DbTableName="sys_menu_wms",DbShortTaleName="menu"},
+           new MappingTable() { EntityName="Sys_menu",DbTableName="Sys_menu",DbShortTaleName="menu"},
         };
 
         public static readonly MappingColumnList columns = new MappingColumnList()

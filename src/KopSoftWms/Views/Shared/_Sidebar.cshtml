@@ -64,7 +64,7 @@
                             <ul class="treeview-menu">
                                 @foreach (var item2 in item.Children)
                                 {
-                                    <li ref="@item2.Url?.Replace("/","")"><a href="@item2.Url"><i class="fa fa-circle-o"></i> @item2.Name</a></li>
+                                    <li ref="@item2.Url?.Replace("/","")"><a href="@item2.Url?type=@ViewData["Type"]"><i class="fa fa-circle-o"></i> @item2.Name</a></li>
                                 }
                             </ul>
                         </li>

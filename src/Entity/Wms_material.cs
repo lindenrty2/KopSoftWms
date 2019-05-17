@@ -29,6 +29,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:False
         /// </summary>
+        [SugarColumn(Length = 20)]
         public string MaterialNo { get; set; }
 
         /// <summary>
@@ -36,6 +37,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:False
         /// </summary>
+        [SugarColumn(Length = 60)]
         public string MaterialName { get; set; }
 
         /// <summary>
@@ -43,6 +45,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(IsNullable = true)]
         public long? MaterialType { get; set; }
 
         /// <summary>
@@ -50,6 +53,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(IsNullable = true)]
         public long? Unit { get; set; }
 
         /// <summary>
@@ -57,6 +61,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(IsNullable = true)]
         public long? StoragerackId { get; set; }
 
         /// <summary>
@@ -64,6 +69,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(IsNullable = true)]
         public long? ReservoirAreaId { get; set; }
 
         /// <summary>
@@ -71,6 +77,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(IsNullable = true)]
         public long? WarehouseId { get; set; }
 
         /// <summary>
@@ -78,6 +85,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(Length = 18, IsNullable = true)]
         public decimal? Qty { get; set; }
 
         /// <summary>
@@ -85,20 +93,23 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
-        public decimal? ExpiryDate { get; set; }
+        [SugarColumn(IsNullable = true)]
+        public int ExpiryDate { get; set; } 
 
         /// <summary>
         /// Desc:1 0
         /// Default:1
         /// Nullable:True
         /// </summary>
-        public byte? IsDel { get; set; }
+        [SugarColumn()]
+        public byte IsDel { get; set; }
 
         /// <summary>
         /// Desc:
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(Length = 255, IsNullable = true)]
         public string Remark { get; set; }
 
         /// <summary>
@@ -106,6 +117,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(IsNullable = true)]
         public long? CreateBy { get; set; }
 
         /// <summary>
@@ -113,6 +125,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(IsNullable = true)]
         public DateTime? CreateDate { get; set; }
 
         /// <summary>
@@ -120,6 +133,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(IsNullable = true)]
         public long? ModifiedBy { get; set; }
 
         /// <summary>
@@ -127,6 +141,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(IsNullable = true)]
         public DateTime? ModifiedDate { get; set; }
     }
 }

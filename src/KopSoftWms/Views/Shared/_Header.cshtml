@@ -12,6 +12,30 @@
         <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
             <span class="sr-only">Toggle navigation</span>
         </a>
+        <span style="margin-left:10px">
+            @{
+                if ((string)ViewData["type"] == "sys")
+                {
+                    <a href="/Home?type=sys" class="btn btn-primary navbar-btn" style="background:skyblue">系统</a>
+                }
+                else
+                {
+                    <a href="/Home?type=sys" class="btn btn-primary navbar-btn">系统</a>
+                }
+                long? currentStoreId = (long?)ViewData["currentStoreId"];
+                foreach (Wms_warehouse warehouse in (Wms_warehouse[])ViewData["stores"])
+                {
+                    if (currentStoreId == warehouse.WarehouseId)
+                    {
+                        <a href="/Home?type=wms&storeId=@warehouse.WarehouseId" class="btn btn-primary navbar-btn" style="background:skyblue">@warehouse.WarehouseName</a>
+                    }
+                    else
+                    {
+                        <a href="/Home?type=wms&storeId=@warehouse.WarehouseId" class="btn btn-primary navbar-btn">@warehouse.WarehouseName</a>
+                    }
+                }
+            }
+        </span>
         <div class="navbar-custom-menu">
             <ul class="nav navbar-nav">
                 <!-- User Account: style can be found in dropdown.less -->

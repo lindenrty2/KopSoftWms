@@ -27,6 +27,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(Length = 60)]
         public string PlatformNo { get; set; }
 
         /// <summary>
@@ -34,12 +35,14 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(Length = 60)]
         public string SerialNo { get; set; }
 
         /// <summary>
         /// Desc:部门Id
         /// Default:
         /// Nullable:True
+        [SugarColumn(IsNullable = true)]
         /// </summary>
         public long? DeptId { get; set; }
 
@@ -48,8 +51,10 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(IsNullable = true)]
         public long? DeviceType { get; set; }
 
+        [SugarColumn(IsNullable = true)]
         public long? PropertyType { get; set; }
 
         /// <summary>
@@ -57,6 +62,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(Length = 255, IsNullable = true)]
         public string Remark { get; set; }
 
         /// <summary>
@@ -64,6 +70,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(IsNullable = true)]
         public long? CreateBy { get; set; }
 
         /// <summary>
@@ -71,6 +78,7 @@ namespace YL.Core.Entity
         /// Default:DateTime.Now
         /// Nullable:True
         /// </summary>
+        [SugarColumn(IsNullable = true)]
         public DateTime? CreateDate { get; set; }
 
         /// <summary>
@@ -78,6 +86,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(IsNullable = true)]
         public long? ModifiedBy { get; set; }
 
         /// <summary>
@@ -85,6 +94,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(IsNullable = true)]
         public DateTime? ModifiedDate { get; set; }
 
         /// <summary>

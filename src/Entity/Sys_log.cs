@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using SqlSugar;
 using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace YL.Core.Entity
 {
@@ -18,7 +19,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
-        [SugarColumn(IsPrimaryKey = true)]
+        [SugarColumn(IsPrimaryKey = true)] 
         public long LogId { get; set; }
 
         /// <summary>
@@ -26,6 +27,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(Length = 15)]
         public string LogIp { get; set; }
 
         /// <summary>
@@ -33,6 +35,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(Length = 10)]
         public string LogType { get; set; }
 
         /// <summary>
@@ -40,6 +43,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(Length = 10000)]
         public string Description { get; set; }
 
         /// <summary>
@@ -47,6 +51,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(Length = 150)]
         public string Url { get; set; }
 
         /// <summary>
@@ -54,6 +59,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(Length = 500)]
         public string Browser { get; set; }
 
         /// <summary>
@@ -61,6 +67,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(IsNullable = true)]
         public long? CreateBy { get; set; }
 
         /// <summary>
@@ -68,6 +75,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(IsNullable = true)]
         public DateTime? CreateDate { get; set; } = DateTime.Now;
 
         /// <summary>
@@ -75,6 +83,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(IsNullable = true)]
         public long? ModifiedBy { get; set; }
 
         /// <summary>
@@ -82,6 +91,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(IsNullable = true)]
         public DateTime? ModifiedDate { get; set; }
     }
 }

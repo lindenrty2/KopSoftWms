@@ -10,17 +10,36 @@ namespace YL.Core.Entity
             this.IsDel = Convert.ToByte("1");
             this.CreateDate = DateTime.Now;
         }
-        /// <summary>        /// Desc:客户id        /// Default:        /// Nullable:False        /// </summary>        [SugarColumn(IsPrimaryKey = true)]        public long CustomerId { get; set; }
+        /// <summary>
+        /// Desc:客户id
+        /// Default:
+        /// Nullable:False
+        /// </summary>
+        [SugarColumn(IsPrimaryKey = true)]
+        public long CustomerId { get; set; }
 
-        /// <summary>        /// Desc:客户编号        /// Default:        /// Nullable:False        /// </summary>        public string CustomerNo { get; set; }
+        /// <summary>
+        /// Desc:客户编号
+        /// Default:
+        /// Nullable:False
+        /// </summary>
+        [SugarColumn(Length = 20, IsNullable = true)]
+        public string CustomerNo { get; set; }
 
-        /// <summary>        /// Desc:客户名称        /// Default:        /// Nullable:False        /// </summary>        public string CustomerName { get; set; }
+        /// <summary>
+        /// Desc:客户名称
+        /// Default:
+        /// Nullable:False
+        /// </summary>
+        [SugarColumn(Length = 60)]
+        public string CustomerName { get; set; }
 
         /// <summary>
         /// Desc:地址
         /// Default:
         /// Nullable:False
         /// </summary>
+        [SugarColumn(Length = 200, IsNullable = true)]
         public string Address { get; set; }
 
         /// <summary>
@@ -28,6 +47,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:False
         /// </summary>
+        [SugarColumn(Length = 30, IsNullable = true)]
         public string CustomerPerson { get; set; }
 
         /// <summary>
@@ -35,6 +55,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:False
         /// </summary>
+        [SugarColumn(Length = 10, IsNullable = true)]
         public string CustomerLevel { get; set; }
 
         /// <summary>
@@ -42,6 +63,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(Length = 50, IsNullable = true)]
         public string Email { get; set; }
 
         /// <summary>
@@ -49,6 +71,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(Length = 20, IsNullable = true)]
         public string Tel { get; set; }
 
         /// <summary>
@@ -56,13 +79,15 @@ namespace YL.Core.Entity
         /// Default:1
         /// Nullable:True
         /// </summary>
-        public byte? IsDel { get; set; }
+        [SugarColumn()]
+        public byte IsDel { get; set; }
 
         /// <summary>
         /// Desc:备注
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(Length = 255, IsNullable = true)]
         public string Remark { get; set; }
 
         /// <summary>
@@ -70,6 +95,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(IsNullable = true)]
         public long? CreateBy { get; set; }
 
         /// <summary>
@@ -77,6 +103,7 @@ namespace YL.Core.Entity
         /// Default:DateTime.Now
         /// Nullable:True
         /// </summary>
+        [SugarColumn(IsNullable = true)]
         public DateTime? CreateDate { get; set; }
 
         /// <summary>
@@ -84,6 +111,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(IsNullable = true)]
         public long? ModifiedBy { get; set; }
 
         /// <summary>
@@ -91,6 +119,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(IsNullable = true)]
         public DateTime? ModifiedDate { get; set; }
     }
 }

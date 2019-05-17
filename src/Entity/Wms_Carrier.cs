@@ -24,6 +24,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:False
         /// </summary>
+        [SugarColumn(Length = 20)]
         public string CarrierNo { get; set; }
 
         /// <summary>
@@ -31,6 +32,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:False
         /// </summary>
+        [SugarColumn(Length = 60)]
         public string CarrierName { get; set; }
 
         /// <summary>
@@ -38,6 +40,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:False
         /// </summary>
+        [SugarColumn(Length = 80)]
         public string Address { get; set; }
 
         /// <summary>
@@ -45,6 +48,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:False
         /// </summary>
+        [SugarColumn(Length = 20)]
         public string CarrierPerson { get; set; }
 
         /// <summary>
@@ -52,6 +56,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:False
         /// </summary>
+        [SugarColumn(Length = 10)]
         public string CarrierLevel { get; set; }
 
         /// <summary>
@@ -59,6 +64,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(Length = 20)]
         public string Email { get; set; }
 
         /// <summary>
@@ -66,6 +72,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(Length = 20)]
         public string Tel { get; set; }
 
         /// <summary>
@@ -73,13 +80,15 @@ namespace YL.Core.Entity
         /// Default:1
         /// Nullable:True
         /// </summary>
-        public byte? IsDel { get; set; }
+        [SugarColumn()]
+        public byte IsDel { get; set; }
 
         /// <summary>
         /// Desc:备注
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(Length = 255, IsNullable = true)]
         public string Remark { get; set; }
 
         /// <summary>
@@ -87,6 +96,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(IsNullable = true)]
         public long? CreateBy { get; set; }
 
         /// <summary>
@@ -94,6 +104,7 @@ namespace YL.Core.Entity
         /// Default:DateTime.Now
         /// Nullable:True
         /// </summary>
+        [SugarColumn(IsNullable = true)]
         public DateTime? CreateDate { get; set; }
 
         /// <summary>
@@ -101,6 +112,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(IsNullable = true)]
         public long? ModifiedBy { get; set; }
 
         /// <summary>
@@ -108,6 +120,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(IsNullable = true)]
         public DateTime? ModifiedDate { get; set; }
     }
 }
