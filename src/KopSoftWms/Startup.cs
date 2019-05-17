@@ -82,7 +82,7 @@ namespace YL
                 config.DbType = sqlSugarConfig.Item1;
                 config.IsAutoCloseConnection = true;
                 config.InitKeyType = InitKeyType.Attribute;
-                //config.IsShardSameThread = true;
+                //config.IsShardSameThread = false;
             });
             services.AddJson(o =>
             {
@@ -104,7 +104,6 @@ namespace YL
             ServiceExtension.RegisterAssembly(services, "Repository");
             var bulid = services.BuildServiceProvider();
             ServiceResolve.SetServiceResolve(bulid);
-
 
             InitDataBase(sqlSugarConfig.Item1, sqlSugarConfig.Item2);
         }
@@ -148,7 +147,7 @@ namespace YL
         protected static void InitTableData<T>(SqlSugarClient sqlClient,string fileName) where T : class, new()
         {
             if (sqlClient.Queryable<T>().Any()) return;
-            string fullPath = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory() , "DataBase",fileName);
+            string fullPath = System.IO.Path.Combine(AppContext.BaseDirectory, "DataBase",fileName);
             string value = System.IO.File.ReadAllText(fullPath);
             T[] datas = JsonConvert.DeserializeObject<T[]>(value);
             sqlClient.Insertable(datas).ExecuteCommand();
