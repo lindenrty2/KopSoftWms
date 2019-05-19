@@ -32,9 +32,28 @@ namespace YL.Core.Dto
         }
 
         /// <summary>
-        /// 库存查询参数
+        /// 仓储格查询参数
         /// </summary>
         public class InventoryBootstrapParams : BootstrapParams
+        {
+            /// <summary>
+            /// 货架Id
+            /// </summary>
+            public string StorageRackId { get; set; }
+            /// <summary>
+            /// 仓储格Id
+            /// </summary>
+            public string InventoryBoxId { get; set; }
+            /// <summary>
+            /// 物料Id
+            /// </summary>
+            public string MaterialId { get; set; }
+        }
+
+        /// <summary>
+        /// 仓储箱查询参数
+        /// </summary>
+        public class InventoryBoxBootstrapParams : BootstrapParams
         {
             public string StorageRackId { get; set; }
             public string MaterialId { get; set; }

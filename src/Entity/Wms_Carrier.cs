@@ -3,6 +3,9 @@ using SqlSugar;
 
 namespace YL.Core.Entity
 {
+    /// <summary>
+    /// 承运商
+    /// </summary>
     public partial class Wms_Carrier
     {
         public Wms_Carrier()

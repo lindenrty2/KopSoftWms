@@ -3,6 +3,9 @@ using SqlSugar;
 
 namespace YL.Core.Entity
 {
+    /// <summary>
+    /// 客户
+    /// </summary>
     public class Wms_Customer
     {
         public Wms_Customer()

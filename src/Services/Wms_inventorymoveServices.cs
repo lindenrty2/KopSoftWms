@@ -86,13 +86,14 @@ namespace Services
 
         public bool Auditin(long userId, long InventorymoveId)
         {
+            throw new NotImplementedException();
             var flag = _client.Ado.UseTran(() =>
             {
                 var invmovedetailList = _client.Queryable<Wms_invmovedetail>().Where(c => c.InventorymoveId == InventorymoveId).ToList();
                 var invmove = _client.Queryable<Wms_inventorymove>().Where(c => c.InventorymoveId == InventorymoveId).First();
                 invmovedetailList.ForEach(c =>
                 {
-                    var exist = _client.Queryable<Wms_inventory>().Where(i => i.MaterialId == c.MaterialId && i.StoragerackId == invmove.SourceStoragerackId).First();
+                    var exist = _client.Queryable<Wms_inventory>().Where(i => i.MaterialId == c.MaterialId && i.InventoryBoxId == invmove.SourceInventoryBoxId).First();
                     CheckNull.ArgumentIsNullException(exist, PubConst.StockOut1);
                     if (exist.Qty < c.ActQty)
                     {
@@ -103,12 +104,12 @@ namespace Services
                     exist.ModifiedBy = userId;
                     exist.ModifiedDate = DateTimeExt.DateTime;
                     _client.Updateable(exist).ExecuteCommand();
-                    exist = _client.Queryable<Wms_inventory>().Where(i => i.MaterialId == c.MaterialId && i.StoragerackId == invmove.AimStoragerackId).First();
+                    exist = _client.Queryable<Wms_inventory>().Where(i => i.MaterialId == c.MaterialId && i.InventoryBoxId == invmove.AimInventoryBoxId).First();
                     if (exist == null)
                     {
                         _client.Insertable(new Wms_inventory
                         {
-                            StoragerackId = invmove.AimStoragerackId,
+                            InventoryBoxId = invmove.AimInventoryBoxId,
                             CreateBy = userId,
                             InventoryId = PubId.SnowflakeId,
                             MaterialId = c.MaterialId,

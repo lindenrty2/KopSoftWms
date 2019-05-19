@@ -178,7 +178,7 @@ namespace Services
         }
 
         public bool Auditin(long UserId, long stockInId)
-        {
+        { 
             var flag = _client.Ado.UseTran(() =>
             {
                 //添加库存 如果有则修改 如果没有新增 添加库存明细
@@ -189,12 +189,12 @@ namespace Services
                 var inventory = new Wms_inventory();
                 stockInDetailList.ForEach(c =>
                 {
-                    var exist = _client.Queryable<Wms_inventory>().Where(i => i.MaterialId == c.MaterialId && i.StoragerackId == c.StoragerackId).First();
+                    var exist = _client.Queryable<Wms_inventory>().Where(i => i.MaterialId == c.MaterialId && i.InventoryId == c.InventoryId).First();
                     if (exist.IsNullT())
                     {
                         //add
                         inventory.InventoryId = PubId.SnowflakeId;
-                        inventory.StoragerackId = c.StoragerackId;
+                        inventory.InventoryId = c.InventoryId;
                         inventory.CreateBy = UserId;
                         inventory.Qty = c.ActInQty;
                         inventory.MaterialId = c.MaterialId;

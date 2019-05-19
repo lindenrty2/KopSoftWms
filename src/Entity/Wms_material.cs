@@ -94,7 +94,7 @@ namespace YL.Core.Entity
         /// Nullable:True
         /// </summary>
         [SugarColumn(IsNullable = true)]
-        public int ExpiryDate { get; set; } 
+        public int ExpiryDate { get; set; }
 
         /// <summary>
         /// Desc:1 0

@@ -8,5 +8,6 @@ namespace IServices
         string PageList(PubParams.InventoryBootstrapParams bootstrap);
 
         string SearchInventory(PubParams.InventoryBootstrapParams bootstrap);
+
     }
 }

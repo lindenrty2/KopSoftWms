@@ -75,6 +75,9 @@ namespace YL.Utils.Pub
 
         public const string Inventorymove1 = "移库编号重复";
 
+        public const string InventoryBox_Duplicate = "料箱编号重复";
+        public const string InventoryBox_NonExistent = "料箱不存在";
+
         public const string Import1 = "导入数据为空";
         public const string Import2 = "导入成功";
         public const string Import3 = "导入失败";

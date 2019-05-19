@@ -116,7 +116,7 @@ namespace KopSoftWms.Controllers
                     MaterialNo = _materialServices.QueryableToEntity(m => m.MaterialId == c.MaterialId).MaterialNo,
                     MaterialName = _materialServices.QueryableToEntity(m => m.MaterialId == c.MaterialId).MaterialName,
                     ActQty = c.ActQty,
-                    Qty = _inventoryServices.QueryableToEntity(m => m.MaterialId == c.MaterialId && m.StoragerackId == model.SourceStoragerackId).Qty,
+                    Qty = _inventoryServices.QueryableToEntity(m => m.MaterialId == c.MaterialId && m.InventoryId == model.SourceInventoryId).Qty,
                     AuditinId = c.AuditinId.ToString(),
                     AuditinTime = c.AuditinTime,
                     CreateBy = c.CreateBy.ToString(),

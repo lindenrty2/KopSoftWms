@@ -30,17 +30,19 @@ namespace Services
             {
                 bootstrap.offset = bootstrap.offset / bootstrap.limit + 1;
             }
-            var query = _client.Queryable<Wms_inventory, Wms_material, Wms_storagerack, Sys_user, Sys_user>
-                ((s, p, d, c, u) => new object[] {
+            var query = _client.Queryable<Wms_inventory, wms_inventorybox,Wms_material, Wms_storagerack, Sys_user, Sys_user>
+                ((s,sb, p, d, c, u) => new object[] {
                    JoinType.Left,s.MaterialId==p.MaterialId,
-                   JoinType.Left,s.StoragerackId==d.StorageRackId,
+                   JoinType.Left,s.InventoryBoxId==sb.InventoryBoxId,
+                   JoinType.Left,sb.StorageRackId==d.StorageRackId,
                    JoinType.Left,s.CreateBy==c.UserId,
                    JoinType.Left,s.ModifiedBy==u.UserId,
                  })
-                 .Where((s, p, d, c, u) => s.IsDel == 1 && d.IsDel == 1 && c.IsDel == 1)
-                 .Select((s, p, d, c, u) => new
+                 .Where((s, sb, p, d, c, u) => s.IsDel == 1 && sb.IsDel == 1 && d.IsDel == 1 && c.IsDel == 1)
+                 .Select((s, sb , p, d, c, u) => new
                  {
                      InventoryId = s.InventoryId.ToString(),
+                     InventoryBoxId = sb.InventoryBoxId.ToString(),
                      s.Qty,
                      MaterialId = p.MaterialId.ToString(),
                      p.MaterialNo,
@@ -63,6 +65,10 @@ namespace Services
             if (!bootstrap.StorageRackId.IsEmpty())
             {
                 query.Where(s => s.StorageRackId == bootstrap.StorageRackId);
+            }
+            if (!bootstrap.InventoryBoxId.IsEmpty())
+            {
+                query.Where(s => s.InventoryBoxId == bootstrap.InventoryBoxId);
             }
             if (!bootstrap.MaterialId.IsEmpty())
             {
@@ -91,17 +97,19 @@ namespace Services
             {
                 bootstrap.offset = bootstrap.offset / bootstrap.limit + 1;
             }
-            var query = _client.Queryable<Wms_inventory, Wms_material, Wms_storagerack, Sys_user, Sys_user>
-                ((s, p, d, c, u) => new object[] {
+            var query = _client.Queryable<Wms_inventory, wms_inventorybox, Wms_material, Wms_storagerack, Sys_user, Sys_user>
+                ((s, sb, p, d, c, u) => new object[] {
                    JoinType.Left,s.MaterialId==p.MaterialId,
-                   JoinType.Left,s.StoragerackId==d.StorageRackId,
+                   JoinType.Left,s.InventoryBoxId==sb.InventoryBoxId,
+                   JoinType.Left,sb.StorageRackId==d.StorageRackId,
                    JoinType.Left,s.CreateBy==c.UserId,
                    JoinType.Left,s.ModifiedBy==u.UserId,
                  })
-                 .Where((s, p, d, c, u) => s.IsDel == 1 && d.IsDel == 1 && c.IsDel == 1)
-                 .Select((s, p, d, c, u) => new
+                 .Where((s, sb, p, d, c, u) => s.IsDel == 1 && sb.IsDel == 1 && d.IsDel == 1 && c.IsDel == 1)
+                 .Select((s, sb, p, d, c, u) => new
                  {
                      InventoryId = s.InventoryId.ToString(),
+                     InventoryBoxId = s.InventoryBoxId.ToString(),
                      s.Qty,
                      MaterialId = p.MaterialId.ToString(),
                      p.MaterialNo,
@@ -125,6 +133,10 @@ namespace Services
             {
                 query.Where((s) => s.StorageRackId == bootstrap.StorageRackId);
             }
+            if (!bootstrap.InventoryBoxId.IsEmpty())
+            {
+                query.Where((s) => s.InventoryBoxId == bootstrap.InventoryBoxId);
+            }
             if (bootstrap.order.Equals("desc", StringComparison.OrdinalIgnoreCase))
             {
                 query.OrderBy($"MergeTable.{bootstrap.sort} desc");
@@ -136,5 +148,6 @@ namespace Services
             var list = query.ToPageList(bootstrap.offset, bootstrap.limit, ref totalNumber);
             return Bootstrap.GridData(list, totalNumber).JilToJson();
         }
+         
     }
 }

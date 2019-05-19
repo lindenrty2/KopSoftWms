@@ -1,58 +1,60 @@
 ﻿using SqlSugar;
 using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace YL.Core.Entity
 {
-    ///<summary>
-    /// 货架
-    ///</summary>
-    public partial class Wms_storagerack
+    /// <summary>
+    /// 储存箱(物料箱)
+    /// </summary>
+    public class wms_inventorybox 
     {
-        public Wms_storagerack()
+        public wms_inventorybox()
         {
             this.IsDel = Convert.ToByte("1");
             this.CreateDate = DateTime.Now;
         }
 
         /// <summary>
-        /// Desc:货架Id
+        /// Desc:储存箱ID
         /// Default:
         /// Nullable:False
         /// </summary>
         [SugarColumn(IsPrimaryKey = true)]
-        public long StorageRackId { get; set; }
+        public long InventoryBoxId { get; set; }
 
         /// <summary>
-        /// Desc:货架编号
+        /// Desc:储存箱编号
         /// Default:
         /// Nullable:False
         /// </summary>
-        [SugarColumn(Length = 20, IsNullable = true)]
-        public string StorageRackNo { get; set; }
+        public string InventoryBoxNo { get; set; }
 
         /// <summary>
-        /// Desc:货架名称
-        /// Default:
-        /// Nullable:True
-        /// </summary>
-        [SugarColumn(Length = 60)]
-        public string StorageRackName { get; set; }
-
-        /// <summary>
-        /// Desc:所属仓库
-        /// Default:
-        /// Nullable:False
+        /// 仓库Id
         /// </summary>
         [SugarColumn(IsNullable = true)]
         public long? WarehouseId { get; set; }
 
         /// <summary>
-        /// Desc:所属库区
-        /// Default:
-        /// Nullable:False
+        /// 库区Id
         /// </summary>
         [SugarColumn(IsNullable = true)]
         public long? ReservoirAreaId { get; set; }
+
+        /// <summary>
+        /// Desc:货架Id
+        /// Default:
+        /// Nullable:True
+        /// </summary>
+        [SugarColumn(IsNullable = true)]
+        public long? StorageRackId { get; set; }
+
+        /// <summary>
+        /// 格数
+        /// </summary>
+        public int Size { get; set; } = 1;
 
         /// <summary>
         /// Desc:备注
@@ -64,11 +66,11 @@ namespace YL.Core.Entity
 
         /// <summary>
         /// Desc:1 0
-        /// Default:1
-        /// Nullable:True
+        /// Default:
+        /// Nullable:False
         /// </summary>
-        [SugarColumn(IsNullable = true)]
-        public byte? IsDel { get; set; }
+        [SugarColumn()]
+        public byte IsDel { get; set; }
 
         /// <summary>
         /// Desc:创建人
@@ -101,5 +103,7 @@ namespace YL.Core.Entity
         /// </summary>
         [SugarColumn(IsNullable = true)]
         public DateTime? ModifiedDate { get; set; }
+
+
     }
 }

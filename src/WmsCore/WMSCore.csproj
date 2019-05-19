@@ -96,6 +96,9 @@
     <Content Update="Views\Dict\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\InventoryBox\Add.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\InventoryMove\Add.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>

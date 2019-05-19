@@ -30,7 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\KopSoftWms\KopSoftWms.csproj" />
+    <ProjectReference Include="..\..\src\WmsCore\WMSCore.csproj" />
     <ProjectReference Include="..\..\src\YL.Utils\YL.Utils.csproj" />
   </ItemGroup>
 

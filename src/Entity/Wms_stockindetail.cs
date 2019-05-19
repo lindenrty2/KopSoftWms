@@ -66,9 +66,22 @@ namespace YL.Core.Entity
         /// Desc:货架
         /// Default:
         /// Nullable:True
+        /// </summary> 
+        public long StoragerackId { get; set; }
+
+        /// <summary>
+        /// Desc:料箱Id
+        /// Default:
+        /// Nullable:True
         /// </summary>
-        [SugarColumn(IsNullable = true)]
-        public long? StoragerackId { get; set; }
+        public long InventoryBoxId { get; set; }
+
+        /// <summary>
+        /// Desc:料箱格Id
+        /// Default:
+        /// Nullable:True
+        /// </summary>
+        public long InventoryId { get; set; }
 
         /// <summary>
         /// Desc:审核人

@@ -224,6 +224,22 @@
     "ModifiedDate": null
   },
   {
+    "MenuId": 40,
+    "MenuName": "料箱管理",
+    "MenuUrl": "/InventoryBoxRack",
+    "MenuIcon": "&#xe61a;",
+    "MenuParent": 11,
+    "Sort": 14,
+    "Status": 1,
+    "MenuType": "wms_menu",
+    "IsDel": 1,
+    "Remark": null,
+    "CreateBy": null,
+    "CreateDate": "2018-10-09 08:49:14",
+    "ModifiedBy": null,
+    "ModifiedDate": null
+  },
+  {
     "MenuId": 15,
     "MenuName": "设备管理",
     "MenuUrl": "#",

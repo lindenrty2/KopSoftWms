@@ -183,7 +183,7 @@ namespace Services
                 var inventory = new Wms_inventory();
                 stockOutDetailList.ForEach(c =>
                 {
-                    var exist = _client.Queryable<Wms_inventory>().Where(i => i.MaterialId == c.MaterialId && i.StoragerackId == c.StoragerackId).First();
+                    var exist = _client.Queryable<Wms_inventory>().Where(i => i.MaterialId == c.MaterialId && i.InventoryId == c.InventoryId).First();
                     CheckNull.ArgumentIsNullException(exist, PubConst.StockOut1);
                     if (exist.Qty < c.ActOutQty)
                     {

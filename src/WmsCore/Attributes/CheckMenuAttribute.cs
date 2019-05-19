@@ -43,7 +43,7 @@ namespace YL.NetCore.Attributes
                 if (tryStoreId.Count > 0)
                 {
                     currentStoreId = tryStoreId[0].ToInt64();
-                    viewData["currentStoreId"] = type;
+                    viewData["currentStoreId"] = currentStoreId;
                 }
             }
             var properties = context.ActionDescriptor.Properties;

@@ -39,12 +39,28 @@ namespace YL.Core.Entity
         public long? SourceStoragerackId { get; set; }
 
         /// <summary>
+        /// Desc:原料箱Id
+        /// Default:
+        /// Nullable:True
+        /// </summary>
+        [SugarColumn(IsNullable = true)]
+        public long? SourceInventoryBoxId { get; set; }
+
+        /// <summary>
         /// Desc:目标货架
         /// Default:
         /// Nullable:True
         /// </summary>
         [SugarColumn(IsNullable = true)]
         public long? AimStoragerackId { get; set; }
+
+        /// <summary>
+        /// Desc:目标料箱Id
+        /// Default:
+        /// Nullable:True
+        /// </summary>
+        [SugarColumn(IsNullable = true)]
+        public long? AimInventoryBoxId { get; set; }
 
         /// <summary>
         /// Desc:状态

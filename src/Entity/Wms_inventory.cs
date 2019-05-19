@@ -6,7 +6,7 @@ using SqlSugar;
 namespace YL.Core.Entity
 {
     ///<summary>
-    ///
+    ///储存箱格
     ///</summary>
     public partial class Wms_inventory
     {
@@ -17,7 +17,7 @@ namespace YL.Core.Entity
         }
 
         /// <summary>
-        /// Desc:
+        /// Desc:储存箱格Id
         /// Default:
         /// Nullable:False
         /// </summary>
@@ -25,7 +25,7 @@ namespace YL.Core.Entity
         public long InventoryId { get; set; }
 
         /// <summary>
-        /// Desc:
+        /// Desc:物料Id
         /// Default:
         /// Nullable:True
         /// </summary>
@@ -33,12 +33,12 @@ namespace YL.Core.Entity
         public long? MaterialId { get; set; }
 
         /// <summary>
-        /// Desc:
+        /// Desc:储存箱Id
         /// Default:
         /// Nullable:True
         /// </summary>
         [SugarColumn(IsNullable = true)]
-        public long? StoragerackId { get; set; }
+        public long? InventoryBoxId { get; set; }
 
         /// <summary>
         /// Desc:

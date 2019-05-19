@@ -74,7 +74,7 @@ namespace Services
 
         public List<PermissionMenu> GetMenu()
         {
-            var permissionMenus = _menuServices.QueryableToList(c => c.IsDel == 1 && c.MenuType == "menu" && c.Status == 1);
+            var permissionMenus = _menuServices.QueryableToList(c => c.IsDel == 1 && ( c.MenuType == "wms_menu" || c.MenuType == "sys_menu" ) && c.Status == 1);
             var parentPermissions = permissionMenus.Where(a => a.MenuParent == -1).ToList();
             var ret = new List<PermissionMenu>();
             parentPermissions.ForEach(p =>

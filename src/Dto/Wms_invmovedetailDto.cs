@@ -9,8 +9,13 @@ namespace YL.Core.Dto
     {
         public long? SourceStoragerackId { get; set; }
         public string SourceStoragerack { get; set; }
+        public long? SourceInventoryId { get; set; }
+
+
         public long? AimStoragerackId { get; set; }
         public string AimStoragerack { get; set; }
+        public string AimInventoryId { get; set; }
+
         public string Pid { get; set; } //InventorymoveId
 
         public List<Wmsinvmovedetail> Detail { get; set; }
