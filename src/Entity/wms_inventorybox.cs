@@ -8,9 +8,9 @@ namespace YL.Core.Entity
     /// <summary>
     /// 储存箱(物料箱)
     /// </summary>
-    public class wms_inventorybox 
+    public class Wms_inventorybox 
     {
-        public wms_inventorybox()
+        public Wms_inventorybox()
         {
             this.IsDel = Convert.ToByte("1");
             this.CreateDate = DateTime.Now;
@@ -29,7 +29,16 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:False
         /// </summary>
+        [SugarColumn(Length = 32)]
         public string InventoryBoxNo { get; set; }
+
+        /// <summary>
+        /// Desc:储存箱名
+        /// Default:
+        /// Nullable:False
+        /// </summary>
+        [SugarColumn(Length = 64)]
+        public string InventoryBoxName { get; set; }
 
         /// <summary>
         /// 仓库Id

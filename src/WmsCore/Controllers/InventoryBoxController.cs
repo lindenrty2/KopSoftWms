@@ -9,21 +9,26 @@ using YL.NetCore.Attributes;
 using YL.NetCore.NetCoreApp;
 using YL.Utils.Extensions;
 using YL.Utils.Pub;
+using YL.Utils.Table;
+using static YL.Core.Dto.PubParams;
 
 namespace KopSoftWms.Controllers
 {
     public class InventoryBoxController : BaseController
     {
         private readonly IWms_inventoryBoxServices _inventoryBoxServices;
+        private readonly IWms_inventoryServices _inventoryServices;
         private readonly IWms_storagerackServices _storagerackServices;
 
         public InventoryBoxController(
             IWms_storagerackServices storagerackServices,
-            IWms_inventoryBoxServices inventoryBoxServices
+            IWms_inventoryBoxServices inventoryBoxServices,
+            IWms_inventoryServices inventoryServices
             )
         {
             _storagerackServices = storagerackServices;
             _inventoryBoxServices = inventoryBoxServices;
+            _inventoryServices = inventoryServices;
         }
 
         [HttpGet]
@@ -48,7 +53,7 @@ namespace KopSoftWms.Controllers
         [HttpGet]
         public IActionResult Add(string id)
         {
-            var model = new wms_inventorybox();
+            var model = new Wms_inventorybox();
             if (id.IsEmpty())
             {
                 return View(model);
@@ -63,7 +68,7 @@ namespace KopSoftWms.Controllers
         [HttpPost]
         [FilterXss]
         [OperationLog(LogType.addOrUpdate)]
-        public IActionResult AddOrUpdate([FromForm]wms_inventorybox model, [FromForm]string id)
+        public IActionResult AddOrUpdate([FromForm]Wms_inventorybox model, [FromForm]string id)
         {
             var validator = new InventoryBoxFluent();
             var results = validator.Validate(model);
@@ -89,7 +94,7 @@ namespace KopSoftWms.Controllers
                 model.InventoryBoxId = id.ToInt64();
                 model.ModifiedBy = UserDtoCache.UserId;
                 model.ModifiedDate = DateTimeExt.DateTime;
-                var flag = _inventoryBoxServices.Update(model);
+                var flag = _inventoryBoxServices.Update(model,null,false);
                 return BootJsonH(flag ? (flag, PubConst.Update1) : (flag, PubConst.Update2));
             }
         }
@@ -104,11 +109,29 @@ namespace KopSoftWms.Controllers
             {
                 return BootJsonH((false, PubConst.InventoryBox_NonExistent));
             }
-            else
+            bool hasItems = _inventoryServices.IsAny(c => c.InventoryBoxId == SqlFunc.ToInt64(id));
+            if (hasItems)
             {
-                var flag = _inventoryBoxServices.Update(new wms_inventorybox { InventoryBoxId = SqlFunc.ToInt64(id), IsDel = 0, ModifiedBy = UserDtoCache.UserId, ModifiedDate = DateTimeExt.DateTime }, c => new { c.IsDel, c.ModifiedBy, c.ModifiedDate });
-                return BootJsonH(flag ? (flag, PubConst.Delete1) : (flag, PubConst.Delete2));
+                return BootJsonH((false, PubConst.InventoryBox_CannotDeleteBecauseItems));
             }
+            var flag = _inventoryBoxServices.Update(new Wms_inventorybox { InventoryBoxId = SqlFunc.ToInt64(id), IsDel = 0, ModifiedBy = UserDtoCache.UserId, ModifiedDate = DateTimeExt.DateTime }, c => new { c.IsDel, c.ModifiedBy, c.ModifiedDate });
+            return BootJsonH(flag ? (flag, PubConst.Delete1) : (flag, PubConst.Delete2));
+            
+        }
+
+        [HttpGet]
+        public IActionResult Search(string text)
+        {
+            var bootstrap = new InventoryBoxBootstrapParams()
+            {
+                limit = 100,
+                offset = 0,
+                sort = "CreateDate",
+                search = text,
+                order = "desc"
+            };
+            var json = _inventoryBoxServices.PageList(bootstrap);
+            return Content(json);
         }
 
     }

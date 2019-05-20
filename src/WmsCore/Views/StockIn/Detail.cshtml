@@ -103,31 +103,31 @@
                     if (app.StorageRackList.length <= 0) {
                         app.searchStorageRack(text, 2);
                     }
-                    //if (dom.length > 0) {
-                    //    yui.$axiosget('/Storagerack/Search?text=' + text).then(function (res) {
-                    //        var data = res.data.rows;
-                    //        var html = "<option value=''>请选择</option>";
-                    //        for (var item in data) {
-                    //            html += "<option value='" + data[item].StorageRackId + "' " + "data-subtext='" + data[item].StorageRackNo + "'>" + data[item].StorageRackName + "</option>"
-                    //        }
-                    //        $("#StoragerackId").empty();
-                    //        $("#StoragerackId").append(html)
-                    //        $('#StoragerackId').selectpicker('refresh');
-                    //    }).catch(function (res) {
-                    //    });
-                    //} else {
-                    //    yui.$axiosget('/Storagerack/Search?text=' + text).then(function (res) {
-                    //        var data = res.data.rows;
-                    //        var html = "<option value=''>请选择</option>";
-                    //        for (var item in data) {
-                    //            html += "<option value='" + data[item].StorageRackId + "' " + "data-subtext='" + data[item].StorageRackNo + "'>" + data[item].StorageRackName + "</option>"
-                    //        }
-                    //        $("#StoragerackId").empty();
-                    //        $("#StoragerackId").append(html)
-                    //        $('#StoragerackId').selectpicker('refresh');
-                    //    }).catch(function (res) {
-                    //    });
-                    //}
+                    if (dom.length > 0) {
+                        yui.$axiosget('/Storagerack/Search?text=' + text).then(function (res) {
+                            var data = res.data.rows;
+                            var html = "<option value=''>请选择</option>";
+                            for (var item in data) {
+                                html += "<option value='" + data[item].StorageRackId + "' " + "data-subtext='" + data[item].StorageRackNo + "'>" + data[item].StorageRackName + "</option>"
+                            }
+                            $("#StoragerackId").empty();
+                            $("#StoragerackId").append(html)
+                            $('#StoragerackId').selectpicker('refresh');
+                        }).catch(function (res) {
+                        });
+                    } else {
+                        yui.$axiosget('/Storagerack/Search?text=' + text).then(function (res) {
+                            var data = res.data.rows;
+                            var html = "<option value=''>请选择</option>";
+                            for (var item in data) {
+                                html += "<option value='" + data[item].StorageRackId + "' " + "data-subtext='" + data[item].StorageRackNo + "'>" + data[item].StorageRackName + "</option>"
+                            }
+                            $("#StoragerackId").empty();
+                            $("#StoragerackId").append(html)
+                            $('#StoragerackId').selectpicker('refresh');
+                        }).catch(function (res) {
+                        });
+                    }
                 });
             });
         });
@@ -158,9 +158,9 @@
                     $("#MaterialId").selectpicker({
                         noneSelectedText: '请选择',
                     });
-                    $("#StoragerackId").selectpicker({
-                        noneSelectedText: '请选择',
-                    });
+                    //$("#StoragerackId").selectpicker({
+                    //    noneSelectedText: '请选择',
+                    //});
                     _self.searchMaterial("", 1);
                     _self.searchStorageRack("",1);
                 });

@@ -30,7 +30,7 @@ namespace Services
             {
                 bootstrap.offset = bootstrap.offset / bootstrap.limit + 1;
             }
-            var query = _client.Queryable<Wms_inventory, wms_inventorybox,Wms_material, Wms_storagerack, Sys_user, Sys_user>
+            var query = _client.Queryable<Wms_inventory, Wms_inventorybox,Wms_material, Wms_storagerack, Sys_user, Sys_user>
                 ((s,sb, p, d, c, u) => new object[] {
                    JoinType.Left,s.MaterialId==p.MaterialId,
                    JoinType.Left,s.InventoryBoxId==sb.InventoryBoxId,
@@ -97,7 +97,7 @@ namespace Services
             {
                 bootstrap.offset = bootstrap.offset / bootstrap.limit + 1;
             }
-            var query = _client.Queryable<Wms_inventory, wms_inventorybox, Wms_material, Wms_storagerack, Sys_user, Sys_user>
+            var query = _client.Queryable<Wms_inventory, Wms_inventorybox, Wms_material, Wms_storagerack, Sys_user, Sys_user>
                 ((s, sb, p, d, c, u) => new object[] {
                    JoinType.Left,s.MaterialId==p.MaterialId,
                    JoinType.Left,s.InventoryBoxId==sb.InventoryBoxId,

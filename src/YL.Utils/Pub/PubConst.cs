@@ -77,6 +77,7 @@ namespace YL.Utils.Pub
 
         public const string InventoryBox_Duplicate = "料箱编号重复";
         public const string InventoryBox_NonExistent = "料箱不存在";
+        public const string InventoryBox_CannotDeleteBecauseItems = "由于料箱中存在物料所以无法删除"; 
 
         public const string Import1 = "导入数据为空";
         public const string Import2 = "导入成功";

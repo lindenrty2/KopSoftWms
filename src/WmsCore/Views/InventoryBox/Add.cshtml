@@ -1,6 +1,6 @@
 ﻿@{
     Layout = "_LayoutH";
-    @model wms_inventorybox
+    @model Wms_inventorybox
 }
 <div id="app" v-cloak>
     <form class="form-horizontal" onsubmit="return false">
@@ -11,8 +11,13 @@
                     <input class="form-control" v-model="InventoryBoxNo" v-focus type="text">
                 </div>
             </div>
-            <yl-input lable="物料名称" v-model="MaterialName"></yl-input>
-
+            <yl-input lable="料箱名称" v-model="InventoryBoxName"></yl-input>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">格数</label>
+                <div class="col-sm-10">
+                    <input type="number" style="text-align:center;width:60px" v-model="Size" min="1" value="1">
+                </div>
+            </div>
             @await Component.InvokeAsync("Warehouse")
             <div class="form-group">
                 <label class="form-label col-sm-2">当前库区</label>
@@ -80,9 +85,11 @@
             el: "#app",
             data: {
                 submit: "添加",
-                Remark: "@Model.Remark",
                 InventoryBoxId:"@Model.InventoryBoxId",
-                InventoryBoxNo:"@Model.InventoryBoxNo", 
+                InventoryBoxNo: "@Model.InventoryBoxNo", 
+                InventoryBoxName: "@Model.InventoryBoxName", 
+                Size: "@Model.Size", 
+                Remark: "@Model.Remark",
                 WarehouseId: "@Model.WarehouseId", 
                 ReservoirAreaId: "@Model.ReservoirAreaId",
                 StoragerackId:"@Model.StorageRackId",
@@ -131,59 +138,32 @@
                 },
                 addL: function () {
                     var _self = this;
-                    if (_self.MaterialNo.length <= 0) {
+                    if (_self.InventoryBoxNo.length <= 0) {
                         layer.msg("物料编号不能为空", { icon: 2 });
                         return false;
                     }
-                    if (_self.MaterialName.length <= 0) {
+                    if (_self.InventoryBoxName.length <= 0) {
                         layer.msg("物料名称不能为空", { icon: 2 });
                         return false;
                     }
-                    if (_self.MaterialType.length <= 0) {
-                        layer.msg("请选择物料分类", { icon: 2 });
-                        return false;
-                    }
-                    if (_self.Unit.length <= 0) {
-                        layer.msg("请选择单位类别", { icon: 2 });
-                        return false;
-                    }
-                    if (_self.WarehouseId.length <= 0) {
-                        layer.msg("请选择仓库", { icon: 2 });
-                        return false;
-                    }
-                    if (_self.ReservoirAreaId.length <= 0) {
-                        layer.msg("请选择库区", { icon: 2 });
-                        return false;
-                    }
-                    if (_self.StoragerackId.length <= 0) {
-                        layer.msg("请选择货架", { icon: 2 });
-                        return false;
-                    }
-                    if (_self.Qty.length <= 0 || _self.Qty<=0) {
-                        layer.msg("安全库存必须大于0", { icon: 2 });
-                        return false;
-                    }
-                    if (_self.ExpiryDate.length <= 0 || _self.ExpiryDate <= 0) {
-                        layer.msg("有效期天数必须大于0", { icon: 2 });
+                    if (_self.Size.length <= 0) {
+                        layer.msg("请输入格数", { icon: 2 });
                         return false;
                     }
                     var index = layer.load(1, {
                         shade: [0.1, '#fff'] //0.1透明度的白色背景
                     });
                     var data = {
-                        id: _self.MaterialId,
-                        MaterialNo: _self.MaterialNo,
-                        MaterialName: _self.MaterialName,
-                        MaterialType: _self.MaterialType,
-                        Unit: _self.Unit,
+                        id: _self.InventoryBoxId,
+                        InventoryBoxNo: _self.InventoryBoxNo,
+                        InventoryBoxName: _self.InventoryBoxName, 
+                        Size: _self.Size,
                         WarehouseId: _self.WarehouseId,
                         ReservoirAreaId: _self.ReservoirAreaId,
                         StoragerackId: _self.StoragerackId,
-                        Remark: _self.Remark,
-                        Qty: _self.Qty,
-                        ExpiryDate: _self.ExpiryDate
+                        Remark: _self.Remark
                     };
-                    yui.$axiospostform('/Material/AddOrUpdate', data)
+                    yui.$axiospostform('/InventoryBox/AddOrUpdate', data)
                         .then(function (response) {
                             if (response.data.Item1 === 101) {
                                 layer.tips(response.data.Item2, '.layui-layer-setwin', {

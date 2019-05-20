@@ -10,7 +10,7 @@ using YL.Utils.Table;
 
 namespace Services
 {
-    public class Wms_inventoryBoxServices : BaseServices<wms_inventorybox>, IWms_inventoryBoxServices
+    public class Wms_inventoryBoxServices : BaseServices<Wms_inventorybox>, IWms_inventoryBoxServices
     {
         private readonly IWms_inventoryBoxRepository _repository;
         private readonly SqlSugarClient _client;
@@ -30,17 +30,19 @@ namespace Services
             {
                 bootstrap.offset = bootstrap.offset / bootstrap.limit + 1;
             }
-            var query = _client.Queryable< wms_inventorybox, Wms_storagerack, Sys_user, Sys_user>
+            var query = _client.Queryable< Wms_inventorybox, Wms_storagerack, Sys_user, Sys_user>
                 ((ib, sr, su, su2) => new object[] {
-                   JoinType.Left,ib.StorageRackId==sr.StorageRackId,
-                   JoinType.Left,ib.CreateBy==su.UserId,
+                   JoinType.Left,ib.StorageRackId==sr.StorageRackId && sr.IsDel == 1,
+                   JoinType.Left,ib.CreateBy==su.UserId && su.IsDel == 1,
                    JoinType.Left,ib.ModifiedBy==su2.UserId,
                  })
-                 .Where(( ib, sr, su, su2) => sr.IsDel == 1 && su.IsDel == 1)
+                 //.Where(( ib, sr, su, su2) => { })
                  .Select(( ib , sr, su, su2) => new
                  {
                      InventoryBoxId = ib.InventoryBoxId.ToString(),
                      ib.InventoryBoxNo,
+                     ib.InventoryBoxName,
+                     ib.Size,
                      StorageRackId = sr.StorageRackId.ToString(),
                      sr.StorageRackNo,
                      sr.StorageRackName,
@@ -58,6 +60,10 @@ namespace Services
             if (!bootstrap.datemin.IsEmpty() && !bootstrap.datemax.IsEmpty())
             {
                 query.Where(s => s.CreateDate > bootstrap.datemin.ToDateTimeB() && s.CreateDate <= bootstrap.datemax.ToDateTimeE());
+            }
+            if (!bootstrap.search.IsEmpty())
+            {
+                query.Where(s => s.InventoryBoxNo.Contains(bootstrap.search) || s.InventoryBoxName.Contains(bootstrap.search));
             }
             if (bootstrap.order.Equals("desc", StringComparison.OrdinalIgnoreCase))
             {

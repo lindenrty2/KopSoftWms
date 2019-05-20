@@ -194,7 +194,7 @@ namespace Services
                     {
                         //add
                         inventory.InventoryId = PubId.SnowflakeId;
-                        inventory.InventoryId = c.InventoryId;
+                        inventory.InventoryBoxId = c.InventoryBoxId;
                         inventory.CreateBy = UserId;
                         inventory.Qty = c.ActInQty;
                         inventory.MaterialId = c.MaterialId;

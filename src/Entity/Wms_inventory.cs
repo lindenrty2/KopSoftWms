@@ -38,7 +38,12 @@ namespace YL.Core.Entity
         /// Nullable:True
         /// </summary>
         [SugarColumn(IsNullable = true)]
-        public long? InventoryBoxId { get; set; }
+        public long InventoryBoxId { get; set; }
+
+        /// <summary>
+        /// 储存箱格位置
+        /// </summary>
+        public int Position { get; set; }
 
         /// <summary>
         /// Desc:

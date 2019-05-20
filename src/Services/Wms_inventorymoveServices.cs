@@ -86,7 +86,6 @@ namespace Services
 
         public bool Auditin(long userId, long InventorymoveId)
         {
-            throw new NotImplementedException();
             var flag = _client.Ado.UseTran(() =>
             {
                 var invmovedetailList = _client.Queryable<Wms_invmovedetail>().Where(c => c.InventorymoveId == InventorymoveId).ToList();

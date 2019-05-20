@@ -36,7 +36,7 @@ namespace YL.Core.Entity
         /// Nullable:True
         /// </summary>
         [SugarColumn(IsNullable = true)]
-        public long? SourceStoragerackId { get; set; }
+        public long SourceStoragerackId { get; set; }
 
         /// <summary>
         /// Desc:原料箱Id
@@ -44,7 +44,7 @@ namespace YL.Core.Entity
         /// Nullable:True
         /// </summary>
         [SugarColumn(IsNullable = true)]
-        public long? SourceInventoryBoxId { get; set; }
+        public long SourceInventoryBoxId { get; set; }
 
         /// <summary>
         /// Desc:目标货架
@@ -52,7 +52,7 @@ namespace YL.Core.Entity
         /// Nullable:True
         /// </summary>
         [SugarColumn(IsNullable = true)]
-        public long? AimStoragerackId { get; set; }
+        public long AimStoragerackId { get; set; }
 
         /// <summary>
         /// Desc:目标料箱Id
@@ -60,7 +60,7 @@ namespace YL.Core.Entity
         /// Nullable:True
         /// </summary>
         [SugarColumn(IsNullable = true)]
-        public long? AimInventoryBoxId { get; set; }
+        public long AimInventoryBoxId { get; set; }
 
         /// <summary>
         /// Desc:状态
