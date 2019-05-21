@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using SqlSugar;
@@ -32,6 +33,9 @@ namespace YL.Core.Entity
         [SugarColumn(IsNullable = true)]
         public long? MaterialId { get; set; }
 
+        [SugarColumn(IsIgnore = true)]
+        public string MaterialName { get; set; }
+
         /// <summary>
         /// Desc:储存箱Id
         /// Default:
@@ -42,8 +46,10 @@ namespace YL.Core.Entity
 
         /// <summary>
         /// 储存箱格位置
-        /// </summary>
-        public int Position { get; set; }
+        /// </summary> 
+        [DefaultValue(1)]
+        [SugarColumn(IsNullable = false)]
+        public int Position { get; set; } = 1;
 
         /// <summary>
         /// Desc:

@@ -258,6 +258,76 @@ var yl = {
             columns: obj
         });
     },
+    table3: function (id, data, obj, key, singleSelect, DeptId, sortName, sortOrder) {
+        method = method || "GET";
+        sortName = sortName || "CreateDate";
+        sortOrder = sortOrder || "desc";
+        if (typeof singleSelect === "undefined") {
+            singleSelect = true;
+        }
+        $("#" + id).bootstrapTable({
+            data: data, 
+            contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+            toolbar: '#toolbar', //工具按钮用哪个容器
+            striped: true, //是否显示行间隔色
+            cache: false, //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+            sortable: true, //是否启用排序
+            sortOrder: sortOrder, //排序方式
+            sortName: sortName,
+            pagination: true, //是否显示分页（*）
+            paginationLoop: true,
+            onlyInfoPagination: false,
+            sidePagination: "server", //分页方式：client客户端分页，server服务端分页（*）
+            pageNumber: 1, //初始化加载第一页，默认第一页,并记录
+            pageSize: 10, //每页的记录行数（*）
+            pageList: [10, 25, 50, 100, 'All'], //可供选择的每页的行数（*）
+            search: true, //是否显示表格搜索
+            strictSearch: false, //设置为 true启用全匹配搜索，否则为模糊搜索。
+            trimOnSearch: true, //设置为 true 将自动去掉搜索字符的前后空格。
+            smartDisplay: true,
+            showPaginationSwitch: false,
+            showColumns: true, //是否显示所有的列（选择显示的列）
+            showHeader: true, //是否显示列头。
+            showFooter: false, //是否显示列脚。
+            showRefresh: true, //是否显示刷新按钮
+            showExport: false, //是否显示导出按钮
+            exportDataType: "all",
+            buttonsAlign: "right", //按钮位置
+            exportTypes: ['csv', 'txt', 'sql', 'doc', 'excel', 'xlsx', 'pdf'], //导出文件类型
+            Icons: 'glyphicon-export',
+            singleSelect: singleSelect, //设置 true 将禁止多选。
+            minimumCountColumns: 1, //最少允许的列数
+            clickToSelect: true, //是否启用点击选中行
+            //height: 500,                      //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
+            //idField: "Name",
+            uniqueId: key, //每一行的唯一标识，一般为主键列
+            showToggle: true, //是否显示详细视图和列表视图的切换按钮
+            showFullscreen: false,
+            cardView: false, //是否显示详细视图
+            detailView: false, //是否显示父子表
+            queryParams: function (params) {
+                var temp = {
+                    limit: params.limit,     //页面大小
+                    offset: params.offset,   //页码
+                    sort: params.sort,      //排序列名
+                    order: params.order, //排序命令（desc，asc）
+                    _: params._,
+                    search: params.search,
+                    datemin: _self.$refs.datemin.value,
+                    datemax: _self.$refs.datemax.value,
+                    //datemin: $("#datemin").val(),
+                    //datemax: $("#datemax").val() || "",
+                    //keyword: $("#keyword").val() || ""
+                };
+                if (DeptId) {
+                    temp.DeptId = _self.$refs.DeptId.value;
+                }
+                return temp;
+            },
+            queryParamsType: 'limit',
+            columns: obj
+        });
+    },
     layershow: function (title, url, w, h) {
         if (title === null || title === '') {
             title = false;

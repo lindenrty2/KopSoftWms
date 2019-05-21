@@ -166,9 +166,30 @@
                         visible: true
                     },
                     {
-                        field: 'InventoryId',
+                        field: 'InventoryBoxId',
                         title: 'Id',
                         visible: false
+                    },
+                    {
+                        field: '',
+                        title: '操作',
+                        align: 'center',
+                        sortable: true,
+                        formatter: function (value, row, index) {
+                            var html = [];
+                            html.push('<button id="ViewDetailL" type="button" class="btn btn-link" style="margin-top:-8px;margin-left:-10px;">详细</button>'
+                                , '<button id="OutL" type="button" class="btn btn-link" style="margin-top:-8px;margin-left:-10px;">出库</button>'
+                            );
+                            return html.join('');
+                        },
+                        events: {
+                            'click #ViewDetailL': function (e, value, row, index) {
+                                app.ShowDetailL(row.InventoryBoxId);
+                            },
+                            'click #OutL': function (e, value, row, index) {
+                                app.OutL(row.InventoryBoxId);
+                            }
+                        },
                     },
                     {
                         field: 'InventoryBoxNo',
@@ -181,7 +202,7 @@
                         title: '料箱名称',
                         align: 'center',
                         sortable: true
-                        },
+                    },
                     {
                         field: 'Size',
                         title: '料箱格数',
@@ -279,6 +300,9 @@
                         layer.alert("请选中行", { icoon: 3, skin: "layer-ext-moon" });
                     }
                 },
+                ShowDetailL: function (val) { 
+                    yui.layershow("料箱详细", "/InventoryBox/Detail?id=" + val, 600, 500);
+                }
             }
         });
     </script>

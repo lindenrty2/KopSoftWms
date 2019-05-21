@@ -134,5 +134,45 @@ namespace KopSoftWms.Controllers
             return Content(json);
         }
 
+
+        [HttpGet]
+        public IActionResult Detail(string id)
+        {
+            long searchId = id.ToInt64();
+            var model = new Wms_InventryBoxDto();
+            if (id.IsEmptyZero())
+            {
+                return Content("");
+            }
+            else
+            {
+                Wms_inventorybox box = _inventoryBoxServices.QueryableToEntity(c => c.InventoryBoxId == searchId && c.IsDel == 1);
+                model.InventoryBoxId = box.InventoryBoxId;
+                model.InventoryBoxNo = box.InventoryBoxNo;
+                model.InventoryBoxName = box.InventoryBoxName;
+                model.Size = box.Size;
+                model.WarehouseId = box.WarehouseId;
+                model.ReservoirAreaId = box.ReservoirAreaId;
+                model.StorageRackId = box.StorageRackId;
+                model.Detail = _inventoryServices.QueryableToList(c => c.InventoryBoxId == searchId && c.IsDel == 1);
+                return View(model);
+            }
+        }
+
+        [HttpGet]
+        public IActionResult ListDetail(string id)
+        {
+            long searchId = id.ToInt64();
+            var model = new Wms_inventory();
+            if (id.IsEmptyZero())
+            {
+                return Content("");
+            }
+            else
+            {
+                model = _inventoryServices.QueryableToEntity(c => c.InventoryBoxId == searchId);
+                return View(model);
+            }
+        }
     }
 }
