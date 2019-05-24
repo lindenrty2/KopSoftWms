@@ -27,7 +27,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:False
         /// </summary>
-        [SugarColumn(Length = 20)]
+        [SugarColumn(Length = 20/*, IsIdentity = true*/)]
         public string CarrierNo { get; set; }
 
         /// <summary>
@@ -35,7 +35,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:False
         /// </summary>
-        [SugarColumn(Length = 60)]
+        [SugarColumn(Length = 60/*, IsIdentity = true*/)]
         public string CarrierName { get; set; }
 
         /// <summary>

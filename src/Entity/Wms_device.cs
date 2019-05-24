@@ -27,7 +27,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
-        [SugarColumn(Length = 60)]
+        [SugarColumn(Length = 60/*, IsIdentity = true*/)]
         public string PlatformNo { get; set; }
 
         /// <summary>
@@ -35,14 +35,14 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
-        [SugarColumn(Length = 60)]
+        [SugarColumn(Length = 60/*, IsIdentity = true*/)]
         public string SerialNo { get; set; }
 
         /// <summary>
         /// Desc:部门Id
         /// Default:
         /// Nullable:True
-        [SugarColumn(IsNullable = true)]
+        [SugarColumn(IsNullable = true/*, IsIdentity = true*/)]
         /// </summary>
         public long? DeptId { get; set; }
 

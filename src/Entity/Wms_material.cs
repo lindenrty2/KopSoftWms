@@ -29,7 +29,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:False
         /// </summary>
-        [SugarColumn(Length = 20)]
+        [SugarColumn(Length = 20/*, IsIdentity = true*/)]
         public string MaterialNo { get; set; }
 
         /// <summary>
@@ -37,7 +37,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:False
         /// </summary>
-        [SugarColumn(Length = 60)]
+        [SugarColumn(Length = 60/*, IsIdentity = true*/)]
         public string MaterialName { get; set; }
 
         /// <summary>

@@ -141,6 +141,7 @@ namespace YL
             catch(Exception ex)
             {
                 logger.Log(NLog.LogLevel.Error, ex, "数据库整备失败");
+                throw new InvalidOperationException("数据库整备失败");
             }
         }
 

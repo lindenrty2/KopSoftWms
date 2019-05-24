@@ -29,7 +29,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
-        [SugarColumn(IsNullable = true)]
+        [SugarColumn(IsNullable = true/*, IsIdentity = true*/)]
         public long? StockInDetailId { get; set; }
 
         /// <summary>

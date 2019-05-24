@@ -27,7 +27,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
-        [SugarColumn(Length = 30)]
+        [SugarColumn(Length = 30/*, IsIdentity = true*/)]
         public string InventorymoveNo { get; set; }
 
         /// <summary>
@@ -35,7 +35,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
-        [SugarColumn(IsNullable = true)]
+        [SugarColumn(IsNullable = true/*, IsIdentity = true*/)]
         public long SourceStoragerackId { get; set; }
 
         /// <summary>
@@ -43,7 +43,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
-        [SugarColumn(IsNullable = true)]
+        [SugarColumn(IsNullable = true/*, IsIdentity = true*/)]
         public long SourceInventoryBoxId { get; set; }
 
         /// <summary>
@@ -51,7 +51,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
-        [SugarColumn(IsNullable = true)]
+        [SugarColumn(IsNullable = true/*, IsIdentity = true*/)]
         public long AimStoragerackId { get; set; }
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
-        [SugarColumn(IsNullable = true)]
+        [SugarColumn(IsNullable = true/*, IsIdentity = true*/)]
         public long AimInventoryBoxId { get; set; }
 
         /// <summary>

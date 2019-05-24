@@ -26,7 +26,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:False
         /// </summary>
-        [SugarColumn(Length = 20, IsNullable = true)]
+        [SugarColumn(Length = 20, IsNullable = true/*, IsIdentity = true*/)]
         public string CustomerNo { get; set; }
 
         /// <summary>
@@ -34,7 +34,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:False
         /// </summary>
-        [SugarColumn(Length = 60)]
+        [SugarColumn(Length = 60/*, IsIdentity = true*/)]
         public string CustomerName { get; set; }
 
         /// <summary>

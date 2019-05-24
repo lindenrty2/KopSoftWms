@@ -31,31 +31,33 @@ namespace Services
                 bootstrap.offset = bootstrap.offset / bootstrap.limit + 1;
             }
             var query = _client.Queryable<Wms_inventory, Wms_inventorybox,Wms_material, Wms_storagerack, Sys_user, Sys_user>
-                ((s,sb, p, d, c, u) => new object[] {
-                   JoinType.Left,s.MaterialId==p.MaterialId,
+                ((s,sb, m, sr, scu, smu) => new object[] {
                    JoinType.Left,s.InventoryBoxId==sb.InventoryBoxId,
-                   JoinType.Left,sb.StorageRackId==d.StorageRackId,
-                   JoinType.Left,s.CreateBy==c.UserId,
-                   JoinType.Left,s.ModifiedBy==u.UserId,
+                   JoinType.Left,s.MaterialId==m.MaterialId,
+                   JoinType.Left,sb.StorageRackId==sr.StorageRackId,
+                   JoinType.Left,s.CreateBy==scu.UserId,
+                   JoinType.Left,s.ModifiedBy==smu.UserId,
                  })
-                 .Where((s, sb, p, d, c, u) => s.IsDel == 1 && sb.IsDel == 1 && d.IsDel == 1 && c.IsDel == 1)
-                 .Select((s, sb , p, d, c, u) => new
+                 .Where((s, sb, m, sr, scu, smu) => s.IsDel == 1 && sb.IsDel == 1 && sr.IsDel == 1 && scu.IsDel == 1)
+                 .Select((s, sb , m, sr, scu, smu) => new
                  {
                      InventoryId = s.InventoryId.ToString(),
                      InventoryBoxId = sb.InventoryBoxId.ToString(),
                      s.Qty,
-                     MaterialId = p.MaterialId.ToString(),
-                     p.MaterialNo,
-                     p.MaterialName,
-                     SafeQty = p.Qty,
-                     StorageRackId = d.StorageRackId.ToString(),
-                     d.StorageRackNo,
-                     d.StorageRackName,
+                     MaterialId = m.MaterialId.ToString(),
+                     m.MaterialNo,
+                     m.MaterialName,
+                     SafeQty = m.Qty,
+                     StorageRackId = sr.StorageRackId.ToString(),
+                     sr.StorageRackNo,
+                     sr.StorageRackName,
+                     sb.InventoryBoxNo,
+                     sb.InventoryBoxName,
                      s.IsDel,
                      s.Remark,
-                     CName = c.UserNickname,
+                     CName = scu.UserNickname,
                      s.CreateDate,
-                     UName = u.UserNickname,
+                     UName = smu.UserNickname,
                      s.ModifiedDate
                  }).MergeTable();
             if (!bootstrap.search.IsEmpty())

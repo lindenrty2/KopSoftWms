@@ -29,7 +29,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:False
         /// </summary>
-        [SugarColumn(Length = 32)]
+        [SugarColumn(Length = 32/*, IsIdentity = true*/)]
         public string InventoryBoxNo { get; set; }
 
         /// <summary>
@@ -37,19 +37,19 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:False
         /// </summary>
-        [SugarColumn(Length = 64)]
+        [SugarColumn(Length = 64/*, IsIdentity = true*/)]
         public string InventoryBoxName { get; set; }
 
         /// <summary>
         /// 仓库Id
         /// </summary>
-        [SugarColumn(IsNullable = true)]
+        [SugarColumn(IsNullable = true/*, IsIdentity = true*/)]
         public long? WarehouseId { get; set; }
 
         /// <summary>
         /// 库区Id
         /// </summary>
-        [SugarColumn(IsNullable = true)]
+        [SugarColumn(IsNullable = true/*, IsIdentity = true*/)]
         public long? ReservoirAreaId { get; set; }
 
         /// <summary>
@@ -57,7 +57,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
-        [SugarColumn(IsNullable = true)]
+        [SugarColumn(IsNullable = true/*, IsIdentity = true*/)]
         public long? StorageRackId { get; set; }
 
         /// <summary>

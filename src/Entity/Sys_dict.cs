@@ -28,7 +28,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
-        [SugarColumn(Length = 20, IsNullable = true)] 
+        [SugarColumn(Length = 20, IsNullable = true/*, IsIdentity = true*/)] 
         public string DictNo { get; set; }
 
         /// <summary>

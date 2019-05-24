@@ -38,7 +38,7 @@ namespace YL.Core.Entity
         [SugarColumn(Length = 50)]
         public string UserNickname { get; set; }
 
-        [SugarColumn(IsNullable = true)]
+        [SugarColumn(IsNullable = true/*, IsIdentity = true*/)]
         public long? RoleId { get; set; }
 
         [SugarColumn(Length = 255, IsNullable = true)]

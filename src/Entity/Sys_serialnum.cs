@@ -29,7 +29,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:False
         /// </summary>
-        [SugarColumn(Length = 30)]
+        [SugarColumn(Length = 30/*, IsIdentity = true*/)]
         public string SerialNumber { get; set; }
 
         [SugarColumn()]

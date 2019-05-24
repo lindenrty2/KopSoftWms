@@ -30,9 +30,12 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
-        [SugarColumn(IsNullable = true)]
+        [SugarColumn(IsNullable = true/*, IsIdentity = true*/)]
         public long? MaterialId { get; set; }
 
+        /// <summary>
+        /// 物料名（非DB字段）
+        /// </summary>
         [SugarColumn(IsIgnore = true)]
         public string MaterialName { get; set; }
 
@@ -41,7 +44,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
-        [SugarColumn(IsNullable = true)]
+        [SugarColumn(IsNullable = true/*, IsIdentity = true*/)]
         public long InventoryBoxId { get; set; }
 
         /// <summary>

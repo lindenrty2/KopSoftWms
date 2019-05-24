@@ -27,7 +27,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
-        [SugarColumn(IsNullable = true)]
+        [SugarColumn(IsNullable = true/*, IsIdentity = true*/)]
         public long? StockInId { get; set; }
 
         /// <summary>
@@ -43,7 +43,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
-        [SugarColumn(IsNullable = true)]
+        [SugarColumn(IsNullable = true/*, IsIdentity = true*/)]
         public long? MaterialId { get; set; }
 
         /// <summary>
@@ -67,6 +67,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary> 
+        [SugarColumn(/*, IsIdentity = true*/)]
         public long StoragerackId { get; set; }
 
         /// <summary>
@@ -74,6 +75,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(/*, IsIdentity = true*/)]
         public long InventoryBoxId { get; set; }
 
         /// <summary>
@@ -81,6 +83,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
+        [SugarColumn(/*, IsIdentity = true*/)]
         public long InventoryId { get; set; }
 
         /// <summary>

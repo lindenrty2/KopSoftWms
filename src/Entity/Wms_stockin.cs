@@ -29,7 +29,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
-        [SugarColumn(Length = 32, IsNullable = true)]
+        [SugarColumn(Length = 32, IsNullable = true/*, IsIdentity = true*/)]
         public string StockInNo { get; set; }
 
         /// <summary>
@@ -53,7 +53,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
-        [SugarColumn(Length = 32, IsNullable = true)]
+        [SugarColumn(Length = 32, IsNullable = true/*, IsIdentity = true*/)]
         public string OrderNo { get; set; }
 
         /// <summary>

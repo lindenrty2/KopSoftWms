@@ -27,7 +27,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
-        [SugarColumn(Length = 15)]
+        [SugarColumn(Length = 15/*, IsIdentity = true*/)]
         public string LogIp { get; set; }
 
         /// <summary>
@@ -35,7 +35,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
-        [SugarColumn(Length = 10)]
+        [SugarColumn(Length = 10/*, IsIdentity = true*/)]
         public string LogType { get; set; }
 
         /// <summary>
