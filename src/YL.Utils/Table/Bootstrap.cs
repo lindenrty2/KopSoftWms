@@ -33,6 +33,8 @@
             public string datemin { get; set; } = "";
             public string datemax { get; set; } = "";
             public string keyword { get; set; } = "";
+
+            public long storeId { get; set; }
         }
 
         public static object GridData(object data, int total)

@@ -19,6 +19,7 @@
                             <span class="input-group-addon">日期范围</span>
                             <input type="text" v-model="datemin" ref="datemin" id="datemin" class="form-control" style="width:120px;">
                             <input type="text" v-model="datemax" ref="datemax" id="datemax" class="form-control" style="width:120px;margin-left:10px;">
+                            <input type="text" v-model="storeId" ref="storeId" id="storeId" style="display:none">
                             <button name="search" v-on:click="searchL" type="submit" class="btn btn-success" style="margin-left:10px;"><i class="fa fa-search"></i> 搜货架</button>
                         </div>
                         <div id="toolbar" class="btn-group">
@@ -137,10 +138,10 @@
                             return _self.jsonDateFormat(value);
                         }
                     }];
-                    yui.table("bootstraptable", "/StorageRack/List", obj, "POST", "StorageRackId");
+                    yui.table("bootstraptable", "/StorageRack/List?storeId=@ViewData["currentStoreId"]", obj, "POST", "StorageRackId");
                 },
                 showL: function () {
-                    yui.layershow("添加货架", "/StorageRack/Add", 550, 460);
+                    yui.layershow("添加货架", "/StorageRack/Add?storeId=@ViewData["currentStoreId"]", 550, 460);
                 },
                 searchL: function () {
                     $("#bootstraptable").bootstrapTable('refresh');

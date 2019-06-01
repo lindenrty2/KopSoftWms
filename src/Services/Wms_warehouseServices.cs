@@ -31,7 +31,7 @@ namespace Services
                 ((s, c, u) => new object[] {
                    JoinType.Left,s.CreateBy==c.UserId,
                    JoinType.Left,s.ModifiedBy==u.UserId
-                 })
+                 }) 
                  .Select((s, c, u) => new
                  {
                      WarehouseId = s.WarehouseId.ToString(),

@@ -18,7 +18,7 @@ namespace Services
         {
             _repository = repository;
             _client = client;
-        }
+        } 
 
         public string PageList(Bootstrap.BootstrapParams bootstrap)
         {
