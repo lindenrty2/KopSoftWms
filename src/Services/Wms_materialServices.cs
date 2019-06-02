@@ -39,7 +39,7 @@ namespace Services
                    JoinType.Left,s.CreateBy==c.UserId,
                    JoinType.Left,s.ModifiedBy==u.UserId,
                  })
-                 .Where((s, t, ut, r, k, w, c, u) => s.IsDel == 1 && t.IsDel == 1 && ut.IsDel == 1 && r.IsDel == 1 && k.IsDel == 1 && w.IsDel == 1)
+                 .Where((s, t, ut, r, k, w, c, u) => s.WarehouseId == bootstrap.storeId && s.IsDel == 1 && t.IsDel == 1 && ut.IsDel == 1 && r.IsDel == 1 && k.IsDel == 1 && w.IsDel == 1)
                  .Select((s, t, ut, r, k, w, c, u) => new
                  {
                      MaterialId = s.MaterialId.ToString(),

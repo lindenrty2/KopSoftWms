@@ -117,7 +117,8 @@
             data: {
                 UserNickname: '',
                 datemin: '',
-                datemax: ''
+                datemax: '',
+                storeId: 0
             },
             //beforeCreate: function () {
             //    this.$nextTick(function () {
@@ -134,9 +135,10 @@
                 _self.$nextTick(function () {
                     _self.$refs.User.parentNode.parentNode.classList.add("active");
                     _self.$refs.User.classList.add("active");
+                    _self.$refs.storeId = @ViewData["currentStoreId"];
 
-                    _self.datemin = _self.getCurrentMonthFirst();
-                    _self.datemax = _self.getCurrentMonthLast();
+                    _self.datemin = "1900-01-01";
+                    _self.datemax = "2099-01-01";
                     $('#datemin').datetimepicker({
                         format: 'yyyy-mm-dd',
                         minView: 2,

@@ -41,7 +41,7 @@ namespace YL.Core.Entity
         /// <summary>
         /// 外部地址
         /// </summary>
-        [SugarColumn(Length = 120/*, IsIdentity = true*/)]
+        [SugarColumn(Length = 120,IsNullable=true /*, IsIdentity = true*/)]
         public string IFAddress { get; set; }
 
         /// <summary>

@@ -38,7 +38,7 @@ namespace Services
                    JoinType.Left,s.CreateBy==scu.UserId,
                    JoinType.Left,s.ModifiedBy==smu.UserId,
                  })
-                 .Where((s, sb, m, sr, scu, smu) => s.IsDel == 1 && sb.IsDel == 1 && sr.IsDel == 1 && scu.IsDel == 1)
+                 .Where((s, sb, m, sr, scu, smu) => sb.WarehouseId == bootstrap.storeId && s.IsDel == 1 && sb.IsDel == 1 && sr.IsDel == 1 && scu.IsDel == 1)
                  .Select((s, sb , m, sr, scu, smu) => new
                  {
                      InventoryId = s.InventoryId.ToString(),

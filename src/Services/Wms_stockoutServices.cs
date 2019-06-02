@@ -52,7 +52,7 @@ namespace Services
                    JoinType.Left,s.CreateBy==c.UserId,
                    JoinType.Left,s.ModifiedBy==u.UserId,
                  })
-                 .Where((s, p, d, c, u) => s.IsDel == 1 && d.IsDel == 1 && c.IsDel == 1)
+                 .Where((s, p, d, c, u) => s.WarehouseId == bootstrap.storeId && s.IsDel == 1 && d.IsDel == 1 && c.IsDel == 1)
                  .Select((s, p, d, c, u) => new
                  {
                      StockOutId = s.StockOutId.ToString(),

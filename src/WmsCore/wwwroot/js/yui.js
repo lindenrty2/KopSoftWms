@@ -414,7 +414,7 @@
                         order: params.order, //排序命令（desc，asc）
                         _: params._,
                         search: params.search,
-                        storeId: _self.$refs.storeId.value
+                        storeId: _self.$refs.storeId === null ? 0 : _self.$refs.storeId.value
                     };
                     if (isShowDate) {
                         temp.datemin = _self.$refs.datemin.value;

@@ -36,7 +36,7 @@ namespace Services
                    JoinType.Left,ib.CreateBy==su.UserId && su.IsDel == 1,
                    JoinType.Left,ib.ModifiedBy==su2.UserId,
                  })
-                 //.Where(( ib, sr, su, su2) => { })
+                 .Where(( ib, sr, su, su2) => ib.WarehouseId == bootstrap.storeId && ib.IsDel == 1)
                  .Select(( ib , sr, su, su2) => new
                  {
                      InventoryBoxId = ib.InventoryBoxId.ToString(),

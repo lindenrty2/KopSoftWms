@@ -41,6 +41,11 @@ namespace YL.Core.Entity
         public long? StockInType { get; set; }
 
         /// <summary>
+        /// 仓库Id
+        /// </summary>
+        public long WarehouseId { get; set; }
+
+        /// <summary>
         /// Desc:供应商
         /// Default:
         /// Nullable:True

@@ -12,6 +12,7 @@ using YL.NetCore.NetCoreApp;
 using YL.Utils.Pub;
 using YL.Utils.Extensions;
 using MediatR;
+using System.Linq;
 
 namespace KopSoftWms.Controllers
 {
@@ -38,7 +39,7 @@ namespace KopSoftWms.Controllers
             _mediator = mediator;
         }
 
-        public IActionResult Index(string type = "sys",long storeId = 0)
+        public IActionResult Index(string type = "wms",long storeId = 0)
         {
             //TempData["returnUrl"] = returnUrl;
             _userServices.Login(UserDtoCache.UserId, GetIp());
@@ -76,7 +77,14 @@ namespace KopSoftWms.Controllers
 
             var stores = _warehouseServices.Queryable().ToList().ToArray();
             ViewData["stores"] = stores;
-            ViewData["currentStoreId"] = storeId;
+            if(storeId == 0 && stores.Length > 0)
+            {
+                ViewData["currentStoreId"] = stores.First().WarehouseId;
+            }
+            else
+            {
+                ViewData["currentStoreId"] = storeId;
+            }
 
             return View();
         }

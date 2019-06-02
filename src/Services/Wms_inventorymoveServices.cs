@@ -45,7 +45,7 @@ namespace Services
                    JoinType.Left,w.CreateBy==c.UserId,
                    JoinType.Left,w.ModifiedBy==u.UserId,
                  })
-                 .Where((w, s, a, c, u) => w.IsDel == 1)
+                 .Where((w, s, a, c, u) => w.IsDel == 1 && (s.WarehouseId == bootstrap.storeId || a.WarehouseId == bootstrap.storeId))
                  .Select((w, s, a, c, u) => new
                  {
                      InventorymoveId = w.InventorymoveId.ToString(),

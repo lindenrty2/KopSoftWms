@@ -54,16 +54,18 @@
             el: '#app',
             data: {
                 datemin: '',
-                datemax: ''
+                datemax: '',
+                storeId:0
             },
             mounted: function () {
                 var _self = this;
                 _self.$nextTick(function () {
                     _self.$refs.Role.parentNode.parentNode.classList.add("active");
                     _self.$refs.Role.classList.add("active");
+                    _self.$refs.storeId = @ViewData["currentStoreId"];
 
-                    _self.datemin = _self.getCurrentMonthFirst();
-                    _self.datemax = _self.getCurrentMonthLast();
+                    _self.datemin = "1900-01-01";
+                    _self.datemax = "2099-01-01";
                     $('#datemin').datetimepicker({
                         format: 'yyyy-mm-dd',
                         minView: 2,
@@ -143,7 +145,7 @@
                         var index = layer.confirm("您确定要修改吗？", { btn: ["确定", "取消"] }, function () {
                             layer.close(index);
                             var id = arr[0].RoleId;
-                            yui.layershow("修改角色", "/Role/Add?id=" + id, 600, 550);
+                            yui.layershow("修改角色", "/Role/Add?id=" + id, 700, 900);
                         }, function () {
 
                         });

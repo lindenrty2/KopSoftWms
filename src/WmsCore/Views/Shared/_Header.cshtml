@@ -14,14 +14,6 @@
         </a>
         <span style="margin-left:10px">
             @{
-                if ((string)ViewData["type"] == "sys")
-                {
-                    <a href="/Home?type=sys" class="btn btn-primary navbar-btn" style="background:skyblue">系统</a>
-                }
-                else
-                {
-                    <a href="/Home?type=sys" class="btn btn-primary navbar-btn">系统</a>
-                }
                 long? currentStoreId = (long?)ViewData["currentStoreId"];
                 foreach (Wms_warehouse warehouse in (Wms_warehouse[])ViewData["stores"])
                 {

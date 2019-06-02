@@ -45,7 +45,8 @@
             el: '#app',
             data: {
                 datemin: '',
-                datemax: ''
+                datemax: '',
+                storeId: 0
             },
             mounted: function () {
                 var _self = this;
@@ -53,9 +54,10 @@
                     //显示active
                     _self.$refs.Carrier.parentNode.parentNode.classList.add("active");
                     _self.$refs.Carrier.classList.add("active");
-
-                    _self.datemin = _self.getCurrentMonthFirst();
-                    _self.datemax = _self.getCurrentMonthLast();
+                    
+                    _self.$refs.storeId = @ViewData["currentStoreId"];
+                    _self.$refs.datemin.value = "1900-01-01";
+                    _self.$refs.datemax.value = "2099-01-01";
                     $('#datemin').datetimepicker({
                         format: 'yyyy-mm-dd',
                         minView: 2,

@@ -39,7 +39,7 @@ namespace Services
                    JoinType.Left,p.StockInId==i.StockInId,
                    JoinType.Left,w.StorageRackId==p.StoragerackId
                  })
-                 .Where((s, p, d, c, u, i, w) => s.IsDel == 1 && d.IsDel == 1 && c.IsDel == 1 && i.IsDel == 1 && w.IsDel == 1)
+                 .Where((s, p, d, c, u, i, w) => w.WarehouseId == bootstrap.storeId && s.IsDel == 1 && d.IsDel == 1 && c.IsDel == 1 && i.IsDel == 1 && w.IsDel == 1)
                  .Select((s, p, d, c, u, i, w) => new
                  {
                      InventoryrecordId = s.InventoryrecordId.ToString(),

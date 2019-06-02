@@ -47,7 +47,7 @@
             data: {
                 datemin: '',
                 datemax: '',
-                storeId:'@ViewData["currentStoreId"]'
+                storeId:@ViewData["currentStoreId"]
             },
             mounted: function () {
                 var _self = this;
@@ -58,7 +58,7 @@
 
                     _self.datemin = _self.getCurrentMonthFirst();
                     _self.datemax = _self.getCurrentMonthLast();
-                    _self.storeId = '@ViewData["currentStoreId"]';
+                    _self.storeId = @ViewData["currentStoreId"];
                     $('#datemin').datetimepicker({
                         format: 'yyyy-mm-dd',
                         minView: 2,

@@ -64,16 +64,19 @@
             data: {
                 datemin: '',
                 datemax: '',
-                deliveryId: ''
+                deliveryId: '',
+                storeId: 0
             },
             mounted: function () {
                 var _self = this;
                 _self.$nextTick(function () {
                     //显示active
                     _self.$refs.Delivery.parentNode.parentNode.classList.add("active");
-                    _self.$refs.Delivery.classList.add("active");
-                    _self.$refs.datemin.value = _self.getCurrentMonthFirst();
-                    _self.$refs.datemax.value = _self.getCurrentMonthLast();
+                    _self.$refs.Delivery.classList.add("active");                
+                    _self.$refs.storeId = @ViewData["currentStoreId"];
+
+                    _self.$refs.datemin.value = "1900-01-01";
+                    _self.$refs.datemax.value = "2099-01-01";
                     //_self.datemin = _self.getCurrentMonthFirst();
                     //_self.datemax = _self.getCurrentMonthLast();
                     $('#datemin').datetimepicker({

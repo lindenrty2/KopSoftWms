@@ -21,13 +21,15 @@ namespace KopSoftWms.Controllers
         private readonly ISys_roleServices _roleServices;
         private readonly ISys_rolemenuServices _rolemenuServices;
         private readonly ISys_userServices _userServices;
+        private readonly IWms_warehouseServices _warehouseServices;
 
-        public RoleController(ISys_userServices userServices, ISys_rolemenuServices rolemenuServices, ISys_roleServices roleServices, ISys_menuServices menuServices)
+        public RoleController(ISys_userServices userServices, ISys_rolemenuServices rolemenuServices, ISys_roleServices roleServices, ISys_menuServices menuServices, IWms_warehouseServices warehouseServices)
         {
             _userServices = userServices;
             _menuServices = menuServices;
             _roleServices = roleServices;
             _rolemenuServices = rolemenuServices;
+            _warehouseServices = warehouseServices;
         }
 
         [CheckMenu]
@@ -88,6 +90,7 @@ namespace KopSoftWms.Controllers
                     Remark = role?.Remark,
                     Children = list
                 };
+                this.ViewData["stores"] = _warehouseServices.Queryable().ToList().ToArray();
                 return View(roles);
             }
         }
