@@ -39,6 +39,12 @@ namespace YL.Core.Entity
         public string WarehouseName { get; set; }
 
         /// <summary>
+        /// 外部地址
+        /// </summary>
+        [SugarColumn(Length = 120/*, IsIdentity = true*/)]
+        public string IFAddress { get; set; }
+
+        /// <summary>
         /// Desc:是否删除 1未删除  0删除
         /// Default:1
         /// Nullable:True

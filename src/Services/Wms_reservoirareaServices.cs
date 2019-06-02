@@ -21,7 +21,7 @@ namespace Services
         }
 
         public string PageList(Bootstrap.BootstrapParams bootstrap)
-        {
+        { 
             int totalNumber = 0;
             if (bootstrap.offset != 0)
             {
@@ -33,6 +33,7 @@ namespace Services
                    JoinType.Left,s.ModifiedBy==u.UserId,
                    JoinType.Left,s.WarehouseId==w.WarehouseId
                  })
+                 .Where((s,c,u,w) => s.WarehouseId == bootstrap.storeId && s.IsDel == 1 && w.IsDel == 1 )
                  .Select((s, c, u, w) => new
                  {
                      ReservoirAreaId = s.ReservoirAreaId.ToString(),

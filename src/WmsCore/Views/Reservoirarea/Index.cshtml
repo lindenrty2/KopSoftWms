@@ -19,6 +19,7 @@
                             <span class="input-group-addon">日期范围</span>
                             <input type="text" v-model="datemin" ref="datemin" id="datemin" class="form-control" style="width:120px;">
                             <input type="text" v-model="datemax" ref="datemax" id="datemax" class="form-control" style="width:120px;margin-left:10px;">
+                            <input type="text" v-model="storeId" ref="storeId" id="storeId" style="display:none" > 
                             <button name="search" v-on:click="searchL" type="submit" class="btn btn-success" style="margin-left:10px;"><i class="fa fa-search"></i> 搜库区</button>
                         </div>
                         <div id="toolbar" class="btn-group">
@@ -45,7 +46,8 @@
             el: '#app',
             data: {
                 datemin: '',
-                datemax: ''
+                datemax: '',
+                storeId:'@ViewData["currentStoreId"]'
             },
             mounted: function () {
                 var _self = this;
@@ -56,6 +58,7 @@
 
                     _self.datemin = _self.getCurrentMonthFirst();
                     _self.datemax = _self.getCurrentMonthLast();
+                    _self.storeId = '@ViewData["currentStoreId"]';
                     $('#datemin').datetimepicker({
                         format: 'yyyy-mm-dd',
                         minView: 2,
@@ -135,7 +138,7 @@
                     yui.table("bootstraptable", "/Reservoirarea/List", obj, "POST", "ReservoirareaId");
                 },
                 showL: function () {
-                    yui.layershow("添加库区", "/Reservoirarea/Add", 550, 460);
+                    yui.layershow("添加库区", "/Reservoirarea/Add?storeId=@ViewData["currentStoreId"]", 550, 460);
                 },
                 searchL: function () {
                     $("#bootstraptable").bootstrapTable('refresh');
@@ -146,7 +149,7 @@
                         var index = layer.confirm("您确定要修改吗？", { btn: ["确定", "取消"] }, function () {
                             layer.close(index);
                             var id = arr[0].ReservoirAreaId;
-                            yui.layershow("修改库区", "/Reservoirarea/Add?id=" + id, 550, 460);
+                            yui.layershow("修改库区", "/Reservoirarea/Add?storeId=@ViewData["currentStoreId"]&id=" + id, 550, 460);
                         }, function () {
 
                         });

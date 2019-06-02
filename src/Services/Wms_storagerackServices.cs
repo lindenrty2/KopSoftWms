@@ -36,7 +36,7 @@ namespace Services
                    JoinType.Left,s.CreateBy==c.UserId,
                    JoinType.Left,s.ModifiedBy==u.UserId,
                  })
-                 .Where((s, r, w, c, u) => s.IsDel == 1 && r.IsDel == 1 && w.IsDel == 1)
+                 .Where((s, r, w, c, u) => s.WarehouseId == bootstrap.storeId && s.IsDel == 1 && r.IsDel == 1 && w.IsDel == 1)
                  .Select((s, r, w, c, u) => new
                  {
                      StorageRackId = s.StorageRackId.ToString(),
