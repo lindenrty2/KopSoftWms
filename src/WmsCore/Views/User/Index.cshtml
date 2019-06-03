@@ -118,7 +118,7 @@
                 UserNickname: '',
                 datemin: '',
                 datemax: '',
-                storeId: 0
+                storeId: '0'
             },
             //beforeCreate: function () {
             //    this.$nextTick(function () {
@@ -135,7 +135,7 @@
                 _self.$nextTick(function () {
                     _self.$refs.User.parentNode.parentNode.classList.add("active");
                     _self.$refs.User.classList.add("active");
-                    _self.$refs.storeId = @ViewData["currentStoreId"];
+                    _self.$refs.storeId = '@ViewData["currentStoreId"]';
 
                     _self.datemin = "1900-01-01";
                     _self.datemax = "2099-01-01";

@@ -55,14 +55,14 @@
             data: {
                 datemin: '',
                 datemax: '',
-                storeId:0
+                storeId: '0'
             },
             mounted: function () {
                 var _self = this;
                 _self.$nextTick(function () {
                     _self.$refs.Role.parentNode.parentNode.classList.add("active");
                     _self.$refs.Role.classList.add("active");
-                    _self.$refs.storeId = @ViewData["currentStoreId"];
+                    _self.$refs.storeId = '@ViewData["currentStoreId"]';
 
                     _self.datemin = "1900-01-01";
                     _self.datemax = "2099-01-01";

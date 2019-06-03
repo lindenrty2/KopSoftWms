@@ -66,7 +66,7 @@
                 datemin: '',
                 datemax: '',
                 DictType: '',
-                storeId: 0
+                storeId: '0'
             },
             mounted: function () {
                 var _self = this;
@@ -74,7 +74,7 @@
                     //显示active
                     _self.$refs.Dict.parentNode.parentNode.classList.add("active");
                     _self.$refs.Dict.classList.add("active");
-                    _self.$refs.storeId = @ViewData["currentStoreId"];
+                    _self.$refs.storeId = '@ViewData["currentStoreId"]';
 
                     _self.$refs.datemin.value = "1900-01-01";
                     _self.$refs.datemax.value = "2099-01-01";

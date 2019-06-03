@@ -47,7 +47,7 @@
             data: {
                 datemin: '',
                 datemax: '',
-                storeId:@ViewData["currentStoreId"]
+                storeId: '0'
             },
             mounted: function () {
                 var _self = this;
@@ -55,10 +55,11 @@
                     //显示active
                     _self.$refs.ReservoirArea.parentNode.parentNode.classList.add("active");
                     _self.$refs.ReservoirArea.classList.add("active");
+                    _self.$refs.storeId = '@ViewData["currentStoreId"]';
 
-                    _self.datemin = _self.getCurrentMonthFirst();
-                    _self.datemax = _self.getCurrentMonthLast();
-                    _self.storeId = @ViewData["currentStoreId"];
+                    _self.datemin = "1900-01-01";
+                    _self.datemax = "2099-01-01";
+                    
                     $('#datemin').datetimepicker({
                         format: 'yyyy-mm-dd',
                         minView: 2,

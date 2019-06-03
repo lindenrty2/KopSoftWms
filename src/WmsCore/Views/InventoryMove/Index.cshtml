@@ -80,7 +80,7 @@
                 Status: '',
                 moveList: [],
                 moveDList: [],
-                storeId: @ViewData["currentStoreId"]
+                storeId: '0'
             },
             mounted: function () {
                 var _self = this;
@@ -88,6 +88,8 @@
                     //显示active
                     _self.$refs.InventoryMove.parentNode.parentNode.classList.add("active");
                     _self.$refs.InventoryMove.classList.add("active");
+                    _self.$refs.storeId = '@ViewData["currentStoreId"]';
+
                     _self.$refs.datemin.value = _self.getCurrentMonthFirst();
                     _self.$refs.datemax.value = _self.getCurrentMonthLast();
                     //_self.datemin = _self.getCurrentMonthFirst();

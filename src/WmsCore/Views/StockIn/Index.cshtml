@@ -97,7 +97,7 @@
                 StockInStatus: '',
                 stockInList: [],
                 stockInDList: [],
-                storeId: @ViewData["currentStoreId"]
+                storeId: '0'
             },
             mounted: function () {
                 var _self = this;
@@ -105,8 +105,9 @@
                     //显示active
                     _self.$refs.StockIn.parentNode.parentNode.classList.add("active");
                     _self.$refs.StockIn.classList.add("active");
-                    _self.$refs.datemin.value = _self.getCurrentMonthFirst();
-                    _self.$refs.datemax.value = _self.getCurrentMonthLast();
+                    _self.$refs.storeId = '@ViewData["currentStoreId"]';
+                    _self.$refs.datemin.value = "1900-01-01";
+                    _self.$refs.datemax.value = "2099-01-01";
                     //_self.datemin = _self.getCurrentMonthFirst();
                     //_self.datemax = _self.getCurrentMonthLast();
                     $('#datemin').datetimepicker({

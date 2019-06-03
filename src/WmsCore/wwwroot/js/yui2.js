@@ -189,7 +189,7 @@ var yl = {
                     search: params.search,
                     datemin: _self.$refs.datemin.value,
                     datemax: _self.$refs.datemax.value,
-                    storeId: _self.$refs.storeId === null ? 0 : _self.$refs.storeId.value
+                    storeId: _self.$refs.storeId === null ? 0 : _self.$refs.storeId
                     //datemin: $("#datemin").val(),
                     //datemax: $("#datemax").val() || "",
                     //keyword: $("#keyword").val() || ""
@@ -316,7 +316,7 @@ var yl = {
                     search: params.search,
                     datemin: _self.$refs.datemin.value,
                     datemax: _self.$refs.datemax.value,
-                    storeId: _self.$refs.storeId === null ? 0 : _self.$refs.storeId.value
+                    storeId: _self.$refs.storeId === null ? 0 : _self.$refs.storeId
                     //datemin: $("#datemin").val(),
                     //datemax: $("#datemax").val() || "",
                     //keyword: $("#keyword").val() || ""
