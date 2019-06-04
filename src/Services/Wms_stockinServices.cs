@@ -151,9 +151,10 @@ namespace Services
                       g.StorageRackNo,
                       g.StorageRackName,
                       Status = SqlFunc.IF(s.Status == 1).Return(StockInStatus.initial.GetDescription())
-                      .ElseIF(s.Status == 2).Return(StockInStatus.egis.GetDescription())
-                      .ElseIF(s.Status == 3).Return(StockInStatus.auditfailed.GetDescription())
-                      .End(StockInStatus.underReview.GetDescription()),
+                      .ElseIF(s.Status == 2).Return(StockInStatus.task_confirm.GetDescription())
+                      .ElseIF(s.Status == 3).Return(StockInStatus.task_canceled.GetDescription())
+                      .ElseIF(s.Status == 4).Return(StockInStatus.task_working.GetDescription())
+                      .End(StockInStatus.task_finish.GetDescription()),
                       s.PlanInQty,
                       s.ActInQty,
                       s.IsDel,
@@ -180,52 +181,13 @@ namespace Services
         public bool Auditin(long UserId, long stockInId)
         { 
             var flag = _client.Ado.UseTran(() =>
-            {
-                //添加库存 如果有则修改 如果没有新增 添加库存明细
-                var stockInDetailList = _client.Queryable<Wms_stockindetail>().Where(c => c.StockInId == stockInId).ToList();
-                var inventoryListAdd = new List<Wms_inventory>();
-                var inventoryListUpdate = new List<Wms_inventory>();
-                var inventoryDetail = new List<Wms_inventoryrecord>();
-                var inventory = new Wms_inventory();
-                stockInDetailList.ForEach(c =>
-                {
-                    var exist = _client.Queryable<Wms_inventory>().Where(i => i.MaterialId == c.MaterialId && i.InventoryId == c.InventoryId).First();
-                    if (exist.IsNullT())
-                    {
-                        //add
-                        inventory.InventoryId = PubId.SnowflakeId;
-                        inventory.InventoryBoxId = c.InventoryBoxId;
-                        inventory.CreateBy = UserId;
-                        inventory.Qty = c.ActInQty;
-                        inventory.MaterialId = c.MaterialId;
-                        //inventoryListAdd.Add(exist);
-                        _client.Insertable(inventory).ExecuteCommand();
-                    }
-                    else
-                    {
-                        //update
-                        exist.Qty = exist.Qty + c.ActInQty;
-                        exist.ModifiedBy = UserId;
-                        exist.ModifiedDate = DateTimeExt.DateTime;
-                        //inventoryListUpdate.Add(exist);
-                        _client.Updateable(exist).ExecuteCommand();
-                    }
-                    inventoryDetail.Add(new Wms_inventoryrecord
-                    {
-                        InventoryrecordId = PubId.SnowflakeId,
-                        CreateBy = UserId,
-                        Qty = c.ActInQty,
-                        StockInDetailId = c.StockInDetailId,
-                    });
-                });
-                //_inventory.Insert(inventoryListAdd);
-                //_inventory.Update(inventoryListUpdate);
-                _client.Insertable(inventoryDetail).ExecuteCommand();
+            { 
+             
                 //修改明细状态 2
-                _client.Updateable(new Wms_stockindetail { Status = StockInStatus.egis.ToByte(), AuditinId = UserId, AuditinTime = DateTimeExt.DateTime, ModifiedBy = UserId, ModifiedDate = DateTimeExt.DateTime }).UpdateColumns(c => new { c.Status, c.AuditinId, c.AuditinTime, c.ModifiedBy, c.ModifiedDate })
+                _client.Updateable(new Wms_stockindetail { Status = StockInStatus.task_confirm.ToByte(), AuditinId = UserId, AuditinTime = DateTimeExt.DateTime, ModifiedBy = UserId, ModifiedDate = DateTimeExt.DateTime }).UpdateColumns(c => new { c.Status, c.AuditinId, c.AuditinTime, c.ModifiedBy, c.ModifiedDate })
                 .Where(c => c.StockInId == stockInId && c.IsDel == 1).ExecuteCommand();
                 //修改主表中的状态改为进行中 2
-                _client.Updateable(new Wms_stockin { StockInId = stockInId, StockInStatus = StockInStatus.egis.ToByte(), ModifiedBy = UserId, ModifiedDate = DateTimeExt.DateTime }).UpdateColumns(c => new { c.StockInStatus, c.ModifiedBy, c.ModifiedDate }).ExecuteCommand();
+                _client.Updateable(new Wms_stockin { StockInId = stockInId, StockInStatus = StockInStatus.task_confirm.ToByte(), ModifiedBy = UserId, ModifiedDate = DateTimeExt.DateTime }).UpdateColumns(c => new { c.StockInStatus, c.ModifiedBy, c.ModifiedDate }).ExecuteCommand();
             }).IsSuccess;
             return flag;
         }

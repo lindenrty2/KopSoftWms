@@ -83,7 +83,7 @@ namespace Services
                  _client.Updateable(new Wms_stockout
                  {
                      StockOutId = delivery.StockOutId.Value,
-                     StockOutStatus = StockInStatus.delivery.ToByte(),
+                     StockOutStatus = StockInStatus.task_finish.ToByte(),
                      ModifiedBy = delivery.ModifiedBy,
                      ModifiedDate = delivery.ModifiedDate
                  })

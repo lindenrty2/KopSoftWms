@@ -10,7 +10,7 @@
     <PackageReference Include="BuildBundlerMinifier" Version="2.9.406" />
     <PackageReference Include="Dapper" Version="1.60.6" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
-    <PackageReference Include="sqlSugarCore" Version="4.9.9.10" />
+    <PackageReference Include="sqlSugarCore" Version="5.0.0.6" />
   </ItemGroup>
 
   <ItemGroup>

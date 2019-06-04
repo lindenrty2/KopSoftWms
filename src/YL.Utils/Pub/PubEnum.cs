@@ -82,23 +82,20 @@ namespace YL.Utils.Pub
     /// </summary>
     public enum StockInStatus
     {
-        [Description("初始")]
+        [Description("任务创建中")]
         initial = 1,
 
-        [Description("审核通过")]
-        egis = 2,
+        [Description("任务确认")]
+        task_confirm = 2,
 
-        [Description("审核未通过")]
-        auditfailed = 3,
+        [Description("任务取消")]
+        task_canceled = 3,
 
-        [Description("审核中")]
-        underReview = 4,
-
-        /// <summary>
-        /// 出库用
-        /// </summary>
-        [Description("已发货")]
-        delivery = 5,
+        [Description("任务进行中")]
+        task_working = 4,
+         
+        [Description("任务完成")]
+        task_finish = 5,
     }
 
     public enum LogType

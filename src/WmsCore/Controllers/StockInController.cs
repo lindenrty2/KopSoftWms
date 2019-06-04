@@ -77,11 +77,12 @@ namespace KopSoftWms.Controllers
         }
 
         [HttpGet]
-        public IActionResult Add(string id)
+        public IActionResult Add(string id,long warehouseId)
         {
             var model = new Wms_stockin();
             if (id.IsEmpty())
             {
+                model.WarehouseId = warehouseId;
                 return View(model);
             }
             else
@@ -130,9 +131,9 @@ namespace KopSoftWms.Controllers
                     }
                 }
                 model.StockInNo = _serialnumServices.GetSerialnum(UserDtoCache.UserId, "Wms_stockin");
-                model.StockInId = PubId.SnowflakeId;
+                model.StockInId = PubId.SnowflakeId; 
                 model.StockInStatus = StockInStatus.initial.ToByte();
-                model.CreateBy = UserDtoCache.UserId;
+                model.CreateBy = UserDtoCache.UserId; 
                 bool flag = _stockinServices.Insert(model);
                 return BootJsonH(flag ? (flag, PubConst.Add1) : (flag, PubConst.Add2));
             }

@@ -215,13 +215,17 @@
                         formatter: function (value, row, index) {
                             switch (value) {
                                 case 1:
-                                    return '<span class="label label-success radius">初始</span>';
+                                    return '<span class="label label-success radius">入库任务创建中</span>';
                                 //return "初始";
                                 case 2:
-                                    return '<span class="label label-success radius">审核通过</span>';
+                                    return '<span class="label label-success radius">入库任务确认</span>';
                                 //return "审核通过";
                                 case 3:
-                                    return '<span class="label label-success radius">审核未通过</span>';
+                                    return '<span class="label label-success radius">入库任务取消</span>';
+                                case 4:
+                                    return '<span class="label label-success radius">入库中</span>';
+                                case 5:
+                                    return '<span class="label label-success radius">入库完成</span>';
                                 // "审核未通过";
                                 default:
                                     return '<span class="label label-success radius">-</span>';
@@ -398,7 +402,7 @@
                     //yui.table("bootstraptable", "/StockIn/List", obj, "POST", "StockInId", true, qParams);
                 },
                 showL: function () {
-                    yui.layershow("入库", "/StockIn/Add", 600, 500);
+                    yui.layershow("入库", "/StockIn/Add?warehouseId=@ViewData["currentStoreId"]", 600, 500);
                 },
                 addDetailL: function (val) {
                     yui.layershow("入库明细", "/StockIn/Detail?pid=" + val, 600, 500);

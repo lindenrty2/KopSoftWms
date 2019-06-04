@@ -125,10 +125,10 @@ namespace Services
                 });
 
                 //修改明细状态 2
-                _client.Updateable(new Wms_invmovedetail { Status = StockInStatus.egis.ToByte(), AuditinId = userId, AuditinTime = DateTimeExt.DateTime, ModifiedBy = userId, ModifiedDate = DateTimeExt.DateTime }).UpdateColumns(c => new { c.Status, c.AuditinId, c.AuditinTime, c.ModifiedBy, c.ModifiedDate }).Where(c => c.InventorymoveId == InventorymoveId && c.IsDel == 1).ExecuteCommand();
+                _client.Updateable(new Wms_invmovedetail { Status = StockInStatus.task_confirm.ToByte(), AuditinId = userId, AuditinTime = DateTimeExt.DateTime, ModifiedBy = userId, ModifiedDate = DateTimeExt.DateTime }).UpdateColumns(c => new { c.Status, c.AuditinId, c.AuditinTime, c.ModifiedBy, c.ModifiedDate }).Where(c => c.InventorymoveId == InventorymoveId && c.IsDel == 1).ExecuteCommand();
 
                 //修改主表中的状态改为进行中 2
-                _client.Updateable(new Wms_inventorymove { InventorymoveId = InventorymoveId, Status = StockInStatus.egis.ToByte(), ModifiedBy = userId, ModifiedDate = DateTimeExt.DateTime }).UpdateColumns(c => new { c.Status, c.ModifiedBy, c.ModifiedDate }).ExecuteCommand();
+                _client.Updateable(new Wms_inventorymove { InventorymoveId = InventorymoveId, Status = StockInStatus.task_confirm.ToByte(), ModifiedBy = userId, ModifiedDate = DateTimeExt.DateTime }).UpdateColumns(c => new { c.Status, c.ModifiedBy, c.ModifiedDate }).ExecuteCommand();
             }).IsSuccess;
             return flag;
         }
@@ -179,9 +179,10 @@ namespace Services
                       m.MaterialNo,
                       m.MaterialName,
                       Status = SqlFunc.IF(s.Status == 1).Return(StockInStatus.initial.GetDescription())
-                      .ElseIF(s.Status == 2).Return(StockInStatus.egis.GetDescription())
-                      .ElseIF(s.Status == 3).Return(StockInStatus.auditfailed.GetDescription())
-                      .End(StockInStatus.underReview.GetDescription()),
+                      .ElseIF(s.Status == 2).Return(StockInStatus.task_confirm.GetDescription())
+                      .ElseIF(s.Status == 3).Return(StockInStatus.task_canceled.GetDescription())
+                      .ElseIF(s.Status == 3).Return(StockInStatus.task_working.GetDescription())
+                      .End(StockInStatus.task_finish.GetDescription()),
                       s.PlanQty,
                       s.ActQty,
                       s.IsDel,
