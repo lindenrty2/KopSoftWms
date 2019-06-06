@@ -25,13 +25,7 @@
                 <div class="col-sm-10">
                     <input class="form-control" v-model="ActInQty" v-focus type="text">
                 </div>
-            </div>
-            <div class="form-group">
-                <label class="form-label col-sm-2">货架</label>
-                <div class="col-sm-10">
-                    <select size="1" id="StoragerackId" v-model="StoragerackId" class="show-menu-arrow show-tick selectpicker form-control" data-live-search="true"></select>
-                </div>
-            </div>
+            </div> 
             <div class="form-group">
                 <label class="col-sm-2 control-label">备注</label>
                 <div class="col-sm-10">
@@ -91,45 +85,7 @@
                     //}
                 });
             });
-
-            $('#StoragerackId').on('show.bs.select', function (e, clickedIndex, isSelected, previousValue) {
-                var divdom = $("div[class='bs-searchbox']")[0].childNodes[0];
-                $(divdom).on("input propertychange", function () {
-                    var dom = $("li[class='no-results']");
-                    var text = divdom.value;
-                    if (dom.length > 0) {
-                        app.searchStorageRack(text, 2);
-                    }
-                    if (app.StorageRackList.length <= 0) {
-                        app.searchStorageRack(text, 2);
-                    }
-                    if (dom.length > 0) {
-                        yui.$axiosget('/Storagerack/Search?text=' + text).then(function (res) {
-                            var data = res.data.rows;
-                            var html = "<option value=''>请选择</option>";
-                            for (var item in data) {
-                                html += "<option value='" + data[item].StorageRackId + "' " + "data-subtext='" + data[item].StorageRackNo + "'>" + data[item].StorageRackName + "</option>"
-                            }
-                            $("#StoragerackId").empty();
-                            $("#StoragerackId").append(html)
-                            $('#StoragerackId').selectpicker('refresh');
-                        }).catch(function (res) {
-                        });
-                    } else {
-                        yui.$axiosget('/Storagerack/Search?text=' + text).then(function (res) {
-                            var data = res.data.rows;
-                            var html = "<option value=''>请选择</option>";
-                            for (var item in data) {
-                                html += "<option value='" + data[item].StorageRackId + "' " + "data-subtext='" + data[item].StorageRackNo + "'>" + data[item].StorageRackName + "</option>"
-                            }
-                            $("#StoragerackId").empty();
-                            $("#StoragerackId").append(html)
-                            $('#StoragerackId').selectpicker('refresh');
-                        }).catch(function (res) {
-                        });
-                    }
-                });
-            });
+             
         });
         var app = new Vue({
             el: "#app",
@@ -137,7 +93,7 @@
                 submit: "添加",
                 MaterialId:"@Model.MaterialId",
                 StockInId:"@Model.StockInId",
-                StockInDetailId:"@Model.StockInDetailId",
+                StockInDetailId: "@Model.StockInDetailId",
                 Remark: "@Model.Remark",
                 StoragerackId: "@Model.StoragerackId",
                 PlanInQty:"@Model.PlanInQty",
@@ -169,11 +125,11 @@
                 searchMaterial: function (val,type) {
                     _self = this;
                     if (type === 1) {
-                        _self.urlS = "/Material/Search";
+                        _self.urlS = "/Material/Search?storeId=@ViewData["currentStoreId"]";
                     } else {
-                        _self.urlS = "/Material/Search?text=" + val;
-                    }
-                    yui.$axiosget('/Material/Search').then(function (res) {
+                        _self.urlS = "/Material/Search?storeId=@ViewData["currentStoreId"]&text=" + val;
+                    } 
+                    yui.$axiosget(_self.urlS).then(function (res) {
                         _self.MaterialList = res.data.rows;
                         var html = "<option value=''>请选择</option>";
                         for (var item in _self.MaterialList) {

@@ -1,0 +1,70 @@
+﻿@using YL.Utils.Json;
+@{
+    Layout = "_LayoutH";
+    @model YL.Core.Dto.Wms_InventryBoxDto
+}
+@section styles{
+    <link rel="stylesheet" href="~/css/bootstrap-select.min.css" />
+}
+<div id="app" v-cloak>
+    <table id="bootstraptable" class="table table-bordered text-nowrap table-hover"></table>
+</div>
+
+@section scripts{
+    <script src="~/js/bootstrap-select.min.js"></script>
+    <script src="~/js/defaults-zh_CN.min.js"></script>
+    <script>
+        $(function () {
+            var obj = [{
+                checkbox: true,             //是否显示复选框
+                visible: true
+            },
+            {
+                field: 'Position',
+                title: '格号',
+                visible: false
+            },
+            {
+                field: 'MaterialNo',
+                title: '物料编号',
+                align: 'center',
+                sortable: true
+            },
+            {
+                field: 'Qty',
+                title: '数量',
+                align: 'center',
+                sortable: true
+            },
+            {
+                field: 'ModifiedDate',
+                title: '最后更新时间',
+                align: 'center',
+                sortable: true
+            }];
+            var qParams = {
+            };
+            yui.tableX("bootstraptable", app.list, obj, "InventoryId", true, qParams);
+
+        });
+
+        var app = new Vue({
+            el: "#app",
+            data: {
+                InventoryBoxId: "@Model.InventoryBoxId",
+                InventoryBoxNo:"@Model.InventoryBoxNo",
+                InventoryBoxName:"@Model.InventoryBoxName",
+                urlM: '',
+                list: @Html.Raw(Model.Detail.JilToJson())
+            },
+            computed: {
+                count: function () {
+                    return this.strLength(this.Remark, false);
+                }
+            },
+            watch: {},
+            mounted: function () {},
+            methods: {}
+        });
+    </script>
+}

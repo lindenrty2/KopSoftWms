@@ -77,12 +77,12 @@ namespace KopSoftWms.Controllers
         }
 
         [HttpGet]
-        public IActionResult Add(string id,long warehouseId)
+        public IActionResult Add(string id,long storeId)
         {
             var model = new Wms_stockin();
             if (id.IsEmpty())
             {
-                model.WarehouseId = warehouseId;
+                model.WarehouseId = storeId;
                 return View(model);
             }
             else
@@ -93,9 +93,10 @@ namespace KopSoftWms.Controllers
         }
 
         [HttpGet]
-        public IActionResult Detail(string id, string pid)
+        public IActionResult Detail(string id, string pid, long storeId)
         {
             var model = new Wms_stockindetail();
+            ViewData["currentStoreId"] = storeId;
             if (id.IsEmptyZero())
             {
                 model.StockInId = pid.ToInt64();
@@ -107,6 +108,14 @@ namespace KopSoftWms.Controllers
                 return View(model);
             }
         }
+
+        [HttpGet]
+        public IActionResult Work(string pid)
+        {
+            var model = _stockinServices.QueryableToEntity(c => c.StockInId == SqlFunc.ToInt64(pid) && c.IsDel == 1);
+            return View(model);
+        }
+         
 
         [HttpPost]
         [FilterXss]
