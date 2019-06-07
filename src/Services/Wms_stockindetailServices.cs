@@ -21,24 +21,21 @@ namespace Services
 
         public string PageList(string pid)
         {
-            var query = _client.Queryable<Wms_stockindetail, Wms_material, Wms_stockin, Wms_storagerack, Sys_user, Sys_user, Sys_user>
-                ((s, m, p, g, c, u, a) => new object[] {
+            var query = _client.Queryable<Wms_stockindetail, Wms_material, Wms_stockin, Sys_user, Sys_user, Sys_user>
+                ((s, m, p, c, u, a) => new object[] {
                    JoinType.Left,s.MaterialId==m.MaterialId,
                    JoinType.Left,s.StockInId==p.StockInId,
-                   JoinType.Left,s.StoragerackId==g.StorageRackId,
                    JoinType.Left,s.CreateBy==c.UserId,
                    JoinType.Left,s.ModifiedBy==u.UserId,
                    JoinType.Left,s.AuditinId==a.UserId,
                  })
-                 .Where((s, m, p, g, c, u, a) => s.IsDel == 1 && p.IsDel == 1 && g.IsDel == 1 && c.IsDel == 1)
-                 .Select((s, m, p, g, c, u, a) => new
+                 .Where((s, m, p, c, u, a) => s.IsDel == 1 && p.IsDel == 1 && c.IsDel == 1)
+                 .Select((s, m, p, c, u, a) => new
                  {
                      StockInId = s.StockInId.ToString(),
                      StockInDetailId = s.StockInDetailId.ToString(),
                      m.MaterialNo,
                      m.MaterialName,
-                     g.StorageRackNo,
-                     g.StorageRackName,
                      s.Status,
                      s.PlanInQty,
                      s.ActInQty,
