@@ -29,32 +29,25 @@ namespace Services
             {
                 bootstrap.offset = bootstrap.offset / bootstrap.limit + 1;
             }
-            var query = _client.Queryable<Wms_material, Sys_dict, Sys_dict, Wms_storagerack, Wms_reservoirarea, Wms_warehouse, Sys_user, Sys_user>
-                ((s, t, ut, r, k, w, c, u) => new object[] {
+            var query = _client.Queryable<Wms_material, Sys_dict, Sys_dict, Wms_warehouse, Sys_user, Sys_user>
+                ((s, t, ut, w, c, u) => new object[] {
                    JoinType.Left,s.MaterialType==t.DictId,
                    JoinType.Left,s.Unit==ut.DictId,
-                   JoinType.Left,s.StoragerackId==r.StorageRackId,
-                   JoinType.Left,s.ReservoirAreaId==k.ReservoirAreaId,
                    JoinType.Left,s.WarehouseId==w.WarehouseId,
                    JoinType.Left,s.CreateBy==c.UserId,
                    JoinType.Left,s.ModifiedBy==u.UserId,
                  })
-                 .Where((s, t, ut, r, k, w, c, u) => s.WarehouseId == bootstrap.storeId && s.IsDel == 1 && t.IsDel == 1 && ut.IsDel == 1 && r.IsDel == 1 && k.IsDel == 1 && w.IsDel == 1)
-                 .Select((s, t, ut, r, k, w, c, u) => new
+                 .Where((s, t, ut, w, c, u) => s.WarehouseId == bootstrap.storeId && s.IsDel == 1 && t.IsDel == 1 && ut.IsDel == 1 && w.IsDel == 1)
+                 .Select((s, t, ut, w, c, u) => new
                  {
                      MaterialId = s.MaterialId.ToString(),
                      s.MaterialNo,
                      s.MaterialName,
-                     r.StorageRackNo,
-                     r.StorageRackName,
-                     k.ReservoirAreaNo,
-                     k.ReservoirAreaName,
                      w.WarehouseNo,
                      w.WarehouseName,
                      MaterialType = t.DictName,
                      Unit = ut.DictName,
                      s.Qty,
-                     s.ExpiryDate,
                      s.IsDel,
                      s.Remark,
                      CName = c.UserNickname,
@@ -104,7 +97,6 @@ namespace Services
                      单位类别 = ut.DictName,
                      物料分类 = t.DictName,
                      安全库存 = s.Qty,
-                     有效期 = s.ExpiryDate,
                      货架编号 = r.StorageRackNo,
                      货架名称 = r.StorageRackName,
                      库区编号 = k.ReservoirAreaNo,

@@ -1,5 +1,7 @@
 ﻿using System;
 using SqlSugar;
+using YL.Utils.Extensions;
+using YL.Utils.Pub;
 
 namespace YL.Core.Entity
 {
@@ -35,8 +37,16 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
-        [SugarColumn(IsNullable = true)]
-        public byte? Status { get; set; }
+        [SugarColumn(IsNullable = false , DefaultValue = "1")]
+        public byte Status { get; set; }
+
+        /// <summary>
+        /// Desc:仓库Id
+        /// Default:
+        /// Nullable:True
+        /// </summary>
+        [SugarColumn(IsNullable = false)]
+        public long WarehouseId { get; set; }
 
         /// <summary>
         /// Desc:物料
@@ -62,45 +72,6 @@ namespace YL.Core.Entity
         [SugarColumn(Length = 18, IsNullable = true)]
         public decimal? ActInQty { get; set; }
 
-        /// <summary>
-        /// Desc:货架
-        /// Default:
-        /// Nullable:True
-        /// </summary> 
-        [SugarColumn(/*, IsIdentity = true*/)]
-        public long StoragerackId { get; set; }
-
-        /// <summary>
-        /// Desc:料箱Id
-        /// Default:
-        /// Nullable:True
-        /// </summary>
-        [SugarColumn(/*, IsIdentity = true*/)]
-        public long InventoryBoxId { get; set; }
-
-        /// <summary>
-        /// Desc:料箱格Id
-        /// Default:
-        /// Nullable:True
-        /// </summary>
-        [SugarColumn(/*, IsIdentity = true*/)]
-        public long InventoryId { get; set; }
-
-        /// <summary>
-        /// Desc:审核人
-        /// Default:
-        /// Nullable:True
-        /// </summary>
-        [SugarColumn(IsNullable = true)]
-        public long? AuditinId { get; set; }
-
-        /// <summary>
-        /// Desc:审核时间
-        /// Default:
-        /// Nullable:True
-        /// </summary>
-        [SugarColumn(IsNullable = true)]
-        public DateTime? AuditinTime { get; set; }
 
         /// <summary>
         /// Desc:1 0
@@ -149,5 +120,88 @@ namespace YL.Core.Entity
         /// </summary>
         [SugarColumn(IsNullable = true)]
         public DateTime? ModifiedDate { get; set; }
+    }
+
+    /// <summary>
+    /// 入库任务
+    /// </summary>
+    public class Wms_StockinTask
+    {
+        /// <summary>
+        /// 入库任务Id
+        /// </summary>
+        [SugarColumn(IsPrimaryKey = true)]
+        public long StockInTaskId { get; set; }
+        
+        /// <summary>
+        /// Desc:入库详细Id
+        /// Default:
+        /// Nullable:True
+        /// </summary> 
+        [SugarColumn(/*, IsIdentity = true*/)]
+        public long? StockInDetailId { get; set; }
+
+
+        /// <summary>
+        /// Desc:库区Id
+        /// Default:
+        /// Nullable:True
+        /// </summary> 
+        [SugarColumn(/*, IsIdentity = true*/)]
+        public long ReservoirareaId { get; set; }
+
+        /// <summary>
+        /// Desc:货架
+        /// Default:
+        /// Nullable:True
+        /// </summary> 
+        [SugarColumn(/*, IsIdentity = true*/)]
+        public long StoragerackId { get; set; }
+
+        /// <summary>
+        /// Desc:料箱Id
+        /// Default:
+        /// Nullable:True
+        /// </summary>
+        [SugarColumn(/*, IsIdentity = true*/)]
+        public long? InventoryBoxId { get; set; }
+
+        /// <summary>
+        /// Desc:料箱格Id
+        /// Default:
+        /// Nullable:True
+        /// </summary>
+        [SugarColumn(/*, IsIdentity = true*/)]
+        public long InventoryId { get; set; }
+
+        /// <summary>
+        /// 数量
+        /// </summary>
+        public decimal? Qty { get; set; }
+
+        /// <summary>
+        /// Desc:审核人
+        /// Default:
+        /// Nullable:True
+        /// </summary>
+        [SugarColumn(IsNullable = true)]
+        public long? OperaterId { get; set; }
+
+        /// <summary>
+        /// Desc:审核时间
+        /// Default:
+        /// Nullable:True
+        /// </summary>
+        [SugarColumn(IsNullable = true)]
+        public DateTime? OperaterDate { get; set; }
+
+        /// <summary>
+        /// Desc:
+        /// Default:
+        /// Nullable:True
+        /// </summary>
+        [SugarColumn(IsNullable = false, DefaultValue = "1")]
+        public byte? Status { get; set; }
+
     }
 }

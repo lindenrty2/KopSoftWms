@@ -147,14 +147,18 @@
                         sortable: true,
                         formatter: function (value, row, index) {
                             var html = [];
-                            if (value != 2) {
+                            if (value == 1) {
                                 html.push('<button id="addDetailL" type="button" class="btn btn-link" style="margin-top:-8px;">添加明细</button>'
                                     , '<button id="auditinL" type="button" class="btn btn-link" style="margin-top:-8px;margin-left:-10px;">审核</button>'
                                 );
                             }
+                            else if (value == 2 || value == 3 ) {
+                                html.push(
+                                    '<button id="workL" type="button" class="btn btn-link" style="margin-top:-8px;margin-left:-10px;">操作</button>'
+                                );
+                            }
                             html.push(
-                                '<button id="workL" type="button" class="btn btn-link" style="margin-top:-8px;margin-left:-10px;">操作</button>'
-                                , '<button id="previewL" type="button" class="btn btn-link" style="margin-top:-8px;margin-left:-10px;">预览</button>'
+                                '<button id="previewL" type="button" class="btn btn-link" style="margin-top:-8px;margin-left:-10px;">预览</button>'
                                 , '<button id="printL" type="button" class="btn btn-link" style="margin-top:-8px;margin-left:-10px;">打印</button>'
                             );
                             return html.join('');
@@ -220,17 +224,17 @@
                         sortable: true,
                         formatter: function (value, row, index) {
                             switch (value) {
+                                case -1:
+                                    return '<span class="label label-danger radius">入库任务取消</span>';
                                 case 1:
-                                    return '<span class="label label-success radius">入库任务创建中</span>';
+                                    return '<span class="label label-default radius">入库任务创建中</span>';
                                 //return "初始";
                                 case 2:
-                                    return '<span class="label label-success radius">入库任务确认</span>';
+                                    return '<span class="label label-info radius">入库任务确认</span>';
                                 //return "审核通过";
                                 case 3:
-                                    return '<span class="label label-success radius">入库任务取消</span>';
+                                    return '<span class="label label-primary radius">入库中</span>';
                                 case 4:
-                                    return '<span class="label label-success radius">入库中</span>';
-                                case 5:
                                     return '<span class="label label-success radius">入库完成</span>';
                                 // "审核未通过";
                                 default:
@@ -349,15 +353,15 @@
                         sortable: true,
                         formatter: function (value, row, index) {
                             switch (value) {
+                                case -1:
+                                    return '<span class="label label-danger radius">已取消</span>';
                                 case 1:
-                                    return '<span class="label label-success radius">待审核</span>';
+                                    return '<span class="label label-default radius">待审核</span>';
                                 case 2:
-                                    return '<span class="label label-success radius">已确认</span>';
+                                    return '<span class="label label-info radius">待操作</span>';
                                 case 3:
-                                    return '<span class="label label-success radius">已取消</span>';
+                                    return '<span class="label label-primary radius">入库中</span>';
                                 case 4:
-                                    return '<span class="label label-success radius">入库中</span>';
-                                case 5:
                                     return '<span class="label label-success radius">入库完成</span>';
                                 default:
                                     return '<span class="label label-success radius">-</span>';
@@ -368,15 +372,8 @@
                         title: '审核人',
                         align: 'center',
                         sortable: true
-                    }, {
-                        field: 'AuditinTime',
-                        align: 'center',
-                        title: '审核时间',
-                        sortable: true,
-                        formatter: function (value, row, index) {
-                            return _self.jsonDateFormat(value);
-                        }
-                    }, {
+                    },
+                    {
                         field: 'Remark',
                         align: 'center',
                         title: '备注'

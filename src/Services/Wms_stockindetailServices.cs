@@ -21,16 +21,17 @@ namespace Services
 
         public string PageList(string pid)
         {
-            var query = _client.Queryable<Wms_stockindetail, Wms_material, Wms_stockin, Sys_user, Sys_user, Sys_user>
-                ((s, m, p, c, u, a) => new object[] {
-                   JoinType.Left,s.MaterialId==m.MaterialId,
-                   JoinType.Left,s.StockInId==p.StockInId,
-                   JoinType.Left,s.CreateBy==c.UserId,
-                   JoinType.Left,s.ModifiedBy==u.UserId,
-                   JoinType.Left,s.AuditinId==a.UserId,
+            var query = _client.Queryable<Wms_stockindetail, Wms_material, Wms_stockin, Wms_StockinTask, Sys_user, Sys_user, Sys_user>
+                ((s, m, p, st, c, u, o) => new object[] {
+                   JoinType.Left,s.MaterialId==m.MaterialId && m.IsDel == 1,
+                   JoinType.Left,s.StockInId==p.StockInId && p.IsDel == 1,
+                   JoinType.Left,s.StockInDetailId==st.StockInDetailId,
+                   JoinType.Left,s.CreateBy==c.UserId && c.IsDel == 1,
+                   JoinType.Left,s.ModifiedBy==u.UserId && u.IsDel == 1,
+                   JoinType.Left,st.OperaterId==o.UserId && o.IsDel == 1
                  })
-                 .Where((s, m, p, c, u, a) => s.IsDel == 1 && p.IsDel == 1 && c.IsDel == 1)
-                 .Select((s, m, p, c, u, a) => new
+                 //.Where((s, m, p, c, u) => )
+                 .Select((s, m, p, st, c, u ,o) => new
                  {
                      StockInId = s.StockInId.ToString(),
                      StockInDetailId = s.StockInDetailId.ToString(),
@@ -41,14 +42,18 @@ namespace Services
                      s.ActInQty,
                      s.IsDel,
                      s.Remark,
-                     s.AuditinTime,
-                     AName = a.UserNickname,
+                     InventoryBoxId = st == null ? 0 : st.InventoryBoxId,
+                     TaskStatus = st == null ? 0 : st.Status,
+                     OName = o.UserNickname, 
+                     st.OperaterDate,
                      CName = c.UserNickname,
                      s.CreateDate,
                      UName = u.UserNickname,
                      s.ModifiedDate
-                 }).MergeTable();
-            query.Where(c => c.StockInId == pid).OrderBy(c => c.CreateDate, OrderByType.Desc);
+                 }) 
+                 .MergeTable();
+            query.Where(c => c.StockInId == pid).OrderBy(c => c.CreateDate, OrderByType.Desc) 
+                ;
             //if (bootstrap.order.Equals("desc", StringComparison.OrdinalIgnoreCase))
             //{
             //    query.OrderBy($"MergeTable.{bootstrap.sort} desc");

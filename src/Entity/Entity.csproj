@@ -13,4 +13,8 @@
     <PackageReference Include="sqlSugarCore" Version="5.0.0.6" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\YL.Utils\YL.Utils.csproj" />
+  </ItemGroup>
+
 </Project>

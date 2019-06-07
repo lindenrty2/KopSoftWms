@@ -1,7 +1,7 @@
 ﻿@using YL.Utils.Json;
 @{
     Layout = "_LayoutH";
-    @model YL.Core.Dto.Wms_InventryBoxDto
+    @model YL.Core.Entity.Wms_stockin
 }
 @section styles{
     <link rel="stylesheet" href="~/css/bootstrap-select.min.css" />
@@ -14,48 +14,147 @@
     <script src="~/js/bootstrap-select.min.js"></script>
     <script src="~/js/defaults-zh_CN.min.js"></script>
     <script>
-        $(function () {
-            var obj = [{
-                checkbox: true,             //是否显示复选框
-                visible: true
-            },
-            {
-                field: 'Position',
-                title: '格号',
-                visible: false
-            },
-            {
-                field: 'MaterialNo',
-                title: '物料编号',
-                align: 'center',
-                sortable: true
-            },
-            {
-                field: 'Qty',
-                title: '数量',
-                align: 'center',
-                sortable: true
-            },
-            {
-                field: 'ModifiedDate',
-                title: '最后更新时间',
-                align: 'center',
-                sortable: true
-            }];
-            var qParams = {
-            };
-            yui.tableX("bootstraptable", app.list, obj, "InventoryId", true, qParams);
-
-        });
-
         var app = new Vue({
             el: "#app",
             data: {
-                InventoryBoxId: "@Model.InventoryBoxId",
-                InventoryBoxNo:"@Model.InventoryBoxNo",
-                InventoryBoxName:"@Model.InventoryBoxName",
+                datemin: '',
+                datemax: '',
+                StockInId: "@Model.StockInId",
+                StockInNo:"@Model.StockInNo",
                 urlM: '',
-                list: @Html.Raw(Model.Detail.JilToJson())
+                storeId: '0'
+            },
+            mounted: function () {
+                _self = this;
+                _self.$nextTick(function () {
+                    _self.$refs.storeId = '@ViewData["currentStoreId"]';
+
+                    _self.$refs.datemin = "1900-01-01";
+                    _self.$refs.datemax = "2099-01-01";
+                    var obj = [{
+                        checkbox: true,             //是否显示复选框
+                        visible: true
+                    },
+                    {
+                        field: 'StockInDetailId',
+                        title: '详细ID',
+                        visible: false
+                    },
+                    {
+                        field: 'Status',
+                        title: '状态',
+                        visible: true,
+                        sortable: true,
+                        formatter: function (value, row, index) {
+                            var html = [];
+                            if(value == -1) {
+                                return '<span class="label label-danger radius">已取消</span>';
+                            }
+                            else if (value == 1) { //任务创建中
+                                return '<span class="label label-default radius">任务创建中</span>';
+                            }
+                            else if (value == 2) { //待操作
+                                return '<span class="label label-default radius">待操作</span>';
+                            }
+                            else if (value == 3) { //进行中
+                                return '<span class="label label-primary radius">进行中</span>';
+                            }
+                            else if (value == 4) { //已完成
+                                return '<span class="label label-success radius">已完成</span>';
+                            } 
+                            return html.join('');
+                        },
+
+                    },
+                    {
+                        field: 'MaterialNo',
+                        title: '物料编号',
+                        align: 'center',
+                        sortable: true
+                    },
+                    {
+                        field: 'MaterialName',
+                        title: '物料名称',
+                        align: 'center',
+                        sortable: true
+                    }, 
+                    {
+                        field: 'PlanInQty',
+                        title: '计划数量',
+                        align: 'center',
+                        sortable: true
+                    }
+                    , {
+                        field: 'ActInQty',
+                        title: '实际数量',
+                        align: 'center',
+                        sortable: true
+                    },
+                    {
+                        field: 'Remark',
+                        title: '备注',
+                        align: 'left',
+                        sortable: true
+                    },
+                    {
+                        field: 'ModifiedDate',
+                        title: '最后更新时间',
+                        align: 'center',
+                        sortable: true,
+                        formatter: function (value, row, index) {
+                            return _self.jsonDateFormat(value);
+                        }
+                    },
+                    {
+                        field: 'TaskStatus',
+                        title: '操作',
+                        visible: true,
+                        sortable: true,
+                        formatter: function (value, row, index) {
+                            var html = [];
+                            if (value == 1) { //任务已确认
+                            }
+                            else if (value == 2) { //出库中
+                                html.push(
+                                    '<span class="label label-primary radius">料箱' + row.InventoryBoxId + '出库中</span>'
+                                );
+                            }
+                            else if (value == 3) { //出库完成
+                                html.push(
+                                    '<button id="outL" type="button" class="btn btn-link btn-outL" style="margin-top:-8px;margin-left:-10px;" onclick="">料箱' + row.InventoryBoxId + '归库</button>'
+                                );
+                            }
+                            else if (value == 4) { //归库中
+                                html.push(
+                                    '<span class="label label-primary radius">料箱' + row.InventoryBoxId + '归库中</span>'
+                                );
+                            }
+                            else if (value == 5) { //归库完成
+                                html.push(
+                                    '<span class="label label-success radius">料箱' + row.InventoryBoxId + '归库完成</span>'
+                                );
+                            }
+                            if (row.Status == 2 || row.Status == 3) {
+                                html.push(
+                                    '<button id="outL" type="button" class="btn btn-link btn-outL" style="margin-top:-8px;margin-left:-10px;" onclick="">新出库</button>'
+                                );
+                            }
+                            return html.join('');
+                        },
+                        events: {
+                            'click #outL': function (e, value, row, index) {
+                                if (value === 1) {
+                                    app.deleteDetailL(row.StockInDetailId);
+                                } 
+                            }
+                        },
+                    }
+                    ];
+                    var qParams = {
+                        pid: "@Model.StockInId"
+                    };
+                    yui.table("bootstraptable", "/StockIn/WorkList", obj, "GET", "StockInDetailId", true, qParams); 
+                });
             },
             computed: {
                 count: function () {
@@ -63,8 +162,10 @@
                 }
             },
             watch: {},
-            mounted: function () {},
-            methods: {}
+            methods: {
+
+
+            }
         });
     </script>
 }
