@@ -36,12 +36,12 @@
                         visible: true
                     },
                     {
-                        field: 'StockInDetailId',
+                        field: 'Detail.StockInDetailId',
                         title: '详细ID',
                         visible: false
                     },
                     {
-                        field: 'Status',
+                        field: 'Detail.Status',
                         title: '状态',
                         visible: true,
                         sortable: true,
@@ -67,37 +67,37 @@
 
                     },
                     {
-                        field: 'MaterialNo',
+                        field: 'Detail.MaterialNo',
                         title: '物料编号',
                         align: 'center',
                         sortable: true
                     },
                     {
-                        field: 'MaterialName',
+                        field: 'Detail.MaterialName',
                         title: '物料名称',
                         align: 'center',
                         sortable: true
                     }, 
                     {
-                        field: 'PlanInQty',
+                        field: 'Detail.PlanInQty',
                         title: '计划数量',
                         align: 'center',
                         sortable: true
                     }
                     , {
-                        field: 'ActInQty',
+                        field: 'Detail.ActInQty',
                         title: '实际数量',
                         align: 'center',
                         sortable: true
                     },
                     {
-                        field: 'Remark',
+                        field: 'Detail.Remark',
                         title: '备注',
                         align: 'left',
                         sortable: true
                     },
                     {
-                        field: 'ModifiedDate',
+                        field: 'Detail.ModifiedDate',
                         title: '最后更新时间',
                         align: 'center',
                         sortable: true,
@@ -106,40 +106,43 @@
                         }
                     },
                     {
-                        field: 'TaskStatus',
+                        field: 'Tasks',
                         title: '操作',
                         visible: true,
                         sortable: true,
                         formatter: function (value, row, index) {
                             var html = [];
-                            if (value == 1) { //任务已确认
+                            for (var i = 0; i < value.length; i++) {
+                                var item = value[i];
+                                if (item.Status == 1) { //任务已确认
+                                }
+                                else if (item.Status == 2) { //出库中
+                                    html.push(
+                                        '<span class="label label-primary radius">料箱' + item.InventoryBoxId + '出库中</span>'
+                                    );
+                                }
+                                else if (item.Status == 3) { //出库完成
+                                    html.push(
+                                        '<button id="outL" type="button" class="btn btn-link btn-outL" style="margin-top:-8px;margin-left:-10px;" onclick="">料箱' + item.InventoryBoxId + '归库</button>'
+                                    );
+                                }
+                                else if (item.Status == 4) { //归库中
+                                    html.push(
+                                        '<span class="label label-primary radius">料箱' + item.InventoryBoxId + '归库中</span>'
+                                    );
+                                }
+                                else if (item.Status == 5) { //归库完成
+                                    html.push(
+                                        '<span class="label label-success radius">料箱' + item.InventoryBoxId + '归库完成</span>'
+                                    );
+                                }
                             }
-                            else if (value == 2) { //出库中
-                                html.push(
-                                    '<span class="label label-primary radius">料箱' + row.InventoryBoxId + '出库中</span>'
-                                );
-                            }
-                            else if (value == 3) { //出库完成
-                                html.push(
-                                    '<button id="outL" type="button" class="btn btn-link btn-outL" style="margin-top:-8px;margin-left:-10px;" onclick="">料箱' + row.InventoryBoxId + '归库</button>'
-                                );
-                            }
-                            else if (value == 4) { //归库中
-                                html.push(
-                                    '<span class="label label-primary radius">料箱' + row.InventoryBoxId + '归库中</span>'
-                                );
-                            }
-                            else if (value == 5) { //归库完成
-                                html.push(
-                                    '<span class="label label-success radius">料箱' + row.InventoryBoxId + '归库完成</span>'
-                                );
-                            }
-                            if (row.Status == 2 || row.Status == 3) {
+                            if (row.Detail.Status == 2 || row.Detail.Status == 3) {
                                 html.push(
                                     '<button id="outL" type="button" class="btn btn-link btn-outL" style="margin-top:-8px;margin-left:-10px;" onclick="">新出库</button>'
                                 );
                             }
-                            return html.join('');
+                            return html.join('<br/>');
                         },
                         events: {
                             'click #outL': function (e, value, row, index) {

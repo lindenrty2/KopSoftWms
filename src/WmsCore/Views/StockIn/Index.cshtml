@@ -179,7 +179,7 @@
                                 }
                             },
                             'click #workL': function (e, value, row, index) {
-                                app.workL(row.StockInId);
+                                app.workL(row.StockInId, row.StockInNo);
 
                             },
                             'click #previewL': function (e, value, row, index) {
@@ -281,16 +281,16 @@
                         visible: true
                     },
                     {
-                        field: 'StockInDetailId',
+                        field: 'Detail.StockInDetailId',
                         title: 'Id',
                         visible: false
                     }, {
-                        field: 'Status',
+                        field: 'Detail.Status',
                         title: '操作',
                         align: 'center',
                         sortable: true,
                         formatter: function (value, row, index) {
-                            if (value != 2) {
+                            if (value < 2) {
                                 return ['<button id="deleteDetailL" type="button" class="btn btn-link" style="margin-top:-8px;">删除</button>'
                                     , '<button id="editDetailL" type="button" class="btn btn-link" style="margin-top:-8px;">修改</button>'
                                 ].join('');
@@ -315,39 +315,39 @@
                             },
                         },
                     }, {
-                        field: 'MaterialNo',
+                        field: 'Detail.MaterialNo',
                         title: '物料编号',
                         align: 'center',
                         sortable: true
                     }, {
-                        field: 'MaterialName',
+                        field: 'Detail.MaterialName',
                         title: '物料名称',
                         align: 'center',
                         sortable: true
                     }, {
-                        field: 'PlanInQty',
+                        field: 'Detail.PlanInQty',
                         title: '计划数量',
                         align: 'center',
                         sortable: true
                     }
-                        , {
-                        field: 'ActInQty',
+                    , {
+                        field: 'Detail.ActInQty',
                         title: '实际数量',
                         align: 'center',
                         sortable: true
                     }, {
-                        field: 'StorageRackNo',
+                        field: 'Detail.StorageRackNo',
                         title: '货架编号',
                         align: 'center',
                         sortable: true
                     }, {
-                        field: 'StorageRackName',
+                        field: 'Detail.StorageRackName',
                         title: '货架名称',
                         align: 'center',
                         sortable: true
                     },
                     {
-                        field: 'Status',
+                        field: 'Detail.Status',
                         title: '状态',
                         align: 'center',
                         sortable: true,
@@ -367,23 +367,18 @@
                                     return '<span class="label label-success radius">-</span>';
                             }
                         }
-                    }, {
-                        field: 'AName',
-                        title: '审核人',
-                        align: 'center',
-                        sortable: true
                     },
                     {
-                        field: 'Remark',
+                        field: 'Detail.Remark',
                         align: 'center',
                         title: '备注'
                     }, {
-                        field: 'CName',
+                        field: 'Detail.CName',
                         title: '创建人',
                         align: 'center',
                         sortable: true
                     }, {
-                        field: 'CreateDate',
+                        field: 'Detail.CreateDate',
                         align: 'center',
                         title: '创建时间',
                         sortable: true,
@@ -391,12 +386,12 @@
                             return _self.jsonDateFormat(value);
                         }
                     }, {
-                        field: 'UName',
+                        field: 'Detail.UName',
                         align: 'center',
                         title: '修改人',
                         sortable: true
                     }, {
-                        field: 'ModifiedDate',
+                        field: 'Detail.ModifiedDate',
                         title: '修改时间',
                         align: 'center',
                         sortable: true,
@@ -414,8 +409,8 @@
                 addDetailL: function (val) {
                     yui.layershow("入库明细", "/StockIn/Detail?storeId=@ViewData["currentStoreId"]&pid=" + val, 600, 500);
                 },
-                workL: function (val) { 
-                    yui.layershow("入库操作", "/StockIn/Work?storeId=@ViewData["currentStoreId"]&pid=" + val, 600, 500);
+                workL: function (val,no) { 
+                    yui.layershow("入库操作(" + no + ")", "/StockIn/Work?storeId=@ViewData["currentStoreId"]&pid=" + val, 1000, 700);
                 },
                 htmlL: function (val, type) {
                     var index = layer.load(1, {
