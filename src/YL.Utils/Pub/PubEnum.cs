@@ -82,20 +82,41 @@ namespace YL.Utils.Pub
     /// </summary>
     public enum StockInStatus
     {
+        [Description("任务取消")]
+        task_canceled = -1,
+
         [Description("任务创建中")]
         initial = 1,
 
         [Description("任务确认")]
         task_confirm = 2,
 
-        [Description("任务取消")]
-        task_canceled = 3,
-
         [Description("任务进行中")]
-        task_working = 4,
+        task_working = 3,
          
         [Description("任务完成")]
-        task_finish = 5,
+        task_finish = 4,
+    }
+
+    public enum StockInTaskStatus
+    {
+        [Description("入库任务取消")]
+        task_canceled = -1,
+
+        [Description("入库任务确认")]
+        task_confirm = 1,
+         
+        [Description("入库任务出库中")]
+        task_outing = 2,
+
+        [Description("入库任务出库完成")]
+        task_outed = 3,
+
+        [Description("入库任务归库中")]
+        task_backing = 2,
+
+        [Description("入库任务归库完成")]
+        task_backed = 3,
     }
 
     public enum LogType

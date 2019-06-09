@@ -103,7 +103,6 @@
                 MaterialType: "@Model.MaterialType",
                 Unit: "@Model.Unit",
                 Qty: "@Model.Qty",
-                ExpiryDate: "@Model.ExpiryDate",
                 WarehouseId: "@Model.WarehouseId",
                 ReservoirAreaId: "@Model.ReservoirAreaId",
                 StoragerackId:"@Model.StoragerackId",
@@ -189,22 +188,6 @@
                     }
                     if (_self.WarehouseId.length <= 0) {
                         layer.msg("请选择仓库", { icon: 2 });
-                        return false;
-                    }
-                    if (_self.ReservoirAreaId.length <= 0) {
-                        layer.msg("请选择库区", { icon: 2 });
-                        return false;
-                    }
-                    if (_self.StoragerackId.length <= 0) {
-                        layer.msg("请选择货架", { icon: 2 });
-                        return false;
-                    }
-                    if (_self.Qty.length <= 0 || _self.Qty<=0) {
-                        layer.msg("安全库存必须大于0", { icon: 2 });
-                        return false;
-                    }
-                    if (_self.ExpiryDate.length <= 0 || _self.ExpiryDate <= 0) {
-                        layer.msg("有效期天数必须大于0", { icon: 2 });
                         return false;
                     }
                     var index = layer.load(1, {

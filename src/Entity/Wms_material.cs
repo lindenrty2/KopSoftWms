@@ -86,15 +86,7 @@ namespace YL.Core.Entity
         /// Nullable:True
         /// </summary>
         [SugarColumn(Length = 18, IsNullable = true)]
-        public decimal? Qty { get; set; }
-
-        /// <summary>
-        /// Desc:有效期
-        /// Default:
-        /// Nullable:True
-        /// </summary>
-        [SugarColumn(IsNullable = true)]
-        public int ExpiryDate { get; set; }
+        public decimal? Qty { get; set; } 
 
         /// <summary>
         /// Desc:1 0

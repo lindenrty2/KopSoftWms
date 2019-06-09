@@ -132,17 +132,18 @@ namespace Services
                  }).MergeTable().Where(s => s.StockInId == stockInId).ToList();
             bool flag1 = true;
             bool flag2 = true;
-            var list2 = _client.Queryable<Wms_stockindetail, Wms_material, Wms_stockin, Wms_storagerack, Sys_user, Sys_user, Sys_user>
-                 ((s, m, p, g, c, u, a) => new object[] {
-                   JoinType.Left,s.MaterialId==m.MaterialId,
-                   JoinType.Left,s.StockInId==p.StockInId,
-                   JoinType.Left,s.StoragerackId==g.StorageRackId,
-                   JoinType.Left,s.CreateBy==c.UserId,
-                   JoinType.Left,s.ModifiedBy==u.UserId,
-                   JoinType.Left,s.AuditinId==a.UserId,
+            var list2 = _client.Queryable<Wms_stockindetail, Wms_material, Wms_stockin, Wms_StockinTask, Wms_storagerack, Sys_user, Sys_user , Sys_user>
+                 ((s, m, p, st, g,  c, u ,o) => new object[] {
+                   JoinType.Left,s.MaterialId==m.MaterialId && m.IsDel == 1,
+                   JoinType.Left,s.StockInId==p.StockInId && p.IsDel == 1,
+                   JoinType.Left,s.StockInDetailId==st.StockInDetailId ,
+                   JoinType.Left,st.StoragerackId ==g.StorageRackId && g.IsDel == 1, 
+                   JoinType.Left,s.CreateBy==c.UserId && c.IsDel == 1,
+                   JoinType.Left,s.ModifiedBy==u.UserId && u.IsDel == 1,
+                   JoinType.Left,st.OperaterId==o.UserId && o.IsDel == 1
                   })
-                  .Where((s, m, p, g, c, u, a) => s.IsDel == 1 && p.IsDel == 1 && g.IsDel == 1 && c.IsDel == 1)
-                  .Select((s, m, p, g, c, u, a) => new
+                  //.Where((s, m, p, g, c, u, a) => s.IsDel == 1 && p.IsDel == 1 && g.IsDel == 1 && c.IsDel == 1)
+                  .Select((s, m, p, st, g, c, u, o) => new
                   {
                       StockInId = s.StockInId.ToString(),
                       StockInDetailId = s.StockInDetailId.ToString(),
@@ -159,8 +160,8 @@ namespace Services
                       s.ActInQty,
                       s.IsDel,
                       s.Remark,
-                      s.AuditinTime,
-                      AName = a.UserNickname,
+                      st.OperaterDate,
+                      AName = o.UserNickname,
                       CName = c.UserNickname,
                       s.CreateDate,
                       UName = u.UserNickname,
@@ -184,7 +185,7 @@ namespace Services
             { 
              
                 //修改明细状态 2
-                _client.Updateable(new Wms_stockindetail { Status = StockInStatus.task_confirm.ToByte(), AuditinId = UserId, AuditinTime = DateTimeExt.DateTime, ModifiedBy = UserId, ModifiedDate = DateTimeExt.DateTime }).UpdateColumns(c => new { c.Status, c.AuditinId, c.AuditinTime, c.ModifiedBy, c.ModifiedDate })
+                _client.Updateable(new Wms_stockindetail { Status = StockInStatus.task_confirm.ToByte(), ModifiedBy = UserId, ModifiedDate = DateTimeExt.DateTime }).UpdateColumns(c => new { c.Status, c.ModifiedBy, c.ModifiedDate })
                 .Where(c => c.StockInId == stockInId && c.IsDel == 1).ExecuteCommand();
                 //修改主表中的状态改为进行中 2
                 _client.Updateable(new Wms_stockin { StockInId = stockInId, StockInStatus = StockInStatus.task_confirm.ToByte(), ModifiedBy = UserId, ModifiedDate = DateTimeExt.DateTime }).UpdateColumns(c => new { c.StockInStatus, c.ModifiedBy, c.ModifiedDate }).ExecuteCommand();

@@ -115,7 +115,13 @@ namespace KopSoftWms.Controllers
             var model = _stockinServices.QueryableToEntity(c => c.StockInId == SqlFunc.ToInt64(pid) && c.IsDel == 1);
             return View(model);
         }
-         
+
+        [HttpGet]
+        public ContentResult WorkList(string pid)
+        {
+            var workList = _stockindetailServices.PageList(pid);
+            return Content(workList);
+        }
 
         [HttpPost]
         [FilterXss]
@@ -140,7 +146,7 @@ namespace KopSoftWms.Controllers
                     }
                 }
                 model.StockInNo = _serialnumServices.GetSerialnum(UserDtoCache.UserId, "Wms_stockin");
-                model.StockInId = PubId.SnowflakeId; 
+                model.StockInId = PubId.SnowflakeId;
                 model.StockInStatus = StockInStatus.initial.ToByte();
                 model.CreateBy = UserDtoCache.UserId; 
                 bool flag = _stockinServices.Insert(model);

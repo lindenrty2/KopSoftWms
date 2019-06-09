@@ -30,17 +30,18 @@ namespace Services
             {
                 bootstrap.offset = bootstrap.offset / bootstrap.limit + 1;
             }
-            var query = _client.Queryable<Wms_inventoryrecord, Wms_stockindetail, Wms_material, Sys_user, Sys_user, Wms_stockin, Wms_storagerack>
-                ((s, p, d, c, u, i, w) => new object[] {
-                   JoinType.Left,s.StockInDetailId==p.StockInDetailId,
-                   JoinType.Left,p.MaterialId==d.MaterialId,
-                   JoinType.Left,s.CreateBy==c.UserId,
-                   JoinType.Left,s.ModifiedBy==u.UserId,
-                   JoinType.Left,p.StockInId==i.StockInId,
-                   JoinType.Left,w.StorageRackId==p.StoragerackId
+            var query = _client.Queryable<Wms_inventoryrecord, Wms_stockindetail, Wms_material, Sys_user, Sys_user, Sys_user, Wms_stockin, Wms_StockinTask, Wms_storagerack>
+                ((s, p, d, c, u, o, i, st, w) => new object[] {
+                   JoinType.Left,s.StockInDetailId==p.StockInDetailId && p.IsDel == 1,
+                   JoinType.Left,p.MaterialId==d.MaterialId && d.IsDel == 1,
+                   JoinType.Left,s.CreateBy==c.UserId && c.IsDel == 1,
+                   JoinType.Left,s.ModifiedBy==u.UserId && u.IsDel == 1,
+                   JoinType.Left,p.StockInId==i.StockInId && i.IsDel == 1,
+                   JoinType.Left,p.StockInDetailId==st.StockInDetailId , 
+                   JoinType.Left,st.StoragerackId==w.StorageRackId && w.IsDel == 1
                  })
-                 .Where((s, p, d, c, u, i, w) => w.WarehouseId == bootstrap.storeId && s.IsDel == 1 && d.IsDel == 1 && c.IsDel == 1 && i.IsDel == 1 && w.IsDel == 1)
-                 .Select((s, p, d, c, u, i, w) => new
+                 .Where((s, p, d, c, u, o, i, st, w) => w.WarehouseId == bootstrap.storeId  )
+                 .Select((s, p, d, c, u, o, i, st, w) => new
                  {
                      InventoryrecordId = s.InventoryrecordId.ToString(),
                      i.StockInNo,
@@ -51,6 +52,8 @@ namespace Services
                      w.StorageRackName,
                      s.IsDel,
                      s.Remark,
+                     OName = o.UserNickname,
+                     st.OperaterDate,
                      CName = c.UserNickname,
                      s.CreateDate,
                      UName = u.UserNickname,

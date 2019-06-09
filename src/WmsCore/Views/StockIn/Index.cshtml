@@ -147,14 +147,18 @@
                         sortable: true,
                         formatter: function (value, row, index) {
                             var html = [];
-                            if (value != 2) {
+                            if (value == 1) {
                                 html.push('<button id="addDetailL" type="button" class="btn btn-link" style="margin-top:-8px;">添加明细</button>'
                                     , '<button id="auditinL" type="button" class="btn btn-link" style="margin-top:-8px;margin-left:-10px;">审核</button>'
                                 );
                             }
+                            else if (value == 2 || value == 3 ) {
+                                html.push(
+                                    '<button id="workL" type="button" class="btn btn-link" style="margin-top:-8px;margin-left:-10px;">操作</button>'
+                                );
+                            }
                             html.push(
-                                '<button id="workL" type="button" class="btn btn-link" style="margin-top:-8px;margin-left:-10px;">操作</button>'
-                                , '<button id="previewL" type="button" class="btn btn-link" style="margin-top:-8px;margin-left:-10px;">预览</button>'
+                                '<button id="previewL" type="button" class="btn btn-link" style="margin-top:-8px;margin-left:-10px;">预览</button>'
                                 , '<button id="printL" type="button" class="btn btn-link" style="margin-top:-8px;margin-left:-10px;">打印</button>'
                             );
                             return html.join('');
@@ -175,7 +179,7 @@
                                 }
                             },
                             'click #workL': function (e, value, row, index) {
-                                app.workL(row.StockInId);
+                                app.workL(row.StockInId, row.StockInNo);
 
                             },
                             'click #previewL': function (e, value, row, index) {
@@ -220,17 +224,17 @@
                         sortable: true,
                         formatter: function (value, row, index) {
                             switch (value) {
+                                case -1:
+                                    return '<span class="label label-danger radius">入库任务取消</span>';
                                 case 1:
-                                    return '<span class="label label-success radius">入库任务创建中</span>';
+                                    return '<span class="label label-default radius">入库任务创建中</span>';
                                 //return "初始";
                                 case 2:
-                                    return '<span class="label label-success radius">入库任务确认</span>';
+                                    return '<span class="label label-info radius">入库任务确认</span>';
                                 //return "审核通过";
                                 case 3:
-                                    return '<span class="label label-success radius">入库任务取消</span>';
+                                    return '<span class="label label-primary radius">入库中</span>';
                                 case 4:
-                                    return '<span class="label label-success radius">入库中</span>';
-                                case 5:
                                     return '<span class="label label-success radius">入库完成</span>';
                                 // "审核未通过";
                                 default:
@@ -277,16 +281,16 @@
                         visible: true
                     },
                     {
-                        field: 'StockInDetailId',
+                        field: 'Detail.StockInDetailId',
                         title: 'Id',
                         visible: false
                     }, {
-                        field: 'Status',
+                        field: 'Detail.Status',
                         title: '操作',
                         align: 'center',
                         sortable: true,
                         formatter: function (value, row, index) {
-                            if (value != 2) {
+                            if (value < 2) {
                                 return ['<button id="deleteDetailL" type="button" class="btn btn-link" style="margin-top:-8px;">删除</button>'
                                     , '<button id="editDetailL" type="button" class="btn btn-link" style="margin-top:-8px;">修改</button>'
                                 ].join('');
@@ -311,82 +315,70 @@
                             },
                         },
                     }, {
-                        field: 'MaterialNo',
+                        field: 'Detail.MaterialNo',
                         title: '物料编号',
                         align: 'center',
                         sortable: true
                     }, {
-                        field: 'MaterialName',
+                        field: 'Detail.MaterialName',
                         title: '物料名称',
                         align: 'center',
                         sortable: true
                     }, {
-                        field: 'PlanInQty',
+                        field: 'Detail.PlanInQty',
                         title: '计划数量',
                         align: 'center',
                         sortable: true
                     }
-                        , {
-                        field: 'ActInQty',
+                    , {
+                        field: 'Detail.ActInQty',
                         title: '实际数量',
                         align: 'center',
                         sortable: true
                     }, {
-                        field: 'StorageRackNo',
+                        field: 'Detail.StorageRackNo',
                         title: '货架编号',
                         align: 'center',
                         sortable: true
                     }, {
-                        field: 'StorageRackName',
+                        field: 'Detail.StorageRackName',
                         title: '货架名称',
                         align: 'center',
                         sortable: true
                     },
                     {
-                        field: 'Status',
+                        field: 'Detail.Status',
                         title: '状态',
                         align: 'center',
                         sortable: true,
                         formatter: function (value, row, index) {
                             switch (value) {
+                                case -1:
+                                    return '<span class="label label-danger radius">已取消</span>';
                                 case 1:
-                                    return '<span class="label label-success radius">待审核</span>';
+                                    return '<span class="label label-default radius">待审核</span>';
                                 case 2:
-                                    return '<span class="label label-success radius">已确认</span>';
+                                    return '<span class="label label-info radius">待操作</span>';
                                 case 3:
-                                    return '<span class="label label-success radius">已取消</span>';
+                                    return '<span class="label label-primary radius">入库中</span>';
                                 case 4:
-                                    return '<span class="label label-success radius">入库中</span>';
-                                case 5:
                                     return '<span class="label label-success radius">入库完成</span>';
                                 default:
                                     return '<span class="label label-success radius">-</span>';
                             }
                         }
-                    }, {
-                        field: 'AName',
-                        title: '审核人',
-                        align: 'center',
-                        sortable: true
-                    }, {
-                        field: 'AuditinTime',
-                        align: 'center',
-                        title: '审核时间',
-                        sortable: true,
-                        formatter: function (value, row, index) {
-                            return _self.jsonDateFormat(value);
-                        }
-                    }, {
-                        field: 'Remark',
+                    },
+                    {
+                        field: 'Detail.Remark',
                         align: 'center',
                         title: '备注'
                     }, {
-                        field: 'CName',
+                        field: 'Detail.CName',
                         title: '创建人',
                         align: 'center',
                         sortable: true
                     }, {
-                        field: 'CreateDate',
+                        field: 'Detail.CreateDate',
                         align: 'center',
                         title: '创建时间',
                         sortable: true,
@@ -394,12 +386,12 @@
                             return _self.jsonDateFormat(value);
                         }
                     }, {
-                        field: 'UName',
+                        field: 'Detail.UName',
                         align: 'center',
                         title: '修改人',
                         sortable: true
                     }, {
-                        field: 'ModifiedDate',
+                        field: 'Detail.ModifiedDate',
                         title: '修改时间',
                         align: 'center',
                         sortable: true,
@@ -417,8 +409,8 @@
                 addDetailL: function (val) {
                     yui.layershow("入库明细", "/StockIn/Detail?storeId=@ViewData["currentStoreId"]&pid=" + val, 600, 500);
                 },
-                workL: function (val) { 
-                    yui.layershow("入库操作", "/StockIn/Work?storeId=@ViewData["currentStoreId"]&pid=" + val, 600, 500);
+                workL: function (val,no) { 
+                    yui.layershow("入库操作(" + no + ")", "/StockIn/Work?storeId=@ViewData["currentStoreId"]&pid=" + val, 1000, 700);
                 },
                 htmlL: function (val, type) {
                     var index = layer.load(1, {
