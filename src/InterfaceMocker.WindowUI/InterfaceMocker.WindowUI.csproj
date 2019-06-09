@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net462</TargetFramework>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  
+  <PropertyGroup>
+    <LanguageTargets>$(MSBuildToolsPath)\Microsoft.CSharp.targets</LanguageTargets> 
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <Compile Update="**\*.xaml.cs" DependentUpon="%(Filename)" />
+    <Page Include="**\*.xaml" SubType="Designer" Generator="MSBuild:Compile" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\InterfaceMocker.Service\InterfaceMocker.Service.csproj" />
+  </ItemGroup> 
+ 
+  
+</Project>

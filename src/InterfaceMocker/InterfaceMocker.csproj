@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net462</TargetFramework>
+    <UserSecretsId>23bab62b-ae94-48ea-aefa-6adc76a17f18</UserSecretsId>
+    <ApplicationIcon />
+    <OutputType>Exe</OutputType>
+    <StartupObject />
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+      <PackageReference Include="Microsoft.AspNet.Cors" version="5.2.6" />
+      <PackageReference Include="Microsoft.AspNet.WebApi.Client" version="5.2.6" />
+      <PackageReference Include="Microsoft.AspNet.WebApi.Core" version="5.2.6" />
+      <PackageReference Include="Microsoft.AspNet.WebApi.Cors" version="5.2.6" />
+      <PackageReference Include="Microsoft.AspNet.WebApi.Owin" version="5.2.6" />
+      <PackageReference Include="Microsoft.AspNet.WebApi.SelfHost" version="5.2.6" />
+      <PackageReference Include="Microsoft.AspNet.WebApi.WebHost" version="5.2.6" />
+      <PackageReference Include="Microsoft.Owin" version="4.0.0" />
+      <PackageReference Include="Microsoft.Owin.Host.HttpListener" version="4.0.0" />
+      <PackageReference Include="Microsoft.Owin.Hosting" version="4.0.0" />
+      <PackageReference Include="Newtonsoft.Json" version="11.0.2" />
+      <PackageReference Include="Owin" version="1.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\InterfaceMocker.Service\InterfaceMocker.Service.csproj" />
+    <ProjectReference Include="..\InterfaceMocker.WindowUI\InterfaceMocker.WindowUI.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+
+</Project>
