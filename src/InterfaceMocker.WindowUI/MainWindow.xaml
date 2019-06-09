@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"  
-        Height="500" Width="600" WindowStartupLocation="CenterScreen" Title="MES/WCS Mocker" Loaded="Window_Loaded" >
+        Height="900" Width="1600" WindowStartupLocation="CenterScreen" Title="MES/WCS Mocker" Loaded="Window_Loaded" >
     <Grid Margin="5">
         <Grid.RowDefinitions>
             <RowDefinition Height="70"/>
@@ -24,12 +24,12 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Label Grid.Column="0" Content="WMS地址" />
-                <TextBox Grid.Column="1" HorizontalAlignment="Stretch" TextWrapping="Wrap" VerticalAlignment="Center" Text="TextBox"  />
+                <TextBox Grid.Column="1" x:Name="ctlWMSAddress" HorizontalAlignment="Stretch" TextWrapping="Wrap" VerticalAlignment="Center" Text=""  />
             </Grid>
         </GroupBox>
 
         <GroupBox Grid.Row="1" Header="MES" >
-            <Grid >
+            <Grid Margin="5">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="30"/>
                     <RowDefinition Height="30"/>
@@ -39,13 +39,25 @@
                     <ColumnDefinition Width="100"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Label Grid.Column="0" Content="MES地址" />
-                <TextBox Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" TextWrapping="Wrap" Text="TextBox"  />
+                <Label Grid.Row="0" Grid.Column="0" Content="地址" />
+                <TextBox Grid.Row="0" Grid.Column="1" x:Name="ctlMESAddress" Text="" IsReadOnly="True" />
+                <Label Grid.Row="1" Grid.Column="0" Content="操作" />
+                <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal">
+                    <Button Content="新入库任务" />
+                    <Button Content="新出库任务" />
+                    <Button Content="库存查询" />
+                    <Button Content="物流控制" />
+                    <Button Content="物流查询" />
+                </StackPanel>
+                <ScrollViewer Grid.Row="2" Grid.Column="1">
+                    <StackPanel x:Name="ctlMESTasks">
+                    </StackPanel> 
+                </ScrollViewer>
             </Grid>
         </GroupBox>
 
         <GroupBox Grid.Row="1" Grid.Column="1" Header="WCS" >
-            <Grid >
+            <Grid Margin="5" >
                 <Grid.RowDefinitions>
                     <RowDefinition Height="30"/>
                     <RowDefinition Height="30"/>
@@ -55,8 +67,11 @@
                     <ColumnDefinition Width="100"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Label Grid.Column="0" Content="MES地址" />
-                <TextBox Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" TextWrapping="Wrap" Text="TextBox"  />
+                <Label Grid.Row="0" Grid.Column="0" Content="地址" />
+                <TextBox Grid.Row="0" Grid.Column="1" x:Name="ctlWCSAddress" Text="" IsReadOnly="True" />
+                <Label Grid.Row="1" Grid.Column="0" Content="操作" />
+                <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal"> 
+                </StackPanel>
             </Grid>
         </GroupBox>
     </Grid>

@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace WMSCore.Outside
 {
-    public class WCSHookController : IWCSController
+    public class WCSHookController : Controller
     {
         public string Ping(string s)
         {
@@ -15,10 +15,4 @@ namespace WMSCore.Outside
         }
     }
 
-    [ServiceContract]
-    public interface IWCSController
-    {
-        [OperationContract]
-        string Ping(string s);
-    }
 }

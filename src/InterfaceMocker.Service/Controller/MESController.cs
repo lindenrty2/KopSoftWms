@@ -1,20 +1,15 @@
 ﻿using InterfaceMocker.Service.Do;
-using Microsoft.Owin.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using Owin;
 using System;
-using System.Collections.Generic;
-using System.Net.Http.Formatting; 
-using System.Text;
-using System.Web.Http;
-using System.Web.Http.Cors;
+using System.ServiceModel;
 
 namespace InterfaceMocker.Service
-{  
-    public class MESController : ApiController
+{ 
+    public class MESController : Controller , IMESController
     { 
         [HttpGet]
-        public IHttpActionResult GetMaterialInfo(int rfid)
+        public IActionResult GetMaterialInfo(int rfid)
         {
             RetMaterial retModel = new RetMaterial();
             if (rfid == 0)
@@ -31,7 +26,7 @@ namespace InterfaceMocker.Service
         }
 
         [HttpPost]
-        public IHttpActionResult ConfirmBalanceMES(dynamic obj)
+        public IActionResult ConfirmBalanceMES(dynamic obj)
         {
             RetValue retModel = new RetValue();
             retModel.Returncode = Convert.ToString("1");
@@ -39,12 +34,25 @@ namespace InterfaceMocker.Service
         }
 
         [HttpPost]
-        public IHttpActionResult ConfirmOutStockMES(dynamic obj)
+        public IActionResult ConfirmOutStockMES(dynamic obj)
         {
             RetValue retModel = new RetValue();
             retModel.Returncode = Convert.ToString("1");
 
             return Ok(retModel);
         }
+    }
+
+    [ServiceContract]
+    public interface IMESController
+    {
+        [OperationContract]
+        IActionResult GetMaterialInfo(int rfid);
+
+        [OperationContract]
+        IActionResult ConfirmBalanceMES(object obj);
+
+        [OperationContract]
+        IActionResult ConfirmOutStockMES(object obj);
     }
 }

@@ -206,7 +206,7 @@ namespace YL
             app.UseCookiePolicy();
             app.UseAuthentication();
 
-            app.UseSoapEndpoint<WCSHookController>("/WMS.asmx", new BasicHttpBinding());
+            app.UseSoapEndpoint<MESHookController>("/MesHook.asmx", new BasicHttpBinding());
             app.UseStatusCodePagesWithRedirects("/Home/Error/{0}");
             app.UseMvc(routes =>
             {

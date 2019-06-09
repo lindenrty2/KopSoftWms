@@ -21,7 +21,12 @@ namespace InterfaceMocker.WindowUI
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            _mesHost.Start(16001);
+            int port = 16001;
+            _mesHost.Start(port);
+            this.ctlMESAddress.Text = $"http://localhost:{port}/MES.asmx";
+            this.ctlWCSAddress.Text = $"http://localhost:{port}/WCS/";
+            this.ctlWMSAddress.Text = $"http://localhost:23456/outside/";
+
         }
     }
 }

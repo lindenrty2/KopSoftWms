@@ -8,19 +8,11 @@
       <Reference Include="System.Web" version="4.0.0" />
   </ItemGroup>
   
-  <ItemGroup>
-      <PackageReference Include="Microsoft.AspNet.Cors" version="5.2.6" />
-      <PackageReference Include="Microsoft.AspNet.WebApi.Client" version="5.2.6" />
-      <PackageReference Include="Microsoft.AspNet.WebApi.Core" version="5.2.6" />
-      <PackageReference Include="Microsoft.AspNet.WebApi.Cors" version="5.2.6" />
-      <PackageReference Include="Microsoft.AspNet.WebApi.Owin" version="5.2.6" />
-      <PackageReference Include="Microsoft.AspNet.WebApi.SelfHost" version="5.2.6" />
-      <PackageReference Include="Microsoft.AspNet.WebApi.WebHost" version="5.2.6" />
-      <PackageReference Include="Microsoft.Owin" version="4.0.0" />
-      <PackageReference Include="Microsoft.Owin.Host.HttpListener" version="4.0.0" />
-      <PackageReference Include="Microsoft.Owin.Hosting" version="4.0.0" />
-      <PackageReference Include="Newtonsoft.Json" version="11.0.2" />
-      <PackageReference Include="Owin" version="1.0" />
+  <ItemGroup> 
+      <PackageReference Include="Microsoft.AspNetCore" Version="2.2.0" /> 
+      <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" /> 
+      <PackageReference Include="Microsoft.AspNetCore.ResponseCompression" Version="2.2.0" /> 
+      <PackageReference Include="Newtonsoft.Json" version="11.0.2" /><PackageReference Include="SoapCore" Version="0.9.9.5" /> 
   </ItemGroup>
 
 </Project>
