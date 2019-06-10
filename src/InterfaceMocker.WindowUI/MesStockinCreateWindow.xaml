@@ -4,10 +4,12 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:InterfaceMocker.WindowUI"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
              mc:Ignorable="d" Title="入库任务"
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="900">
     <Grid Margin="10">
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200"/>
             <ColumnDefinition Width="200"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
@@ -21,22 +23,57 @@
             <RowDefinition Height="30"/>
         </Grid.RowDefinitions>
         <Label Grid.Row="0" Grid.Column="0">入库单编号(WarehousingId)</Label>
-        <TextBox Grid.Row="0" Grid.Column="1" x:Name="ctlWarehousingId" Text="" />
+        <TextBox Grid.Row="0" Grid.Column="1" x:Name="ctlWarehousingId" Text="{Binding WarehousingId}" />
         <Label Grid.Row="1" Grid.Column="0">入库单类型(WarehousingType)</Label>
-        <TextBox Grid.Row="1" Grid.Column="1" x:Name="ctlWarehousingType" Text="" />
+        <ComboBox Grid.Row="1" Grid.Column="1" x:Name="ctlWarehousingType" SelectedValue="{Binding WarehousingType}" >
+            <ComboBox.ItemsSource>
+                <x:Array Type="sys:String">
+                    <sys:String>采购入库单</sys:String>
+                    <sys:String>试用入库单</sys:String> 
+                </x:Array>
+            </ComboBox.ItemsSource>
+        </ComboBox>
         <Label Grid.Row="2" Grid.Column="0">入库时间(WarehousingTime)</Label>
-        <TextBox Grid.Row="2" Grid.Column="1" x:Name="ctlWarehousingTime" Text="" />
+        <TextBox Grid.Row="2" Grid.Column="1" x:Name="ctlWarehousingTime" Text="{Binding WarehousingTime}" />
         <Label Grid.Row="3" Grid.Column="0">生产令号(ProductionPlanId)</Label>
-        <TextBox Grid.Row="3" Grid.Column="1" x:Name="ctlProductionPlanId" Text="" />
+        <TextBox Grid.Row="3" Grid.Column="1" x:Name="ctlProductionPlanId" Text="{Binding ProductionPlanId}" />
         <Label Grid.Row="4" Grid.Column="0">批次号(WorkAreaName)</Label>
-        <TextBox Grid.Row="4" Grid.Column="1" x:Name="ctlWorkAreaName" Text="" />
+        <TextBox Grid.Row="4" Grid.Column="1" x:Name="ctlWorkAreaName" Text="{Binding WorkAreaName}" />
 
         <Label Grid.Row="5" Grid.Column="0">物料列表(Supplies)</Label>
-        <DataGrid Grid.Row="5" Grid.Column="1" x:Name="dataGrid"  />
+        <DataGrid Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="2" x:Name="ctlSuppliesInfoList" AutoGenerateColumns="False" ItemsSource="{Binding SuppliesInfoList}" >
+            <DataGrid.Columns>
+                <DataGridCheckBoxColumn Binding="{Binding IsActive}" Width="40"/>
+                <DataGridTextColumn Header="物料唯一编号(SuppliesOnlyId)" Binding="{Binding SuppliesOnlyId}" Width="100" />
+                <DataGridTextColumn Header="物料编号/图号(SuppliesId)" Binding="{Binding SuppliesId}" Width="100" />
+                <DataGridTextColumn Header="物料名称(SuppliesName)" Binding="{Binding SuppliesName}" Width="100" />
+                <DataGridComboBoxColumn Header="型号(SuppliesType)" SelectedValueBinding="{Binding SuppliesType}" >
+                    <DataGridComboBoxColumn.ItemsSource>
+                        <x:Array Type="sys:String">
+                            <sys:String>型号A</sys:String>
+                            <sys:String>型号B</sys:String>
+                            <sys:String>型号C</sys:String>
+                        </x:Array>
+                    </DataGridComboBoxColumn.ItemsSource>
+                </DataGridComboBoxColumn>
+                <DataGridTextColumn Header="数量(SuppliesNumber)" Binding="{Binding SuppliesNumber}" Width="100" />
+                <DataGridComboBoxColumn Header="单位(Unit)" SelectedValueBinding="{Binding Unit}" >
+                    <DataGridComboBoxColumn.ItemsSource>
+                        <x:Array Type="sys:String">
+                            <sys:String>件</sys:String>
+                            <sys:String>个</sys:String>
+                            <sys:String>打</sys:String>
+                        </x:Array>
+                    </DataGridComboBoxColumn.ItemsSource>
+                </DataGridComboBoxColumn>
+
+            </DataGrid.Columns>
+        </DataGrid>
 
         <StackPanel Grid.Row="6" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center">
-            <Button Width="100" Content="确定" />
-            <Button Margin="20,0,0,0" Width="100" Content="取消" />
+            <Button Width="100" Content="添加物料" Click="AddMaterial_Click" />
+            <Button Margin="20,0,0,0" Width="100" Content="确定" Click="Confirm_Click" />
+            <Button Margin="20,0,0,0" Width="100" Content="取消" Click="Cancel_Click" />
         </StackPanel>
     </Grid>
 </Window>

@@ -22,11 +22,12 @@
   
   <ItemGroup>
     <None Remove="MesStockinCreateWindow.xaml" />
-    <None Remove="MesStockinTask.xaml" />
-    <None Remove="MesStockoutTask.xaml" />
+    <None Remove="MesStockinTaskControl.xaml" />
+    <None Remove="MesStockoutTaskControl.xaml" />
   </ItemGroup>
   
   <ItemGroup>
+    <ProjectReference Include="..\Dto\Dto.csproj" />
     <ProjectReference Include="..\InterfaceMocker.Service\InterfaceMocker.Service.csproj" />
   </ItemGroup>
   
@@ -34,11 +35,13 @@
     <Compile Update="MesStockinCreateWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="MesStockinTask.xaml.cs">
+    <Compile Update="MesStockinTaskControl.xaml.cs">
       <SubType>Code</SubType>
+      <DependentUpon>MesStockinTaskControl.xaml</DependentUpon>
     </Compile>
-    <Compile Update="MesStockoutTask.xaml.cs">
+    <Compile Update="MesStockoutTaskControl.xaml.cs">
       <SubType>Code</SubType>
+      <DependentUpon>MesStockoutTaskControl.xaml</DependentUpon>
     </Compile>
   </ItemGroup> 
  

@@ -28,5 +28,27 @@ namespace InterfaceMocker.WindowUI
             this.ctlWMSAddress.Text = $"http://localhost:23456/outside/";
 
         }
+
+        private void NewStockIn_Click(object sender, RoutedEventArgs e)
+        {
+            MesStockinCreateWindow window = new MesStockinCreateWindow();
+            if (window.ShowDialog() != true)
+            {
+                return;
+            }
+            MesStockinTaskControl taskControl = new MesStockinTaskControl(window.Data);
+            ctlMESTasks.Children.Add(taskControl);
+
+        }
+
+        private void NewStockOut_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void MesTaskClear_Click(object sender, RoutedEventArgs e)
+        {
+            ctlMESTasks.Children.Clear();
+        }
     }
 }

@@ -43,13 +43,14 @@
                 <TextBox Grid.Row="0" Grid.Column="1" x:Name="ctlMESAddress" Text="" IsReadOnly="True" />
                 <Label Grid.Row="1" Grid.Column="0" Content="操作" />
                 <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal">
-                    <Button Content="新入库任务" />
-                    <Button Content="新出库任务" />
-                    <Button Content="库存查询" />
-                    <Button Content="物流控制" />
-                    <Button Content="物流查询" />
+                    <Button Margin="5" Content="新入库任务" Click="NewStockIn_Click" />
+                    <Button Margin="5" Content="新出库任务" Click="NewStockOut_Click" />
+                    <Button Margin="5" Content="库存查询" />
+                    <Button Margin="5" Content="物流控制" />
+                    <Button Margin="5" Content="物流查询" />
+                    <Button Margin="5" Content="清除" Click="MesTaskClear_Click"/>
                 </StackPanel>
-                <ScrollViewer Grid.Row="2" Grid.Column="1">
+                <ScrollViewer Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
                     <StackPanel x:Name="ctlMESTasks">
                     </StackPanel> 
                 </ScrollViewer>
@@ -70,8 +71,12 @@
                 <Label Grid.Row="0" Grid.Column="0" Content="地址" />
                 <TextBox Grid.Row="0" Grid.Column="1" x:Name="ctlWCSAddress" Text="" IsReadOnly="True" />
                 <Label Grid.Row="1" Grid.Column="0" Content="操作" />
-                <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal"> 
+                <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
                 </StackPanel>
+                <ScrollViewer Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
+                    <StackPanel x:Name="ctlWCSTasks">
+                    </StackPanel>
+                </ScrollViewer>
             </Grid>
         </GroupBox>
     </Grid>
