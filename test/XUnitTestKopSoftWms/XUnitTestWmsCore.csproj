@@ -30,11 +30,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\WmsCore\WMSCore.csproj" />
-    <ProjectReference Include="..\..\src\YL.Utils\YL.Utils.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Update="NLog.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

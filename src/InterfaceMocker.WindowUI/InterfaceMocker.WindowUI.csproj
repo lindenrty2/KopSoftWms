@@ -7,6 +7,7 @@
   <ItemGroup>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xaml" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
@@ -27,7 +28,6 @@
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\Dto\Dto.csproj" />
     <ProjectReference Include="..\InterfaceMocker.Service\InterfaceMocker.Service.csproj" />
   </ItemGroup>
   
@@ -43,6 +43,10 @@
       <SubType>Code</SubType>
       <DependentUpon>MesStockoutTaskControl.xaml</DependentUpon>
     </Compile>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services" />
   </ItemGroup> 
  
   

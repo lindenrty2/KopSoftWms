@@ -18,7 +18,7 @@
             <RowDefinition Height="2"/>
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
-        <Label Grid.ColumnSpan="4" Background="SkyBlue" Content="入库任务" />
+        <Label Grid.ColumnSpan="4" x:Name="ctlTitle" Background="SkyBlue" Content="入库任务" />
         <Label Grid.Row="1" Grid.Column="0" Content="发送" HorizontalAlignment="Left" VerticalAlignment="Top"/>
         <TextBox Grid.Row="1" Grid.Column="1" x:Name="ctlSend" TextWrapping="Wrap" Text="" IsReadOnly="True" />
         <TextBox Grid.Row="1" Grid.Column="2" x:Name="ctlSendResponse" TextWrapping="Wrap" Text="尚未回馈" IsReadOnly="True" />

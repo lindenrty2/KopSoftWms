@@ -4,7 +4,7 @@ using System;
 namespace YL.Core.Entity
 {
     ///<summary>
-    ///
+    /// 库区
     ///</summary>
     public partial class Wms_reservoirarea
     {

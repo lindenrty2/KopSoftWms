@@ -113,14 +113,31 @@ namespace KopSoftWms.Controllers
         public IActionResult Work(string pid)
         {
             var model = _stockinServices.QueryableToEntity(c => c.StockInId == SqlFunc.ToInt64(pid) && c.IsDel == 1);
+            ViewData["currentStoreId"] = model.WarehouseId;
             return View(model);
         }
 
         [HttpGet]
         public ContentResult WorkList(string pid)
         {
-            var workList = _stockindetailServices.PageList(pid);
+            var workList = _stockindetailServices.PageList(pid); 
             return Content(workList);
+        }
+
+        [HttpGet]
+        public IActionResult InventoryBoxOut( string detailId , long storeId)
+        {
+            ViewData["currentStoreId"] = storeId;
+            var model = _stockindetailServices.QueryableToEntity(c => c.StockInDetailId == SqlFunc.ToInt64(detailId) && c.IsDel == 1);
+            return View(model);
+        }
+
+
+        [HttpGet]
+        public IActionResult InventoryBoxBack(string stockinTaskId)
+        {
+            object model = null;
+            return View(model);
         }
 
         [HttpPost]

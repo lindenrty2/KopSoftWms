@@ -6,6 +6,8 @@ namespace YL.Utils.Pub
 {
     public static class PubConst
     {
+        public static long InterfaceUserId = 1;
+
         public const string Login1 = "登录成功";
         public const string Login2 = "账号或密码错误";
         public const string Login3 = "账号被禁用，请联系管理员";
@@ -91,5 +93,13 @@ namespace YL.Utils.Pub
         public const string File6 = "上传成功";
         public const string File7 = "上传失败";
         public const string File8 = "无数据";
+
     }
+
+    public static class DeleteFlag
+    {
+        public const sbyte Normal = 1;
+        public const sbyte Deleted = 0;
+    }
+
 }

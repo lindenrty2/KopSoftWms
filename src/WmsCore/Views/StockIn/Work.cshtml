@@ -139,16 +139,14 @@
                             }
                             if (row.Detail.Status == 2 || row.Detail.Status == 3) {
                                 html.push(
-                                    '<button id="outL" type="button" class="btn btn-link btn-outL" style="margin-top:-8px;margin-left:-10px;" onclick="">新出库</button>'
+                                    '<button id="outL" type="button" class="btn btn-link btn-outL" style="margin-top:-8px;margin-left:-10px;" >新出库</button>'
                                 );
                             }
                             return html.join('<br/>');
                         },
                         events: {
                             'click #outL': function (e, value, row, index) {
-                                if (value === 1) {
-                                    app.deleteDetailL(row.StockInDetailId);
-                                } 
+                                app.boxOutL(row.Detail.StockInDetailId);
                             }
                         },
                     }
@@ -166,7 +164,9 @@
             },
             watch: {},
             methods: {
-
+                boxOutL: function (detailId) {
+                    yui.layershow("料箱出库", "/StockIn/InventoryBoxOut?detailId=" + detailId + "&storeId=@ViewData["currentStoreId"]", 600, 500);
+                },
 
             }
         });

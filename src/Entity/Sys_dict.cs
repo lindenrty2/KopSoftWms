@@ -48,6 +48,14 @@ namespace YL.Core.Entity
         public string DictType { get; set; }
 
         /// <summary>
+        /// Desc:所属仓库
+        /// Default:
+        /// Nullable:True
+        /// </summary>
+        [SugarColumn(IsNullable = true)]
+        public long? WarehouseId { get; set; }
+
+        /// <summary>
         /// Desc:1未删除   0删除
         /// Default:1
         /// Nullable:False

@@ -120,7 +120,7 @@ namespace KopSoftWms.Controllers
         }
 
         [HttpGet]
-        public IActionResult Search(string text)
+        public IActionResult Search(long storeId, string text)
         {
             var bootstrap = new InventoryBoxBootstrapParams()
             {
@@ -128,7 +128,8 @@ namespace KopSoftWms.Controllers
                 offset = 0,
                 sort = "CreateDate",
                 search = text,
-                order = "desc"
+                order = "desc",
+                storeId = storeId
             };
             var json = _inventoryBoxServices.PageList(bootstrap);
             return Content(json);

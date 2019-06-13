@@ -159,4 +159,74 @@ namespace YL.Utils.Pub
 
 
     }
+
+    public enum MesTaskTypes
+    {
+        [Description("入库任务")]
+        StockIn = 1,
+        [Description("出库任务")]
+        StockOut = 2,
+
+    }
+
+
+    public enum MESTaskWorkStatus
+    {
+        [Description("处理已取消")]
+        None = -2,
+        [Description("处理失败")]
+        Failed = -1,
+        [Description("待计划")]
+        WaitPlan = 1,
+        [Description("已计划任务")]
+        Planed = 2,
+        [Description("已开始处理")]
+        Working = 3,
+        [Description("处理已完成")]
+        WorkComplated = 4,
+    }
+
+    public enum MESTaskNotifyStatus
+    {
+        [Description("回馈失败")]
+        Failed = -1,
+        [Description("已接收任务")]
+        Requested = 1,
+        [Description("等待回馈MES")]
+        WaitResponse = 2,
+        [Description("已反馈MES")]
+        Responsed = 3,
+    }
+
+
+    public enum WCSTaskWorkStatus
+    {
+        [Description("处理失败")]
+        Failed = -1,
+        [Description("不明")]
+        Unknow = 0,
+        [Description("待计划")]
+        WaitPlan = 1,
+        [Description("已计划任务")]
+        Planed = 2,
+        [Description("已开始处理")]
+        Working = 3,
+        [Description("处理已完成")]
+        WorkComplated = 4,
+    }
+
+    public enum WCSTaskNotifyStatus
+    {
+        [Description("通知失败")]
+        Failed = -1,
+        [Description("待通知")]
+        WaitRequest = 1,
+        [Description("等待回馈")]
+        WaitResponse = 2,
+        [Description("已接收回馈")]
+        Responsed = 3,
+    }
+
+
+
 }

@@ -43,7 +43,14 @@ namespace YL.Core.Entity
         /// <summary>
         /// 仓库Id
         /// </summary>
+        [SugarColumn(IsNullable = false)]
         public long WarehouseId { get; set; }
+
+        /// <summary>
+        /// Mes任务Id
+        /// </summary>
+        [SugarColumn(IsNullable = false)]
+        public long MesTaskId { get; set; }
 
         /// <summary>
         /// Desc:供应商

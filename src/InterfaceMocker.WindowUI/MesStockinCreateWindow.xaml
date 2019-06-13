@@ -19,6 +19,7 @@
             <RowDefinition Height="30"/>
             <RowDefinition Height="30"/>
             <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="30"/>
         </Grid.RowDefinitions>
@@ -37,11 +38,22 @@
         <TextBox Grid.Row="2" Grid.Column="1" x:Name="ctlWarehousingTime" Text="{Binding WarehousingTime}" />
         <Label Grid.Row="3" Grid.Column="0">生产令号(ProductionPlanId)</Label>
         <TextBox Grid.Row="3" Grid.Column="1" x:Name="ctlProductionPlanId" Text="{Binding ProductionPlanId}" />
-        <Label Grid.Row="4" Grid.Column="0">批次号(WorkAreaName)</Label>
-        <TextBox Grid.Row="4" Grid.Column="1" x:Name="ctlWorkAreaName" Text="{Binding WorkAreaName}" />
-
-        <Label Grid.Row="5" Grid.Column="0">物料列表(Supplies)</Label>
-        <DataGrid Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="2" x:Name="ctlSuppliesInfoList" AutoGenerateColumns="False" ItemsSource="{Binding SuppliesInfoList}" >
+        <Label Grid.Row="4" Grid.Column="0">批次号(BatchPlanId)</Label>
+        <TextBox Grid.Row="4" Grid.Column="1" x:Name="ctlBatchPlanId" Text="{Binding BatchPlanId}" />
+        <Label Grid.Row="5" Grid.Column="0">作业区(WorkAreaName)</Label> 
+        <ComboBox Grid.Row="5" Grid.Column="1" x:Name="ctlWorkAreaName" SelectedValue="{Binding WorkAreaName}" >
+            <ComboBox.ItemsSource>
+                <x:Array Type="sys:String">
+                    <sys:String>工作区1</sys:String>
+                    <sys:String>工作区2</sys:String>
+                    <sys:String>工作区3</sys:String>
+                    <sys:String>工作区4</sys:String>
+                    <sys:String>工作区5</sys:String>
+                </x:Array>
+            </ComboBox.ItemsSource>
+        </ComboBox>
+        <Label Grid.Row="6" Grid.Column="0">物料列表(Supplies)</Label>
+        <DataGrid Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="2" x:Name="ctlSuppliesInfoList" AutoGenerateColumns="False" ItemsSource="{Binding SuppliesInfoList}" >
             <DataGrid.Columns>
                 <DataGridCheckBoxColumn Binding="{Binding IsActive}" Width="40"/>
                 <DataGridTextColumn Header="物料唯一编号(SuppliesOnlyId)" Binding="{Binding SuppliesOnlyId}" Width="100" />
@@ -70,7 +82,7 @@
             </DataGrid.Columns>
         </DataGrid>
 
-        <StackPanel Grid.Row="6" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center">
+        <StackPanel Grid.Row="7" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center">
             <Button Width="100" Content="添加物料" Click="AddMaterial_Click" />
             <Button Margin="20,0,0,0" Width="100" Content="确定" Click="Confirm_Click" />
             <Button Margin="20,0,0,0" Width="100" Content="取消" Click="Cancel_Click" />

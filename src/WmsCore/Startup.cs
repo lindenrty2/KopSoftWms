@@ -170,16 +170,22 @@ namespace YL
                 case ServiceLifetime.Scoped:
                     services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
                     services.AddScoped(typeof(IBaseServices<>), typeof(BaseServices<>));
+                    services.AddScoped<MESHookController>();
+                    services.AddScoped<WCSHookController>();
                     break;
 
                 case ServiceLifetime.Singleton:
                     services.AddSingleton(typeof(IBaseRepository<>), typeof(BaseRepository<>));
                     services.AddSingleton(typeof(IBaseServices<>), typeof(BaseServices<>));
+                    services.AddSingleton<MESHookController>();
+                    services.AddSingleton<WCSHookController>();
                     break;
 
                 case ServiceLifetime.Transient:
                     services.AddTransient(typeof(IBaseRepository<>), typeof(BaseRepository<>));
                     services.AddTransient(typeof(IBaseServices<>), typeof(BaseServices<>));
+                    services.AddTransient<MESHookController>();
+                    services.AddTransient<WCSHookController>();
                     break;
             }
         }
@@ -206,7 +212,7 @@ namespace YL
             app.UseCookiePolicy();
             app.UseAuthentication();
 
-            app.UseSoapEndpoint<MESHookController>("/MesHook.asmx", new BasicHttpBinding());
+            app.UseSoapEndpoint<MESHookController>("/Outside/MesHook.asmx", new BasicHttpBinding());
             app.UseStatusCodePagesWithRedirects("/Home/Error/{0}");
             app.UseMvc(routes =>
             {

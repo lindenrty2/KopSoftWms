@@ -35,4 +35,29 @@ namespace YL.Core.Dto
         public string Unit { get; set; }
 
     }
+
+    /// <summary>
+    /// 物料操作结果
+    /// </summary>
+    public class OutsideMaterialResult
+    {
+        /// <summary>
+        /// 物料编号/图号
+        /// </summary>
+        public string SuppliesId { get; set; }
+        /// <summary>
+        /// 物料名称
+        /// </summary>
+        public string SuppliesName { get; set; }
+        /// <summary>
+        /// 物料数量
+        /// </summary>
+        public string SuppliesNumber { get; set; }
+        /// <summary>
+        /// 更新后库存
+        /// </summary>
+        public string RefreshStock { get; set; }
+
+
+    }
 }

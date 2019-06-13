@@ -6,7 +6,7 @@ using System.Text;
 namespace YL.Core.Entity
 {
     ///<summary>
-    ///
+    ///物料
     ///</summary>
     public partial class Wms_material
     {
@@ -77,8 +77,8 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
-        [SugarColumn(IsNullable = true)]
-        public long? WarehouseId { get; set; }
+        [SugarColumn(DefaultValue = "0", IsNullable = false)]
+        public long WarehouseId { get; set; } = 0;
 
         /// <summary>
         /// Desc:安全库存

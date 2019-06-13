@@ -4,7 +4,6 @@
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <TypeScriptToolsVersion>3.0</TypeScriptToolsVersion>
     <LangVersion>7.1</LangVersion>
-    <DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>
     <ApplicationIcon />
     <OutputType>Exe</OutputType>
     <StartupObject />
@@ -36,7 +35,6 @@
     <PackageReference Include="BuildBundlerMinifier" Version="2.9.406" />
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.7.8" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />
     <PackageReference Include="Pomelo.AspNetCore.TimedJob" Version="2.0.0-rtm-10046" />
     <PackageReference Include="SoapCore" Version="0.9.9.5" />
@@ -164,6 +162,12 @@
     <Content Update="Views\Shared\_LayoutH.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\StockIn\InventoryBoxBack.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\StockIn\InventoryBoxOut.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\StockIn\Detail.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
@@ -199,6 +203,11 @@
   <ItemGroup>
     <Folder Include="wwwroot\upload\head\" />
     <Folder Include="DataBase\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Dto\Dto.csproj" />
+    <ProjectReference Include="..\IServices\IServices.csproj" />
   </ItemGroup>
 
   <ProjectExtensions>
