@@ -110,13 +110,8 @@
                         shade: [0.1, '#fff'] //0.1透明度的白色背景
                     });
                     var data = {
-                        id: _self.StockInDetailId,
-                        StockInId: _self.StockInId,
-                        MaterialId: _self.MaterialId,
-                        StoragerackId: _self.StoragerackId,
-                        PlanInQty: _self.PlanInQty,
-                        ActInQty: 0,
-                        Remark: _self.Remark
+                        id: _self.StockInDetailId, 
+                        inventoryBoxId: _self.InventoryBoxId,
                     };
                     yui.$axiospostform('/StockIn/DoInventoryBoxOut', data)
                         .then(function (response) {

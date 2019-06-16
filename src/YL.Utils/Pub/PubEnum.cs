@@ -160,6 +160,19 @@ namespace YL.Utils.Pub
 
     }
 
+    public enum InventoryBoxStatus
+    {
+        [Description("未上架")]
+        None = 0,
+        [Description("在库")]
+        InPosition = 1,
+        [Description("出库中")]
+        Outing = 1,
+        [Description("归库中")]
+        Backing = 1,
+
+    }
+
     public enum MesTaskTypes
     {
         [Description("入库任务")]

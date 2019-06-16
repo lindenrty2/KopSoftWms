@@ -1,6 +1,7 @@
 ﻿using IServices;
 using Microsoft.AspNetCore.Mvc;
 using SqlSugar;
+using System;
 using System.Linq;
 using YL.Core.Dto;
 using YL.Core.Entity;
@@ -20,9 +21,10 @@ namespace KopSoftWms.Controllers
         private readonly ISys_dictServices _dictServices;
         private readonly ISys_serialnumServices _serialnumServices;
         private readonly IWms_stockindetailServices _stockindetailServices;
+        private readonly IWms_inventoryBoxServices _inventoryBoxServices;
         private readonly SqlSugarClient _client;
 
-        public StockInController(
+        public StockInController( 
             IWms_stockindetailServices stockindetailServices,
             ISys_serialnumServices serialnumServices,
             ISys_dictServices dictServices,
@@ -130,6 +132,33 @@ namespace KopSoftWms.Controllers
             ViewData["currentStoreId"] = storeId;
             var model = _stockindetailServices.QueryableToEntity(c => c.StockInDetailId == SqlFunc.ToInt64(detailId) && c.IsDel == 1);
             return View(model);
+        }
+
+        [HttpPost]
+        public RouteData DoInventoryBoxOut(long stockInDetailId, long inventoryBoxId)
+        {
+            Wms_stockindetail detail = _stockindetailServices.QueryableToEntity(x => x.StockInDetailId == stockInDetailId);
+            if (detail == null) { return YL.Core.Dto.RouteData.From(PubMessages.E2001_STOCKINDETAIL_NOTFOUND); }
+            if (detail.Status == StockInStatus.task_finish.ToByte()) { return YL.Core.Dto.RouteData.From(PubMessages.E2002_STOCKINDETAIL_ALLOW_FINISHED); }
+            Wms_inventorybox inventoryBox = _inventoryBoxServices.QueryableToEntity(x => x.InventoryBoxId == inventoryBoxId);
+            if (inventoryBox == null) { return YL.Core.Dto.RouteData.From(PubMessages.E2003_INVENTORYBOX_NOTFOUND); }
+            if (inventoryBox.Status != InventoryBoxStatus.InPosition) { return YL.Core.Dto.RouteData.From(PubMessages.E2004_INVENTORYBOX_NOTINPOSITION); }
+
+            _client.BeginTran();
+
+            Wms_StockinTask stockinTask = new Wms_StockinTask()
+            {
+                StockInTaskId = PubId.SnowflakeId,
+                //InventoryId = inventor.
+                InventoryBoxId = inventoryBoxId,
+                ReservoirareaId = (long)inventoryBox.ReservoirAreaId,
+                StoragerackId = (long)inventoryBox.StorageRackId,
+                StockInDetailId = detail.StockInDetailId,
+                OperaterDate = DateTime.Now,
+                OperaterId = UserDto.UserId,
+                Qty = 0,
+                Status = 
+            }
         }
 
 

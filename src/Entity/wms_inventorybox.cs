@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using YL.Utils.Pub;
 
 namespace YL.Core.Entity
 {
@@ -72,6 +73,14 @@ namespace YL.Core.Entity
         /// </summary>
         [SugarColumn(Length = 255, IsNullable = true)]
         public string Remark { get; set; }
+
+        /// <summary>
+        /// Desc:状态
+        /// Default:
+        /// Nullable:True
+        /// </summary>
+        [SugarColumn(IsNullable = true)]
+        public InventoryBoxStatus Status { get; set; }
 
         /// <summary>
         /// Desc:1 0
