@@ -141,7 +141,6 @@ namespace YL.Core.Entity
         [SugarColumn(/*, IsIdentity = true*/)]
         public long? StockInDetailId { get; set; }
 
-
         /// <summary>
         /// Desc:库区Id
         /// Default:
@@ -163,21 +162,14 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
-        [SugarColumn(/*, IsIdentity = true*/)]
-        public long? InventoryBoxId { get; set; }
+        [SugarColumn(IsNullable = false)]
+        public long InventoryBoxId { get; set; }
 
         /// <summary>
-        /// Desc:料箱格Id
-        /// Default:
-        /// Nullable:True
+        /// 数据
         /// </summary>
-        [SugarColumn(/*, IsIdentity = true*/)]
-        public long InventoryId { get; set; }
-
-        /// <summary>
-        /// 数量
-        /// </summary>
-        public decimal? Qty { get; set; }
+        [SugarColumn(Length = 4000, IsNullable=true)]
+        public string Data { get; set; }
 
         /// <summary>
         /// Desc:审核人

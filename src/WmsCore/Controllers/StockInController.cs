@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SqlSugar;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using YL.Core.Dto;
 using YL.Core.Entity;
@@ -21,7 +22,9 @@ namespace KopSoftWms.Controllers
         private readonly ISys_dictServices _dictServices;
         private readonly ISys_serialnumServices _serialnumServices;
         private readonly IWms_stockindetailServices _stockindetailServices;
+        private readonly IWms_stockintaskServices _stockinTaskServices;
         private readonly IWms_inventoryBoxServices _inventoryBoxServices;
+        private readonly IWms_inventoryServices _inventoryServices;
         private readonly SqlSugarClient _client;
 
         public StockInController( 
@@ -30,6 +33,9 @@ namespace KopSoftWms.Controllers
             ISys_dictServices dictServices,
             IWms_supplierServices supplierServices,
             IWms_stockinServices stockinServices,
+            IWms_stockintaskServices stockinTaskServices,
+            IWms_inventoryBoxServices inventoryBoxServices,
+            IWms_inventoryServices inventoryServices,
             SqlSugarClient client
             )
         {
@@ -38,6 +44,9 @@ namespace KopSoftWms.Controllers
             _dictServices = dictServices;
             _supplierServices = supplierServices;
             _stockinServices = stockinServices;
+            _stockinTaskServices = stockinTaskServices;
+            _inventoryBoxServices = inventoryBoxServices;
+            _inventoryServices = inventoryServices;
             _client = client;
         }
 
@@ -137,36 +146,147 @@ namespace KopSoftWms.Controllers
         [HttpPost]
         public RouteData DoInventoryBoxOut(long stockInDetailId, long inventoryBoxId)
         {
-            Wms_stockindetail detail = _stockindetailServices.QueryableToEntity(x => x.StockInDetailId == stockInDetailId);
-            if (detail == null) { return YL.Core.Dto.RouteData.From(PubMessages.E2001_STOCKINDETAIL_NOTFOUND); }
-            if (detail.Status == StockInStatus.task_finish.ToByte()) { return YL.Core.Dto.RouteData.From(PubMessages.E2002_STOCKINDETAIL_ALLOW_FINISHED); }
-            Wms_inventorybox inventoryBox = _inventoryBoxServices.QueryableToEntity(x => x.InventoryBoxId == inventoryBoxId);
-            if (inventoryBox == null) { return YL.Core.Dto.RouteData.From(PubMessages.E2003_INVENTORYBOX_NOTFOUND); }
-            if (inventoryBox.Status != InventoryBoxStatus.InPosition) { return YL.Core.Dto.RouteData.From(PubMessages.E2004_INVENTORYBOX_NOTINPOSITION); }
-
-            _client.BeginTran();
-
-            Wms_StockinTask stockinTask = new Wms_StockinTask()
+            try
             {
-                StockInTaskId = PubId.SnowflakeId,
-                //InventoryId = inventor.
-                InventoryBoxId = inventoryBoxId,
-                ReservoirareaId = (long)inventoryBox.ReservoirAreaId,
-                StoragerackId = (long)inventoryBox.StorageRackId,
-                StockInDetailId = detail.StockInDetailId,
-                OperaterDate = DateTime.Now,
-                OperaterId = UserDto.UserId,
-                Qty = 0,
-                Status = 
+                _client.BeginTran();
+
+                Wms_stockindetail detail = _stockindetailServices.QueryableToEntity(x => x.StockInDetailId == stockInDetailId);
+                if (detail == null) { return YL.Core.Dto.RouteData.From(PubMessages.E2001_STOCKINDETAIL_NOTFOUND); }
+                if (detail.Status == StockInStatus.task_finish.ToByte()) { return YL.Core.Dto.RouteData.From(PubMessages.E2002_STOCKINDETAIL_ALLOW_FINISHED); }
+
+                Wms_stockin stockin = _stockinServices.QueryableToEntity(x => x.StockInId == detail.StockInId);
+                if (stockin == null) { return YL.Core.Dto.RouteData.From(PubMessages.E2013_STOCKIN_NOTFOUND); }
+                if (stockin.StockInStatus == StockInStatus.task_finish.ToByte()) { return YL.Core.Dto.RouteData.From(PubMessages.E2014_STOCKIN_ALLOW_FINISHED); }
+
+
+                Wms_inventorybox inventoryBox = _inventoryBoxServices.QueryableToEntity(x => x.InventoryBoxId == inventoryBoxId);
+                if (inventoryBox == null) { return YL.Core.Dto.RouteData.From(PubMessages.E2003_INVENTORYBOX_NOTFOUND); }
+                if (inventoryBox.Status != InventoryBoxStatus.InPosition) { return YL.Core.Dto.RouteData.From(PubMessages.E2004_INVENTORYBOX_NOTINPOSITION); }
+
+                Wms_StockinTask task = new Wms_StockinTask()
+                {
+                    StockInTaskId = PubId.SnowflakeId,
+                    InventoryBoxId = inventoryBoxId,
+                    ReservoirareaId = (long)inventoryBox.ReservoirAreaId,
+                    StoragerackId = (long)inventoryBox.StorageRackId,
+                    StockInDetailId = detail.StockInDetailId,
+                    Data = null,
+                    OperaterDate = DateTime.Now,
+                    OperaterId = UserDto.UserId, 
+                    Status = StockInTaskStatus.task_outing.ToByte()
+                };
+                if (!SendWCSOutCommand(task))
+                {
+                    _client.RollbackTran();
+                    return YL.Core.Dto.RouteData.From(PubMessages.E2101_WCS_BACKCOMMAND_FAIL);
+                }
+
+                _stockinTaskServices.Insert(task);
+
+                inventoryBox.Status = InventoryBoxStatus.Outing;
+                inventoryBox.ModifiedBy = UserDto.UserId;
+                inventoryBox.ModifiedDate = DateTime.Now;
+                _inventoryBoxServices.UpdateEntity(inventoryBox);
+
+                if (detail.Status == StockInStatus.task_confirm.ToByte())
+                {
+                    detail.Status = StockInStatus.task_working.ToByte();
+                    _stockindetailServices.Update(detail);
+                }
+                if (stockin.StockInStatus == StockInStatus.task_confirm.ToByte())
+                {
+                    stockin.StockInStatus = StockInStatus.task_working.ToByte();
+                    _stockinServices.Update(stockin);
+                }
+
+                _client.CommitTran();
+                return new YL.Core.Dto.RouteData();
             }
+            catch(Exception)
+            {
+                _client.RollbackTran();
+                return YL.Core.Dto.RouteData.From(PubMessages.E2005_STOCKIN_BOXOUT_FAIL);
+            }
+
+        }
+        private bool SendWCSOutCommand(Wms_StockinTask task)
+        {
+            return true;
         }
 
-
         [HttpGet]
-        public IActionResult InventoryBoxBack(string stockinTaskId)
+        public IActionResult InventoryBoxBack(long stockinTaskId)
         {
             object model = null;
             return View(model);
+        }
+
+        [HttpPost]
+        public RouteData DoInventoryBoxBack(long stockinTaskId,InventoryDetailDto[] details)
+        {
+            try
+            {
+                _client.BeginTran();
+
+                Wms_StockinTask task = _stockinTaskServices.QueryableToEntity(x => x.StockInTaskId == stockinTaskId);
+                if (task == null) { return YL.Core.Dto.RouteData.From(PubMessages.E2007_STOCKINTASK_NOTFOUND); }
+                if (task.Status <= StockInTaskStatus.task_outed.ToByte()) { return YL.Core.Dto.RouteData.From(PubMessages.E2008_STOCKINTASK_NOTOUT); }
+                if (task.Status == StockInTaskStatus.task_backing.ToByte()) { return YL.Core.Dto.RouteData.From(PubMessages.E2009_STOCKINTASK_ALLOW_BACKING); }
+                if (task.Status == StockInTaskStatus.task_backed.ToByte()) { return YL.Core.Dto.RouteData.From(PubMessages.E2010_STOCKINTASK_ALLOW_BACKED); }
+
+                Wms_inventorybox inventoryBox = _inventoryBoxServices.QueryableToEntity(x => x.InventoryBoxId == task.InventoryBoxId);
+                if (inventoryBox == null) { return YL.Core.Dto.RouteData.From(PubMessages.E2003_INVENTORYBOX_NOTFOUND); }
+                if (inventoryBox.Status != InventoryBoxStatus.Outed) { return YL.Core.Dto.RouteData.From(PubMessages.E2011_INVENTORYBOX_NOTOUTED); }
+
+                List<Wms_inventory> inventories = _inventoryServices.QueryableToList(x => x.InventoryBoxId == task.InventoryBoxId);
+                List<Wms_inventory> updatedInventories = new List<Wms_inventory>();
+                foreach(InventoryDetailDto detail in details)
+                {
+                    Wms_inventory inventory = inventories.FirstOrDefault(x => x.InventoryId == detail.InventoryId);
+                    if(inventory.MaterialId != detail.MaterialId)
+                    {
+                        return YL.Core.Dto.RouteData.From(PubMessages.E2012_INVENTORYBOX_MATERIAL_NOTMATCH);
+                    }
+                    inventory.Qty = detail.Qty;
+                    inventory.ModifiedDate = DateTime.Now;
+                    inventory.ModifiedBy = this.UserDto.UserId;
+                    
+                    updatedInventories.Add(inventory);
+                }
+                if (!SendWCSBackCommand(task))
+                {
+                    _client.RollbackTran();
+                    return YL.Core.Dto.RouteData.From(PubMessages.E2101_WCS_BACKCOMMAND_FAIL);
+                }
+
+                foreach (Wms_inventory inventoriy in updatedInventories)
+                {
+                    _inventoryServices.Update(inventoriy);
+                }
+
+                task.Status = StockInTaskStatus.task_backing.ToByte();
+                task.OperaterId = UserDto.UserId;
+                task.OperaterDate = DateTime.Now;
+                _stockinTaskServices.UpdateEntity(task);
+
+                inventoryBox.Status = InventoryBoxStatus.Backing;
+                inventoryBox.ModifiedBy = UserDto.UserId;
+                inventoryBox.ModifiedDate = DateTime.Now;
+                _inventoryBoxServices.UpdateEntity(inventoryBox);
+
+                _client.CommitTran();
+                return new YL.Core.Dto.RouteData();
+            }
+            catch (Exception)
+            {
+                _client.RollbackTran();
+                return YL.Core.Dto.RouteData.From(PubMessages.E2005_STOCKIN_BOXOUT_FAIL);
+            }
+        }
+
+        private bool SendWCSBackCommand(Wms_StockinTask task)
+        {
+            return true;
         }
 
         [HttpPost]

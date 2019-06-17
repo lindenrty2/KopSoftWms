@@ -54,6 +54,11 @@ namespace YL.Core.Dto
         {
             return RouteData<T>.From(routeData.Code, routeData.Message);
         }
+
+        public static RouteData From(object e2002_STOCKINTASK_ALLOW_BACKING)
+        {
+            throw new NotImplementedException();
+        }
     }
 
 

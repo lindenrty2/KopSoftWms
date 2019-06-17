@@ -167,9 +167,11 @@ namespace YL.Utils.Pub
         [Description("在库")]
         InPosition = 1,
         [Description("出库中")]
-        Outing = 1,
+        Outing = 2,
+        [Description("出库完成")]
+        Outed = 3,
         [Description("归库中")]
-        Backing = 1,
+        Backing = 4,
 
     }
 
