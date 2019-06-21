@@ -5,7 +5,7 @@ using YL.Core.Entity;
 
 namespace IRepository
 {
-    public interface IWms_stockintaskRepository : IBaseRepository<Wms_StockinTask>
+    public interface IWms_inventoryboxtaskRepository : IBaseRepository<Wms_inventoryboxTask>
     {
     }
 }

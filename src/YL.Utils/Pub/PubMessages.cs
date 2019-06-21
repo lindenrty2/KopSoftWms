@@ -11,6 +11,7 @@ namespace YL.Utils.Pub
         public static MessageItem E1002_SuppliesType_WarehouseId_NotSet = new MessageItem(-1002, "物料类型没有指定仓库");
         public static MessageItem E1003_Unit_NotFound = new MessageItem(-1003, "找不到单位定义");
         public static MessageItem E1004_WarehouseType_NotFound = new MessageItem(-1004, "找不到入库类型定义");
+        public static MessageItem E1005_MaterialNo_NotFound = new MessageItem(-1005, "找不到物料编号");
 
 
         public static MessageItem E2001_STOCKINDETAIL_NOTFOUND = new MessageItem(-2001, "找不到入库详细");
@@ -25,23 +26,22 @@ namespace YL.Utils.Pub
         public static MessageItem E2010_STOCKINTASK_ALLOW_BACKED = new MessageItem(-2010, "料箱已归库");
         public static MessageItem E2011_INVENTORYBOX_NOTOUTED = new MessageItem(-2011, "料箱状态异常，需要料箱状态为[出库完成]");
         public static MessageItem E2012_INVENTORYBOX_MATERIAL_NOTMATCH = new MessageItem(-2012, "料箱物料不匹配");
-        public static MessageItem E2013_STOCKIN_NOTFOUND = new MessageItem(-2001, "找不到入库详细");
-        public static MessageItem E2014_STOCKIN_ALLOW_FINISHED = new MessageItem(-2002, "该入库已完成");
+        public static MessageItem E2013_STOCKIN_NOTFOUND = new MessageItem(-2013, "找不到入库详细");
+        public static MessageItem E2014_STOCKIN_ALLOW_FINISHED = new MessageItem(-2014, "该入库已完成");
+        public static MessageItem E2015_STOCKIN_HASNOT_MATERIAL = new MessageItem(-2015, "入库单中找不到该物料");
+        public static MessageItem E2016_INVENTORYBOX_NOTOUT = new MessageItem(-2016, "料箱不在出库状态");
+        public static MessageItem E2017_INVENTORYBOX_NOTBACK = new MessageItem(-2017, "料箱不在归库状态");
 
-        public static MessageItem E2100_WCS_OUTCOMMAND_FAIL = new MessageItem(-2010, "WCS料箱出库命令失败");
-        public static MessageItem E2101_WCS_BACKCOMMAND_FAIL = new MessageItem(-2011, "WCS料箱归库命令失败");
-   
+        public static MessageItem E2100_WCS_OUTCOMMAND_FAIL = new MessageItem(-2100, "WCS料箱出库命令失败");
+
+        public static MessageItem E2102_WCS_TASKID_INVAILD = new MessageItem(-2102, "WCS任务Id无效");
+        public static MessageItem E2103_WCS_STOCKOUTTASK_NOTFOUND = new MessageItem(-2103, "WCS回调出库确认时发现任务不存在");
+        public static MessageItem E2104_WCS_STOCKOUTTASK_NOTOUT = new MessageItem(-2104, "WCS回调出库确认时发现任务不处于出库状态");
+
+        public static MessageItem E2110_WCS_BACKCOMMAND_FAIL = new MessageItem(-2101, "WCS料箱归库命令失败");
+        public static MessageItem E2111_WCS_STOCKBACKTASK_NOTFOUND = new MessageItem(-2111, "WCS回调归库确认时发现任务不存在");
+        public static MessageItem E2112_WCS_STOCKBACKTASK_NOTBACK = new MessageItem(-2112, "WCS回调归库确认时发现任务不处于出库状态");
     }
 
-    public class MessageItem
-    {
-        public int Code { get; set; }
-        public string Message { get; set; }
 
-        public MessageItem(int code,string message)
-        {
-            this.Code = code;
-            this.Message = message;
-        }
-    }
 }

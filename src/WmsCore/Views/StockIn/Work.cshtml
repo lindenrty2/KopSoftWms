@@ -7,6 +7,10 @@
     <link rel="stylesheet" href="~/css/bootstrap-select.min.css" />
 }
 <div id="app" v-cloak>
+    <div>
+        <button id="boxOutL" type="button" class="btn btn-link btn-outL margin-left:20px" onclick="app.boxOutL();">料箱出库</button>
+        <button id="scanL" type="button" class="btn btn-link btn-scanL" onclick="app.scanL();" >扫码操作</button>
+    </div>
     <table id="bootstraptable" class="table table-bordered text-nowrap table-hover"></table>
 </div>
 
@@ -20,7 +24,7 @@
                 datemin: '',
                 datemax: '',
                 StockInId: "@Model.StockInId",
-                StockInNo:"@Model.StockInNo",
+                StockInNo: "@Model.StockInNo",
                 urlM: '',
                 storeId: '0'
             },
@@ -36,12 +40,12 @@
                         visible: true
                     },
                     {
-                        field: 'Detail.StockInDetailId',
+                        field: 'StockInDetailId',
                         title: '详细ID',
                         visible: false
                     },
                     {
-                        field: 'Detail.Status',
+                        field: 'Status',
                         title: '状态',
                         visible: true,
                         sortable: true,
@@ -67,37 +71,37 @@
 
                     },
                     {
-                        field: 'Detail.MaterialNo',
+                        field: 'MaterialNo',
                         title: '物料编号',
                         align: 'center',
                         sortable: true
                     },
                     {
-                        field: 'Detail.MaterialName',
+                        field: 'MaterialName',
                         title: '物料名称',
                         align: 'center',
                         sortable: true
                     }, 
                     {
-                        field: 'Detail.PlanInQty',
+                        field: 'PlanInQty',
                         title: '计划数量',
                         align: 'center',
                         sortable: true
                     }
                     , {
-                        field: 'Detail.ActInQty',
+                        field: 'ActInQty',
                         title: '实际数量',
                         align: 'center',
                         sortable: true
                     },
                     {
-                        field: 'Detail.Remark',
+                        field: 'Remark',
                         title: '备注',
                         align: 'left',
                         sortable: true
                     },
                     {
-                        field: 'Detail.ModifiedDate',
+                        field: 'ModifiedDate',
                         title: '最后更新时间',
                         align: 'center',
                         sortable: true,
@@ -112,6 +116,7 @@
                         sortable: true,
                         formatter: function (value, row, index) {
                             var html = [];
+                            return html.join('<br/>');
                             for (var i = 0; i < value.length; i++) {
                                 var item = value[i];
                                 if (item.Status == 1) { //任务已确认
@@ -123,7 +128,7 @@
                                 }
                                 else if (item.Status == 3) { //出库完成
                                     html.push(
-                                        '<button id="outL" type="button" class="btn btn-link btn-outL" style="margin-top:-8px;margin-left:-10px;" onclick="">料箱' + item.InventoryBoxId + '归库</button>'
+                                        '<button id="backL" type="button" class="btn btn-link btn-backL" style="margin-top:-8px;margin-left:-10px;" onclick="">料箱' + item.InventoryBoxId + '归库</button>'
                                     );
                                 }
                                 else if (item.Status == 4) { //归库中
@@ -136,17 +141,12 @@
                                         '<span class="label label-success radius">料箱' + item.InventoryBoxId + '归库完成</span>'
                                     );
                                 }
-                            }
-                            if (row.Detail.Status == 2 || row.Detail.Status == 3) {
-                                html.push(
-                                    '<button id="outL" type="button" class="btn btn-link btn-outL" style="margin-top:-8px;margin-left:-10px;" >新出库</button>'
-                                );
-                            }
+                            } 
                             return html.join('<br/>');
                         },
                         events: {
-                            'click #outL': function (e, value, row, index) {
-                                app.boxOutL(row.Detail.StockInDetailId);
+                            'click #backL': function (e, value, row, index) {
+                                app.boxBackL(row.Detail.StockInDetailId);
                             }
                         },
                     }
@@ -164,10 +164,18 @@
             },
             watch: {},
             methods: {
-                boxOutL: function (detailId) {
-                    yui.layershow("料箱出库", "/StockIn/InventoryBoxOut?detailId=" + detailId + "&storeId=@ViewData["currentStoreId"]", 600, 500);
+                boxOutL: function () {
+                    yui.layershow("料箱出库", "/StockIn/InventoryBoxOut?storeId=@ViewData["currentStoreId"]", 600, 500);
                 },
-
+                boxBackL: function () {
+                    yui.layershow("料箱归库", "/StockIn/InventoryBoxOut?storeId=@ViewData["currentStoreId"]", 600, 500);
+                },
+                scanL: function (detailId) {
+                    yui.layershow("扫码操作", "/StockIn/ScanPage?stockInId=@Model.StockInId&storeId=@ViewData["currentStoreId"]", 600, 650);
+                },
+                refreshL: function () {
+                    $("button[name='search']").click();
+                }
             }
         });
     </script>

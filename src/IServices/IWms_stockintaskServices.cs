@@ -5,7 +5,7 @@ using YL.Core.Entity;
 
 namespace IServices
 {
-    public interface IWms_stockintaskServices : IBaseServices<Wms_StockinTask>
+    public interface IWms_inventoryBoxTaskServices : IBaseServices<Wms_inventoryboxTask>
     {
 
 

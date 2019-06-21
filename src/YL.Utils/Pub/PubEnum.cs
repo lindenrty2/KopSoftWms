@@ -98,7 +98,7 @@ namespace YL.Utils.Pub
         task_finish = 4,
     }
 
-    public enum StockInTaskStatus
+    public enum InventoryBoxTaskStatus
     {
         [Description("入库任务取消")]
         task_canceled = -1,

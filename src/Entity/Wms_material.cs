@@ -29,6 +29,14 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:False
         /// </summary>
+        [SugarColumn(Length = 20,IsNullable=true)]
+        public string MaterialOnlyId { get; set; }
+
+        /// <summary>
+        /// Desc:产品编号
+        /// Default:
+        /// Nullable:False
+        /// </summary>
         [SugarColumn(Length = 20/*, IsIdentity = true*/)]
         public string MaterialNo { get; set; }
 
@@ -54,23 +62,7 @@ namespace YL.Core.Entity
         /// Nullable:True
         /// </summary>
         [SugarColumn(IsNullable = true)]
-        public long? Unit { get; set; }
-
-        /// <summary>
-        /// Desc:默认所属货架
-        /// Default:
-        /// Nullable:True
-        /// </summary>
-        [SugarColumn(IsNullable = true)]
-        public long? StoragerackId { get; set; }
-
-        /// <summary>
-        /// Desc:默认所属库区
-        /// Default:
-        /// Nullable:True
-        /// </summary>
-        [SugarColumn(IsNullable = true)]
-        public long? ReservoirAreaId { get; set; }
+        public long? Unit { get; set; } 
 
         /// <summary>
         /// Desc:默认所属仓库

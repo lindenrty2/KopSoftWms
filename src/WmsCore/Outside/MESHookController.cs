@@ -13,6 +13,7 @@ using YL.Utils.Pub;
 
 namespace WMSCore.Outside
 {
+    [Route("/hook/mes")]
     public class MESHookController : Controller, IMESHookController
     {
         private IWms_mastaskServices _mastaskServices;
@@ -183,7 +184,16 @@ namespace WMSCore.Outside
 
         private RouteData<Wms_material> GetOrCreateMaterial(OutsideMaterialDto materialDto)
         {
-            Wms_material material = _materialServices.QueryableToEntity(x => x.MaterialNo == materialDto.SuppliesId);
+            Wms_material material = null;
+            if(string.IsNullOrEmpty(materialDto.SuppliesOnlyId))
+            {
+                material = _materialServices.QueryableToEntity(x => x.MaterialNo == materialDto.SuppliesId);
+            }
+            else
+            {
+                material = _materialServices.QueryableToEntity(x => x.MaterialOnlyId == materialDto.SuppliesOnlyId);
+            }
+            
             if (material == null)
             {
                 Sys_dict typeDict = _dictServices.QueryableToEntity(x => x.DictType == PubDictType.material.ToByte().ToString() && x.DictName == materialDto.SuppliesType);
@@ -205,6 +215,7 @@ namespace WMSCore.Outside
                 material = new Wms_material()
                 {
                     MaterialId = PubId.SnowflakeId,
+                    MaterialOnlyId = materialDto.SuppliesOnlyId,
                     MaterialNo = materialDto.SuppliesId,
                     MaterialName = materialDto.SuppliesName,
                     MaterialType = typeDict.DictId,

@@ -19,18 +19,21 @@ namespace KopSoftWms.Controllers
         private readonly IWms_reservoirareaServices _reservoirareaServices;
         private readonly IWms_storagerackServices _storagerackServices;
         private readonly IWms_materialServices _materialServices;
+        private readonly IWms_inventoryBoxServices _inventoryBoxServices;
 
         public StorageRackController(
             IWms_warehouseServices warehouseServices,
             IWms_storagerackServices storagerackServices,
             IWms_reservoirareaServices reservoirareaServices,
-            IWms_materialServices materialServices
+            IWms_materialServices materialServices,
+            IWms_inventoryBoxServices inventoryBoxServices
             )
         {
             _warehouseServices = warehouseServices;
             _storagerackServices = storagerackServices;
             _reservoirareaServices = reservoirareaServices;
             _materialServices = materialServices;
+            _inventoryBoxServices = inventoryBoxServices;
         }
 
         [HttpGet]
@@ -131,10 +134,10 @@ namespace KopSoftWms.Controllers
 
         [HttpGet]
         [OperationLog(LogType.delete)]
-        public IActionResult Delete(string id)
+        public IActionResult Delete(long id)
         {
-            //判断有没有物料
-            var isExist = _materialServices.IsAny(c => c.StoragerackId == SqlFunc.ToInt64(id));
+            //判断有没有料箱在该货架上
+            var isExist = _inventoryBoxServices.IsAny(x => x.StorageRackId == id);
             if (isExist)
             {
                 return BootJsonH((false, PubConst.Warehouse6));

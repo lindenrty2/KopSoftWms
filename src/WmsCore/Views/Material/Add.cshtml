@@ -22,36 +22,7 @@
             @await Component.InvokeAsync("Dict", YL.Utils.Pub.PubDictType.material.ToString())
             @await Component.InvokeAsync("Dict", YL.Utils.Pub.PubDictType.unit.ToString())
             @await Component.InvokeAsync("Warehouse")
-            <div class="form-group">
-                <label class="form-label col-sm-2">所属库区</label>
-                <div class="col-sm-10">
-                    <select class="form-control" v-model="ReservoirAreaId" size="1">
-                        <option value="">请选择</option>
-                        <template v-for="item in rlist">
-                            <option :value="item.value">{{item.name}}</option>
-                        </template>
-                    </select>
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="form-label col-sm-2">所属货架</label>
-                <div class="col-sm-10">
-                    <select class="form-control" v-model="StoragerackId" size="1">
-                        <option value="">请选择</option>
-                        <template v-for="item in slist">
-                            <option :value="item.value">{{item.name}}</option>
-                        </template>
-                    </select>
-                </div>
-            </div>
-            <yl-input lable="安全库存" id="Qty" v-model="Qty"></yl-input>
-            <yl-input lable="有效期(天)" id="ExpiryDate" v-model="ExpiryDate"></yl-input>
-            @*<div class="form-group">
-                    <label class="col-sm-2 control-label">有效期(天)</label>
-                    <div class="col-sm-10">
-                        <input class="form-control" id="ExpiryDate" v-model="ExpiryDate" type="text">
-                    </div>
-                </div>*@
+           
             <div class="form-group">
                 <label class="col-sm-2 control-label">备注</label>
                 <div class="col-sm-10">
@@ -103,9 +74,7 @@
                 MaterialType: "@Model.MaterialType",
                 Unit: "@Model.Unit",
                 Qty: "@Model.Qty",
-                WarehouseId: "@Model.WarehouseId",
-                ReservoirAreaId: "@Model.ReservoirAreaId",
-                StoragerackId:"@Model.StoragerackId",
+                WarehouseId: "@Model.WarehouseId", 
                 rlist: [],//库区
                 slist: []//货架
             },
@@ -200,11 +169,7 @@
                         MaterialType: _self.MaterialType,
                         Unit: _self.Unit,
                         WarehouseId: _self.WarehouseId,
-                        ReservoirAreaId: _self.ReservoirAreaId,
-                        StoragerackId: _self.StoragerackId,
-                        Remark: _self.Remark,
-                        Qty: _self.Qty,
-                        ExpiryDate: _self.ExpiryDate
+                        Remark: _self.Remark
                     };
                     yui.$axiospostform('/Material/AddOrUpdate', data)
                         .then(function (response) {

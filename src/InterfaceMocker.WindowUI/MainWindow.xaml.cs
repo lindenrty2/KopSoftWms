@@ -1,10 +1,13 @@
-﻿using InterfaceMocker.Service;
+﻿using EventBus;
+using InterfaceMocker.Service;
+using InterfaceMocker.Service.Do;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using WMSCore.Outside;
 
 namespace InterfaceMocker.WindowUI
 {
@@ -14,9 +17,11 @@ namespace InterfaceMocker.WindowUI
         ServiceHost _wcsHost = new ServiceHost();
 
 
+        private static SimpleEventBus _eventBus = SimpleEventBus.GetDefaultEventBus();
         public MainWindow()
         {
             InitializeComponent();
+            _eventBus.Register(this);
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -49,6 +54,15 @@ namespace InterfaceMocker.WindowUI
         private void MesTaskClear_Click(object sender, RoutedEventArgs e)
         {
             ctlMESTasks.Children.Clear();
+        }
+
+        [EventSubscriber]
+        public void HandleEvent(KeyValuePair<OutStockInfo, CreateOutStockResult> args)
+        {
+            this.Dispatcher.Invoke(() => {
+                WCSOutStockTaskControl taskControl = new WCSOutStockTaskControl(args.Key, args.Value);
+                ctlWCSTasks.Children.Add(taskControl);
+            });            
         }
     }
 }

@@ -20,10 +20,26 @@ namespace YL.Core.Dto
         /// 物料Id
         /// </summary>
         public long MaterialId { get; set; }
+ 
         /// <summary>
-        /// 数量
+        /// 计划数量
         /// </summary>
-        public int Qty { get; set; }
+        public long PlanQty { get; set; }
+
+        /// <summary>
+        /// 已入库数量
+        /// </summary>
+        public long ComplateQty { get; set; }
+
+        /// <summary>
+        /// 料箱原始数量
+        /// </summary>
+        public long BeforeQty { get; set; }
+
+        /// <summary>
+        /// 当前入库数量
+        /// </summary>
+        public long Qty { get; set; }
 
     }
 }

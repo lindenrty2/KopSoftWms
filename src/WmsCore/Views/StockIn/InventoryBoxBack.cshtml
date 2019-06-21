@@ -1,44 +1,53 @@
 ﻿@{
     Layout = "_LayoutH";
-    @model Wms_stockindetail
+    @model List<YL.Core.Dto.InventoryDetailDto>
 }
 @section styles{
     <link rel="stylesheet" href="~/css/bootstrap-select.min.css" />
 }
 <div id="app" v-cloak>
     <form class="form-horizontal" onsubmit="return false">
-        <div class="box-body">
-            <div class="form-group">
-                <label class="col-sm-2 control-label">计划数量</label>
-                <div class="col-sm-10">
-                    <label class="form-control" v-model="PlanInQty" v-focus type="text"/>
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-2 control-label">已入库数量</label>
-                <div class="col-sm-10">
-                    <label class="form-control" v-model="ActInQty" v-focus type="text"/>
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-2 control-label">料箱原始数量</label>
-                <div class="col-sm-10">
-                    <label class="form-control" v-model="Qty" v-focus type="text"/>
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-2 control-label">当前入库数量</label>
-                <div class="col-sm-10">
-                    <input class="form-control" v-model="Qty" v-focus type="text">
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-2 control-label">料箱变更后数量</label>
-                <div class="col-sm-10">
-                    <label class="form-control" v-model="Qty" v-focus type="text"/>
-                </div>
-            </div>
-        </div>
+        <table class="box-body">
+            <tr>
+                <td>
+                    <label class="col-sm-2 control-label">格号</label>
+                </td>
+                <td>
+                    <label class="col-sm-2 control-label">物料名</label>
+                </td>
+                <td>
+                    <label class="col-sm-2 control-label">已入库/计划入库</label>
+                </td>
+                <td>
+                    <label class="col-sm-2 control-label">料箱装入数</label>
+                </td>
+                <td>
+                    <label class="col-sm-2 control-label">料箱数量</label>
+                </td>
+            </tr>
+            @{
+                foreach (YL.Core.Dto.InventoryDetailDto detail in Model)
+                {
+                    <tr>
+                        <td>
+                            <label name="Postion" iid="@detail.InventoryId" class="form-control Postion" />
+                        </td>
+                        <td>
+                            <label name="MaterialName" iid="@detail.InventoryId" class="form-control MaterialName" />
+                        </td>
+                        <td>
+                            <label name="PlanQty" iid="@detail.InventoryId" ComplateQty=@detail.ComplateQty PlanQty=@detail.PlanQty class="form-control PlanQty" />
+                        </td>
+                        <td>
+                            <input name="Qty" iid="@detail.InventoryId" type="text" class="form-control Qty" onchange="app.refresh('@detail.InventoryId')" >
+                        </td>
+                        <td>
+                            <label name="BoxQty" iid="@detail.InventoryId" ComplateQty=@detail.BeforeQty class="form-control BoxQty" />
+                        </td>
+                    </tr>
+                }
+            }
+        </table>
         <div class="box-footer">
             <div class="pull-right box-tools">
                 <input v-on:click="okL" class="btn btn-primary radius" type="submit" v-model="submit">
@@ -54,17 +63,7 @@
         var app = new Vue({
             el: "#app",
             data: {
-                submit: "添加",
-                MaterialId:"@Model.MaterialId",
-                StockInId:"@Model.StockInId",
-                StockInDetailId: "@Model.StockInDetailId",
-                Remark: "@Model.Remark", 
-                PlanInQty:"@Model.PlanInQty",
-                ActInQty: "@Model.ActInQty",
-                MaterialList: [],
-                StorageRackList: [],
-                urlM: '',
-                urlS:''
+                submit: "添加",   
             },
             computed: {
                 count: function () {
@@ -74,12 +73,15 @@
             mounted: function(){
                 var _self = this;
                 _self.$nextTick(function () {
-          
+                    $(".Postion").foreach(function (index, elem) {
+                        refresh(elem.iid);
+                    }
+                    );
                 });
             },
             methods: { 
                 okL: function () {
-                   var _self = this;
+                    var _self = this;
                     if (_self.MaterialId.length <= 0) {
                         layer.msg("请选择物料", { icon: 2 });
                         return false;
@@ -124,6 +126,18 @@
                         .catch(function (error) {
                             layer.close(index);
                         });
+                },
+                refresh: function (id) {
+                    var ctlPlanQty = $(".PlanQty" + id);
+                    var ctlQty = $(".Qty" + id);
+                    var ctlBoxQty = $(".BoxQty" + id);
+                    var qty = Number(ctlQty.val());
+                    var planQty = ctlPlanQty.prop("PlanQty");
+                    var complateQty = ctlPlanQty.prop("ComplateQty");
+                    var beforeQty = ctlPlanQty.prop("BeforeQty");
+
+                    ctlPlanQty.text(complateQty + "(" + qty + ")" + "/" + planQty);
+                    ctlBoxQty.text(beforeQty + "=>" + beforeQty + qty);
                 }
             }
         });

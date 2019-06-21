@@ -55,6 +55,21 @@ namespace YL.Core.Entity
         public long? ReservoirAreaId { get; set; }
 
         /// <summary>
+        /// 行
+        /// </summary>
+        public int Row { get; set; }
+
+        /// <summary>
+        /// 列
+        /// </summary>
+        public int Column { get; set; }
+
+        /// <summary>
+        /// 层
+        /// </summary>
+        public int Floor { get; set; }
+
+        /// <summary>
         /// Desc:备注
         /// Default:
         /// Nullable:True

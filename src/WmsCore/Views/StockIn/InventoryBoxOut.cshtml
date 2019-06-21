@@ -36,7 +36,7 @@
                     if (dom.length > 0) {
                         app.searchInventoryBox(text, 2);
                     }
-                    if (app.MaterialList.length <= 0) {
+                    if (app.InventoryBoxList.length <= 0) {
                         app.searchInventoryBox(text, 2);
                     }
                 });
@@ -47,13 +47,7 @@
             el: "#app",
             data: {
                 submit: "料箱出库",
-                InventoryBoxId:"",
-                MaterialId:"@Model.MaterialId",
-                StockInId:"@Model.StockInId",
-                StockInDetailId: "@Model.StockInDetailId",
-                Remark: "@Model.Remark",
-                PlanInQty:"@Model.PlanInQty",
-                ActInQty: "@Model.ActInQty",
+                InventoryBoxId:"", 
                 MaterialList: [],
                 StorageRackList: [],
                 urlM: '',
@@ -67,7 +61,7 @@
             mounted: function(){
                 var _self = this;
                 _self.$nextTick(function () {
-                    $("#MaterialId").selectpicker({
+                    $("#InventoryBoxId").selectpicker({
                         noneSelectedText: '请选择',
                     });
                     //$("#StoragerackId").selectpicker({
@@ -115,21 +109,14 @@
                     };
                     yui.$axiospostform('/StockIn/DoInventoryBoxOut', data)
                         .then(function (response) {
-                            if (response.data.Item1 === 101) {
-                                layer.tips(response.data.Item2, '.layui-layer-setwin', {
-                                    tips: [1, '#3595CC'],
-                                    time: 3000
-                                });
-                                layer.close(index);
-                                return false;
-                            }
-                            if (response.data.Item1) {
-                                layer.msg(response.data.Item2, { icon: 1, time: 1000 });
+                            if (response.data.isSccuess) { 
+                                layer.msg(response.data.message, { icon: 1, time: 1000 });
                                 setTimeout(function () {
                                     yui.layer_close3();
-                                }, 500);
+                                }, 1000);
+                                return false; 
                             } else {
-                                layer.msg(response.data.Item2 || errorMsg, { icon: 5 });
+                                layer.msg(response.data.message || errorMsg, { icon: 5 });
                             }
                             layer.close(index);
                         })
