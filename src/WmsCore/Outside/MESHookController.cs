@@ -215,13 +215,12 @@ namespace WMSCore.Outside
                 material = new Wms_material()
                 {
                     MaterialId = PubId.SnowflakeId,
-                    MaterialOnlyId = materialDto.SuppliesOnlyId,
-                    MaterialNo = materialDto.SuppliesId,
+                    MaterialOnlyId = materialDto.SuppliesOnlyId ?? "",
+                    MaterialNo = materialDto.SuppliesId ?? "",
                     MaterialName = materialDto.SuppliesName,
                     MaterialType = typeDict.DictId,
                     WarehouseId = warehouseId,
-                    Unit = unitDict.DictId,
-                    Qty = materialDto.SuppliesNumber,
+                    Unit = unitDict.DictId, 
                 };
                 _materialServices.Insert(material);
             }

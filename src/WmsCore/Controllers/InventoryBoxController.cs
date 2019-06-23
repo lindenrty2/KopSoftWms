@@ -148,8 +148,9 @@ namespace KopSoftWms.Controllers
 
 
         [HttpGet]
-        public IActionResult Detail(string id)
+        public IActionResult Detail(long storeId, string id)
         {
+            ViewData["currentStoreId"] = storeId;
             long searchId = id.ToInt64();
             var model = new Wms_InventryBoxDto();
             if (id.IsEmptyZero())
@@ -172,18 +173,32 @@ namespace KopSoftWms.Controllers
         }
 
         [HttpGet]
-        public IActionResult ListDetail(string id)
+        public async Task<string> DetailList(string id)
         {
-            long searchId = id.ToInt64();
-            var model = new Wms_inventory();
+            long searchId = id.ToInt64(); 
             if (id.IsEmptyZero())
             {
-                return Content("");
+                return PubMessages.E1006_INVENTORYBOX_MISSING.Message;
             }
             else
             {
-                model = _inventoryServices.QueryableToEntity(c => c.InventoryBoxId == searchId);
-                return View(model);
+                var query = _client.Queryable<Wms_inventory, Wms_material,Sys_user>((i,m,u) => new object[] {
+                   JoinType.Left,i.MaterialId==m.MaterialId,
+                   JoinType.Left,i.ModifiedBy==u.UserId 
+                 })
+                .Where((i,m,u) => i.InventoryBoxId == searchId )
+                .Select((i, m ,u) => new
+                {
+                    i.Position,
+                    m.MaterialNo,
+                    m.MaterialOnlyId,
+                    m.MaterialName,
+                    i.Qty, 
+                    u.UserName,
+                    i.ModifiedDate
+                }).MergeTable();
+                var list = await query.ToListAsync();
+                return Bootstrap.GridData(list, list.Count).JilToJson();
             }
         }
 
@@ -193,6 +208,12 @@ namespace KopSoftWms.Controllers
         {
             ViewData["currentStoreId"] = storeId;
             return View(null);
+        }
+
+        [HttpPost]
+        public async Task<RouteData> DoInventoryBoxOut(int size)
+        {
+            return null;
         }
 
         [HttpPost]
@@ -364,7 +385,8 @@ namespace KopSoftWms.Controllers
                      m.MaterialNo,
                      m.MaterialName,
                      PlanInQty = sid.PlanInQty,
-                     ActInQty = sid.ActInQty
+                     ActInQty = sid.ActInQty,
+                     Qty = sidb.Qty
                  }).MergeTable();
 
             var rawList = await query.ToListAsync();
@@ -389,7 +411,7 @@ namespace KopSoftWms.Controllers
                     BeforeQty = (int)inventory.Qty,
                     PlanQty = (int)raw.PlanInQty,
                     ComplateQty = (int)raw.ActInQty,
-                    Qty = (int)raw.PlanInQty - (int)raw.ActInQty
+                    Qty = raw.Qty
                 };
                 resultList.Add(newInventory);
                 rawList.Remove(raw);
@@ -419,7 +441,7 @@ namespace KopSoftWms.Controllers
                     BeforeQty = 0,
                     PlanQty = (int)raw.PlanInQty,
                     ComplateQty = (int)raw.ActInQty,
-                    Qty = (int)raw.PlanInQty - (int)raw.ActInQty
+                    Qty = raw.Qty
                 };
                 resultList.Add(newInventory);
             }

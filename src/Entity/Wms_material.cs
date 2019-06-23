@@ -70,15 +70,7 @@ namespace YL.Core.Entity
         /// Nullable:True
         /// </summary>
         [SugarColumn(DefaultValue = "0", IsNullable = false)]
-        public long WarehouseId { get; set; } = 0;
-
-        /// <summary>
-        /// Desc:安全库存
-        /// Default:
-        /// Nullable:True
-        /// </summary>
-        [SugarColumn(Length = 18, IsNullable = true)]
-        public decimal? Qty { get; set; } 
+        public long WarehouseId { get; set; } = 0; 
 
         /// <summary>
         /// Desc:1 0

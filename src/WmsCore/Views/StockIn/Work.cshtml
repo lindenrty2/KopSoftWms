@@ -8,8 +8,11 @@
 }
 <div id="app" v-cloak>
     <div>
-        <button id="boxOutL" type="button" class="btn btn-link btn-outL margin-left:20px" onclick="app.boxOutL();">料箱出库</button>
-        <button id="scanL" type="button" class="btn btn-link btn-scanL" onclick="app.scanL();" >扫码操作</button>
+        <button id="boxOutL" type="button" class="btn btn-outL margin-left:20px" onclick="app.boxOutL();">料箱出库</button>
+        <button id="scanL" type="button" class="btn btn-scanL" onclick="app.scanL();">扫码操作</button>
+        <span id="ctlOutedBoxList" >
+         
+        </span> 
     </div>
     <table id="bootstraptable" class="table table-bordered text-nowrap table-hover"></table>
 </div>
@@ -128,18 +131,21 @@
                                 }
                                 else if (item.TaskStatus == 3) { //出库完成
                                     html.push(
-                                        '<button id="backL" type="button" class="btn btn-link btn-backL" style="margin-top:-8px;margin-left:-10px;" onclick="app.boxBackL(\'' + item.InventoryBoxTaskId + '\');">料箱[' + item.InventoryBoxName + ']归库</button>'
-                                    );
+                                        '<span class="label label-primary radius">料箱[' + item.InventoryBoxName + ']出库完成</span>'
+                                    ); 
+                                    app.addOutedBox(item.InventoryBoxTaskId, item.InventoryBoxName);
                                 }
                                 else if (item.TaskStatus == 4) { //归库中
                                     html.push(
                                         '<span class="label label-primary radius">料箱[' + item.InventoryBoxName + ']归库中</span>'
                                     );
+                                    app.removeOutedBox(item.InventoryBoxTaskId);
                                 }
                                 else if (item.TaskStatus == 5) { //归库完成
                                     html.push(
                                         '<span class="label label-success radius">料箱[' + item.InventoryBoxName + ']归库完成</span>'
                                     );
+                                    app.removeOutedBox(item.InventoryBoxTaskId);
                                 }
                             } 
                             return html.join('<br/>');
@@ -161,6 +167,14 @@
             },
             watch: {},
             methods: {
+                addOutedBox: function (ibTaskId, ibTaskName) {
+                    $("#ob" + ibTaskId).remove();
+                    $("#ctlOutedBoxList").append('<button id="ob' + ibTaskId + '" type="button" class="btn btn-backL" style="margin-left:3px" onclick="app.boxBackL(\'' + ibTaskId + '\');">料箱[' + ibTaskName + ']归库</button>');
+
+                },
+                removeOutedBox: function (ibTaskId) {
+                    $("#ob" + ibTaskId).remove(); 
+                },
                 boxOutL: function () {
                     yui.layershow("料箱出库", "/InventoryBox/InventoryBoxOut?storeId=@ViewData["currentStoreId"]", 600, 500);
                 },

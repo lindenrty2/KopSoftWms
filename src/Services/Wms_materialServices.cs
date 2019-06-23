@@ -41,13 +41,13 @@ namespace Services
                  .Select((s, t, ut, w, c, u) => new
                  {
                      MaterialId = s.MaterialId.ToString(),
+                     s.MaterialOnlyId,
                      s.MaterialNo,
                      s.MaterialName,
                      w.WarehouseNo,
                      w.WarehouseName,
                      MaterialType = t.DictName,
-                     Unit = ut.DictName,
-                     s.Qty,
+                     Unit = ut.DictName, 
                      s.IsDel,
                      s.Remark,
                      CName = c.UserNickname,
@@ -57,7 +57,7 @@ namespace Services
                  }).MergeTable();
             if (!bootstrap.search.IsEmpty())
             {
-                query.Where((s) => s.MaterialNo.Contains(bootstrap.search) || s.MaterialName.Contains(bootstrap.search));
+                query.Where((s) => s.MaterialNo.Contains(bootstrap.search) || s.MaterialName.Contains(bootstrap.search) || s.MaterialOnlyId.Contains(bootstrap.search) );
             }
             if (!bootstrap.datemin.IsEmpty() && !bootstrap.datemax.IsEmpty())
             {
@@ -93,8 +93,7 @@ namespace Services
                      物料编号 = s.MaterialNo,
                      物料名称 = s.MaterialName,
                      单位类别 = ut.DictName,
-                     物料分类 = t.DictName,
-                     安全库存 = s.Qty,
+                     物料分类 = t.DictName, 
                      仓库编号 = w.WarehouseNo,
                      仓库名称 = w.WarehouseName,
                      备注 = s.Remark,

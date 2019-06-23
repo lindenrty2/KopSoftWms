@@ -21,7 +21,7 @@ namespace YL.Core.Entity
         /// </summary>
         [SugarColumn(IsPrimaryKey = true)] 
         public long RoleMenuId { get; set; }
-
+        
         /// <summary>
         /// Desc:
         /// Default:
@@ -29,6 +29,9 @@ namespace YL.Core.Entity
         /// </summary>
         [SugarColumn(IsNullable = true/*, IsIdentity = true*/)]
         public long? RoleId { get; set; }
+
+        [SugarColumn(IsNullable = true/*, IsIdentity = true*/)]
+        public long WarehouseId { get; set; }
 
         /// <summary>
         /// Desc:

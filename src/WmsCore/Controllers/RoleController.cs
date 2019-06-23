@@ -1,8 +1,10 @@
 ﻿using FluentValidation.Results;
 using IServices;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using SqlSugar;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using YL.Core.Dto;
 using YL.Core.Entity;
@@ -67,7 +69,32 @@ namespace KopSoftWms.Controllers
             //    }).ToList();
             //    ret.Add(permissionMenu);
             //});
-            return BootJsonH(_roleServices.GetMenu());
+
+            Wms_warehouse[] warehouses = _warehouseServices.QueryableToList(x => x.IsDel == DeleteFlag.Normal).ToArray();
+            List<PermissionMenu> menus = _roleServices.GetMenu(); 
+            List<PermissionMenu> warehouseMenus = new List<PermissionMenu>();
+            foreach(Wms_warehouse warehouse in warehouses)
+            {
+                PermissionMenu[] copiedMenus = JsonConvert.DeserializeObject<PermissionMenu[]>(JsonConvert.SerializeObject(menus));
+                copiedMenus.ForEach(x => {
+                    x.Id = $"{warehouse.WarehouseId}|{x.Id}";
+                    x.Name = $"{warehouse.WarehouseName}|{x.Name}";
+                    UpdateMenuId(warehouse.WarehouseId,x.Children.ToArray());
+                } );
+
+                warehouseMenus.AddRange(copiedMenus); 
+            }
+
+            return BootJsonH(warehouseMenus);
+        }
+
+        private void UpdateMenuId(long warehouseId, PermissionMenu[] menus)
+        {
+            menus.ForEach(x => {
+                x.Id = $"{warehouseId}|{x.Id}";
+                x.ParentId = $"{warehouseId}|{x.ParentId}";
+                UpdateMenuId(warehouseId, x.Children.ToArray());
+            });
         }
 
         [HttpGet]
@@ -88,7 +115,11 @@ namespace KopSoftWms.Controllers
                     RoleName = role?.RoleName,
                     RoleType = role?.RoleType,
                     Remark = role?.Remark,
-                    Children = list
+                    Children = list.Select(x => new RoleMenuItemDto() {
+                        MenuId = x.MenuId.ToString(),
+                        RoleId = x.RoleId.ToString(),
+                        WarehouseId = x.WarehouseId.ToString()
+                    }).ToList()
                 };
                 this.ViewData["stores"] = _warehouseServices.Queryable().ToList().ToArray();
                 return View(roles);
@@ -113,7 +144,12 @@ namespace KopSoftWms.Controllers
                     RoleName = role?.RoleName,
                     RoleType = role?.RoleType,
                     Remark = role?.Remark,
-                    Children = list
+                    Children = list.Select(x => new RoleMenuItemDto()
+                    {
+                        MenuId = x.MenuId.ToString(),
+                        RoleId = x.RoleId.ToString(),
+                        WarehouseId = x.WarehouseId.ToString()
+                    }).ToList()
                 };
                 return View(roles);
             }
@@ -121,7 +157,7 @@ namespace KopSoftWms.Controllers
 
         [HttpPost]
         [OperationLog(LogType.addOrUpdate)]
-        public IActionResult AddOrUpdate([FromForm]Sys_role role, [FromForm]string id, [FromForm]string[] menuId)
+        public IActionResult AddOrUpdate([FromForm]Sys_role role, [FromForm]string id, [FromForm]string[] menuIds)
         {
             //int[] menuIds = Array.ConvertAll(menuId, new Converter<string, int>(c => c.ToInt32()));
             //Array.Sort(menuIds);
@@ -142,7 +178,7 @@ namespace KopSoftWms.Controllers
                 {
                     return BootJsonH((false, PubConst.Role2));
                 }
-                var flag = _roleServices.Insert(role, UserDtoCache.UserId, menuId);
+                var flag = _roleServices.Insert(role, UserDtoCache.UserId, menuIds);
                 return BootJsonH(flag.IsSuccess ? (flag.IsSuccess, PubConst.Add1) : (flag.IsSuccess, PubConst.Add2));
             }
             else
@@ -154,7 +190,7 @@ namespace KopSoftWms.Controllers
                 //    return BootJsonH((false, PubConst.Role1));
                 //}
                 role.RoleId = id.ToInt64();
-                var flag = _roleServices.Update(role, UserDtoCache.UserId, menuId);
+                var flag = _roleServices.Update(role, UserDtoCache.UserId, menuIds);
                 return BootJsonH(flag.IsSuccess ? (flag.IsSuccess, PubConst.Update1) : (flag.IsSuccess, PubConst.Update2));
             }
         }

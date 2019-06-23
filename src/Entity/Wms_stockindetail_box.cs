@@ -23,7 +23,11 @@ namespace YL.Core.Entity
         /// </summary>
         [SugarColumn(DefaultValue = "0", IsNullable = false)]
         public long InventoryBoxId { get; set; }
-
+        /// <summary>
+        /// 操作数量
+        /// </summary>
+        [SugarColumn(DefaultValue = "0", IsNullable = false)]
+        public int Qty { get; set; }
         /// <summary>
         /// Desc:
         /// Default:

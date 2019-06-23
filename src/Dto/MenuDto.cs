@@ -6,6 +6,8 @@ namespace YL.Core.Dto
 {
     public class MenuDto
     {
+        public string WarehouseId { get; set; }
+
         public string MenuId { get; set; }
 
         public string MenuName { get; set; }

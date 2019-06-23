@@ -51,16 +51,16 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
-        [SugarColumn(Length = 18, IsNullable = true)]
-        public int? PlanQty { get; set; }
+        [SugarColumn(IsNullable = true)]
+        public int PlanQty { get; set; }
 
         /// <summary>
         /// Desc:实际数量
         /// Default:
         /// Nullable:True
         /// </summary>
-        [SugarColumn(Length = 18, IsNullable = true)]
-        public int? ActQty { get; set; }
+        [SugarColumn(IsNullable = true)]
+        public int ActQty { get; set; }
 
         /// <summary>
         /// Desc:审核人

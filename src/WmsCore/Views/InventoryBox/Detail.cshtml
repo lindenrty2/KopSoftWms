@@ -13,40 +13,7 @@
 @section scripts{
     <script src="~/js/bootstrap-select.min.js"></script>
     <script src="~/js/defaults-zh_CN.min.js"></script>
-    <script>
-        $(function () { 
-            var obj = [{
-                checkbox: true,             //是否显示复选框
-                visible: true
-            },
-            {
-                field: 'Position',
-                title: '格号',
-                visible: false
-            },
-            {
-                field: 'MaterialNo',
-                title: '物料编号',
-                align: 'center',
-                sortable: true
-            },
-            {
-                field: 'Qty',
-                title: '数量',
-                align: 'center',
-                sortable: true
-            },
-            {
-                field: 'ModifiedDate',
-                title: '最后更新时间',
-                align: 'center',
-                sortable: true
-            }];
-            var qParams = {
-            };
-            yui.tableX("bootstraptable", app.list, obj, "InventoryId", true, qParams);
-            
-        });
+    <script> 
          
         var app = new Vue({
             el: "#app",
@@ -55,7 +22,68 @@
                 InventoryBoxNo:"@Model.InventoryBoxNo",
                 InventoryBoxName:"@Model.InventoryBoxName",
                 urlM: '',
-                list: @Html.Raw(Model.Detail.JilToJson())
+                list: @Html.Raw(Model.Detail.JilToJson()),
+                storeId: '@ViewData["currentStoreId"]'
+            },
+            mounted: function () {
+                _self = this;
+                _self.$nextTick(function () {
+                    _self.$refs.storeId = '@ViewData["currentStoreId"]';
+                    _self.$refs.datemin = "1900-01-01";
+                    _self.$refs.datemax = "2099-01-01";
+                    var obj = [{
+                        checkbox: true,             //是否显示复选框
+                        visible: true
+                    },
+                    {
+                        field: 'Position',
+                        title: '格号',
+                        visible: false
+                    },
+                    {
+                        field: 'MaterialNo',
+                        title: '物料编号',
+                        align: 'center',
+                        sortable: true
+                    }, 
+                    {
+                        field: 'MaterialOnlyId',
+                        title: '物料唯一编号',
+                        align: 'center',
+                        sortable: true
+                    },
+                    {
+                        field: 'MaterialName',
+                        title: '物料编号',
+                        align: 'center',
+                        sortable: true
+                    }, 
+                    {
+                        field: 'Qty',
+                        title: '数量',
+                        align: 'center',
+                        sortable: true
+                    },
+                    {
+                        field: 'UserName',
+                        title: '更新者',
+                        align: 'center',
+                        sortable: true
+                    },
+                    {
+                        field: 'ModifiedDate',
+                        title: '最后更新时间',
+                        align: 'center',
+                        sortable: true,
+                        formatter: function (value, row, index) {
+                            return _self.jsonDateFormat(value);
+                        }
+                    }];             
+                    var qParams = {
+                        Id: "@Model.InventoryBoxId"
+                    };
+                    yui.table("bootstraptable", "/InventoryBox/DetailList", obj, "GET", "InventoryId", true, qParams); 
+                })
             },
             computed: {
                 count: function () {
@@ -63,7 +91,6 @@
                 }
             },
             watch: {},
-            mounted: function () {},
             methods: {}
         });
     </script>

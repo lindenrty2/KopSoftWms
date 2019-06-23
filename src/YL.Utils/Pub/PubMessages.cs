@@ -14,7 +14,7 @@ namespace YL.Utils.Pub
         public static MessageItem E1003_Unit_NotFound = new MessageItem(-1003, "找不到单位定义");
         public static MessageItem E1004_WarehouseType_NotFound = new MessageItem(-1004, "找不到入库类型定义");
         public static MessageItem E1005_MaterialNo_NotFound = new MessageItem(-1005, "找不到物料编号");
-
+        public static MessageItem E1006_INVENTORYBOX_MISSING = new MessageItem(-1006, "缺少料箱编号");
 
         public static MessageItem I2000_STOCKIN_SCAN_SCCUESS = new MessageItem(2000, "入库扫码关联成功");
         public static MessageItem I2001_STOCKOUT_SCAN_SCCUESS = new MessageItem(2000, "入库扫码关联成功");

@@ -61,7 +61,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
-        [SugarColumn(Length = 18, IsNullable = true)]
+        [SugarColumn(IsNullable = true)]
         public int? PlanInQty { get; set; }
 
         /// <summary>
@@ -69,7 +69,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
-        [SugarColumn(Length = 18, IsNullable = true)]
+        [SugarColumn(IsNullable = true)]
         public int? ActInQty { get; set; }
 
 

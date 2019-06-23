@@ -21,5 +21,7 @@ namespace YL.Core.Dto
 
         public int ActInQty { get; set; }
 
+        public int Qty { get; set; }
+
     }
 }

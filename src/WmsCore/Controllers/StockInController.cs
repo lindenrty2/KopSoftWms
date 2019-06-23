@@ -174,24 +174,32 @@ namespace KopSoftWms.Controllers
                     if (detail == null) { return YL.Core.Dto.RouteData.From(PubMessages.E2001_STOCKINDETAIL_NOTFOUND,$"MaterialId='{material.MaterialId}'"); }
                     if (detail.Status == StockInStatus.task_finish.ToByte()) { return YL.Core.Dto.RouteData.From(PubMessages.E2002_STOCKINDETAIL_ALLOW_FINISHED); }
 
-                    Wms_stockindetail_box box = null;
-                    if(_stockindetailboxServices.IsAny(x => x.InventoryBoxTaskId == inventoryBoxTask.InventoryBoxTaskId && x.StockinDetailId == detail.StockInDetailId))
+                    Wms_stockindetail_box box = _stockindetailboxServices.QueryableToEntity(x => x.InventoryBoxTaskId == inventoryBoxTask.InventoryBoxTaskId && x.StockinDetailId == detail.StockInDetailId);
+                    if (box != null)
                     {
-                        continue;
-                    }
-                    box = new Wms_stockindetail_box()
-                    {
-                        DetailBoxId = PubId.SnowflakeId,
-                        InventoryBoxTaskId = inventoryBoxTask.InventoryBoxTaskId,
-                        InventoryBoxId = inventoryBox.InventoryBoxId,
-                        StockinDetailId = detail.StockInDetailId,
-                        Remark = remark,
-                        CreateDate = DateTime.Now,
-                        CreateBy = UserDto.UserId
-                    };
-                    
-                    _stockindetailboxServices.Insert(box);
+                        box.Qty += material.Qty;
 
+                        if (!_stockindetailboxServices.UpdateEntity(box))
+                        {
+                            return YL.Core.Dto.RouteData.From(PubMessages.E0002_UPDATE_COUNT_FAIL);
+                        }
+                    }
+                    else
+                    {
+                        box = new Wms_stockindetail_box()
+                        {
+                            DetailBoxId = PubId.SnowflakeId,
+                            InventoryBoxTaskId = inventoryBoxTask.InventoryBoxTaskId,
+                            InventoryBoxId = inventoryBox.InventoryBoxId,
+                            StockinDetailId = detail.StockInDetailId,
+                            Qty = material.Qty,
+                            Remark = remark,
+                            CreateDate = DateTime.Now,
+                            CreateBy = UserDto.UserId
+                        };
+
+                        _stockindetailboxServices.Insert(box);
+                    }
                     if (detail.Status == StockInStatus.task_confirm.ToByte())
                     {
                         detail.Status = StockInStatus.task_working.ToByte();
@@ -228,7 +236,7 @@ namespace KopSoftWms.Controllers
             if(detail == null)
             {
                 return RouteData<Wms_StockInMaterialDetailDto>.From(PubMessages.E2015_STOCKIN_HASNOT_MATERIAL);
-            }
+            } 
             Wms_StockInMaterialDetailDto detailDto = new Wms_StockInMaterialDetailDto()
             {
                 StockInId = detail.StockInId.ToString(),
@@ -237,7 +245,9 @@ namespace KopSoftWms.Controllers
                 MaterialNo = material.MaterialNo,
                 MaterialName = material.MaterialName,
                 PlanInQty = (int)detail.PlanInQty,
-                ActInQty = (int)detail.ActInQty
+                ActInQty = (int)detail.ActInQty,
+                Qty = 0
+
             };
             return RouteData<Wms_StockInMaterialDetailDto>.From(detailDto);
         }

@@ -337,7 +337,7 @@
                     }
                 },
                 ShowDetailL: function (val) { 
-                    yui.layershow("料箱详细", "/InventoryBox/Detail?id=" + val, 600, 500);
+                    yui.layershow("料箱详细", "/InventoryBox/Detail?storeId=@ViewData["currentStoreId"]&id=" + val, 1000, 800);
                 },
                 OutL: function (val) {
                     var _self = this;

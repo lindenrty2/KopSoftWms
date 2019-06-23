@@ -14,6 +14,15 @@ namespace YL.Core.Dto
         public string RoleType { get; set; }
         public string Remark { get; set; }
 
-        public List<Sys_rolemenu> Children { get; set; }
+        public List<RoleMenuItemDto> Children { get; set; }
+    }
+
+    public class RoleMenuItemDto
+    {
+        public string RoleId { get; set; }
+         
+        public string WarehouseId { get; set; }
+         
+        public string MenuId { get; set; }
     }
 }

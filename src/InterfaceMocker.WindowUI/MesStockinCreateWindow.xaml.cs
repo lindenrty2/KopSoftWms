@@ -72,8 +72,8 @@ namespace InterfaceMocker.WindowUI
         { 
             IEnumerable<OutsideMaterialDto> newItem = new OutsideMaterialDto[] { new OutsideMaterialDto()
                 {
-                    SuppliesOnlyId =  null,
-                    SuppliesId = "TPY01-" + DateTime.Now.ToString("yyyyMMddHHmmss"),
+                    SuppliesOnlyId =  "TPY01-" + DateTime.Now.ToString("yyyyMMddHHmmss"),
+                    SuppliesId = null,
                     SuppliesName = "物料-" + DateTime.Now.ToString("yyyyMMddHHmmss"),
                     SuppliesNumber = 10,
                     SuppliesType = "型号A",

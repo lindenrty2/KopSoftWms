@@ -63,10 +63,11 @@
                 <el-table-column label="物料名" prop="materialName" align="center"></el-table-column>
                 <el-table-column label="料箱现存数" prop="beforeQty" align="center"></el-table-column>
                 <el-table-column label="计划入库数" prop="planQty" align="center"></el-table-column>
-                <el-table-column label="已入库数" prop="complateQty" align="center"></el-table-column>
+                <el-table-column label="已入库数" prop="complateQty" align="center"></el-table-column> 
                 <el-table-column label="入库数量" align="center">
                     <template slot-scope="scope">
-                        <el-input v-model="scope.row.qty" :maxlength=10 @@change="evidChangeLast(scope.row.qty)"></el-input>
+                        <!--el-input v-model="scope.row.qty" :maxlength=10 @@change="evidChangeLast(scope.row.qty)"></!--el-input-->
+                        <input type="number" style="text-align:center;width:100px" v-model="scope.row.qty" min="1" value="1">
                     </template>
                 </el-table-column>
                 <el-table-column label="操作">

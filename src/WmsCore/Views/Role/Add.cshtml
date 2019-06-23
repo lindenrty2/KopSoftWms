@@ -33,34 +33,32 @@
                     <input v-on:click="inverse" class="btn btn-primary radius" type="button" value="反选">
                 </div>
             </div>
-            @{
-                foreach (Wms_warehouse warehouse in (Wms_warehouse[])ViewData["stores"])
-                {
-                    <div class="form-group">
-                        <label class="control-label col-sm-2">@warehouse.WarehouseName 角色：</label>
-                        <div class="col-sm-10">
-                            <dl class="permission-list" v-for="item in list">
-                                <dt>
+            
+            <div class="form-group">
+                <label class="control-label col-sm-2">角色：</label>
+                <div class="col-sm-10">
+                    <dl class="permission-list" v-for="item in list">
+                        <dt>
+                            <label>
+                                <input type="checkbox" v-on:click="checkMenu(item,item.Children)" v-model="checkedNames" :value="item.Id">
+                                {{item.Name}}
+                            </label>
+                        </dt>
+                        <dd>
+                            <dl class="cl permission-list2">
+                                <dt v-for="item2 in item.Children">
                                     <label>
-                                        <input type="checkbox" v-on:click="checkMenu(item,item.Children)" v-model="checkedNames" :value="item.Id">
-                                        {{item.Name}}
+                                        <input type="checkbox" v-model="checkedNames" :value="item2.Id">
+                                        {{item2.Name}}
                                     </label>
                                 </dt>
-                                <dd>
-                                    <dl class="cl permission-list2">
-                                        <dt v-for="item2 in item.Children">
-                                            <label>
-                                                <input type="checkbox" v-model="checkedNames" :value="item2.Id">
-                                                {{item2.Name}}
-                                            </label>
-                                        </dt>
-                                    </dl>
-                                </dd>
                             </dl>
-                        </div>
-                    </div>
-                }
-            }
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+              
+           
             <div class="box-footer">
                 <div class="pull-right box-tools">
                     <input v-on:click="addL" class="btn btn-primary radius" type="submit" v-model="submit">
@@ -145,7 +143,7 @@
                     var arr = [];
                     if (obj.length > 0) {
                         for (var item in obj) {
-                            arr.push(obj[item].MenuId.toString());
+                            arr.push(obj[item].WarehouseId.toString() + "|" + obj[item].MenuId.toString());
                         }
                     }
                     _self.checkedNames = arr;
@@ -248,7 +246,7 @@
                     });
                     var data = {
                         id: _self.RoleId,
-                        menuId: _self.distinct(_self.checkedNames),
+                        menuIds: _self.distinct(_self.checkedNames),
                         RoleName: _self.RoleName,
                         Remark: _self.Remark
                     };

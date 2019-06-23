@@ -159,7 +159,8 @@ namespace Services
                        list.Add(new Sys_rolemenu
                        {
                            CreateBy = userId,
-                           MenuId = item.ToInt64(),
+                           WarehouseId = item.Split('|')[0].ToInt64(),
+                           MenuId = item.Split('|')[1].ToInt64(),
                            RoleId = roleId.RoleId,
                            RoleMenuId = PubId.SnowflakeId
                        });
@@ -169,21 +170,21 @@ namespace Services
            });
         }
 
-        public DbResult<bool> Update(Sys_role role, long userId, string[] menuId)
+        public DbResult<bool> Update(Sys_role role, long userId, string[] menuIds)
         {
             var list = _rolemenuServices.QueryableToList(c => c.RoleId == role.RoleId);
             string idsu = "";  //数据库中的Id;
             list.ForEach((m) =>
             {
-                idsu += m.MenuId + ",";
+                idsu += $"{m.WarehouseId}|{m.MenuId}" + ",";
             });
             var arr = idsu.TrimEnd(',').ToSplit(',');
             //menuId 页面上的菜单Id;
             role.ModifiedBy = userId;
             role.ModifiedDate = DateTimeExt.DateTime;
-            //role.RoleType = "#";
-            string[] pageId = arr.Union(menuId).Except(menuId).ToArray(); //delete
-            string[] dataId = menuId.Union(arr).Except(arr).ToArray();  //insert
+            //role.RoleType = "#"; 
+            string[] pageId = arr.Union(menuIds).Except(menuIds).ToArray(); //delete
+            string[] dataId = menuIds.Union(arr).Except(arr).ToArray();  //insert
             return _repository.UseTran(() =>
             {
                 _repository.Update(role);
@@ -192,7 +193,10 @@ namespace Services
                 {
                     foreach (var item in pageId)
                     {
-                        array.Add(list.Where(c => c.RoleId == role.RoleId && c.MenuId == item.ToInt64()).SingleOrDefault().RoleMenuId);
+                        if (string.IsNullOrEmpty(item)) continue;
+                        long warehouseId = item.Split('|')[0].ToInt64();
+                        long menuId = item.Split('|')[1].ToInt64();
+                        array.Add(list.Where(c => c.RoleId == role.RoleId && c.MenuId == menuId).SingleOrDefault().RoleMenuId);
                     }
                     _rolemenuServices.Delete(array.ToArray());
                 }
@@ -201,10 +205,14 @@ namespace Services
                     var roleList = new List<Sys_rolemenu>();
                     foreach (var item in dataId)
                     {
+                        if (string.IsNullOrEmpty(item)) continue;
+                        long warehouseId = item.Split('|')[0].ToInt64();
+                        long menuId = item.Split('|')[1].ToInt64();
                         roleList.Add(new Sys_rolemenu
                         {
                             CreateBy = userId,
-                            MenuId = item.ToInt64(),
+                            WarehouseId = warehouseId,
+                            MenuId = menuId,
                             RoleId = role.RoleId,
                             RoleMenuId = PubId.SnowflakeId
                         });
