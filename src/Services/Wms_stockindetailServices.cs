@@ -50,26 +50,30 @@ namespace Services
             query.Where(c => c.StockInId == pid).OrderBy(c => c.CreateDate, OrderByType.Desc) 
                 ;
 
-            //var list = query.ToList().Select(item => new {
-            //    Detail = item,
-            //    Tasks =  _client.Queryable<Wms_InventoryBoxTask, Wms_inventorybox, Sys_user>(
-            //        (st, ib, ou) => new object[] {
-            //                 JoinType.Left,st.InventoryBoxId == ib.InventoryBoxId,
-            //                 JoinType.Left,st.OperaterId == ou.UserId
+            var list = query.ToList().Select(item => new
+            {
+                Detail = item,
+                Tasks = _client.Queryable<Wms_stockindetail_box, Wms_inventoryboxTask, Wms_inventorybox, Sys_user>(
+                    (stb, st, ib, ou) => new object[] {
+                             JoinType.Left,stb.InventoryBoxTaskId == st.InventoryBoxTaskId,
+                             JoinType.Left,st.InventoryBoxId == ib.InventoryBoxId,
+                             JoinType.Left,st.OperaterId == ou.UserId
 
-            //        })
-            //        .Where((st, ib, ou) => st.InventoryBoxTaskId.ToString() == item.StockInDetailId)
-            //        .Select((st, ib, ou) => new {
-            //            StockInTaskId = st.InventoryBoxTaskId.ToString(),
-            //            InventoryBoxId = st.InventoryBoxId.ToString(),
-            //            st.Status,
-            //            ib.InventoryBoxNo,
-            //            ib.InventoryBoxName,
-            //            ou.UserNickname
-            //        })
-            //        .MergeTable().ToList()
-            //});
-            var list = query.ToList();
+                    })
+                    .Where((stb, st, ib, ou) => stb.StockinDetailId.ToString() == item.StockInDetailId)
+                    .Select((stb, st, ib, ou) => new
+                    {
+                        InventoryBoxTaskId = st.InventoryBoxTaskId.ToString(), 
+                        InventoryBoxId = st.InventoryBoxId.ToString(), 
+                        TaskStatus = (int)st.Status,
+                        ib.InventoryBoxNo,
+                        ib.InventoryBoxName,
+                        Status = (int)ib.Status,
+                        ou.UserNickname
+                    })
+                    .MergeTable().ToList()
+            });
+            //var list = query.ToList();
             return Bootstrap.GridData(list, list.Count()).JilToJson();
         }
     }

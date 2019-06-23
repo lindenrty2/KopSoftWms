@@ -62,7 +62,7 @@ namespace YL.Core.Entity
         /// Nullable:True
         /// </summary>
         [SugarColumn(Length = 18, IsNullable = true)]
-        public decimal? PlanInQty { get; set; }
+        public int? PlanInQty { get; set; }
 
         /// <summary>
         /// Desc:实际数量
@@ -70,7 +70,7 @@ namespace YL.Core.Entity
         /// Nullable:True
         /// </summary>
         [SugarColumn(Length = 18, IsNullable = true)]
-        public decimal? ActInQty { get; set; }
+        public int? ActInQty { get; set; }
 
 
         /// <summary>

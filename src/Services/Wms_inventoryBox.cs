@@ -47,6 +47,7 @@ namespace Services
                      sr.StorageRackNo,
                      sr.StorageRackName,
                      ib.IsDel,
+                     Status = (int)ib.Status,
                      ib.Remark,
                      CName = su.UserNickname,
                      ib.CreateDate,

@@ -180,9 +180,13 @@
                         sortable: true,
                         formatter: function (value, row, index) {
                             var html = [];
-                            html.push('<button id="ViewDetailL" type="button" class="btn btn-link" style="margin-top:-8px;margin-left:-10px;">详细</button>'
-                                , '<button id="OutL" type="button" class="btn btn-link" style="margin-top:-8px;margin-left:-10px;">出库</button>'
-                            );
+                            html.push('<button id="ViewDetailL" type="button" class="btn btn-link" style="margin-top:-8px;margin-left:-10px;">详细</button>');
+                            if (row.Status == 1) {
+                                html.push('<button id="OutL" type="button" class="btn btn-link" style="margin-top:-8px;margin-left:-10px;">出库</button>');
+                            }
+                            else if(row.Status == 3){
+                                html.push('<button id="BackL" type="button" class="btn btn-link" style="margin-top:-8px;margin-left:-10px;">归库</button>');
+                            }
                             return html.join('');
                         },
                         events: {
@@ -191,6 +195,9 @@
                             },
                             'click #OutL': function (e, value, row, index) {
                                 app.OutL(row.InventoryBoxId);
+                            },
+                            'click #BackL': function (e, value, row, index) {
+                                app.BackL(row.InventoryBoxId);
                             }
                         },
                     },
@@ -223,6 +230,32 @@
                         title: '货架名称',
                         align: 'center',
                         sortable: true
+                    },
+                    {
+                        field: 'Status',
+                        title: '状态',
+                        align: 'center',
+                        sortable: true,
+                        formatter: function (value, row, index) {
+                            if (value == 0) {
+                                return "未部署";
+                            }
+                            else if (value == 1) {
+                                return "在库";
+                            }
+                            else if (value == 2) {
+                                return "出库中";
+                            }
+                            else if (value == 3) {
+                                return "出库完成";
+                            }
+                            else if (value == 4) {
+                                return "归库中";
+                            }
+                            else {
+                                return "异常";
+                            }
+                        }
                     },
                     {
                         field: 'Remark',
@@ -305,7 +338,49 @@
                 },
                 ShowDetailL: function (val) { 
                     yui.layershow("料箱详细", "/InventoryBox/Detail?id=" + val, 600, 500);
-                }
+                },
+                OutL: function (val) {
+                    var _self = this;
+                    var index = layer.confirm("您确定要出库吗？", { btn: ["确定", "取消"] }, function () { 
+                        var data = {
+                            inventoryBoxId: val,
+                        };
+                        yui.$axiospostform('/InventoryBox/DoInventoryBoxOut', data)
+                            .then(function (response) {
+                                if (response.data.isSccuess) {
+                                    layer.msg(response.data.message, { icon: 1, time: 1000 }); 
+                                } else {
+                                    layer.msg(response.data.message || errorMsg, { icon: 5 }); 
+                                }
+                                _self.searchL();
+                                layer.close(index);
+                            })
+                            .catch(function (error) {
+                                layer.close(index);
+                            });
+                    });
+                },
+                BackL: function (val) {
+                    var _self = this;
+                    var index = layer.confirm("您确定要归库吗？", { btn: ["确定", "取消"] }, function () {
+                        var data = {
+                            inventoryBoxId: val,
+                        };
+                        yui.$axiospostform('/InventoryBox/DoInventoryBoxBack', data)
+                            .then(function (response) {
+                                if (response.data.isSccuess) {
+                                    layer.msg(response.data.message, { icon: 1, time: 1000 });
+                                } else {
+                                    layer.msg(response.data.message || errorMsg, { icon: 5 });
+                                }
+                                _self.searchL();
+                                layer.close(index);
+                            })
+                            .catch(function (error) {
+                                layer.close(index);
+                            });
+                    });
+                },
             }
         });
     </script>

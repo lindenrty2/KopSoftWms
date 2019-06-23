@@ -1,4 +1,5 @@
-﻿@{
+﻿@using YL.Utils.Extensions;
+@{
     Layout = "_LayoutH";
     @model Wms_inventorybox
 }
@@ -38,6 +39,18 @@
                         <template v-for="item in slist">
                             <option :value="item.value">{{item.name}}</option>
                         </template>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label col-sm-2">状态(请勿轻易修改)</label>
+                <div class="col-sm-10">
+                    <select class="form-control" v-model="Status" size="1">
+                        <option value="0">未部署</option>
+                        <option value="1">在库</option>
+                        <option value="2">出库中</option>
+                        <option value="3">出库完成</option>
+                        <option value="4">归库中</option>
                     </select>
                 </div>
             </div>
@@ -86,13 +99,14 @@
             data: {
                 submit: "添加",
                 InventoryBoxId:"@Model.InventoryBoxId",
-                InventoryBoxNo: "@Model.InventoryBoxNo", 
-                InventoryBoxName: "@Model.InventoryBoxName", 
-                Size: "@Model.Size", 
+                InventoryBoxNo: "@Model.InventoryBoxNo",
+                InventoryBoxName: "@Model.InventoryBoxName",
+                Size: "@Model.Size",
                 Remark: "@Model.Remark",
-                WarehouseId: "@Model.WarehouseId", 
+                WarehouseId: "@Model.WarehouseId",
                 ReservoirAreaId: "@Model.ReservoirAreaId",
-                StoragerackId:"@Model.StorageRackId",
+                StoragerackId: "@Model.StorageRackId",
+                Status:@Model.Status.ToByte(),
                 rlist: [],//库区
                 slist: []//货架
             },
@@ -156,11 +170,12 @@
                     var data = {
                         id: _self.InventoryBoxId,
                         InventoryBoxNo: _self.InventoryBoxNo,
-                        InventoryBoxName: _self.InventoryBoxName, 
+                        InventoryBoxName: _self.InventoryBoxName,
                         Size: _self.Size,
                         WarehouseId: _self.WarehouseId,
                         ReservoirAreaId: _self.ReservoirAreaId,
                         StoragerackId: _self.StoragerackId,
+                        Status: _self.Status,
                         Remark: _self.Remark
                     };
                     yui.$axiospostform('/InventoryBox/AddOrUpdate', data)

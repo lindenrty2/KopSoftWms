@@ -191,7 +191,7 @@ namespace Services
                         CheckNull.ArgumentIsNullException(PubConst.StockOut2);
                     }
                     //update
-                    exist.Qty = exist.Qty - c.ActOutQty;
+                    exist.Qty = (int)exist.Qty - (int)c.ActOutQty;
                     exist.ModifiedBy = userId;
                     exist.ModifiedDate = DateTimeExt.DateTime;
                     _client.Updateable(exist).ExecuteCommand();

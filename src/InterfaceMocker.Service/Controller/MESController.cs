@@ -1,13 +1,17 @@
-﻿using InterfaceMocker.Service.Do;
+﻿using EventBus;
+using InterfaceMocker.Service.Do;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.ServiceModel;
+using YL.Core.Dto;
 
 namespace InterfaceMocker.Service
 { 
     public class MESController : Controller , IMESController
-    { 
+    {
+        public static SimpleEventBus _eventBus = SimpleEventBus.GetDefaultEventBus();
         [HttpGet]
         public IActionResult GetMaterialInfo(int rfid)
         {
@@ -26,20 +30,23 @@ namespace InterfaceMocker.Service
         }
 
         [HttpPost]
-        public IActionResult ConfirmBalanceMES(dynamic obj)
+        public OutSideStockInResponseResult ConfirmBalanceMES(OutSideStockInResponse obj)
         {
-            RetValue retModel = new RetValue();
-            retModel.Returncode = Convert.ToString("1");
-            return Ok(retModel);
+            OutSideStockInResponseResult retModel = new OutSideStockInResponseResult();
+            retModel.WarehousingId = obj.WarehousingId;
+            retModel.IsNormalExecution = true;
+            _eventBus.Post(new KeyValuePair<OutSideStockInResponse, OutSideStockInResponseResult>(obj, retModel), TimeSpan.Zero);
+            return retModel;
         }
 
         [HttpPost]
-        public IActionResult ConfirmOutStockMES(dynamic obj)
+        public OutSideStockOutResponseResult ConfirmOutStockMES(OutSideStockOutResponse obj)
         {
-            RetValue retModel = new RetValue();
-            retModel.Returncode = Convert.ToString("1");
-
-            return Ok(retModel);
+            OutSideStockOutResponseResult retModel = new OutSideStockOutResponseResult();
+            retModel.WarehouseEntryId = obj.WarehouseEntryId;
+            retModel.IsNormalExecution = true;
+            _eventBus.Post(new KeyValuePair<OutSideStockOutResponse, OutSideStockOutResponseResult>(obj, retModel), TimeSpan.Zero);
+            return retModel;
         }
     }
 
@@ -50,9 +57,9 @@ namespace InterfaceMocker.Service
         IActionResult GetMaterialInfo(int rfid);
 
         [OperationContract]
-        IActionResult ConfirmBalanceMES(object obj);
+        OutSideStockInResponseResult ConfirmBalanceMES(OutSideStockInResponse obj);
 
         [OperationContract]
-        IActionResult ConfirmOutStockMES(object obj);
+        OutSideStockOutResponseResult ConfirmOutStockMES(OutSideStockOutResponse obj);
     }
 }

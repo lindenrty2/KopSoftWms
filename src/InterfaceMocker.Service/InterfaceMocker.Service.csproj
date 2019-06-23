@@ -5,6 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\Dto\OutsideMaterialDto.cs" Link="Do\OutsideMaterialDto.cs" />
+    <Compile Include="..\Dto\OutsideStockInDto.cs" Link="Do\OutsideStockInDto.cs" />
+    <Compile Include="..\Dto\OutsideStockOutDto.cs" Link="Do\OutsideStockOutDto.cs" />
     <Compile Include="..\WmsCore\Outside\IWCSApiData.cs" Link="Do\IWCSApiData.cs" />
     <Compile Include="..\YL.Utils\Pub\MessageItem.cs" Link="Do\MessageItem.cs" />
   </ItemGroup>

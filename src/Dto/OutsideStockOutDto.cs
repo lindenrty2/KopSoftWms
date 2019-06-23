@@ -108,7 +108,7 @@ namespace YL.Core.Dto
         /// <summary>
         /// 入库单编号
         /// </summary>
-        public string WarehousingId { get; set; }
+        public string WarehouseEntryId { get; set; }
         /// <summary>
         /// 是否正常接收
         /// </summary>

@@ -57,7 +57,7 @@
             <DataGrid.Columns>
                 <DataGridCheckBoxColumn Binding="{Binding IsActive}" Width="40"/>
                 <DataGridTextColumn Header="物料唯一编号(SuppliesOnlyId)" Binding="{Binding SuppliesOnlyId}" Width="100" />
-                <DataGridTextColumn Header="物料编号/图号(SuppliesId)" Binding="{Binding SuppliesId}" Width="100" />
+                <DataGridComboBoxColumn x:Name="colSupplies" Header="物料编号/图号(SuppliesId)" SelectedValueBinding="{Binding SuppliesId}" ></DataGridComboBoxColumn>
                 <DataGridTextColumn Header="物料名称(SuppliesName)" Binding="{Binding SuppliesName}" Width="100" />
                 <DataGridComboBoxColumn Header="型号(SuppliesType)" SelectedValueBinding="{Binding SuppliesType}" >
                     <DataGridComboBoxColumn.ItemsSource>
@@ -82,8 +82,9 @@
             </DataGrid.Columns>
         </DataGrid>
 
-        <StackPanel Grid.Row="7" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center">
+        <StackPanel Grid.Row="7" Grid.ColumnSpan="3" Orientation="Horizontal" HorizontalAlignment="Stretch">
             <Button Width="100" Content="添加物料" Click="AddMaterial_Click" />
+            <Button Margin="20,0,0,0" Width="100" Content="添加自制件" Click="AddSingleMaterial_Click" />
             <Button Margin="20,0,0,0" Width="100" Content="确定" Click="Confirm_Click" />
             <Button Margin="20,0,0,0" Width="100" Content="取消" Click="Cancel_Click" />
         </StackPanel>

@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using WMSCore.Outside;
+using YL.Core.Dto;
 
 namespace InterfaceMocker.WindowUI
 {
@@ -41,7 +42,7 @@ namespace InterfaceMocker.WindowUI
             {
                 return;
             }
-            MesStockinTaskControl taskControl = new MesStockinTaskControl(window.Data);
+            TaskItemControl taskControl = new TaskItemControl(new MesStockinTaskItemViewModel(window.Data));
             ctlMESTasks.Children.Add(taskControl);
 
         }
@@ -59,10 +60,21 @@ namespace InterfaceMocker.WindowUI
         [EventSubscriber]
         public void HandleEvent(KeyValuePair<OutStockInfo, CreateOutStockResult> args)
         {
-            this.Dispatcher.Invoke(() => {
-                WCSOutStockTaskControl taskControl = new WCSOutStockTaskControl(args.Key, args.Value);
+            this.Dispatcher.Invoke((Action)(() => { 
+                TaskItemControl taskControl = new TaskItemControl(new WCSOutStockTaskItemViewModel(args.Key, args.Value));
                 ctlWCSTasks.Children.Add(taskControl);
-            });            
+            }));
+            
         }
+
+        [EventSubscriber]
+        public void HandleEvent(KeyValuePair<BackStockInfo, CreateBackStockResult> args)
+        {
+            this.Dispatcher.BeginInvoke((Action)(() => {
+                TaskItemControl taskControl = new TaskItemControl(new WCSBackStockTaskItemViewModel(args.Key, args.Value));
+                ctlWCSTasks.Children.Add(taskControl);
+            })); 
+        }
+
     }
 }

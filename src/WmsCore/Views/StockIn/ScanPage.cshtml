@@ -5,7 +5,8 @@
 @section styles{
     <style>
         .group-header {
-            margin: 8px;
+            width:100%;
+            height:32px;
             background: #3c8dbc;
             color: white;
         }
@@ -14,12 +15,12 @@
         }
     </style>
     <link rel="stylesheet" href="~/css/bootstrap-select.min.css" />
-    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="~/css/vue.element.min.css">
 }
 <div id="app" v-cloak>
     <div class="form-group">
         <div class="group-header">
-            <label class="control-label col-sm-2">入库单信息区</label>
+            <label class="control-label ">入库单信息区</label>
         </div>
         <div class="group-body">
             <table>
@@ -52,7 +53,7 @@
     <form class="form-horizontal" onsubmit="return false">
         <div >
             <div class="group-header">
-                <label class="control-label col-sm-2">操作区</label>
+                <label class="control-label">操作区</label>
             </div>
             <div class="group-body">
                 <label class="control-label col-sm-2" >输入：</label>
@@ -61,7 +62,7 @@
         </div>
         <div >
             <div class="group-header">
-                <label class="control-label col-sm-2">料箱信息区</label>
+                <label class="control-label">料箱信息区</label>
             </div>
             <div class="group-body">
                 <label class="control-label col-sm-2">编号：</label>
@@ -71,7 +72,7 @@
         </div>
         <div >
             <div class="group-header">
-                <label class="control-label col-sm-2">物料信息区</label>
+                <label class="control-label">物料信息区</label>
             </div>
             <div class="group-body">
                 <el-table :data="tableData"
@@ -110,7 +111,7 @@
 @section scripts{
     <script src="~/js/bootstrap-select.min.js"></script>
     <script src="~/js/defaults-zh_CN.min.js"></script>
-    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <script src="~/js/vue.element.min.js"></script>
     <script>
         var app = new Vue({
             el: "#app",
@@ -156,7 +157,7 @@
                             layer.msg("料箱查询发生错误" + res, { icon: 2 });
                         });
                     }
-                    else if (inputNo[0] == 'B') {
+                    else {
                         var url = "/StockIn/SearchMaterial?storeId=@ViewData["currentStoreId"]&stockInId=@Model.StockInId&materialNo=" + inputNo;
                         yui.$axiosget(url).then(function (res) {
                             if (res.data.data == null) { 
@@ -202,7 +203,7 @@
                     yui.$axiospostform('/StockIn/DoScanComplate', data)
                         .then(function (response) {
                             if (response.data.isSccuess) {
-                                parent.refreshL();
+                                parent.app.refreshL();
                                 layer.msg("", { icon: 1, time: 1000 });
                                 setTimeout(function () {
                                     yui.layer_close3();

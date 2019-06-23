@@ -166,10 +166,10 @@
     <Content Update="Views\StockIn\ScanPage.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="Views\StockIn\InventoryBoxBack.cshtml">
+    <Content Update="Views\InventoryBox\InventoryBoxBack.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="Views\StockIn\InventoryBoxOut.cshtml">
+    <Content Update="Views\InventoryBox\InventoryBoxOut.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="Views\StockIn\Detail.cshtml">

@@ -99,7 +99,7 @@ namespace Services
                         CheckNull.ArgumentIsNullException(PubConst.StockOut2);
                     }
                     //update
-                    exist.Qty = exist.Qty - c.ActQty;
+                    exist.Qty = exist.Qty - (int)c.ActQty;
                     exist.ModifiedBy = userId;
                     exist.ModifiedDate = DateTimeExt.DateTime;
                     _client.Updateable(exist).ExecuteCommand();
@@ -112,12 +112,12 @@ namespace Services
                             CreateBy = userId,
                             InventoryId = PubId.SnowflakeId,
                             MaterialId = c.MaterialId,
-                            Qty = c.ActQty,
+                            Qty = (int)c.ActQty,
                         }).ExecuteCommand();
                     }
                     else
                     {
-                        exist.Qty += c.ActQty;
+                        exist.Qty += (int)c.ActQty;
                         exist.ModifiedBy = userId;
                         exist.ModifiedDate = DateTimeExt.DateTime;
                         _client.Updateable(exist).ExecuteCommand();

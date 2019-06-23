@@ -140,79 +140,6 @@ namespace KopSoftWms.Controllers
             return Content(workList);
         }
 
-        [HttpGet]
-        public IActionResult InventoryBoxOut( long storeId)
-        {
-            ViewData["currentStoreId"] = storeId;
-            return View(null);
-        }
-
-        [HttpPost]
-        public async Task<RouteData> DoInventoryBoxOut(long inventoryBoxId)
-        {
-            try
-            {
-                _client.BeginTran(); 
-
-                Wms_inventorybox inventoryBox = _inventoryBoxServices.QueryableToEntity(x => x.InventoryBoxId == inventoryBoxId);
-                if (inventoryBox == null) { return YL.Core.Dto.RouteData.From(PubMessages.E2003_INVENTORYBOX_NOTFOUND); }
-                if (inventoryBox.Status != InventoryBoxStatus.InPosition) { return YL.Core.Dto.RouteData.From(PubMessages.E2004_INVENTORYBOX_NOTINPOSITION); }
-
-                Wms_inventoryboxTask task = new Wms_inventoryboxTask()
-                {
-                    InventoryBoxTaskId = PubId.SnowflakeId,
-                    InventoryBoxId = inventoryBoxId,
-                    ReservoirareaId = (long)inventoryBox.ReservoirAreaId,
-                    StoragerackId = (long)inventoryBox.StorageRackId,
-                    Data = null,
-                    OperaterDate = DateTime.Now,
-                    OperaterId = UserDto.UserId, 
-                    Status = InventoryBoxTaskStatus.task_outing.ToByte()
-                };
-                if (! await SendWCSOutCommand(task))
-                {
-                    _client.RollbackTran();
-                    return YL.Core.Dto.RouteData.From(PubMessages.E2100_WCS_OUTCOMMAND_FAIL);
-                }
-
-                _inventoryBoxTaskServices.Insert(task);
-
-                inventoryBox.Status = InventoryBoxStatus.Outing;
-                inventoryBox.ModifiedBy = UserDto.UserId;
-                inventoryBox.ModifiedDate = DateTime.Now;
-                _inventoryBoxServices.Update(inventoryBox); 
-
-                _client.CommitTran();
-                return new RouteData();
-            }
-            catch(Exception)
-            {
-                _client.RollbackTran();
-                return YL.Core.Dto.RouteData.From(PubMessages.E2005_STOCKIN_BOXOUT_FAIL);
-            }
-
-        }
-        private async Task<bool> SendWCSOutCommand(Wms_inventoryboxTask task )
-        {
-            try
-            {
-                Wms_storagerack storagerack = _client.Queryable<Wms_storagerack>().First(x => x.StorageRackId == task.StoragerackId);
-
-                OutStockInfo outStockInfo = new OutStockInfo()
-                {
-                    TaskId = task.InventoryBoxTaskId.ToString(),
-                    GetColumn = storagerack.Column.ToString(),
-                    GetRow = storagerack.Row.ToString(),
-                    GetFloor = storagerack.Floor.ToString()
-                };
-                CreateOutStockResult result = await WCSApiAccessor.Instance.CreateOutStockTask(outStockInfo);
-                return result.Successd;
-            }
-            catch(Exception)
-            {
-                return false;
-            }
-        }
 
         [HttpGet]
         public IActionResult ScanPage(long storeId,long stockInId)
@@ -279,7 +206,7 @@ namespace KopSoftWms.Controllers
                 }
 
                 _client.CommitTran();
-                return new YL.Core.Dto.RouteData();
+                return YL.Core.Dto.RouteData.From(PubMessages.I2000_STOCKIN_SCAN_SCCUESS);
             }
             catch (Exception)
             {
@@ -313,94 +240,6 @@ namespace KopSoftWms.Controllers
                 ActInQty = (int)detail.ActInQty
             };
             return RouteData<Wms_StockInMaterialDetailDto>.From(detailDto);
-        }
-
-        [HttpGet]
-        public IActionResult InventoryBoxBack(long stockinTaskId)
-        {
-            return View(null);
-        }
-
-        [HttpPost]
-        public async Task<RouteData> DoInventoryBoxBack(long inventoryBoxTaskId, InventoryDetailDto[] details)
-        {
-            try
-            {
-                _client.BeginTran();
-
-                Wms_inventoryboxTask task = _inventoryBoxTaskServices.QueryableToEntity(x => x.InventoryBoxTaskId == inventoryBoxTaskId);
-                if (task == null) { return YL.Core.Dto.RouteData.From(PubMessages.E2007_STOCKINTASK_NOTFOUND); }
-                if (task.Status <= InventoryBoxTaskStatus.task_outed.ToByte()) { return YL.Core.Dto.RouteData.From(PubMessages.E2008_STOCKINTASK_NOTOUT); }
-                if (task.Status == InventoryBoxTaskStatus.task_backing.ToByte()) { return YL.Core.Dto.RouteData.From(PubMessages.E2009_STOCKINTASK_ALLOW_BACKING); }
-                if (task.Status == InventoryBoxTaskStatus.task_backed.ToByte()) { return YL.Core.Dto.RouteData.From(PubMessages.E2010_STOCKINTASK_ALLOW_BACKED); }
-
-                Wms_inventorybox inventoryBox = _inventoryBoxServices.QueryableToEntity(x => x.InventoryBoxId == task.InventoryBoxId);
-                if (inventoryBox == null) { return YL.Core.Dto.RouteData.From(PubMessages.E2003_INVENTORYBOX_NOTFOUND); }
-                if (inventoryBox.Status != InventoryBoxStatus.Outed) { return YL.Core.Dto.RouteData.From(PubMessages.E2011_INVENTORYBOX_NOTOUTED); }
-
-                List<Wms_inventory> inventories = _inventoryServices.QueryableToList(x => x.InventoryBoxId == task.InventoryBoxId);
-                List<Wms_inventory> updatedInventories = new List<Wms_inventory>();
-                foreach(InventoryDetailDto detail in details)
-                {
-                    Wms_inventory inventory = inventories.FirstOrDefault(x => x.InventoryId == detail.InventoryId);
-                    if(inventory.MaterialId != detail.MaterialId)
-                    {
-                        return YL.Core.Dto.RouteData.From(PubMessages.E2012_INVENTORYBOX_MATERIAL_NOTMATCH);
-                    }
-                    inventory.Qty = detail.Qty;
-                    inventory.ModifiedDate = DateTime.Now;
-                    inventory.ModifiedBy = this.UserDto.UserId;
-                    
-                    updatedInventories.Add(inventory);
-                }
-                if (! await SendWCSBackCommand(task))
-                {
-                    _client.RollbackTran();
-                    return YL.Core.Dto.RouteData.From(PubMessages.E2110_WCS_BACKCOMMAND_FAIL);
-                }
-
-                foreach (Wms_inventory inventoriy in updatedInventories)
-                {
-                    _inventoryServices.Update(inventoriy);
-                }
-
-                task.Status = InventoryBoxTaskStatus.task_backing.ToByte();
-                task.OperaterId = UserDto.UserId;
-                task.OperaterDate = DateTime.Now;
-                _inventoryBoxTaskServices.UpdateEntity(task);
-
-                inventoryBox.Status = InventoryBoxStatus.Backing;
-                inventoryBox.ModifiedBy = UserDto.UserId;
-                inventoryBox.ModifiedDate = DateTime.Now;
-                _inventoryBoxServices.UpdateEntity(inventoryBox);
-
-                _client.CommitTran();
-                return new YL.Core.Dto.RouteData();
-            }
-            catch (Exception)
-            {
-                _client.RollbackTran();
-                return YL.Core.Dto.RouteData.From(PubMessages.E2005_STOCKIN_BOXOUT_FAIL);
-            }
-        }
-
-        private async Task<bool> SendWCSBackCommand(Wms_inventoryboxTask task)
-        {
-            try
-            {
-                Wms_storagerack storagerack = _client.Queryable<Wms_storagerack>().First(x => x.StorageRackId == task.StoragerackId);
-
-                BackStockInfo backStockInfo = new BackStockInfo()
-                {
-                    TaskId = task.InventoryBoxTaskId.ToString()
-                };
-                CreateBackStockResult result = await WCSApiAccessor.Instance.CreateBackStockTask(backStockInfo);
-                return result.Successd;
-            }
-            catch(Exception)
-            {
-                return false;
-            }
         }
 
         [HttpPost]

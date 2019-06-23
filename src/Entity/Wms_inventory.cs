@@ -59,8 +59,8 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
-        [SugarColumn(IsNullable = true)]
-        public decimal? Qty { get; set; }
+        [SugarColumn(DefaultValue="0",IsNullable = false)]
+        public int Qty { get; set; }
 
         /// <summary>
         /// Desc:备注

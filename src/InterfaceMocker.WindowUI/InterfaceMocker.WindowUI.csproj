@@ -23,9 +23,8 @@
   
   <ItemGroup>
     <None Remove="MesStockinCreateWindow.xaml" />
-    <None Remove="MesStockinTaskControl.xaml" />
     <None Remove="MesStockoutTaskControl.xaml" />
-    <None Remove="WCSOutStockTaskControl.xaml" />
+    <None Remove="TaskItemControl.xaml" />
   </ItemGroup>
   
   <ItemGroup>
@@ -41,17 +40,13 @@
     <Compile Update="MesStockinCreateWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="MesStockinTaskControl.xaml.cs">
-      <SubType>Code</SubType>
-      <DependentUpon>MesStockinTaskControl.xaml</DependentUpon>
-    </Compile>
     <Compile Update="MesStockoutTaskControl.xaml.cs">
       <SubType>Code</SubType>
       <DependentUpon>MesStockoutTaskControl.xaml</DependentUpon>
     </Compile>
-    <Compile Update="WCSOutStockTaskControl.xaml.cs">
+    <Compile Update="TaskItemControl.xaml.cs">
       <SubType>Code</SubType>
-      <DependentUpon>WCSOutStockTaskControl.xaml</DependentUpon>
+      <DependentUpon>TaskItemControl.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   

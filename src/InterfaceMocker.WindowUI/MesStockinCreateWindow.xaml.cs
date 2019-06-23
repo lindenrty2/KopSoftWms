@@ -24,9 +24,12 @@ namespace InterfaceMocker.WindowUI
         private OutsideStockInDto _data;
         public OutsideStockInDto Data { get { return _data; } }
 
+        private string[] SuppliesItems = new string[] { "B001", "B002", "B003", "B004", "B005", "B006", "B007", "B008", "B009", "B010" };
+
         public MesStockinCreateWindow()
         {
             InitializeComponent();
+            colSupplies.ItemsSource = SuppliesItems;
             _data = new OutsideStockInDto();
             _data.WarehousingId = "RKD" + DateTime.Now.ToString("yyyyMMddHHmmss");
             _data.WarehousingTime = DateTime.Now.ToString("yyyyMMddHHmmss");
@@ -35,17 +38,8 @@ namespace InterfaceMocker.WindowUI
             _data.BatchPlanId = DateTime.Now.TimeOfDay.Ticks.ToString();
             _data.WorkAreaName = "工作区1";
             _data.SuppliesKinds = 1;
-            _data.SuppliesInfoList = new OutsideMaterialDto[] {
-                new OutsideMaterialDto()
-                {
-                    SuppliesOnlyId =  "SID" + DateTime.Now.Ticks.ToString(),
-                    SuppliesId = "ID" + DateTime.Now.ToString("yyyyMMddHH"),
-                    SuppliesName = "物料"+ DateTime.Now.ToString("yyyyMMddHH"),
-                    SuppliesNumber = 10,
-                    SuppliesType = "型号A",
-                    Unit = "个"
-                }
-            };
+            _data.SuppliesInfoList = new OutsideMaterialDto[0];
+            AddMaterial_Click(null,null);
             this.DataContext = _data;
         }
 
@@ -58,11 +52,29 @@ namespace InterfaceMocker.WindowUI
 
         private void AddMaterial_Click(object sender, RoutedEventArgs e)
         {
+            string suppliy = SuppliesItems[_data.SuppliesInfoList.Length % 10];
             IEnumerable<OutsideMaterialDto> newItem = new OutsideMaterialDto[] { new OutsideMaterialDto()
                 {
-                    SuppliesOnlyId =  "SID" + DateTime.Now.Ticks.ToString(),
-                    SuppliesId = "ID" + DateTime.Now.ToString("yyyyMMddHH"),
-                    SuppliesName = "物料"+ DateTime.Now.ToString("yyyyMMddHH"),
+                    SuppliesOnlyId =  null,
+                    SuppliesId = suppliy,
+                    SuppliesName =  "物料-" + suppliy,
+                    SuppliesNumber = 10,
+                    SuppliesType = "型号A",
+                    Unit = "个"
+                } };
+            _data.SuppliesInfoList = _data.SuppliesInfoList.Union(newItem).ToArray();
+            _data.SuppliesKinds = _data.SuppliesInfoList.Count();
+            ctlSuppliesInfoList.ItemsSource = null;
+            ctlSuppliesInfoList.ItemsSource = _data.SuppliesInfoList;
+        }
+
+        private void AddSingleMaterial_Click(object sender, RoutedEventArgs e)
+        { 
+            IEnumerable<OutsideMaterialDto> newItem = new OutsideMaterialDto[] { new OutsideMaterialDto()
+                {
+                    SuppliesOnlyId =  null,
+                    SuppliesId = "TPY01-" + DateTime.Now.ToString("yyyyMMddHHmmss"),
+                    SuppliesName = "物料-" + DateTime.Now.ToString("yyyyMMddHHmmss"),
                     SuppliesNumber = 10,
                     SuppliesType = "型号A",
                     Unit = "个"

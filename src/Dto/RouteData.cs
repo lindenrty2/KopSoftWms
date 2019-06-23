@@ -29,7 +29,7 @@ namespace YL.Core.Dto
                 Code = code,
                 Message = message
             };
-        }
+        } 
 
         public static RouteData From(MessageItem messageItem)
         {
@@ -54,11 +54,7 @@ namespace YL.Core.Dto
         {
             return RouteData<T>.From(routeData.Code, routeData.Message);
         }
-
-        public static RouteData From(object e2002_STOCKINTASK_ALLOW_BACKING)
-        {
-            throw new NotImplementedException();
-        }
+         
     }
 
 
@@ -75,7 +71,7 @@ namespace YL.Core.Dto
                 Data = data
 
             };
-        }
+        } 
 
         public static RouteData<T> From(MessageItem messageItem, T data = default(T))
         {

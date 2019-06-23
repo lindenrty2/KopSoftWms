@@ -12,12 +12,25 @@
                     <input class="form-control" v-model="DictName" v-focus type="text">
                 </div>
             </div>
-            @*<div class="form-group">
-                    <label class="col-sm-2 control-label">字典类型</label>
-                    <div class="col-sm-10">
-                        <input class="form-control" v-model="DictType" type="text">
-                    </div>
-                </div>*@
+            <div class="form-group">
+                <label class="col-sm-2 control-label">字典类型</label>
+                <div class="col-sm-10"> 
+                    <select class="form-control" v-model="DictType">
+                        <option value="1">单位类别</option>
+                        <option value="2">物料分类</option>
+                        <option value="3">入库单</option>
+                        <option value="4">出库单</option>
+                        <option value="5">设备分类</option>
+                        <option value="6">设备产权</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">仓库</label>
+                <div class="col-sm-10">
+                    @await Component.InvokeAsync("Warehouse")
+                </div>
+            </div>
             <div class="form-group">
                 <label class="col-sm-2 control-label">备注</label>
                 <div class="col-sm-10">
@@ -43,6 +56,7 @@
                 DictId:"@Model.DictId",
                 Remark: "@Model.Remark",
                 DictName: "@Model.DictName",
+                WarehouseId: "@Model.WarehouseId",
                 DictType:"@Model.DictType"
             },
             computed: {
@@ -73,6 +87,7 @@
                         id: _self.DictId,
                         DictName: _self.DictName,
                         DictType: _self.DictType,
+                        WarehouseId: _self.WarehouseId,
                         Remark: _self.Remark
                     };
                     yui.$axiospostform('/Dict/AddOrUpdate', data)
