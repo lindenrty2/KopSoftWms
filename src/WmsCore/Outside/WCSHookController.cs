@@ -54,26 +54,26 @@ namespace WMSCore.Outside
                 long taskId = result.TaskId.ToInt64();
                 if (taskId == 0)
                 {
-                    return Task.FromResult(new ConfirmOutStockResult(PubMessages.E2102_WCS_TASKID_INVAILD));
+                    return Task.FromResult(new ConfirmOutStockResult(PubMessages.E2302_WCS_TASKID_INVAILD));
                 }
                 Wms_inventoryboxTask boxTask = _inventoryBoxTaskServices.QueryableToEntity(x => x.InventoryBoxTaskId == taskId);
                 if (boxTask == null)
                 {
-                    return Task.FromResult(new ConfirmOutStockResult(PubMessages.E2103_WCS_STOCKOUTTASK_NOTFOUND));
+                    return Task.FromResult(new ConfirmOutStockResult(PubMessages.E2303_WCS_STOCKOUTTASK_NOTFOUND));
                 }
                 if (boxTask.Status != InventoryBoxTaskStatus.task_outing.ToByte() && boxTask.Status != InventoryBoxTaskStatus.task_outed.ToByte())
                 {
-                    return Task.FromResult(new ConfirmOutStockResult(PubMessages.E2104_WCS_STOCKOUTTASK_NOTOUT));
+                    return Task.FromResult(new ConfirmOutStockResult(PubMessages.E2304_WCS_STOCKOUTTASK_NOTOUT));
                 }
 
                 Wms_inventorybox box = _inventoryBoxServices.QueryableToEntity(x => x.InventoryBoxId == boxTask.InventoryBoxId);
                 if (box == null)
                 {
-                    return Task.FromResult(new ConfirmOutStockResult(PubMessages.E2003_INVENTORYBOX_NOTFOUND));
+                    return Task.FromResult(new ConfirmOutStockResult(PubMessages.E1011_INVENTORYBOX_NOTFOUND));
                 }
                 if (box.Status != InventoryBoxStatus.Outing && box.Status != InventoryBoxStatus.Outed)
                 {
-                    return Task.FromResult(new ConfirmOutStockResult(PubMessages.E2016_INVENTORYBOX_NOTOUT));
+                    return Task.FromResult(new ConfirmOutStockResult(PubMessages.E1008_INVENTORYBOX_NOTOUT));
                 }
 
                 _client.BeginTran();
@@ -115,26 +115,26 @@ namespace WMSCore.Outside
                 long taskId = result.TaskId.ToInt64();
                 if (taskId == 0)
                 {
-                    return Task.FromResult(new ConfirmBackStockResult(PubMessages.E2102_WCS_TASKID_INVAILD));
+                    return Task.FromResult(new ConfirmBackStockResult(PubMessages.E2302_WCS_TASKID_INVAILD));
                 }
                 Wms_inventoryboxTask boxTask = _inventoryBoxTaskServices.QueryableToEntity(x => x.InventoryBoxTaskId == taskId);
                 if (boxTask == null)
                 {
-                    return Task.FromResult(new ConfirmBackStockResult(PubMessages.E2111_WCS_STOCKBACKTASK_NOTFOUND));
+                    return Task.FromResult(new ConfirmBackStockResult(PubMessages.E2311_WCS_STOCKBACKTASK_NOTFOUND));
                 }
                 if (boxTask.Status != InventoryBoxTaskStatus.task_backing.ToByte() && boxTask.Status != InventoryBoxTaskStatus.task_backed.ToByte())
                 {
-                    return Task.FromResult(new ConfirmBackStockResult(PubMessages.E2112_WCS_STOCKBACKTASK_NOTBACK));
+                    return Task.FromResult(new ConfirmBackStockResult(PubMessages.E2312_WCS_STOCKBACKTASK_NOTBACK));
                 }
 
                 Wms_inventorybox box = _inventoryBoxServices.QueryableToEntity(x => x.InventoryBoxId == boxTask.InventoryBoxId);
                 if (box == null)
                 {
-                    return Task.FromResult(new ConfirmBackStockResult(PubMessages.E2003_INVENTORYBOX_NOTFOUND));
+                    return Task.FromResult(new ConfirmBackStockResult(PubMessages.E1011_INVENTORYBOX_NOTFOUND));
                 }
                 if (box.Status != InventoryBoxStatus.Backing && box.Status != InventoryBoxStatus.InPosition)
                 {
-                    return Task.FromResult(new ConfirmBackStockResult(PubMessages.E2016_INVENTORYBOX_NOTOUT));
+                    return Task.FromResult(new ConfirmBackStockResult(PubMessages.E1008_INVENTORYBOX_NOTOUT));
                 }
 
                 _client.BeginTran();

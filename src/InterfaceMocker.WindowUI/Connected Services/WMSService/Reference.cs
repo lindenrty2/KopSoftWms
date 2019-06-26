@@ -320,6 +320,148 @@ namespace WMSService
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="OutsideStockOutDto", Namespace="http://schemas.datacontract.org/2004/07/YL.Core.Dto")]
+    public partial class OutsideStockOutDto : object
+    {
+        
+        private string BatchPlanIdField;
+        
+        private string ProductionPlanIdField;
+        
+        private WMSService.OutsideMaterialDto[] SuppliesInfoListField;
+        
+        private int SuppliesKindsField;
+        
+        private string WarehouseEntryIdField;
+        
+        private string WarehouseEntryTimeField;
+        
+        private string WarehouseEntryTypeField;
+        
+        private string WorkAreaNameField;
+        
+        private string WorkStationIdField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string BatchPlanId
+        {
+            get
+            {
+                return this.BatchPlanIdField;
+            }
+            set
+            {
+                this.BatchPlanIdField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string ProductionPlanId
+        {
+            get
+            {
+                return this.ProductionPlanIdField;
+            }
+            set
+            {
+                this.ProductionPlanIdField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public WMSService.OutsideMaterialDto[] SuppliesInfoList
+        {
+            get
+            {
+                return this.SuppliesInfoListField;
+            }
+            set
+            {
+                this.SuppliesInfoListField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int SuppliesKinds
+        {
+            get
+            {
+                return this.SuppliesKindsField;
+            }
+            set
+            {
+                this.SuppliesKindsField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string WarehouseEntryId
+        {
+            get
+            {
+                return this.WarehouseEntryIdField;
+            }
+            set
+            {
+                this.WarehouseEntryIdField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string WarehouseEntryTime
+        {
+            get
+            {
+                return this.WarehouseEntryTimeField;
+            }
+            set
+            {
+                this.WarehouseEntryTimeField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string WarehouseEntryType
+        {
+            get
+            {
+                return this.WarehouseEntryTypeField;
+            }
+            set
+            {
+                this.WarehouseEntryTypeField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string WorkAreaName
+        {
+            get
+            {
+                return this.WorkAreaNameField;
+            }
+            set
+            {
+                this.WorkAreaNameField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string WorkStationId
+        {
+            get
+            {
+                return this.WorkStationIdField;
+            }
+            set
+            {
+                this.WorkStationIdField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
     [System.Runtime.Serialization.DataContractAttribute(Name="OutSideStockOutResult", Namespace="http://schemas.datacontract.org/2004/07/YL.Core.Dto")]
     public partial class OutSideStockOutResult : object
     {
@@ -397,7 +539,7 @@ namespace WMSService
         System.Threading.Tasks.Task<WMSService.OutSideStockInResult> WarehousingAsync(WMSService.OutsideStockInDto data);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IMESHookController/WarehouseEntry", ReplyAction="http://tempuri.org/IMESHookController/WarehouseEntryResponse")]
-        System.Threading.Tasks.Task<WMSService.OutSideStockOutResult> WarehouseEntryAsync(WMSService.OutsideStockInDto data);
+        System.Threading.Tasks.Task<WMSService.OutSideStockOutResult> WarehouseEntryAsync(WMSService.OutsideStockOutDto data);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
@@ -460,7 +602,7 @@ namespace WMSService
             return base.Channel.WarehousingAsync(data);
         }
         
-        public System.Threading.Tasks.Task<WMSService.OutSideStockOutResult> WarehouseEntryAsync(WMSService.OutsideStockInDto data)
+        public System.Threading.Tasks.Task<WMSService.OutSideStockOutResult> WarehouseEntryAsync(WMSService.OutsideStockOutDto data)
         {
             return base.Channel.WarehouseEntryAsync(data);
         }

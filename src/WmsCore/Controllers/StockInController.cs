@@ -149,72 +149,28 @@ namespace KopSoftWms.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// 扫描完成处理
+        /// </summary>
+        /// <param name="stockInId"></param>
+        /// <param name="inventoryBoxId"></param>
+        /// <param name="materials"></param>
+        /// <param name="remark"></param>
+        /// <returns></returns>
         [HttpPost]
-        public RouteData DoScanComplate(long stockInId,long inventoryBoxId, Wms_StockInMaterialDetailDto[] materials,string remark)
+        public async Task<RouteData> DoScanComplate(long stockInId,long inventoryBoxId, Wms_StockInMaterialDetailDto[] materials,string remark)
         {
             try
             {
                 _client.BeginTran();
-
-                Wms_stockin stockin = _stockinServices.QueryableToEntity(x => x.StockInId == stockInId);
-                if (stockin == null) { return YL.Core.Dto.RouteData.From(PubMessages.E2013_STOCKIN_NOTFOUND); }
-                if (stockin.StockInStatus == StockInStatus.task_finish.ToByte()) { return YL.Core.Dto.RouteData.From(PubMessages.E2014_STOCKIN_ALLOW_FINISHED); }
-               
-                Wms_inventorybox inventoryBox = _inventoryBoxServices.QueryableToEntity(x => x.InventoryBoxId == inventoryBoxId);
-                if (inventoryBox == null) { return YL.Core.Dto.RouteData.From(PubMessages.E2003_INVENTORYBOX_NOTFOUND); }
-                if (inventoryBox.Status != InventoryBoxStatus.Outed) { return YL.Core.Dto.RouteData.From(PubMessages.E2011_INVENTORYBOX_NOTOUTED); }
-
-                Wms_inventoryboxTask inventoryBoxTask = _inventoryBoxTaskServices.QueryableToEntity(x => x.InventoryBoxId == inventoryBoxId && x.Status == InventoryBoxTaskStatus.task_outed.ToByte());
-                if (inventoryBoxTask == null) { return YL.Core.Dto.RouteData.From(PubMessages.E2011_INVENTORYBOX_NOTOUTED); } //数据异常 
-
-
-                foreach (Wms_StockInMaterialDetailDto material in materials)
+                RouteData result = await DoScanComplateCore(stockInId, inventoryBoxId, materials, remark);
+                if (!result.IsSccuess)
                 {
-                    Wms_stockindetail detail = _stockindetailServices.QueryableToEntity(x => x.StockInId == stockInId && x.MaterialId.ToString() == material.MaterialId);
-                    if (detail == null) { return YL.Core.Dto.RouteData.From(PubMessages.E2001_STOCKINDETAIL_NOTFOUND,$"MaterialId='{material.MaterialId}'"); }
-                    if (detail.Status == StockInStatus.task_finish.ToByte()) { return YL.Core.Dto.RouteData.From(PubMessages.E2002_STOCKINDETAIL_ALLOW_FINISHED); }
-
-                    Wms_stockindetail_box box = _stockindetailboxServices.QueryableToEntity(x => x.InventoryBoxTaskId == inventoryBoxTask.InventoryBoxTaskId && x.StockinDetailId == detail.StockInDetailId);
-                    if (box != null)
-                    {
-                        box.Qty += material.Qty;
-
-                        if (!_stockindetailboxServices.UpdateEntity(box))
-                        {
-                            return YL.Core.Dto.RouteData.From(PubMessages.E0002_UPDATE_COUNT_FAIL);
-                        }
-                    }
-                    else
-                    {
-                        box = new Wms_stockindetail_box()
-                        {
-                            DetailBoxId = PubId.SnowflakeId,
-                            InventoryBoxTaskId = inventoryBoxTask.InventoryBoxTaskId,
-                            InventoryBoxId = inventoryBox.InventoryBoxId,
-                            StockinDetailId = detail.StockInDetailId,
-                            Qty = material.Qty,
-                            Remark = remark,
-                            CreateDate = DateTime.Now,
-                            CreateBy = UserDto.UserId
-                        };
-
-                        _stockindetailboxServices.Insert(box);
-                    }
-                    if (detail.Status == StockInStatus.task_confirm.ToByte())
-                    {
-                        detail.Status = StockInStatus.task_working.ToByte();
-                        _stockindetailServices.Update(detail);
-                    }
+                    _client.RollbackTran();
+                    return result;
                 }
-                
-                if (stockin.StockInStatus == StockInStatus.task_confirm.ToByte())
-                {
-                    stockin.StockInStatus = StockInStatus.task_working.ToByte();
-                    _stockinServices.Update(stockin);
-                }
-
                 _client.CommitTran();
-                return YL.Core.Dto.RouteData.From(PubMessages.I2000_STOCKIN_SCAN_SCCUESS);
+                return result; 
             }
             catch (Exception)
             {
@@ -224,13 +180,139 @@ namespace KopSoftWms.Controllers
 
         }
 
+        /// <summary>
+        /// 扫描完成处理核心
+        /// </summary>
+        /// <param name="stockInId"></param>
+        /// <param name="inventoryBoxId"></param>
+        /// <param name="materials"></param>
+        /// <param name="remark"></param>
+        /// <returns></returns>
+        private async Task<RouteData> DoScanComplateCore(long stockInId, long inventoryBoxId, Wms_StockInMaterialDetailDto[] materials, string remark)
+        {
+            Wms_stockin stockin = _stockinServices.QueryableToEntity(x => x.StockInId == stockInId);
+            if (stockin == null) { return YL.Core.Dto.RouteData.From(PubMessages.E2013_STOCKIN_NOTFOUND); }
+            if (stockin.StockInStatus == StockInStatus.task_finish.ToByte()) { return YL.Core.Dto.RouteData.From(PubMessages.E2014_STOCKIN_ALLOW_FINISHED); }
+
+            Wms_inventorybox inventoryBox = _inventoryBoxServices.QueryableToEntity(x => x.InventoryBoxId == inventoryBoxId);
+            if (inventoryBox == null) { return YL.Core.Dto.RouteData.From(PubMessages.E1011_INVENTORYBOX_NOTFOUND); }
+            if (inventoryBox.Status != InventoryBoxStatus.Outed) { return YL.Core.Dto.RouteData.From(PubMessages.E1014_INVENTORYBOX_NOTOUTED); }
+
+            Wms_inventoryboxTask inventoryBoxTask = _inventoryBoxTaskServices.QueryableToEntity(x => x.InventoryBoxId == inventoryBoxId && x.Status == InventoryBoxTaskStatus.task_outed.ToByte());
+            if (inventoryBoxTask == null) { return YL.Core.Dto.RouteData.From(PubMessages.E1014_INVENTORYBOX_NOTOUTED); } //数据异常 
+
+            Wms_inventory[] inventories = _inventoryServices.QueryableToList(x => x.InventoryBoxId == inventoryBoxId).ToArray();
+            int count = 0; //料格使用数量
+            foreach (Wms_StockInMaterialDetailDto material in materials)
+            {
+                Wms_stockindetail detail = _stockindetailServices.QueryableToEntity(x => x.StockInId == stockInId && x.MaterialId.ToString() == material.MaterialId);
+                if (detail == null) { return YL.Core.Dto.RouteData.From(PubMessages.E2001_STOCKINDETAIL_NOTFOUND, $"MaterialId='{material.MaterialId}'"); }
+                if (detail.Status == StockInStatus.task_finish.ToByte()) { return YL.Core.Dto.RouteData.From(PubMessages.E2002_STOCKINDETAIL_ALLOW_FINISHED); }
+
+                Wms_stockindetail_box box = _stockindetailboxServices.QueryableToEntity(x => x.InventoryBoxTaskId == inventoryBoxTask.InventoryBoxTaskId && x.StockinDetailId == detail.StockInDetailId);
+                if (box != null)
+                {
+                    box.Qty += material.Qty;
+
+                    if (!_stockindetailboxServices.UpdateEntity(box))
+                    {
+                        return YL.Core.Dto.RouteData.From(PubMessages.E0002_UPDATE_COUNT_FAIL);
+                    }
+                }
+                else
+                {
+                    if (!inventories.Any(x => x.MaterialId == material.MaterialId.ToInt64() && x.OrderNo == stockin.OrderNo))
+                    {
+                        count++;
+                    }
+                    if (count > inventoryBox.Size)
+                    { 
+                        return YL.Core.Dto.RouteData<InventoryDetailDto[]>.From(PubMessages.E1010_INVENTORYBOX_BLOCK_OVERLOAD);
+                    }
+                    box = new Wms_stockindetail_box()
+                    {
+                        DetailBoxId = PubId.SnowflakeId,
+                        InventoryBoxTaskId = inventoryBoxTask.InventoryBoxTaskId,
+                        InventoryBoxId = inventoryBox.InventoryBoxId,
+                        StockinDetailId = detail.StockInDetailId,
+                        Qty = material.Qty,
+                        Remark = remark,
+                        CreateDate = DateTime.Now,
+                        CreateBy = UserDto.UserId
+                    };
+
+                    if (!_stockindetailboxServices.Insert(box))
+                    {
+                        return YL.Core.Dto.RouteData<InventoryDetailDto[]>.From(PubMessages.E2005_STOCKIN_BOXOUT_FAIL); 
+                    }
+                }
+                if (detail.Status == StockInStatus.task_confirm.ToByte())
+                {
+                    detail.Status = StockInStatus.task_working.ToByte();
+                    if (!_stockindetailServices.Update(detail))
+                    {
+                        return YL.Core.Dto.RouteData<InventoryDetailDto[]>.From(PubMessages.E2005_STOCKIN_BOXOUT_FAIL);
+                    }
+                }
+            }
+
+            if (stockin.StockInStatus == StockInStatus.task_confirm.ToByte())
+            {
+                stockin.StockInStatus = StockInStatus.task_working.ToByte();
+                _stockinServices.Update(stockin);
+            }
+
+            return YL.Core.Dto.RouteData.From(PubMessages.I2001_STOCKIN_SCAN_SCCUESS);
+        }
+
+        [HttpPost]
+        public RouteData DoComplate(long storeId,long stockInId)
+        {
+            try
+            {
+                _client.BeginTran();
+
+                Wms_stockin stockin = _stockinServices.QueryableToEntity(x => x.StockInId == stockInId);
+                if (stockin == null) { return YL.Core.Dto.RouteData.From(PubMessages.E2013_STOCKIN_NOTFOUND); }
+                if (stockin.StockInStatus == StockInStatus.task_finish.ToByte()) { return YL.Core.Dto.RouteData.From(PubMessages.E2014_STOCKIN_ALLOW_FINISHED); }
+
+                stockin.StockInStatus = StockInStatus.task_finish.ToByte();
+                if (!_stockinServices.Update(stockin))
+                {
+                    return YL.Core.Dto.RouteData.From(PubMessages.E2017_STOCKIN_FAIL, "入库单详细状态更新失败");
+                }
+                List<Wms_stockindetail> details = _stockindetailServices.QueryableToList(x => x.StockInId == stockin.StockInId);
+                foreach(Wms_stockindetail detail in details)
+                {
+                    if (detail.Status == StockInStatus.task_finish.ToByte()) continue;
+                    detail.Status = StockInStatus.task_finish.ToByte();
+                    detail.ModifiedBy = this.UserDto.UserId;
+                    detail.ModifiedDate = DateTime.Now;
+                    if (!_stockindetailServices.Update(detail))
+                    {
+                        return YL.Core.Dto.RouteData.From(PubMessages.E2017_STOCKIN_FAIL, "入库单详细状态更新失败");
+                    }
+                }
+                _client.CommitTran();
+                return YL.Core.Dto.RouteData.From(PubMessages.I2002_STOCKIN_SCCUESS);
+            }
+            catch(Exception ex)
+            { 
+                _client.RollbackTran();
+                return YL.Core.Dto.RouteData.From(PubMessages.E2017_STOCKIN_FAIL,ex.Message);
+            }
+            
+
+
+        }
+
         [HttpGet]
         public RouteData<Wms_StockInMaterialDetailDto> SearchMaterial(long storeId,long stockInId,string materialNo)
         {
             Wms_material material = _client.Queryable<Wms_material>().First( x => x.MaterialNo == materialNo);
             if(material == null)
             {
-                return RouteData<Wms_StockInMaterialDetailDto>.From(PubMessages.E1005_MaterialNo_NotFound);
+                return RouteData<Wms_StockInMaterialDetailDto>.From(PubMessages.E1005_MATERIALNO_NOTFOUND);
             }
             Wms_stockindetail detail = _stockindetailServices.QueryableToEntity(x => x.StockInId == stockInId && x.MaterialId == material.MaterialId);
             if(detail == null)

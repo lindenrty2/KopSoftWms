@@ -25,6 +25,8 @@ namespace InterfaceMocker.WindowUI
         public OutsideStockInDto Data { get { return _data; } }
 
         private string[] SuppliesItems = new string[] { "B001", "B002", "B003", "B004", "B005", "B006", "B007", "B008", "B009", "B010" };
+        private string[] OnlySuppliesItems = new string[] {
+            "TPY01-00001", "TPY01-00002", "TPY01-00003", "TPY01-00004", "TPY02-00001", "TPY02-00001", "GBX02-00001", "GBX02-00002", "GBX02-00003", "GBX02-00004" };
 
         public MesStockinCreateWindow()
         {
@@ -69,10 +71,11 @@ namespace InterfaceMocker.WindowUI
         }
 
         private void AddSingleMaterial_Click(object sender, RoutedEventArgs e)
-        { 
+        {
+            string onlySuppliy = OnlySuppliesItems[_data.SuppliesInfoList.Length % 10];
             IEnumerable<OutsideMaterialDto> newItem = new OutsideMaterialDto[] { new OutsideMaterialDto()
                 {
-                    SuppliesOnlyId =  "TPY01-" + DateTime.Now.ToString("yyyyMMddHHmmss"),
+                    SuppliesOnlyId =  onlySuppliy,
                     SuppliesId = null,
                     SuppliesName = "物料-" + DateTime.Now.ToString("yyyyMMddHHmmss"),
                     SuppliesNumber = 10,

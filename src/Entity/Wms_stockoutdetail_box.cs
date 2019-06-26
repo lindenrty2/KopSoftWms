@@ -5,13 +5,13 @@ using System.Text;
 
 namespace YL.Core.Entity
 {
-    public partial class Wms_stockindetail_box
+    public partial class Wms_stockoutdetail_box
     {
         [SugarColumn(IsPrimaryKey = true)]
         public long DetailBoxId { get; set; }
 
         [SugarColumn(DefaultValue = "0", IsNullable = false)]
-        public long StockinDetailId { get; set; }
+        public long StockOutDetailId { get; set; }
 
         /// <summary>
         /// 料箱任务Id
@@ -52,7 +52,7 @@ namespace YL.Core.Entity
         [SugarColumn(IsNullable = true)]
         public DateTime? CreateDate { get; set; }
 
-        public Wms_stockindetail_box()
+        public Wms_stockoutdetail_box()
         {
             CreateDate = DateTime.Now;
         }

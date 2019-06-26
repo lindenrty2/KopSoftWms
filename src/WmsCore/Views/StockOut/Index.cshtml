@@ -31,9 +31,9 @@
                             <select class="form-control" v-model="StockOutType" style="width:150px;margin-left:10px;">
                                 <option value="">全部类型</option>
                                 @{
-                                    if (ViewBag.StockInType != null || ViewBag.StockInType.Count > 0)
+                                    if (ViewBag.StockOutType != null || ViewBag.StockOutType.Count > 0)
                                     {
-                                        foreach (var item in ViewBag.StockInType)
+                                        foreach (var item in ViewBag.StockOutType)
                                         {
                                             <option value="@item.DictId">@item.DictName</option>
                                         }
@@ -43,9 +43,9 @@
                             <select class="form-control" v-model="StockOutStatus" style="width:150px;margin-left:10px;">
                                 <option value="">全部状态</option>
                                 @{
-                                    if (ViewBag.StockInStatus != null || ViewBag.StockInStatus.Count > 0)
+                                    if (ViewBag.StockOutStatus != null || ViewBag.StockOutStatus.Count > 0)
                                     {
-                                        foreach (var item in ViewBag.StockInStatus)
+                                        foreach (var item in ViewBag.StockOutStatus)
                                         {
                                             <option value="@item.Key">@item.Value</option>
                                         }
@@ -147,10 +147,14 @@
                         sortable: true,
                         formatter: function (value, row, index) {
                             var html = [];
-                            var arr = [2, 5];
-                            if (arr.indexOf(value)==-1) {
+                            if (value == 1) {
                                 html.push('<button id="addDetailL" type="button" class="btn btn-link" style="margin-top:-8px;">添加明细</button>'
                                     , '<button id="auditinL" type="button" class="btn btn-link" style="margin-top:-8px;margin-left:-10px;">审核</button>'
+                                );
+                            }
+                            else if (value == 2 || value == 3) {
+                                html.push(
+                                    '<button id="workL" type="button" class="btn btn-link" style="margin-top:-8px;margin-left:-10px;">操作</button>'
                                 );
                             }
                             html.push('<button id="previewL" type="button" class="btn btn-link" style="margin-top:-8px;margin-left:-10px;">预览</button>'
@@ -172,6 +176,9 @@
                                 } else {
                                     layer.msg("初始转态才允许审核！", { icon: 5 });
                                 }
+                            },
+                            'click #workL': function (e, value, row, index) {
+                                app.workL(row.StockOutId, row.StockOutNo); 
                             },
                             'click #previewL': function (e, value, row, index) {
                                 app.previewL(row.StockOutId);
@@ -215,16 +222,18 @@
                         sortable: true,
                         formatter: function (value, row, index) {
                             switch (value) {
+                                case -1:
+                                    return '<span class="label label-danger radius">出库任务取消</span>';
                                 case 1:
-                                    return '<span class="label label-success radius">初始</span>';
+                                    return '<span class="label label-default radius">出库任务创建中</span>';
                                 //return "初始";
                                 case 2:
-                                    return '<span class="label label-success radius">审核通过</span>';
+                                    return '<span class="label label-info radius">出库任务确认</span>';
                                 //return "审核通过";
                                 case 3:
-                                    return '<span class="label label-success radius">审核未通过</span>';
-                                case 5:
-                                    return '<span class="label label-success radius">已发货</span>';
+                                    return '<span class="label label-primary radius">出库中</span>';
+                                case 4:
+                                    return '<span class="label label-success radius">出库完成</span>';
                                 // "审核未通过";
                                 default:
                                     return '<span class="label label-success radius">-</span>';
@@ -270,16 +279,16 @@
                         visible: true
                     },
                     {
-                        field: 'StockOutDetailId',
+                        field: 'Detail.StockOUtDetailId',
                         title: 'Id',
                         visible: false
                     }, {
-                        field: 'Status',
+                        field: 'Detail.Status',
                         title: '操作',
                         align: 'center',
                         sortable: true,
                         formatter: function (value, row, index) {
-                            if (value != 2) {
+                            if (value < 2) {
                                 return ['<button id="deleteDetailL" type="button" class="btn btn-link" style="margin-top:-8px;">删除</button>'
                                     , '<button id="editDetailL" type="button" class="btn btn-link" style="margin-top:-8px;">修改</button>'
                                 ].join('');
@@ -296,8 +305,7 @@
                                 }
                             },
                             'click #editDetailL': function (e, value, row, index) {
-                                var arr = [2, 5];
-                                if (arr.indexOf(value)==-1) {
+                                if (value != 2) {
                                     app.editDetailL(row.StockOutDetailId);
                                 } else {
                                     layer.msg("初始转态才允许修改！", { icon: 5 });
@@ -305,104 +313,98 @@
                             },
                         },
                     }, {
-                        field: 'MaterialNo',
+                        field: 'Detail.MaterialNo',
                         title: '物料编号',
                         align: 'center',
                         sortable: true
                     }, {
-                        field: 'MaterialName',
+                        field: 'Detail.MaterialName',
                         title: '物料名称',
                         align: 'center',
                         sortable: true
                     }, {
-                        field: 'PlanOutQty',
+                        field: 'Detail.PlanOutQty',
                         title: '计划数量',
                         align: 'center',
                         sortable: true
                     }
-                        , {
-                        field: 'ActOutQty',
+                    , {
+                        field: 'Detail.ActOutQty',
                         title: '实际数量',
                         align: 'center',
                         sortable: true
                     }, {
-                        field: 'StorageRackNo',
+                        field: 'Detail.StorageRackNo',
                         title: '货架编号',
                         align: 'center',
                         sortable: true
                     }, {
-                        field: 'StorageRackName',
+                        field: 'Detail.StorageRackName',
                         title: '货架名称',
                         align: 'center',
                         sortable: true
                     },
                     {
-                        field: 'Status',
+                        field: 'Detail.Status',
                         title: '状态',
                         align: 'center',
                         sortable: true,
                         formatter: function (value, row, index) {
                             switch (value) {
+                                case -1:
+                                    return '<span class="label label-danger radius">已取消</span>';
                                 case 1:
-                                    return '<span class="label label-success radius">待审核</span>';
+                                    return '<span class="label label-default radius">待审核</span>';
                                 case 2:
-                                    return '<span class="label label-success radius">审核通过</span>';
+                                    return '<span class="label label-info radius">待操作</span>';
                                 case 3:
-                                    return '<span class="label label-success radius">审核未通过</span>';
+                                    return '<span class="label label-primary radius">入库中</span>';
+                                case 4:
+                                    return '<span class="label label-success radius">入库完成</span>';
                                 default:
                                     return '<span class="label label-success radius">-</span>';
                             }
                         }
-                    }, {
-                        field: 'AName',
-                        title: '审核人',
-                        align: 'center',
-                        sortable: true
-                    }, {
-                        field: 'AuditinTime',
-                        align: 'center',
-                        title: '审核时间',
-                        sortable: true,
-                        formatter: function (value, row, index) {
-                            return _self.jsonDateFormat(value);
-                        }
-                    }, {
-                        field: 'Remark',
-                        align: 'center',
-                        title: '备注'
-                    }, {
-                        field: 'CName',
-                        title: '创建人',
-                        align: 'center',
-                        sortable: true
-                    }, {
-                        field: 'CreateDate',
-                        align: 'center',
-                        title: '创建时间',
-                        sortable: true,
-                        formatter: function (value, row, index) {
-                            return _self.jsonDateFormat(value);
-                        }
-                    }, {
-                        field: 'UName',
-                        align: 'center',
-                        title: '修改人',
-                        sortable: true
-                    }, {
-                        field: 'ModifiedDate',
-                        title: '修改时间',
-                        align: 'center',
-                        sortable: true,
-                        formatter: function (value, row, index) {
-                            return _self.jsonDateFormat(value);
-                        }
-                    }];
+                        },
+                        {
+                            field: 'Detail.Remark',
+                            align: 'center',
+                            title: '备注'
+                        }, {
+                            field: 'Detail.CName',
+                            title: '创建人',
+                            align: 'center',
+                            sortable: true
+                        }, {
+                            field: 'Detail.CreateDate',
+                            align: 'center',
+                            title: '创建时间',
+                            sortable: true,
+                            formatter: function (value, row, index) {
+                                return _self.jsonDateFormat(value);
+                            }
+                        }, {
+                            field: 'Detail.UName',
+                            align: 'center',
+                            title: '修改人',
+                            sortable: true
+                        }, {
+                            field: 'Detail.ModifiedDate',
+                            title: '修改时间',
+                            align: 'center',
+                            sortable: true,
+                            formatter: function (value, row, index) {
+                                return _self.jsonDateFormat(value);
+                            }
+                        }];
 
                     yui.table2("bootstraptable", "/StockOut/List", "/StockOut/ListDetail", obj, objSub, "POST", "StockOutId", "StockOutId", true, qParams);
-                    //yui.table("bootstraptable", "/StockIn/List", obj, "POST", "StockInId", true, qParams);
                 },
                 showL: function () {
                     yui.layershow("出库", "/StockOut/Add", 600, 500);
+                },
+                workL: function (val,no) { 
+                    yui.layershow("出库操作(" + no + ")", "/StockOut/Work?storeId=@ViewData["currentStoreId"]&pid=" + val, 1600, 900);
                 },
                 addDetailL: function (val) {
                     yui.layershow("出库明细", "/StockOut/Detail?pid=" + val, 600, 500);
@@ -435,7 +437,6 @@
                                     detail += "<td>" + _self.stockOutDList[item].StorageRackName + "</td>";
                                     detail += "<td>" + _self.stockOutDList[item].Status + "</td>";
                                     detail += "<td>" + _self.formatNull(_self.stockOutDList[item].AName) + "</td>";
-                                    detail += "<td>" + _self.formatL(_self.stockOutDList[item].AuditinTime) + "</td>";
                                     detail += "</tr>";
                                 }
                             }

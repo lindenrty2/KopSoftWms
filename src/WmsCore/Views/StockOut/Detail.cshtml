@@ -15,27 +15,9 @@
                 </div>
             </div>
             <div class="form-group">
-                <label class="form-label col-sm-2">货架</label>
-                <div class="col-sm-10">
-                    <select size="1" id="StoragerackId" v-model="StoragerackId" class="show-menu-arrow show-tick selectpicker form-control" data-live-search="true"></select>
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="form-label col-sm-2">货架库存数量</label>
-                <div class="col-sm-10">
-                    <input class="form-control" readonly v-model="Qty" type="text">
-                </div>
-            </div>
-            <div class="form-group">
                 <label class="col-sm-2 control-label">计划数量</label>
                 <div class="col-sm-10">
                     <input class="form-control" v-model="PlanOutQty" v-focus type="text">
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-2 control-label">实际数量</label>
-                <div class="col-sm-10">
-                    <input class="form-control" v-model="ActOutQty" v-focus type="text">
                 </div>
             </div>
             <div class="form-group">
@@ -138,12 +120,10 @@
                 MaterialId:"@Model.MaterialId",
                 StockOutId:"@Model.StockOutId",
                 StockOutDetailId:"@Model.StockOutDetailId",
-                Remark: "@Model.Remark",
-                StoragerackId: "@Model.StoragerackId",
+                Remark: "@Model.Remark", 
                 PlanOutQty:"@Model.PlanOutQty",
                 ActOutQty: "@Model.ActOutQty",
-                MaterialList: [],
-                StorageRackList: [],
+                MaterialList: [], 
                 Qty: "",
                 urlM:'',
             },
@@ -156,29 +136,12 @@
                 MaterialId: function (val) {
                     var _self = this;
                     _self.Qty = "";
-                    yui.$axiosget('/StockOut/SearchInventory?id='+val).then(function (res) {
-                        _self.StorageRackList = res.data.rows;
-                        var html = "<option value=''>请选择</option>";
-                        for (var item in _self.StorageRackList) {
-                            html += "<option value='" + _self.StorageRackList[item].StorageRackId + "' " + "data-subtext='" + _self.StorageRackList[item].StorageRackNo + "'>" + _self.StorageRackList[item].StorageRackName + "</option>"
-                        }
-                        $("#StoragerackId").empty();
-                        $("#StoragerackId").append(html)
-                        $('#StoragerackId').selectpicker('refresh');
-                    }).catch(function (res) {
-                    });
                 },
-                StoragerackId: function (val) {
-                    this.qtyL(val);
-                }
             },
             mounted: function(){
                 var _self = this;
                 _self.$nextTick(function () {
                     $("#MaterialId").selectpicker({
-                        noneSelectedText: '请选择',
-                    });
-                    $("#StoragerackId").selectpicker({
                         noneSelectedText: '请选择',
                     });
                     _self.searchMaterial("",1);
@@ -189,9 +152,9 @@
                 searchMaterial: function (val,type) {
                     var _self = this;
                     if (type === 1) {
-                        _self.urlM = "/Material/Search";
+                        _self.urlM = "/Material/Search?storeId=@ViewData["currentStoreId"]";
                     } else {
-                        _self.urlM = "/Material/Search?text" + val;
+                        _self.urlM = "/Material/Search?storeId=@ViewData["currentStoreId"]&text" + val;
                     }
                     yui.$axiosget(_self.urlM).then(function (res) {
                         _self.MaterialList = res.data.rows;
@@ -208,40 +171,10 @@
                     }).catch(function (res) {
                     });
                 },
-                searchInvntory: function () {
-                    var _self = this;
-                    if (_self.MaterialId.length > 0) {
-                        yui.$axiosget('/StockOut/SearchInventory?id=' + _self.MaterialId).then(function (res) {
-                            _self.StorageRackList = res.data.rows;
-                            var html = "<option value=''>请选择</option>";
-                            for (var item in _self.StorageRackList) {
-                                html += "<option value='" + _self.StorageRackList[item].StorageRackId + "' " + "data-subtext='" + _self.StorageRackList[item].StorageRackNo + "'>" + _self.StorageRackList[item].StorageRackName + "</option>"
-                            }
-                            $("#StoragerackId").empty();
-                            $("#StoragerackId").append(html)
-                            $('#StoragerackId').selectpicker('refresh');
-                            $('#StoragerackId').selectpicker('val', _self.StoragerackId);
-                            _self.qtyL(_self.StoragerackId);
-                        }).catch(function (res) {
-                        });
-                    }
-                },
-                qtyL: function (val) {
-                    var _self = this;
-                    for (var item in _self.StorageRackList) {
-                        if (_self.StorageRackList[item].StorageRackId == val) {
-                            _self.Qty = _self.StorageRackList[item].Qty;
-                        }
-                    }
-                },
                 addL: function () {
                    var _self = this;
                     if (_self.MaterialId.length <= 0) {
                         layer.msg("请选择物料", { icon: 2 });
-                        return false;
-                    }
-                    if (_self.StoragerackId.length <= 0) {
-                        layer.msg("请选择出库货架", { icon: 2 });
                         return false;
                     }
                     if (!yui.signlessInteger(_self.PlanOutQty)) {
@@ -250,10 +183,6 @@
                     }
                     if (!yui.signlessInteger(_self.ActOutQty)) {
                         layer.msg("实际数量为正整数", { icon: 2 });
-                        return false;
-                    }
-                    if (_self.ActOutQty > _self.Qty) {
-                        layer.msg("实际数量大于库存数量", { icon: 2 });
                         return false;
                     }
                     var index = layer.load(1, {
@@ -265,7 +194,6 @@
                         MaterialId: _self.MaterialId,
                         StoragerackId: _self.StoragerackId,
                         PlanOutQty: _self.PlanOutQty,
-                        ActOutQty: _self.ActOutQty,
                         Remark: _self.Remark
                     };
                     yui.$axiospostform('/StockOut/AddOrUpdateD', data)

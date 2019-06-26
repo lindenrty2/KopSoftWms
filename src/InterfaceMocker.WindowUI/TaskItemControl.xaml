@@ -15,7 +15,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Label Grid.Row="0" Grid.ColumnSpan="2" x:Name="ctlTitle" Background="SkyBlue" Content="{Binding Title}" />
-        <DataGrid x:Name="ctlDatas" HeadersVisibility="None" Grid.Row="1" Grid.Column="0" ItemsSource="{Binding Datas}" >
+        <DataGrid x:Name="ctlDatas" HeadersVisibility="None" Grid.Row="1" Grid.Column="0" ItemsSource="{Binding Datas}" AutoGenerateColumns="False" >
             <DataGrid.Columns>
                 <DataGridTextColumn Width="80" Binding="{Binding Type}" />
                 <DataGridTextColumn Width="*" Binding="{Binding Message}" />

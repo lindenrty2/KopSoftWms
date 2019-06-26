@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace InterfaceMocker.WindowUI
@@ -16,6 +17,8 @@ namespace InterfaceMocker.WindowUI
         public ObservableCollection<TaskItemData> Datas { get; } = new ObservableCollection<TaskItemData>();
 
         public TaskItemCommand[] Commands;
+
+        public UserControl UserControl { get; set; }
 
         private static SimpleEventBus _eventBus = SimpleEventBus.GetDefaultEventBus();
         public TaskItemViewModel()

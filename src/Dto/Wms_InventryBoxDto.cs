@@ -8,6 +8,8 @@ namespace YL.Core.Dto
     public class Wms_InventryBoxDto : Wms_inventorybox
     {
 
+
+
         public List<Wms_inventory> Detail { get; set; }
 
     }

@@ -1,20 +1,20 @@
 ﻿@using YL.Utils.Json;
 @{
     Layout = "_LayoutH";
-    @model YL.Core.Entity.Wms_stockin
+    @model YL.Core.Entity.Wms_stockout
 }
 @section styles{
     <link rel="stylesheet" href="~/css/bootstrap-select.min.css" />
 }
 <div id="app" v-cloak>
     <div>
+        <button id="lockL" type="button" class="btn btn-outL margin-left:20px" onclick="app.lockL(true);">锁定</button>
         <button id="box1OutL" type="button" class="btn btn-outL margin-left:20px" onclick="app.boxOutL(true);">料箱出库</button>
-        <button id="box9OutL" type="button" class="btn btn-outL margin-left:20px" onclick="app.boxOutL(false);">多宫格箱出库</button>
         <button id="scanL" type="button" class="btn btn-scanL" onclick="app.scanL();">扫码操作</button>
         <span id="ctlOutedBoxList">
 
         </span>
-        <button id="complateL" type="button" class="btn btn-scanL" onclick="app.complateL();">入库完成</button>
+        <button id="complateL" type="button" class="btn btn-scanL" onclick="app.complateL();">出库完成</button>
     </div>
     <table id="bootstraptable" class="table table-bordered text-nowrap table-hover"></table>
 </div>
@@ -28,8 +28,8 @@
             data: {
                 datemin: '',
                 datemax: '',
-                StockInId: "@Model.StockInId",
-                StockInNo: "@Model.StockInNo",
+                StockOutId: "@Model.StockOutId",
+                StockOutNo: "@Model.StockOutNo",
                 storeId: '@ViewData["currentStoreId"]',
                 urlM: '',
                 storeId: '0'
@@ -46,7 +46,7 @@
                         visible: true
                     },
                     {
-                        field: 'Detail.StockInDetailId',
+                        field: 'Detail.StockOutDetailId',
                         title: '详细ID',
                         visible: false
                     },
@@ -89,13 +89,13 @@
                         sortable: true
                     },
                     {
-                        field: 'Detail.PlanInQty',
+                        field: 'Detail.PlanOutQty',
                         title: '计划数量',
                         align: 'center',
                         sortable: true
                     }
                     , {
-                        field: 'Detail.ActInQty',
+                        field: 'Detail.ActOutQty',
                         title: '实际数量',
                         align: 'center',
                         sortable: true
@@ -157,9 +157,9 @@
                     }
                     ];
                     var qParams = {
-                        pid: "@Model.StockInId"
+                        pid: "@Model.StockOutId"
                     };
-                    yui.table("bootstraptable", "/StockIn/WorkList", obj, "GET", "StockInDetailId", true, qParams);
+                    yui.table("bootstraptable", "/StockOut/WorkList", obj, "GET", "StockOutDetailId", true, qParams);
                 });
             },
             computed: {
@@ -178,13 +178,13 @@
                     $("#ob" + ibTaskId).remove();
                 },
                 boxOutL: function (isfullbox) {
-                    var index = layer.confirm("您确定要出库" + (isfullbox?"":"多宫格") + "料箱吗？", { btn: ["确定", "取消"] }, function () {
+                    var index = layer.confirm("您确定要出库料箱吗？", { btn: ["确定", "取消"] }, function () {
                         layer.close(index);
                         
-                        var url = "/InventoryBox/DoAutoSelectBox";
+                        var url = "/InventoryBox/DoStockOutBoxOut";
                         var data = {
                             storeId: '@ViewData["currentStoreId"]',
-                            isfullbox: isfullbox
+                            stockOutId: '@Model.StockOutId'
                         };
                         yui.$axiospostform(url, data)
                             .then(function (response) {
@@ -203,23 +203,51 @@
                     }, function () {
 
                     });
-
-
                 },
-                boxBackL: function (taskId) {
-                    yui.layershow("料箱归库", "/InventoryBox/StockInBoxBack?storeId=@ViewData["currentStoreId"]&inventoryboxtaskid=" + taskId, 1000, 800);
-                },
-                scanL: function (detailId) {
-                    yui.layershow("扫码操作", "/StockIn/ScanPage?stockInId=@Model.StockInId&storeId=@ViewData["currentStoreId"]", 1000, 800);
-                }, 
-                complateL: function (isfullbox) {
-                    var index = layer.confirm("入库单与实际入库数量不匹配，您确定要将入库单标记为完成吗？", { btn: ["确定", "取消"] }, function () {
+                lockL: function () {
+                    var index = layer.confirm("是否要锁定此订单？", { btn: ["确定", "取消"] }, function () {
                         layer.close(index);
                         
-                        var url = "/StockIn/DoComplate";
+                        var url = "/StockOut/DoLock";
                         var data = {
                             storeId: '@ViewData["currentStoreId"]',
-                            stockInId: '@Model.StockInId'
+                            StockOutId: '@Model.StockOutId'
+                        };
+                        yui.$axiospostform(url, data)
+                            .then(function (response) {
+                                if (response.data.isSccuess) {
+                                    layer.msg(response.data.message, { icon: 1, time: 1000 });
+                                    setTimeout(function () {
+                                        yui.layer_close3();
+                                    }, 1000);
+                                    return false;
+                                }
+                                else {
+                                    layer.msg(response.data.message, { icon: 5 });
+                                }
+                                layer.close(index);
+                            })
+                            .catch(function (error) {
+                                layer.close(index);
+                            });
+                    }, function () {
+
+                    }); 
+                },
+                boxBackL: function (taskId) {
+                    yui.layershow("料箱归库", "/InventoryBox/StockOutBoxBack?storeId=@ViewData["currentStoreId"]&inventoryboxtaskid=" + taskId, 1000, 800);
+                },
+                scanL: function (detailId) {
+                    yui.layershow("扫码操作", "/StockOut/ScanPage?StockOutId=@Model.StockOutId&storeId=@ViewData["currentStoreId"]", 1000, 800);
+                }, 
+                complateL: function (isfullbox) {
+                    var index = layer.confirm("出库单与实际出库数量不匹配，您确定要将出库单标记为完成吗？", { btn: ["确定", "取消"] }, function () {
+                        layer.close(index);
+                        
+                        var url = "/StockOut/DoComplate";
+                        var data = {
+                            storeId: '@ViewData["currentStoreId"]',
+                            StockOutId: '@Model.StockOutId'
                         };
                         yui.$axiospostform(url, data)
                             .then(function (response) {

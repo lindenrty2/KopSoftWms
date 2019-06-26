@@ -23,6 +23,7 @@ namespace InterfaceMocker.WindowUI
         private TaskItemViewModel _viewModel;
         public TaskItemControl(TaskItemViewModel viewModel)
         {
+            viewModel.UserControl = this;
             _viewModel = viewModel;
             InitializeComponent();
 

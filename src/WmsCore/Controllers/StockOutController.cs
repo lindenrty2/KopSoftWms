@@ -1,7 +1,10 @@
 ﻿using IServices;
 using Microsoft.AspNetCore.Mvc;
 using SqlSugar;
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using YL.Core.Dto;
 using YL.Core.Entity;
 using YL.Core.Entity.Fluent.Validation;
@@ -19,8 +22,11 @@ namespace KopSoftWms.Controllers
         private readonly IWms_CustomerServices _customerServices;
         private readonly IWms_stockoutServices _stockoutServices;
         private readonly ISys_serialnumServices _serialnumServices;
-        private readonly IWms_stockoutdetailServices _stockoutdetailServices;
-        private readonly IWms_inventoryServices _inventoryServices;
+        private readonly IWms_stockoutdetailServices _stockoutdetailServices; 
+        private readonly IWms_stockoutdetailboxServices _stockoutdetailboxServices;
+        private readonly IWms_inventoryBoxServices _inventoryBoxServices;
+        private readonly IWms_inventoryBoxTaskServices _inventoryBoxTaskServices;
+        private readonly IWms_inventoryServices _inventoryServices; 
         private readonly SqlSugarClient _client;
 
         public StockOutController(
@@ -28,7 +34,10 @@ namespace KopSoftWms.Controllers
             IWms_CustomerServices customerServices,
             IWms_stockoutServices stockoutServices,
             ISys_serialnumServices serialnumServices,
-            IWms_stockoutdetailServices stockoutdetailServices,
+            IWms_stockoutdetailServices stockoutdetailServices, 
+            IWms_stockoutdetailboxServices stockoutdetailboxServices,
+            IWms_inventoryBoxServices inventoryBoxServices,
+            IWms_inventoryBoxTaskServices inventoryBoxTaskServices,
             IWms_inventoryServices inventoryServices,
             SqlSugarClient client
             )
@@ -38,6 +47,9 @@ namespace KopSoftWms.Controllers
             _stockoutServices = stockoutServices;
             _serialnumServices = serialnumServices;
             _stockoutdetailServices = stockoutdetailServices;
+            _stockoutdetailboxServices = stockoutdetailboxServices;
+            _inventoryBoxServices = inventoryBoxServices;
+            _inventoryBoxTaskServices = inventoryBoxTaskServices;
             _inventoryServices = inventoryServices;
             _client = client;
         }
@@ -47,9 +59,9 @@ namespace KopSoftWms.Controllers
         public IActionResult Index()
         {
             var list = _dictServices.Queryable().Where(c => c.IsDel == 1 && c.DictType == PubDictType.stockout.ToString()).ToList();
-            var stockInStatus = EnumExt.ToKVListLinq<StockInStatus>();
-            ViewBag.StockInType = list;
-            ViewBag.StockInStatus = stockInStatus;
+            var stockOutStatus = EnumExt.ToKVListLinq<StockOutStatus>();
+            ViewBag.StockOutType = list;
+            ViewBag.StockOutStatus = stockOutStatus;
             return View();
         }
 
@@ -141,6 +153,233 @@ namespace KopSoftWms.Controllers
             return Content(sd);
         }
 
+        
+        [HttpGet]
+        public IActionResult Work(string pid)
+        {
+            var model = _stockoutServices.QueryableToEntity(c => c.StockOutId == SqlFunc.ToInt64(pid) && c.IsDel == 1);
+            ViewData["currentStoreId"] = model.WarehouseId;
+            return View(model);
+        }
+
+        [HttpGet]
+        public ContentResult WorkList(string pid)
+        {
+            var workList = _stockoutdetailServices.PageList(pid); 
+            return Content(workList);
+        }
+
+
+        [HttpGet]
+        public IActionResult ScanPage(long storeId,long stockOutId)
+        {
+            ViewData["currentStoreId"] = storeId;
+            var model = _stockoutServices.QueryableToEntity(c => c.StockOutId == SqlFunc.ToInt64(stockOutId) && c.IsDel == 1);
+            return View(model);
+        }
+
+        [HttpPost]
+        public RouteData DoScanComplate(long stockOutId,long inventoryBoxId, Wms_StockOutMaterialDetailDto[] materials,string remark)
+        {
+            try
+            {
+                _client.BeginTran();
+
+                Wms_stockout stockout = _stockoutServices.QueryableToEntity(x => x.StockOutId == stockOutId);
+                if (stockout == null) { return YL.Core.Dto.RouteData.From(PubMessages.E2113_STOCKOUT_NOTFOUND); }
+                if (stockout.StockOutStatus == StockOutStatus.task_finish.ToByte()) { return YL.Core.Dto.RouteData.From(PubMessages.E2114_STOCKOUT_ALLOW_FINISHED); }
+               
+                Wms_inventorybox inventoryBox = _inventoryBoxServices.QueryableToEntity(x => x.InventoryBoxId == inventoryBoxId);
+                if (inventoryBox == null) { return YL.Core.Dto.RouteData.From(PubMessages.E1011_INVENTORYBOX_NOTFOUND); }
+                if (inventoryBox.Status != InventoryBoxStatus.Outed) { return YL.Core.Dto.RouteData.From(PubMessages.E1014_INVENTORYBOX_NOTOUTED); }
+
+                Wms_inventoryboxTask inventoryBoxTask = _inventoryBoxTaskServices.QueryableToEntity(x => x.InventoryBoxId == inventoryBoxId && x.Status == InventoryBoxTaskStatus.task_outed.ToByte());
+                if (inventoryBoxTask == null) { return YL.Core.Dto.RouteData.From(PubMessages.E1014_INVENTORYBOX_NOTOUTED); } //数据异常 
+
+
+                foreach (Wms_StockOutMaterialDetailDto material in materials)
+                {
+                    Wms_stockoutdetail detail = _stockoutdetailServices.QueryableToEntity(x => x.StockOutId == stockOutId && x.MaterialId.ToString() == material.MaterialId);
+                    if (detail == null) { return YL.Core.Dto.RouteData.From(PubMessages.E2101_STOCKOUTDETAIL_NOTFOUND,$"MaterialId='{material.MaterialId}'"); }
+                    if (detail.Status == StockOutStatus.task_finish.ToByte()) { return YL.Core.Dto.RouteData.From(PubMessages.E2102_STOCKOUTDETAIL_ALLOW_FINISHED); }
+
+                    Wms_stockoutdetail_box box = _stockoutdetailboxServices.QueryableToEntity(x => x.InventoryBoxTaskId == inventoryBoxTask.InventoryBoxTaskId && x.StockOutDetailId == detail.StockOutDetailId);
+                    if (box != null)
+                    {
+                        box.Qty += material.Qty;
+
+                        if (!_stockoutdetailboxServices.UpdateEntity(box))
+                        {
+                            return YL.Core.Dto.RouteData.From(PubMessages.E0002_UPDATE_COUNT_FAIL);
+                        }
+                    }
+                    else
+                    {
+                        box = new Wms_stockoutdetail_box()
+                        {
+                            DetailBoxId = PubId.SnowflakeId,
+                            InventoryBoxTaskId = inventoryBoxTask.InventoryBoxTaskId,
+                            InventoryBoxId = inventoryBox.InventoryBoxId,
+                            StockOutDetailId = detail.StockOutDetailId,
+                            Qty = material.Qty,
+                            Remark = remark,
+                            CreateDate = DateTime.Now,
+                            CreateBy = UserDto.UserId
+                        };
+
+                        _stockoutdetailboxServices.Insert(box);
+                    }
+                    if (detail.Status == StockOutStatus.task_confirm.ToByte())
+                    {
+                        detail.Status = StockOutStatus.task_working.ToByte();
+                        _stockoutdetailServices.Update(detail);
+                    }
+                }
+                
+                if (stockout.StockOutStatus == StockOutStatus.task_confirm.ToByte())
+                {
+                    stockout.StockOutStatus = StockOutStatus.task_working.ToByte();
+                    _stockoutServices.Update(stockout);
+                }
+
+                _client.CommitTran();
+                return YL.Core.Dto.RouteData.From(PubMessages.I2101_STOCKOUT_SCAN_SCCUESS);
+            }
+            catch (Exception)
+            {
+                _client.RollbackTran();
+                return YL.Core.Dto.RouteData.From(PubMessages.E2105_STOCKOUT_BOXOUT_FAIL);
+            }
+
+        }
+
+        [HttpPost]
+        public async Task<RouteData> DoLock(long storeId,long stockOutId)
+        {
+            try
+            {
+                _client.BeginTran();
+
+                Wms_stockout stockout = _stockoutServices.QueryableToEntity(x => x.StockOutId == stockOutId);
+                if (stockout == null) { return YL.Core.Dto.RouteData.From(PubMessages.E2113_STOCKOUT_NOTFOUND); }
+                if (stockout.StockOutStatus == StockOutStatus.task_finish.ToByte()) { return YL.Core.Dto.RouteData.From(PubMessages.E2114_STOCKOUT_ALLOW_FINISHED); }
+
+                stockout.IsLocked = true;
+                if (!_stockoutServices.Update(stockout))
+                {
+                    return YL.Core.Dto.RouteData.From(PubMessages.E2118_STOCKOUT_LOCK_FAIL, "出库单锁定状态更新失败");
+                }
+
+                List<Wms_stockoutdetail> details = _stockoutdetailServices.QueryableToList(x => x.StockOutId == stockout.StockOutId);
+                foreach (Wms_stockoutdetail detail in details)
+                {
+                    if (detail.Status == StockOutStatus.task_finish.ToByte()) continue;
+
+                    //优先锁定自身生产令号的物料
+                    Wms_inventory[] inventories = _client.Queryable<Wms_inventory>()
+                        .Where( x => x.MaterialId == detail.MaterialId && !x.IsLocked && (x.OrderNo == stockout.OrderNo || string.IsNullOrEmpty(x.OrderNo)))
+                        .OrderBy(x => x.OrderNo , OrderByType.Desc).ToArray();
+                    int lockedQty = 0;
+                    int needQty = detail.PlanOutQty - detail.ActOutQty;
+                    foreach (Wms_inventory inventory in inventories)
+                    {
+                        inventory.IsLocked = true;
+                        if (_client.Updateable(inventory).ExecuteCommand() == 0)
+                        {
+                            _client.RollbackTran();
+                            return YL.Core.Dto.RouteData.From(PubMessages.E2118_STOCKOUT_LOCK_FAIL, "料格锁定状态更新失败");
+                        }
+                        lockedQty += inventory.Qty;
+                        if(lockedQty >= needQty)
+                        {
+                            //已锁定足够物料
+                            break;
+                        }
+                    }
+                    if (lockedQty < needQty)
+                    {
+                        _client.RollbackTran();
+                        Wms_material material = await _client.Queryable<Wms_material>().FirstAsync(x => x.MaterialId == detail.MaterialId);
+                        return YL.Core.Dto.RouteData.From(PubMessages.E2119_STOCKOUT_MATERIAL_ENOUGH, $"{material.MaterialNo}({material.MaterialName}) 需求/可锁定数：{lockedQty}/{needQty}"); 
+                    }
+                }
+
+                _client.CommitTran();
+                return YL.Core.Dto.RouteData.From(PubMessages.I2103_STOCKOUT_LOCK_SCCUESS);
+            }
+            catch (Exception ex)
+            {
+                _client.RollbackTran();
+                return YL.Core.Dto.RouteData.From(PubMessages.E2118_STOCKOUT_LOCK_FAIL, ex.Message); 
+            } 
+        }
+
+        [HttpPost]
+        public RouteData DoComplate(long storeId,long stockOutId)
+        {
+            try
+            {
+                _client.BeginTran();
+
+                Wms_stockout stockout = _stockoutServices.QueryableToEntity(x => x.StockOutId == stockOutId);
+                if (stockout == null) { return YL.Core.Dto.RouteData.From(PubMessages.E2113_STOCKOUT_NOTFOUND); }
+                if (stockout.StockOutStatus == StockOutStatus.task_finish.ToByte()) { return YL.Core.Dto.RouteData.From(PubMessages.E2114_STOCKOUT_ALLOW_FINISHED); }
+
+                stockout.StockOutStatus = StockOutStatus.task_finish.ToByte();
+                if (!_stockoutServices.Update(stockout))
+                {
+                    return YL.Core.Dto.RouteData.From(PubMessages.E2117_STOCKOUT_FAIL, "出库单详细状态更新失败");
+                }
+                List<Wms_stockoutdetail> details = _stockoutdetailServices.QueryableToList(x => x.StockOutId == stockout.StockOutId);
+                foreach(Wms_stockoutdetail detail in details)
+                {
+                    if (detail.Status == StockOutStatus.task_finish.ToByte()) continue;
+                    detail.Status = StockOutStatus.task_finish.ToByte();
+                    detail.ModifiedBy = this.UserDto.UserId;
+                    detail.ModifiedDate = DateTime.Now;
+                    if (!_stockoutdetailServices.Update(detail))
+                    {
+                        return YL.Core.Dto.RouteData.From(PubMessages.E2117_STOCKOUT_FAIL, "出库单详细状态更新失败");
+                    }
+                }
+                _client.CommitTran();
+                return YL.Core.Dto.RouteData.From(PubMessages.I2102_STOCKOUT_SCCUESS);
+            }
+            catch(Exception ex)
+            { 
+                _client.RollbackTran();
+                return YL.Core.Dto.RouteData.From(PubMessages.E2117_STOCKOUT_FAIL, ex.Message);
+            } 
+        }
+
+        [HttpGet]
+        public RouteData<Wms_StockOutMaterialDetailDto> SearchMaterial(long storeId,long stockOutId,string materialNo)
+        {
+            Wms_material material = _client.Queryable<Wms_material>().First( x => x.MaterialNo == materialNo);
+            if(material == null)
+            {
+                return RouteData<Wms_StockOutMaterialDetailDto>.From(PubMessages.E1005_MATERIALNO_NOTFOUND);
+            }
+            Wms_stockoutdetail detail = _stockoutdetailServices.QueryableToEntity(x => x.StockOutId == stockOutId && x.MaterialId == material.MaterialId);
+            if(detail == null)
+            {
+                return RouteData<Wms_StockOutMaterialDetailDto>.From(PubMessages.E2115_STOCKOUT_HASNOT_MATERIAL);
+            } 
+            Wms_StockOutMaterialDetailDto detailDto = new Wms_StockOutMaterialDetailDto()
+            {
+                StockOutId = detail.StockOutId.ToString(),
+                StockOutDetailId = detail.StockOutDetailId.ToString(),
+                MaterialId = material.MaterialId.ToString(),
+                MaterialNo = material.MaterialNo,
+                MaterialName = material.MaterialName,
+                PlanOutQty = (int)detail.PlanOutQty,
+                ActOutQty = (int)detail.ActOutQty,
+                Qty = 0
+
+            };
+            return RouteData<Wms_StockOutMaterialDetailDto>.From(detailDto);
+        }
+
         [HttpPost]
         [FilterXss]
         [OperationLog(LogType.addOrUpdate)]
@@ -160,12 +399,12 @@ namespace KopSoftWms.Controllers
                 {
                     if (_stockoutServices.IsAny(c => c.OrderNo == model.OrderNo))
                     {
-                        return BootJsonH((false, PubConst.StockIn1));
+                        return BootJsonH((false, PubConst.StockOut1));
                     }
                 }
                 model.StockOutNo = _serialnumServices.GetSerialnum(UserDtoCache.UserId, "Wms_stockout");
                 model.StockOutId = PubId.SnowflakeId;
-                model.StockOutStatus = StockInStatus.initial.ToByte();
+                model.StockOutStatus = StockOutStatus.initial.ToByte();
                 model.CreateBy = UserDtoCache.UserId;
                 bool flag = _stockoutServices.Insert(model);
                 return BootJsonH(flag ? (flag, PubConst.Add1) : (flag, PubConst.Add2));
@@ -196,7 +435,7 @@ namespace KopSoftWms.Controllers
             if (id.IsEmptyZero())
             {
                 model.StockOutDetailId = PubId.SnowflakeId;
-                model.Status = StockInStatus.initial.ToByte();
+                model.Status = StockOutStatus.initial.ToByte();
                 model.CreateBy = UserDtoCache.UserId;
                 bool flag = _stockoutdetailServices.Insert(model);
                 return BootJsonH(flag ? (flag, PubConst.Add1) : (flag, PubConst.Add2));

@@ -55,7 +55,7 @@ namespace YL.Core.Dto
         /// <summary>
         /// 出库单编号
         /// </summary>
-        public bool WarehousingId { get; set; }
+        public string WarehouseEntryId { get; set; }
         /// <summary>
         /// 错误编号
         /// </summary>

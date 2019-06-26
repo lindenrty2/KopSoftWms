@@ -129,35 +129,29 @@ namespace Services
                  }).MergeTable().Where(s => s.StockOutId == stockInId).ToList();
             bool flag1 = true;
             bool flag2 = true;
-            var list2 = _client.Queryable<Wms_stockoutdetail, Wms_material, Wms_stockout, Wms_storagerack, Sys_user, Sys_user, Sys_user>
-                 ((s, m, p, g, c, u, a) => new object[] {
+            var list2 = _client.Queryable<Wms_stockoutdetail, Wms_material, Wms_stockout, Sys_user, Sys_user>
+                 ((s, m, p, c, u) => new object[] {
                    JoinType.Left,s.MaterialId==m.MaterialId,
                    JoinType.Left,s.StockOutId==p.StockOutId,
-                   JoinType.Left,s.StoragerackId==g.StorageRackId,
                    JoinType.Left,s.CreateBy==c.UserId,
                    JoinType.Left,s.ModifiedBy==u.UserId,
-                   JoinType.Left,s.AuditinId==a.UserId,
                   })
-                  .Where((s, m, p, g, c, u, a) => s.IsDel == 1 && m.IsDel == 1 && p.IsDel == 1 && g.IsDel == 1 && c.IsDel == 1)
-                  .Select((s, m, p, g, c, u, a) => new
+                  .Where((s, m, p, c, u) => s.IsDel == 1 && m.IsDel == 1 && p.IsDel == 1 && c.IsDel == 1)
+                  .Select((s, m, p, c, u) => new
                   {
                       StockOutId = s.StockOutId.ToString(),
                       StockOutDetailId = s.StockOutDetailId.ToString(),
                       m.MaterialNo,
                       m.MaterialName,
-                      g.StorageRackNo,
-                      g.StorageRackName,
-                      Status = SqlFunc.IF(s.Status == 1).Return(StockInStatus.initial.GetDescription())
-                      .ElseIF(s.Status == 2).Return(StockInStatus.task_confirm.GetDescription())
-                      .ElseIF(s.Status == 3).Return(StockInStatus.task_canceled.GetDescription())
-                      .ElseIF(s.Status == 3).Return(StockInStatus.task_working.GetDescription())
-                      .End(StockInStatus.task_finish.GetDescription()),
+                      Status = SqlFunc.IF(s.Status == 1).Return(StockOutStatus.initial.GetDescription())
+                      .ElseIF(s.Status == 2).Return(StockOutStatus.task_confirm.GetDescription())
+                      .ElseIF(s.Status == 3).Return(StockOutStatus.task_canceled.GetDescription())
+                      .ElseIF(s.Status == 3).Return(StockOutStatus.task_working.GetDescription())
+                      .End(StockOutStatus.task_finish.GetDescription()),
                       s.PlanOutQty,
                       s.ActOutQty,
                       s.IsDel,
                       s.Remark,
-                      s.AuditinTime,
-                      AName = a.UserNickname,
                       CName = c.UserNickname,
                       s.CreateDate,
                       UName = u.UserNickname,
@@ -198,7 +192,7 @@ namespace Services
                 });
 
                 //修改明细状态 2
-                _client.Updateable(new Wms_stockoutdetail { Status = StockInStatus.task_confirm.ToByte(), AuditinId = userId, AuditinTime = DateTimeExt.DateTime, ModifiedBy = userId, ModifiedDate = DateTimeExt.DateTime }).UpdateColumns(c => new { c.Status, c.AuditinId, c.AuditinTime, c.ModifiedBy, c.ModifiedDate }).Where(c => c.StockOutId == stockOutId && c.IsDel == 1).ExecuteCommand();
+                _client.Updateable(new Wms_stockoutdetail { Status = StockInStatus.task_confirm.ToByte(), ModifiedBy = userId, ModifiedDate = DateTimeExt.DateTime }).UpdateColumns(c => new { c.Status, c.ModifiedBy, c.ModifiedDate }).Where(c => c.StockOutId == stockOutId && c.IsDel == 1).ExecuteCommand();
 
                 //修改主表中的状态改为进行中 2
                 _client.Updateable(new Wms_stockout { StockOutId = stockOutId, StockOutStatus = StockInStatus.task_confirm.ToByte(), ModifiedBy = userId, ModifiedDate = DateTimeExt.DateTime }).UpdateColumns(c => new { c.StockOutStatus, c.ModifiedBy, c.ModifiedDate }).ExecuteCommand();

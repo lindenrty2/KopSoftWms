@@ -33,6 +33,14 @@ namespace YL.Core.Entity
         public long? StockOutId { get; set; }
 
         /// <summary>
+        /// Desc:仓库Id
+        /// Default:
+        /// Nullable:True
+        /// </summary>
+        [SugarColumn(IsNullable = false)]
+        public long WarehouseId { get; set; }
+
+        /// <summary>
         /// Desc:
         /// Default:
         /// Nullable:True
@@ -65,14 +73,6 @@ namespace YL.Core.Entity
         public int ActOutQty { get; set; }
 
         /// <summary>
-        /// Desc:货架
-        /// Default:
-        /// Nullable:True
-        /// </summary>
-        [SugarColumn(/*, IsIdentity = true*/)]
-        public long StoragerackId { get; set; }
-
-        /// <summary>
         /// Desc:料箱Id
         /// Default:
         /// Nullable:True
@@ -87,22 +87,7 @@ namespace YL.Core.Entity
         /// </summary>
         [SugarColumn(/*, IsIdentity = true*/)]
         public long InventoryId { get; set; }
-
-        /// <summary>
-        /// Desc:审核人
-        /// Default:
-        /// Nullable:True
-        /// </summary>
-        [SugarColumn(IsNullable = true)]
-        public long? AuditinId { get; set; }
-
-        /// <summary>
-        /// Desc:审核时间
-        /// Default:
-        /// Nullable:True
-        /// </summary>
-        [SugarColumn(IsNullable = true)]
-        public DateTime? AuditinTime { get; set; }
+         
 
         /// <summary>
         /// Desc:1 0

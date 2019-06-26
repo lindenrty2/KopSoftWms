@@ -61,7 +61,7 @@ namespace Services
 
                     })
                     .Where((stb, st, ib, ou) => stb.StockinDetailId.ToString() == item.StockInDetailId)
-                    .Select((stb, st, ib, ou) => new
+                    .Select((stb, st, ib, ou) => new 
                     {
                         InventoryBoxTaskId = st.InventoryBoxTaskId.ToString(), 
                         InventoryBoxId = st.InventoryBoxId.ToString(), 

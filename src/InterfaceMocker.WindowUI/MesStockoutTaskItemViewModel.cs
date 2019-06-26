@@ -12,14 +12,14 @@ namespace InterfaceMocker.WindowUI
 {
     public class MesStockoutTaskItemViewModel : TaskItemViewModel
     {
-        private WMSService.OutsideStockInDto _data;
+        private WMSService.OutsideStockOutDto _data;
         private WMSService.IMESHookController _mesHook = null;
 
 
-        public MesStockoutTaskItemViewModel(WMSService.OutsideStockInDto data)
+        public MesStockoutTaskItemViewModel(WMSService.OutsideStockOutDto data)
         {
             _data = data; 
-            this.Title = "出库任务:" + data.WarehousingId; 
+            this.Title = "出库任务:" + data.WarehouseEntryId; 
             this.Datas.Add(new TaskItemData("发送", JsonConvert.SerializeObject(data)));
             var binding = new BasicHttpBinding();
             var factory = new ChannelFactory<WMSService.IMESHookController>(binding, "http://localhost:23456/Outside/MesHook.asmx");
@@ -35,11 +35,10 @@ namespace InterfaceMocker.WindowUI
             };
         }
 
-        public void ReSend(object parameter)
+        public async void ReSend(object parameter)
         {
-            _mesHook.WarehouseEntryAsync(_data).ContinueWith(
-                  (x) => { this.Datas.Add(new TaskItemData("发送结果", JsonConvert.SerializeObject(x.Result))); }
-                  );
+            var result = await _mesHook.WarehouseEntryAsync(_data);
+            this.Datas.Add(new TaskItemData("发送结果", JsonConvert.SerializeObject(result)));
         }
 
 

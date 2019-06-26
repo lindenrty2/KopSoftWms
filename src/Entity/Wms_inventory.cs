@@ -48,6 +48,12 @@ namespace YL.Core.Entity
         public long InventoryBoxId { get; set; }
 
         /// <summary>
+        /// 订单号
+        /// </summary>
+        [SugarColumn(Length = 50, IsNullable = true)]
+        public string OrderNo { get; set; }
+
+        /// <summary>
         /// 储存箱格位置
         /// </summary> 
         [DefaultValue(1)]
@@ -69,6 +75,14 @@ namespace YL.Core.Entity
         /// </summary>
         [SugarColumn(Length = 255, IsNullable = true)]
         public string Remark { get; set; }
+
+        /// <summary>
+        /// Desc: 是否锁定
+        /// Default:
+        /// Nullable:False
+        /// </summary>
+        [SugarColumn()]
+        public bool IsLocked { get; set; }
 
         /// <summary>
         /// Desc:1 0

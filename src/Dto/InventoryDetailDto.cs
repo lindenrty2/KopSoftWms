@@ -43,7 +43,10 @@ namespace YL.Core.Dto
         /// 出库详细Id
         /// </summary>
         public string StockOutDetailId { get; set; }
-
+        /// <summary>
+        /// 订单号
+        /// </summary>
+        public string OrderNo { get; set; }
         /// <summary>
         /// 计划数量
         /// </summary>

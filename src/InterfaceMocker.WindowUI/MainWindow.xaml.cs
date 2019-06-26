@@ -43,12 +43,18 @@ namespace InterfaceMocker.WindowUI
                 return;
             }
             TaskItemControl taskControl = new TaskItemControl(new MesStockinTaskItemViewModel(window.Data));
-            ctlMESTasks.Children.Add(taskControl);
-
+            ctlMESTasks.Children.Add(taskControl); 
         }
 
         private void NewStockOut_Click(object sender, RoutedEventArgs e)
         {
+            MesStockoutCreateWindow window = new MesStockoutCreateWindow();
+            if (window.ShowDialog() != true)
+            {
+                return;
+            }
+            TaskItemControl taskControl = new TaskItemControl(new MesStockoutTaskItemViewModel(window.Data));
+            ctlMESTasks.Children.Add(taskControl);
 
         }
 

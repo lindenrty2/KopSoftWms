@@ -106,6 +106,9 @@
     <Content Update="Views\InventoryBox\Detail.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\InventoryBox\StockOutBoxBack.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\InventoryMove\Add.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
@@ -166,10 +169,10 @@
     <Content Update="Views\StockIn\ScanPage.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="Views\InventoryBox\InventoryBoxBack.cshtml">
+    <Content Update="Views\InventoryBox\StockInBoxBack.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="Views\InventoryBox\InventoryBoxOut.cshtml">
+    <Content Update="Views\InventoryBox\BoxOut.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="Views\StockIn\Detail.cshtml">
@@ -182,6 +185,9 @@
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="Views\StockOut\Detail.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\StockOut\ScanPage.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="Views\StorageRack\Add.cshtml">

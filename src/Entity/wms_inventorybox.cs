@@ -9,7 +9,7 @@ namespace YL.Core.Entity
     /// <summary>
     /// 储存箱(物料箱)
     /// </summary>
-    public class Wms_inventorybox 
+    public class Wms_inventorybox
     {
         public Wms_inventorybox()
         {
@@ -64,7 +64,14 @@ namespace YL.Core.Entity
         /// <summary>
         /// 格数
         /// </summary>
+        [SugarColumn(DefaultValue = "1", IsNullable = false)]
         public int Size { get; set; } = 1;
+
+        /// <summary>
+        /// 已使用格数
+        /// </summary>
+        [SugarColumn(DefaultValue = "1", IsNullable = false)]
+        public int UsedSize { get; set; } = 0;
 
         /// <summary>
         /// Desc:备注

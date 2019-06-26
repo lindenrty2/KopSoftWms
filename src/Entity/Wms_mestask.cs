@@ -54,7 +54,7 @@ namespace YL.Core.Entity
         /// <summary>
         /// 物料信息列表
         /// </summary>
-        [SugarColumn(DefaultValue = "", IsNullable = false)]
+        [SugarColumn(Length = 4096, DefaultValue = "", IsNullable = false)]
         public string SuppliesInfoJson { get; set; }
 
         /// <summary>

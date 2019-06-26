@@ -35,19 +35,11 @@ namespace InterfaceMocker.WindowUI
             };
         }
 
-        public void ReSend(object parameter)
+        public async void ReSend(object parameter)
         {
-            _mesHook.WarehousingAsync(_data).ContinueWith(
-                  (x) => {
-                      System.Windows.Application.Current.Dispatcher.BeginInvoke(
-                          (Action)(() => {
-                              this.Datas.Add(new TaskItemData("发送结果", JsonConvert.SerializeObject(x.Result)));
-                          }
-                      ));
-                  }); 
+            var result = await _mesHook.WarehousingAsync(_data);
+            this.Datas.Add(new TaskItemData("发送结果", JsonConvert.SerializeObject(result)));
         }
-
-
 
         [EventSubscriber]
         public void HandleEvent(KeyValuePair<OutSideStockInResponse, OutSideStockInResponseResult> args)

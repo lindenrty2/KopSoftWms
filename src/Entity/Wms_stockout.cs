@@ -49,8 +49,17 @@ namespace YL.Core.Entity
         public long? StockOutType { get; set; }
 
         /// <summary>
+        /// Desc:Mes任务Id
+        /// Default:
+        /// Nullable:True
+        /// </summary>
+        [SugarColumn(IsNullable = true)]
+        public long? MesTaskId { get; set; }
+
+        /// <summary>
         /// 仓库Id
         /// </summary>
+        [SugarColumn(IsNullable = false)]
         public long WarehouseId { get; set; }
 
         /// <summary>
@@ -76,6 +85,14 @@ namespace YL.Core.Entity
         /// </summary>
         [SugarColumn(Length = 255, IsNullable = true)]
         public string Remark { get; set; }
+
+        /// <summary>
+        /// Desc:是否锁定
+        /// Default:
+        /// Nullable:True
+        /// </summary>
+        [SugarColumn(IsNullable = false)]
+        public bool IsLocked { get; set; }
 
         /// <summary>
         /// Desc:1 0
