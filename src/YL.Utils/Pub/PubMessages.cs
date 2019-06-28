@@ -50,18 +50,19 @@ namespace YL.Utils.Pub
         public static MessageItem I2104_STOCKOUT_BOXOUT_SCCUESS = new MessageItem(2104, "出库单料箱出库成功");
 
         public static MessageItem E2100_CREATE_STOCKIN = new MessageItem(-2100, "创建出库单时发生非预期的异常");
-        public static MessageItem E2101_STOCKOUTDETAIL_NOTFOUND = new MessageItem(-2001, "找不到出库详细");
-        public static MessageItem E2102_STOCKOUTDETAIL_ALLOW_FINISHED = new MessageItem(-2002, "该出库已完成");
-        public static MessageItem E2105_STOCKOUT_BOXOUT_FAIL = new MessageItem(-2005, "(出库)料箱出库操作失败");
-        public static MessageItem E2106_STOCKOUT_BOXBACK_FAIL = new MessageItem(-2006, "(出库)料箱归库操作失败"); 
-        public static MessageItem E2113_STOCKOUT_NOTFOUND = new MessageItem(-2013, "找不到入库详细");
-        public static MessageItem E2114_STOCKOUT_ALLOW_FINISHED = new MessageItem(-2014, "该出库已完成");
-        public static MessageItem E2115_STOCKOUT_HASNOT_MATERIAL = new MessageItem(-2015, "出库单中找不到该物料");
-        public static MessageItem E2116_STOCKOUTDETAIL_INVENTORYBOXTASK_NOTMATCH = new MessageItem(-2016, "料箱中存在无法关联入库单的项目");
-        public static MessageItem E2117_STOCKOUT_FAIL = new MessageItem(-2017, "出库单完成失败");
-        public static MessageItem E2118_STOCKOUT_LOCK_FAIL = new MessageItem(-2018, "出库单锁定失败");
-        public static MessageItem E2119_STOCKOUT_MATERIAL_ENOUGH = new MessageItem(-2019, "出库单所需物料没有足够库存");
-        public static MessageItem E2120_STOCKOUT_NOMORE_BOX = new MessageItem(-2020, "出库单没有更多的料箱需要出库");
+        public static MessageItem E2101_STOCKOUTDETAIL_NOTFOUND = new MessageItem(-2101, "找不到出库详细");
+        public static MessageItem E2102_STOCKOUTDETAIL_ALLOW_FINISHED = new MessageItem(-2102, "该出库已完成");
+        public static MessageItem E2105_STOCKOUT_BOXOUT_FAIL = new MessageItem(-2105, "(出库)料箱出库操作失败");
+        public static MessageItem E2106_STOCKOUT_BOXBACK_FAIL = new MessageItem(-2106, "(出库)料箱归库操作失败"); 
+        public static MessageItem E2113_STOCKOUT_NOTFOUND = new MessageItem(-2113, "找不到入库详细");
+        public static MessageItem E2114_STOCKOUT_ALLOW_FINISHED = new MessageItem(-2114, "该出库已完成");
+        public static MessageItem E2115_STOCKOUT_HASNOT_MATERIAL = new MessageItem(-2115, "出库单中找不到该物料");
+        public static MessageItem E2116_STOCKOUTDETAIL_INVENTORYBOXTASK_NOTMATCH = new MessageItem(-2116, "料箱中存在无法关联入库单的项目");
+        public static MessageItem E2117_STOCKOUT_FAIL = new MessageItem(-2117, "出库单完成失败");
+        public static MessageItem E2118_STOCKOUT_LOCK_FAIL = new MessageItem(-2118, "出库单锁定失败");
+        public static MessageItem E2119_STOCKOUT_MATERIAL_ENOUGH = new MessageItem(-2119, "出库单所需物料没有足够库存");
+        public static MessageItem E2120_STOCKOUT_NOMORE_BOX = new MessageItem(-2120, "出库单没有更多的料箱需要出库");
+        public static MessageItem E2121_STOCKOUT_ALLOW_LOCKED = new MessageItem(-2121, "该出库单已锁定，无法再次锁定");
 
         public static MessageItem I2300_WCS_OUTCOMMAND_SCCUESS = new MessageItem(2300, "WCS料箱出库命令成功");
         public static MessageItem E2300_WCS_OUTCOMMAND_FAIL = new MessageItem(-2300, "WCS料箱出库命令失败");

@@ -209,7 +209,7 @@
                         sortable: true
                     }, {
                         field: 'Qty',
-                        title: '库存容量',
+                        title: '库存',
                         align: 'center',
                         sortable: true,
                         formatter: function (value, row, index) {
@@ -219,13 +219,19 @@
                                 return '<span class="label label-danger radius">' + value + '</span>';
                             }
                         }
-                    },
-                    {
-                        field: 'SafeQty',
-                        title: '安全库存',
-                        align: 'center',
-                        sortable: true
-                    },
+                    }, {
+                            field: 'IsLocked',
+                            title: '状态',
+                            align: 'center',
+                            sortable: true,
+                            formatter: function (value, row, index) {
+                                if (value == true) {
+                                    return '<span class="label label-danger radius">锁定</span>';
+                                } else {
+                                    return '<span class="label label-success radius">正常</span>';
+                                }
+                            }
+                        },
                     {
                         field: 'Remark',
                         align: 'center',

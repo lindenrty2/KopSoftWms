@@ -263,6 +263,7 @@ namespace KopSoftWms.Controllers
                 Wms_stockout stockout = _stockoutServices.QueryableToEntity(x => x.StockOutId == stockOutId);
                 if (stockout == null) { return YL.Core.Dto.RouteData.From(PubMessages.E2113_STOCKOUT_NOTFOUND); }
                 if (stockout.StockOutStatus == StockOutStatus.task_finish.ToByte()) { return YL.Core.Dto.RouteData.From(PubMessages.E2114_STOCKOUT_ALLOW_FINISHED); }
+                if (stockout.IsLocked) { return YL.Core.Dto.RouteData.From(PubMessages.E2121_STOCKOUT_ALLOW_LOCKED); }
 
                 stockout.IsLocked = true;
                 if (!_stockoutServices.Update(stockout))

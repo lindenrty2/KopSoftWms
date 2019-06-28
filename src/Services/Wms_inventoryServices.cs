@@ -44,6 +44,7 @@ namespace Services
                      InventoryId = s.InventoryId.ToString(),
                      InventoryBoxId = sb.InventoryBoxId.ToString(),
                      s.Qty,
+                     s.IsLocked,
                      MaterialId = m.MaterialId.ToString(),
                      m.MaterialNo,
                      m.MaterialName, 

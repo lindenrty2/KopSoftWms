@@ -82,5 +82,9 @@ namespace InterfaceMocker.WindowUI
             })); 
         }
 
+        private void WCSTaskClear_Click(object sender, RoutedEventArgs e)
+        {
+            ctlWCSTasks.Children.Clear();
+        }
     }
 }

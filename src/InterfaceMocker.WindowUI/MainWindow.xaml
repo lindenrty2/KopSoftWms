@@ -71,6 +71,9 @@
                 <Label Grid.Row="0" Grid.Column="0" Content="地址" />
                 <TextBox Grid.Row="0" Grid.Column="1" x:Name="ctlWCSAddress" Text="" IsReadOnly="True" />
                 <Label Grid.Row="1" Grid.Column="0" Content="操作" />
+                <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal"> 
+                    <Button Margin="5" Content="清除" Click="WCSTaskClear_Click"/>
+                </StackPanel>
                 <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
                 </StackPanel>
                 <ScrollViewer Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
