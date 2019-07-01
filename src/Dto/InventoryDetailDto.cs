@@ -22,10 +22,19 @@ namespace YL.Core.Dto
         public int InventoryPosition { get; set; }
 
         /// <summary>
+        /// 是否被锁定
+        /// </summary>
+        public bool IsLocked { get; set; }
+
+        /// <summary>
         /// 物料Id
         /// </summary>
         public string MaterialId { get; set; }
 
+        /// <summary>
+        /// 物料唯一Id
+        /// </summary>
+        public string MaterialOnlyId { get; set; }
         /// <summary>
         /// 物料编号
         /// </summary>

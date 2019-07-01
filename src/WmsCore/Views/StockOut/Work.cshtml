@@ -124,6 +124,7 @@
                             var html = [];
                             for (var i = 0; i < value.length; i++) {
                                 var item = value[i];
+                                app.removeOutedBox(item.InventoryBoxTaskId);
                                 if (item.TaskStatus == 1) { //任务已确认
                                 }
                                 else if (item.TaskStatus == 2) { //出库中
@@ -141,7 +142,6 @@
                                     html.push(
                                         '<span class="label label-primary radius">料箱[' + item.InventoryBoxName + ']归库中</span>'
                                     );
-                                    app.removeOutedBox(item.InventoryBoxTaskId);
                                 }
                                 else if (item.TaskStatus == 5) { //归库完成
                                     html.push(
@@ -171,7 +171,7 @@
             methods: {
                 addOutedBox: function (ibTaskId, ibTaskName) {
                     $("#ob" + ibTaskId).remove();
-                    $("#ctlOutedBoxList").append('<button id="ob' + ibTaskId + '" type="button" class="btn btn-backL" style="margin-left:3px" onclick="app.boxBackL(\'' + ibTaskId + '\');">料箱[' + ibTaskName + ']归库</button>');
+                    $("#ctlOutedBoxList").append('<button id="ob' + ibTaskId + '" type="button" class="btn btn-backL" style="margin-left:3px" onclick="app.boxBackL(\'' + ibTaskId + '\');">料箱[' + ibTaskName + ']操作确认</button>');
 
                 },
                 removeOutedBox: function (ibTaskId) {
@@ -235,7 +235,7 @@
                     }); 
                 },
                 boxBackL: function (taskId) {
-                    yui.layershow("料箱归库", "/InventoryBox/StockOutBoxBack?storeId=@ViewData["currentStoreId"]&inventoryboxtaskid=" + taskId, 1000, 800);
+                    yui.layershow("料箱操作确认", "/InventoryBox/StockOutBoxBack?storeId=@ViewData["currentStoreId"]&inventoryboxtaskid=" + taskId, 1000, 800);
                 },
                 scanL: function (detailId) {
                     yui.layershow("扫码操作", "/StockOut/ScanPage?StockOutId=@Model.StockOutId&storeId=@ViewData["currentStoreId"]", 1000, 800);

@@ -16,6 +16,8 @@ namespace YL.Core.Dto
 
         public string MaterialName { get; set; }
 
+        public string OrderNo { get; set; }
+
         public int PlanOutQty { get; set; }
 
         public int ActOutQty { get; set; }

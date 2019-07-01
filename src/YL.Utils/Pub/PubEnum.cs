@@ -119,6 +119,21 @@ namespace YL.Utils.Pub
         task_finish = 4,
     }
 
+    public enum InventoryBoxStatus
+    {
+        [Description("不在库")]
+        None = 0,
+        [Description("在库")]
+        InPosition = 1,
+        [Description("出库中")]
+        Outing = 2,
+        [Description("出库完成")]
+        Outed = 3,
+        [Description("归库中")]
+        Backing = 4,
+
+    }
+
     public enum InventoryBoxTaskStatus
     {
         [Description("任务取消")]
@@ -127,17 +142,20 @@ namespace YL.Utils.Pub
         [Description("任务确认")]
         task_confirm = 1,
          
-        [Description("任务出库中")]
+        [Description("任务进行中：料箱正在出库")]
         task_outing = 2,
 
-        [Description("任务出库完成")]
+        [Description("任务进行中：料箱出库完成")]
         task_outed = 3,
 
-        [Description("任务归库中")]
+        [Description("任务进行中：料箱正在归库")]
         task_backing = 4,
 
-        [Description("任务归库完成")]
+        [Description("任务完成：料箱归库完成")]
         task_backed = 5,
+
+        [Description("任务完成：料箱移除出库")]
+        task_leaved = 6,
     }
 
     public enum LogType
@@ -178,21 +196,6 @@ namespace YL.Utils.Pub
         [Description("下载")]
         download = 10,
 
-
-    }
-
-    public enum InventoryBoxStatus
-    {
-        [Description("未上架")]
-        None = 0,
-        [Description("在库")]
-        InPosition = 1,
-        [Description("出库中")]
-        Outing = 2,
-        [Description("出库完成")]
-        Outed = 3,
-        [Description("归库中")]
-        Backing = 4,
 
     }
 

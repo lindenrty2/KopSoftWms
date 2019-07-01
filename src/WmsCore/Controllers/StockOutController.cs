@@ -179,13 +179,13 @@ namespace KopSoftWms.Controllers
         }
 
         [HttpPost]
-        public RouteData DoScanComplate(long stockOutId,long inventoryBoxId, Wms_StockOutMaterialDetailDto[] materials,string remark)
+        public async Task<RouteData> DoScanComplate(long stockOutId,long inventoryBoxId, Wms_StockOutMaterialDetailDto[] materials,string remark)
         {
             try
             {
                 _client.BeginTran();
 
-                Wms_stockout stockout = _stockoutServices.QueryableToEntity(x => x.StockOutId == stockOutId);
+                Wms_stockout stockout = await _client.Queryable<Wms_stockout>().FirstAsync(x => x.StockOutId == stockOutId);
                 if (stockout == null) { return YL.Core.Dto.RouteData.From(PubMessages.E2113_STOCKOUT_NOTFOUND); }
                 if (stockout.StockOutStatus == StockOutStatus.task_finish.ToByte()) { return YL.Core.Dto.RouteData.From(PubMessages.E2114_STOCKOUT_ALLOW_FINISHED); }
                
@@ -196,6 +196,8 @@ namespace KopSoftWms.Controllers
                 Wms_inventoryboxTask inventoryBoxTask = _inventoryBoxTaskServices.QueryableToEntity(x => x.InventoryBoxId == inventoryBoxId && x.Status == InventoryBoxTaskStatus.task_outed.ToByte());
                 if (inventoryBoxTask == null) { return YL.Core.Dto.RouteData.From(PubMessages.E1014_INVENTORYBOX_NOTOUTED); } //数据异常 
 
+
+                Wms_inventory[] inventories = _inventoryServices.QueryableToList(x => x.InventoryBoxId == inventoryBoxId).ToArray();
 
                 foreach (Wms_StockOutMaterialDetailDto material in materials)
                 {
@@ -215,6 +217,16 @@ namespace KopSoftWms.Controllers
                     }
                     else
                     {
+                        Wms_inventory[] targetInventories = inventories.Where(x => x.MaterialId == detail.MaterialId ).ToArray();
+                        if(targetInventories.Length == 0)
+                        {
+                            return YL.Core.Dto.RouteData.From(PubMessages.E1015_INVENTORYBOX_MATERIAL_NOTMATCH); 
+                        }
+                        Wms_inventory targetInventory = targetInventories.FirstOrDefault(x => !x.IsLocked || x.OrderNo == stockout.OrderNo);
+                        if (targetInventory == null)
+                        { 
+                            return YL.Core.Dto.RouteData.From(PubMessages.E1020_INVENTORYBOX_MATERIAL_LOCKED, $"物料编号:{material.MaterialNo}");
+                        }
                         box = new Wms_stockoutdetail_box()
                         {
                             DetailBoxId = PubId.SnowflakeId,
@@ -354,12 +366,17 @@ namespace KopSoftWms.Controllers
         }
 
         [HttpGet]
-        public RouteData<Wms_StockOutMaterialDetailDto> SearchMaterial(long storeId,long stockOutId,string materialNo)
+        public async Task<RouteData<Wms_StockOutMaterialDetailDto>> SearchMaterial(long storeId,long stockOutId,string materialNo)
         {
-            Wms_material material = _client.Queryable<Wms_material>().First( x => x.MaterialNo == materialNo);
+            Wms_material material = await _client.Queryable<Wms_material>().FirstAsync( x => x.MaterialNo == materialNo);
             if(material == null)
             {
                 return RouteData<Wms_StockOutMaterialDetailDto>.From(PubMessages.E1005_MATERIALNO_NOTFOUND);
+            }
+            Wms_stockout stockout = await _client.Queryable<Wms_stockout>().FirstAsync(x => x.StockOutId == stockOutId);
+            if (stockout == null)
+            {
+                return RouteData<Wms_StockOutMaterialDetailDto>.From(PubMessages.E2115_STOCKOUT_HASNOT_MATERIAL);
             }
             Wms_stockoutdetail detail = _stockoutdetailServices.QueryableToEntity(x => x.StockOutId == stockOutId && x.MaterialId == material.MaterialId);
             if(detail == null)
@@ -373,6 +390,7 @@ namespace KopSoftWms.Controllers
                 MaterialId = material.MaterialId.ToString(),
                 MaterialNo = material.MaterialNo,
                 MaterialName = material.MaterialName,
+                OrderNo = stockout.OrderNo,
                 PlanOutQty = (int)detail.PlanOutQty,
                 ActOutQty = (int)detail.ActOutQty,
                 Qty = 0

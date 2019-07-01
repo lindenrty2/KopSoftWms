@@ -5,7 +5,10 @@ using System.Text;
 namespace YL.Utils.Pub
 {
     public class PubMessages
-    {
+    { 
+        public static MessageItem I1001_BOXBACK_SCCUESS = new MessageItem(1001, "料箱出库成功");
+        public static MessageItem I1002_BOXOUT_SCCUESS = new MessageItem(1002, "料箱归库成功");
+
         public static MessageItem E0002_UPDATE_COUNT_FAIL = new MessageItem(-2, "数据更新失败,可能有第三方更新了数据");
 
         public static MessageItem E1001_SUPPLIESTYPE_NOTFOUND = new MessageItem(-1001,"找不到物料类型定义");
@@ -26,7 +29,8 @@ namespace YL.Utils.Pub
         public static MessageItem E1016_INVENTORYBOX_NOTOUTED = new MessageItem(-1016, "料箱尚未出库完成，无法归库");
         public static MessageItem E1017_INVENTORYBOX_ALLOW_BACKING = new MessageItem(-1017, "料箱已在归库途中，无法再次归库");
         public static MessageItem E1018_INVENTORYBOX_ALLOW_BACKED = new MessageItem(-1018, "料箱已归库");
-
+        public static MessageItem E1019_INVENTORY_LOCKED = new MessageItem(-1019, "物料被锁定,无法出入库");
+        public static MessageItem E1020_INVENTORYBOX_MATERIAL_LOCKED = new MessageItem(-1020, "料箱中的物料被其他任务锁定,无法使用");
 
         public static MessageItem I2000_STOCKOUT_SCAN_SCCUESS = new MessageItem(2000, "创建出库单成功");
         public static MessageItem I2001_STOCKIN_SCAN_SCCUESS = new MessageItem(2001, "入库扫码关联成功");

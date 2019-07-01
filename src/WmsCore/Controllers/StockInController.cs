@@ -202,34 +202,31 @@ namespace KopSoftWms.Controllers
             if (inventoryBoxTask == null) { return YL.Core.Dto.RouteData.From(PubMessages.E1014_INVENTORYBOX_NOTOUTED); } //数据异常 
 
             Wms_inventory[] inventories = _inventoryServices.QueryableToList(x => x.InventoryBoxId == inventoryBoxId).ToArray();
-            int count = 0; //料格使用数量
+            int count = inventories.Count(); //料格使用数量
             foreach (Wms_StockInMaterialDetailDto material in materials)
             {
                 Wms_stockindetail detail = _stockindetailServices.QueryableToEntity(x => x.StockInId == stockInId && x.MaterialId.ToString() == material.MaterialId);
                 if (detail == null) { return YL.Core.Dto.RouteData.From(PubMessages.E2001_STOCKINDETAIL_NOTFOUND, $"MaterialId='{material.MaterialId}'"); }
                 if (detail.Status == StockInStatus.task_finish.ToByte()) { return YL.Core.Dto.RouteData.From(PubMessages.E2002_STOCKINDETAIL_ALLOW_FINISHED); }
 
-                Wms_stockindetail_box box = _stockindetailboxServices.QueryableToEntity(x => x.InventoryBoxTaskId == inventoryBoxTask.InventoryBoxTaskId && x.StockinDetailId == detail.StockInDetailId);
-                if (box != null)
+                Wms_stockindetail_box detailbox = _stockindetailboxServices.QueryableToEntity(x => x.InventoryBoxTaskId == inventoryBoxTask.InventoryBoxTaskId && x.StockinDetailId == detail.StockInDetailId);
+                if (detailbox != null)
                 {
-                    box.Qty += material.Qty;
+                    detailbox.Qty += material.Qty;
 
-                    if (!_stockindetailboxServices.UpdateEntity(box))
+                    if (!_stockindetailboxServices.UpdateEntity(detailbox))
                     {
                         return YL.Core.Dto.RouteData.From(PubMessages.E0002_UPDATE_COUNT_FAIL);
                     }
                 }
                 else
                 {
-                    if (!inventories.Any(x => x.MaterialId == material.MaterialId.ToInt64() && x.OrderNo == stockin.OrderNo))
-                    {
-                        count++;
-                    }
+                    count++;
                     if (count > inventoryBox.Size)
                     { 
                         return YL.Core.Dto.RouteData<InventoryDetailDto[]>.From(PubMessages.E1010_INVENTORYBOX_BLOCK_OVERLOAD);
                     }
-                    box = new Wms_stockindetail_box()
+                    detailbox = new Wms_stockindetail_box()
                     {
                         DetailBoxId = PubId.SnowflakeId,
                         InventoryBoxTaskId = inventoryBoxTask.InventoryBoxTaskId,
@@ -241,7 +238,7 @@ namespace KopSoftWms.Controllers
                         CreateBy = UserDto.UserId
                     };
 
-                    if (!_stockindetailboxServices.Insert(box))
+                    if (!_stockindetailboxServices.Insert(detailbox))
                     {
                         return YL.Core.Dto.RouteData<InventoryDetailDto[]>.From(PubMessages.E2005_STOCKIN_BOXOUT_FAIL); 
                     }

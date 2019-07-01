@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using SqlSugar;
 using System.Linq;
+using System.Threading.Tasks;
+using YL.Core.Dto;
 using YL.Core.Entity;
 using YL.Core.Entity.Fluent.Validation;
 using YL.NetCore.Attributes;
@@ -128,6 +130,23 @@ namespace KopSoftWms.Controllers
             var json = _materialServices.PageList(bootstrap);
             return Content(json);
         }
+
+        /// <summary>
+        /// 入库选择物料，默认显示100条数据，如果没有在从服务端取数据
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<RouteData<Wms_material>> SearchMaterialNo(long storeId, string materialNo)
+        {
+            Wms_material material = await _materialServices.Queryable().FirstAsync(x => x.WarehouseId == storeId && x.MaterialNo == materialNo);
+            if(material == null)
+            {
+                return RouteData<Wms_material>.From(PubMessages.E1005_MATERIALNO_NOTFOUND);
+            }
+            return RouteData<Wms_material>.From(material);
+        }
+
 
         [HttpGet]
         [OperationLog(LogType.export)]

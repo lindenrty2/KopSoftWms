@@ -360,26 +360,8 @@
                             });
                     });
                 },
-                BackL: function (val) {
-                    var _self = this;
-                    var index = layer.confirm("您确定要归库吗？", { btn: ["确定", "取消"] }, function () {
-                        var data = {
-                            inventoryBoxId: val,
-                        };
-                        yui.$axiospostform('/InventoryBox/DoInventoryBoxBack', data)
-                            .then(function (response) {
-                                if (response.data.isSccuess) {
-                                    layer.msg(response.data.message, { icon: 1, time: 1000 });
-                                } else {
-                                    layer.msg(response.data.message || errorMsg, { icon: 5 });
-                                }
-                                _self.searchL();
-                                layer.close(index);
-                            })
-                            .catch(function (error) {
-                                layer.close(index);
-                            });
-                    });
+                BackL: function (val) { 
+                    yui.layershow("料箱归库操作", "/InventoryBox/BoxBack?storeId=@ViewData["currentStoreId"]&inventoryBoxId=" + val, 1000, 800);
                 },
             }
         });

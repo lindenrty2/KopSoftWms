@@ -21,7 +21,7 @@
     <div id="app" v-cloak>
         <div class="form-group">
             <div class="group-header">
-                <label class="control-label col-sm-2">料箱信息区</label>
+                <label class="control-label ">料箱信息区</label>
             </div>
             <div class="group-body">
                 <table>
@@ -50,7 +50,20 @@
                 </table>
             </div>
         </div>
-
+        <div class="form-group">
+            <div class="group-header">
+                <label class="control-label">操作区</label>
+            </div>
+            <div class="group-body">
+                <el-switch v-model="isStockIn" class="control-label col-sm-2" active-text="入库" inactive-text="出库" ></el-switch>
+                <input type="text" v-model="InputNo" style="width:500px" @@keyup.enter="onInputNo">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="group-header">
+                <label class="control-label">箱内物料列表</label>
+            </div> 
+        </div>
         <form class="form-horizontal" onsubmit="return false">
             <el-table :data="tableData"
                       ref="table"
@@ -61,10 +74,9 @@
                 <el-table-column label="料格序号" prop="inventoryPosition" align="center"></el-table-column>
                 <el-table-column label="物料编号" prop="materialNo" align="center"></el-table-column>
                 <el-table-column label="物料名" prop="materialName" align="center"></el-table-column>
+                <el-table-column label="生产令号" prop="orderNo" align="center"></el-table-column>
                 <el-table-column label="料箱现存数" prop="beforeQty" align="center"></el-table-column>
-                <el-table-column label="计划出库数" prop="planQty" align="center"></el-table-column>
-                <el-table-column label="已出库数" prop="complateQty" align="center"></el-table-column> 
-                <el-table-column label="出库数量" align="center">
+                <el-table-column label="操作后数量" align="center">
                     <template slot-scope="scope">
                         <!--el-input v-model="scope.row.qty" :maxlength=10 @@change="evidChangeLast(scope.row.qty)"></!--el-input-->
                         <input type="number" style="text-align:center;width:100px" v-model="scope.row.qty" min="1" value="1">
@@ -84,8 +96,7 @@
             </el-table>
             <div class="box-footer">
                 <div class="pull-right box-tools">
-                    <input v-on:click="okL(false)" class="btn btn-primary radius" type="button" v-model="submit1">
-                    <input v-on:click="okL(true)" class="btn btn-primary radius" type="button" v-model="submit2">
+                    <input v-on:click="okL" class="btn btn-primary radius" type="button" v-model="submit">
                 </div>
             </div>
         </form>
@@ -100,9 +111,10 @@
         var app = new Vue({
             el: "#app",
             data: {
+                InputNo: "",
                 tableData: [],
-                submit1: "操作确认并离库",
-                submit2: "操作确认并归库",
+                isStockIn: true,
+                submit: "料箱归库",
             },
             computed: {
                 count: function () {
@@ -121,7 +133,7 @@
                 },
                 refreshDetail: function () {
                     _self = this;
-                    var url = "/InventoryBox/InventoryOutDetailList?storeId=@ViewData["currentStoreId"]&inventoryBoxTaskId=@ViewData["InventoryBoxTaskId"]";
+                    var url = "/InventoryBox/BackDetailList?storeId=@ViewData["currentStoreId"]&id=@Model.InventoryBoxId";
                         yui.$axiosget(url).then(function (res) {
                             if (res.data.isSccuess) {
                                 _self.tableData = res.data.data;
@@ -130,25 +142,79 @@
                                 layer.msg(res.data.message, { icon: 2 });
                             }
                         }).catch(function (res) {
-                            layer.msg("查询料箱任务发生错误" + res, { icon: 2 });
+                            layer.msg("查询料箱列表发生错误" + res, { icon: 2 });
                         });
                 },
-                okL: function (isback) {
+                onInputNo: function (e) {
+                    var _self = this;
+                    var inputNo = e.srcElement.value; 
+                    if (inputNo.length == 0) { return; }
+                    else if (inputNo[0] == 'I') {
+                         
+                    }
+                    else {
+                        for (var i = 0; i < _self.tableData.length; i++) {
+                            var material = _self.tableData[i];
+                            if (material.materialNo == inputNo && material.orderNo ) {
+                                var bQty = parseInt(material.qty);
+                                if (this.isStockIn) {
+                                    material.qty = bQty + 1;
+                                }
+                                else { 
+                                    if (bQty > 0) {
+
+                                        material.qty = bQty - 1;
+                                    }
+                                    else {
+                                        layer.msg("料箱中物料数量不足" + res, { icon: 2 }); 
+                                    }
+                                }
+                                app.InputNo = "";
+                                return;
+                            }
+                        }
+                        if (!this.isStockIn) {
+                            layer.msg("料箱中没有找到指定的物料" + res, { icon: 2 }); 
+                            return;
+                        }
+                        var url = "/Material/SearchMaterialNo?storeId=@ViewData["currentStoreId"]&materialNo=" + inputNo;
+                        yui.$axiosget(url).then(function (res) {
+                            if (res.data.data == null) { 
+                                layer.msg(res.data.message, { icon: 2 });
+                            }
+                            else {
+                                var list = {
+                                    materialId: res.data.data.materialId,
+                                    materialNo: res.data.data.materialNo,
+                                    materialName: res.data.data.materialName,
+                                    orderNo: res.data.data.orderNo,
+                                    beforeQty: 0, 
+                                    qty: 1,
+                                }
+                                _self.tableData.unshift(list);
+                            }
+                        }).catch(function (res) {
+                            layer.msg("物料查询发生错误" + res, { icon: 2 });
+                        });
+             
+                    }
+                    app.InputNo = "";
+                },
+                okL: function () {
                     var _self = this;
 
                     var index = layer.load(1, {
                         shade: [0.1, '#fff'] //0.1透明度的白色背景
                     });
                     var data = { 
-                        mode: isback ? 2 : 4,
+                        mode:3,
                         inventoryBoxTaskId: '@ViewData["InventoryBoxTaskId"]',
                         details: this.tableData
                     };
                     yui.$axiospostform('/InventoryBox/DoInventoryBoxBack', data)
                         .then(function (response) {
                             if (response.data.isSccuess) {
-                                parent.app.refreshL();
-                                layer.msg("", { icon: 1, time: 1000 });
+                                layer.msg(response.data.message, { icon: 1, time: 1000 });
                                 setTimeout(function () {
                                     yui.layer_close3();
                                 }, 1000);

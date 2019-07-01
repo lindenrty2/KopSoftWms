@@ -1,7 +1,7 @@
 ﻿@using YL.Utils.Json;
 @{
     Layout = "_LayoutH";
-    @model YL.Core.Dto.Wms_InventryBoxDto
+    @model YL.Core.Entity.Wms_inventorybox
 }
 @section styles{
     <link rel="stylesheet" href="~/css/bootstrap-select.min.css" />
@@ -21,8 +21,7 @@
                 InventoryBoxId: "@Model.InventoryBoxId",
                 InventoryBoxNo:"@Model.InventoryBoxNo",
                 InventoryBoxName:"@Model.InventoryBoxName",
-                urlM: '',
-                list: @Html.Raw(Model.Detail.JilToJson()),
+                urlM: '', 
                 storeId: '@ViewData["currentStoreId"]'
             },
             mounted: function () {
@@ -58,6 +57,26 @@
                         align: 'center',
                         sortable: true
                     }, 
+                    {
+                        field: 'OrderNo',
+                        title: '生产令号',
+                        align: 'center',
+                        sortable: true
+                    },
+                    {
+                        field: 'IsLocked',
+                        title: '状态',
+                        align: 'center',
+                        sortable: true,
+                        formatter: function (value, row, index) {
+                            if (value) {
+                                return '<span class="label label-danger radius">锁定</span>';
+                            }
+                            else { 
+                                return '<span class="label label-default radius">正常</span>';
+                            }
+                        }
+                    },
                     {
                         field: 'Qty',
                         title: '数量',

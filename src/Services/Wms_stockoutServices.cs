@@ -175,24 +175,24 @@ namespace Services
             {
                 //添加库存 如果有则修改 如果没有新增 添加库存明细
                 var stockOutDetailList = _client.Queryable<Wms_stockoutdetail>().Where(c => c.StockOutId == stockOutId).ToList();
-                var inventory = new Wms_inventory();
-                stockOutDetailList.ForEach(c =>
-                {
-                    var exist = _client.Queryable<Wms_inventory>().Where(i => i.MaterialId == c.MaterialId && i.InventoryId == c.InventoryId).First();
-                    CheckNull.ArgumentIsNullException(exist, PubConst.StockOut1);
-                    if (exist.Qty < c.ActOutQty)
-                    {
-                        CheckNull.ArgumentIsNullException(PubConst.StockOut2);
-                    }
-                    //update
-                    exist.Qty = (int)exist.Qty - (int)c.ActOutQty;
-                    exist.ModifiedBy = userId;
-                    exist.ModifiedDate = DateTimeExt.DateTime;
-                    _client.Updateable(exist).ExecuteCommand();
-                });
+                //var inventory = new Wms_inventory();
+                //stockOutDetailList.ForEach(c =>
+                //{
+                //    var exist = _client.Queryable<Wms_inventory>().Where(i => i.MaterialId == c.MaterialId && i.InventoryId == c.InventoryId).First();
+                //    CheckNull.ArgumentIsNullException(exist, PubConst.StockOut1);
+                //    if (exist.Qty < c.ActOutQty)
+                //    {
+                //        CheckNull.ArgumentIsNullException(PubConst.StockOut2);
+                //    }
+                //    //update
+                //    exist.Qty = (int)exist.Qty - (int)c.ActOutQty;
+                //    exist.ModifiedBy = userId;
+                //    exist.ModifiedDate = DateTimeExt.DateTime;
+                //    _client.Updateable(exist).ExecuteCommand();
+                //});
 
-                //修改明细状态 2
-                _client.Updateable(new Wms_stockoutdetail { Status = StockInStatus.task_confirm.ToByte(), ModifiedBy = userId, ModifiedDate = DateTimeExt.DateTime }).UpdateColumns(c => new { c.Status, c.ModifiedBy, c.ModifiedDate }).Where(c => c.StockOutId == stockOutId && c.IsDel == 1).ExecuteCommand();
+                ////修改明细状态 2
+                //_client.Updateable(new Wms_stockoutdetail { Status = StockInStatus.task_confirm.ToByte(), ModifiedBy = userId, ModifiedDate = DateTimeExt.DateTime }).UpdateColumns(c => new { c.Status, c.ModifiedBy, c.ModifiedDate }).Where(c => c.StockOutId == stockOutId && c.IsDel == 1).ExecuteCommand();
 
                 //修改主表中的状态改为进行中 2
                 _client.Updateable(new Wms_stockout { StockOutId = stockOutId, StockOutStatus = StockInStatus.task_confirm.ToByte(), ModifiedBy = userId, ModifiedDate = DateTimeExt.DateTime }).UpdateColumns(c => new { c.StockOutStatus, c.ModifiedBy, c.ModifiedDate }).ExecuteCommand();
