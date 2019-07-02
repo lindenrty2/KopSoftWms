@@ -12,10 +12,12 @@ namespace WMSCore.Outside
     {
 
         [HttpPost("ConfirmBalanceMES")]
-        ITask<OutSideStockInResponseResult> ConfirmBalanceMES(OutSideStockInResponse inStockInfo);
+        ITask<OutsideStockInResponseResult> ConfirmBalanceMES(OutsideStockInResponse inStockInfo);
 
         [HttpPost("ConfirmOutStockMES")]
-        ITask<OutSideStockOutResponseResult> ConfirmOutStockMES(OutSideStockOutResponse outStockInfo);
+        ITask<OutsideStockOutResponseResult> ConfirmOutStockMES(OutsideStockOutResponse outStockInfo);
 
+        [HttpPost("LogisticsFinish")]
+        ITask<OutsideLogisticsFinishResponseResult> LogisticsFinish(OutsideLogisticsFinishResponse arg);
     }
 }

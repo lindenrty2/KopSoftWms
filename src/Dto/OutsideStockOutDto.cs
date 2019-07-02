@@ -46,7 +46,7 @@ namespace YL.Core.Dto
     }
 
 
-    public class OutSideStockOutResult
+    public class OutsideStockOutResult
     {
         /// <summary>
         /// 消息接收成功与否
@@ -68,7 +68,7 @@ namespace YL.Core.Dto
     }
 
 
-    public class OutSideStockOutResponse
+    public class OutsideStockOutResponse
     {
 
         /// <summary>
@@ -103,7 +103,7 @@ namespace YL.Core.Dto
     }
 
 
-    public class OutSideStockOutResponseResult
+    public class OutsideStockOutResponseResult
     {
         /// <summary>
         /// 入库单编号

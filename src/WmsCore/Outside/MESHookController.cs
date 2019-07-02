@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
+using System.Threading.Tasks;
 using YL.Core.Dto;
 using YL.Core.Entity;
 using YL.Utils.Extensions;
@@ -47,12 +48,14 @@ namespace WMSCore.Outside
             _stockoutDetailServices = stockoutDetailServices;
         }
 
+        [HttpGet("Ping")]
         public string Ping()
         {
             return "OK";
         }
 
-        public OutSideStockInResult Warehousing(OutsideStockInDto data)
+        [HttpPost("Warehousing")]
+        public OutsideStockInResult Warehousing([FromBody]OutsideStockInDto data)
         {
             try
             {
@@ -80,7 +83,7 @@ namespace WMSCore.Outside
                 if (!routeData.IsSccuess)
                 {
                     _sqlClient.RollbackTran();
-                    return new OutSideStockInResult()
+                    return new OutsideStockInResult()
                     {
                         ErrorId = routeData.CodeString,
                         ErrorInfo = routeData.Message,
@@ -90,7 +93,7 @@ namespace WMSCore.Outside
                     };
                 }
                 _sqlClient.CommitTran();
-                return new OutSideStockInResult()
+                return new OutsideStockInResult()
                 {
                     Success = true,
                     ErrorId = string.Empty,
@@ -102,7 +105,7 @@ namespace WMSCore.Outside
             catch(Exception ex)
             {
                 _sqlClient.RollbackTran();
-                return new OutSideStockInResult()
+                return new OutsideStockInResult()
                 {
                     Success = true,
                     ErrorId = "-1",
@@ -234,7 +237,8 @@ namespace WMSCore.Outside
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        public OutSideStockOutResult WarehouseEntry(OutsideStockOutDto data)
+        [HttpPost("WarehouseEntry")]
+        public OutsideStockOutResult WarehouseEntry([FromBody]OutsideStockOutDto data)
         {
             try
             {
@@ -262,7 +266,7 @@ namespace WMSCore.Outside
                 if (!routeData.IsSccuess)
                 {
                     _sqlClient.RollbackTran();
-                    return new OutSideStockOutResult()
+                    return new OutsideStockOutResult()
                     {
                         ErrorId = routeData.CodeString,
                         ErrorInfo = routeData.Message,
@@ -272,7 +276,7 @@ namespace WMSCore.Outside
                     };
                 }
                 _sqlClient.CommitTran();
-                return new OutSideStockOutResult()
+                return new OutsideStockOutResult()
                 {
                     Success = true,
                     ErrorId = string.Empty,
@@ -284,7 +288,7 @@ namespace WMSCore.Outside
             catch (Exception ex)
             {
                 _sqlClient.RollbackTran();
-                return new OutSideStockOutResult()
+                return new OutsideStockOutResult()
                 {
                     Success = true,
                     ErrorId = "-1",
@@ -362,18 +366,111 @@ namespace WMSCore.Outside
             return new RouteData();
         }
 
+        /// <summary>
+        /// 物料库存查询
+        /// </summary>
+        /// <param name="arg"></param>
+        /// <returns></returns>
+        [HttpGet("MaterialStockEnquiry")]
+        public OutsideMaterialStockEnquiryResult MaterialStockEnquiry(OutsideMaterialStockEnquiryArg arg)
+        {
+            return null;
+        }
+
+        /// <summary>
+        /// 物流控制
+        /// </summary>
+        [HttpPost("LogisticsControl")]
+        public OutsideLogisticsControlResult LogisticsControl([FromBody]OutsideLogisticsControlArg arg)
+        {
+            return null;
+        }
+
+        /// <summary>
+        /// 物流（状态）查询
+        /// </summary>
+        [HttpGet("LogisticsEnquiry")]
+        public OutsideLogisticsEnquiryResult LogisticsEnquiry(OutsideLogisticsEnquiryArg arg)
+        {
+            return null;
+        }
+
+        /// <summary>
+        /// 入库状态查询
+        /// </summary>
+        [HttpGet("WarehousingStatusEnquiry")]
+        public OutsideWarehousingStatusEnquiryResult WarehousingStatusEnquiry(OutsideWarehousingStatusEnquiryArg arg)
+        {
+            return null;
+        }
+
+        /// <summary>
+        /// 出库状态查询
+        /// </summary>
+        [HttpGet("WarehouseEntryStatusEnquiry")]
+        public OutsideWarehouseEntryStatusEnquiryResult WarehouseEntryStatusEnquiry(OutsideWarehouseEntryStatusEnquiryArg arg)
+        {
+            return null;
+        }
+
     }
 
     [ServiceContract]
     public interface IMESHookController
     {
+        /// <summary>
+        /// 状态确认
+        /// </summary>
+        /// <returns></returns>
         [OperationContract]
         string Ping();
 
+        /// <summary>
+        /// 入库
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
         [OperationContract]
-        OutSideStockInResult Warehousing(OutsideStockInDto data);
+        OutsideStockInResult Warehousing(OutsideStockInDto data);
 
+        /// <summary>
+        /// 出库
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
         [OperationContract]
-        OutSideStockOutResult WarehouseEntry(OutsideStockOutDto data);
+        OutsideStockOutResult WarehouseEntry(OutsideStockOutDto data);
+
+        /// <summary>
+        /// 物料库存查询
+        /// </summary>
+        /// <param name="arg"></param>
+        /// <returns></returns>
+        [OperationContract]
+        OutsideMaterialStockEnquiryResult MaterialStockEnquiry(OutsideMaterialStockEnquiryArg arg);
+
+        /// <summary>
+        /// 物流控制
+        /// </summary>
+        [OperationContract]
+        OutsideLogisticsControlResult LogisticsControl(OutsideLogisticsControlArg arg);
+
+        /// <summary>
+        /// 物流（状态）查询
+        /// </summary>
+        [OperationContract]
+        OutsideLogisticsEnquiryResult LogisticsEnquiry(OutsideLogisticsEnquiryArg arg);
+
+        /// <summary>
+        /// 入库状态查询
+        /// </summary>
+        [OperationContract]
+        OutsideWarehousingStatusEnquiryResult WarehousingStatusEnquiry(OutsideWarehousingStatusEnquiryArg arg);
+
+        /// <summary>
+        /// 出库状态查询
+        /// </summary>
+        [OperationContract]
+        OutsideWarehouseEntryStatusEnquiryResult WarehouseEntryStatusEnquiry(OutsideWarehouseEntryStatusEnquiryArg arg);
     }
 }

@@ -29,14 +29,22 @@ namespace WMSCore.Outside
             _apiProxy = HttpApi.Create<IMESApiProxy>(config);
         }
 
-        public async Task<OutSideStockInResponseResult> ConfirmBalanceMES(OutSideStockInResponse inStockInfo)
+        public async Task<OutsideStockInResponseResult> ConfirmBalanceMES(OutsideStockInResponse inStockInfo)
         {
             return await _apiProxy.ConfirmBalanceMES(inStockInfo);
         }
 
-        public async Task<OutSideStockOutResponseResult> ConfirmOutStockMES(OutSideStockOutResponse outStockInfo)
+        public async Task<OutsideStockOutResponseResult> ConfirmOutStockMES(OutsideStockOutResponse outStockInfo)
         {
             return await _apiProxy.ConfirmOutStockMES(outStockInfo);
+        }
+
+        /// <summary>
+        /// 物流控制完成
+        /// </summary>
+        public async Task<OutsideLogisticsFinishResponseResult> LogisticsFinish(OutsideLogisticsFinishResponse arg)
+        {
+            return await _apiProxy.LogisticsFinish(arg);
         }
     }
 }

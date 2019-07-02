@@ -1,35 +1,31 @@
 ﻿using IRepository;
 using IServices;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
+using NLog;
 using Repository;
 using Services;
+using SoapCore;
 using SqlSugar;
+using Swashbuckle.AspNetCore.Swagger;
 using System;
+using System.Linq;
+using System.ServiceModel;
 using System.Text;
+using WMSCore.Outside;
+using YL.Core.Entity;
 using YL.Core.Orm.SqlSugar;
 using YL.NetCore.Attributes;
 using YL.NetCore.Conventions;
 using YL.NetCore.DI;
 using YL.NetCoreApp.Extensions;
 using YL.Utils.Json;
-using MediatR;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.AspNetCore.Mvc.Controllers;
-using Microsoft.AspNetCore.Mvc.Filters;
-using YL.Core.Entity;
-using System.Linq;
-using Newtonsoft.Json;
-using Microsoft.Extensions.Logging;
-using NLog;
-using SoapCore;
-using System.ServiceModel;
-using WMSCore.Outside;
 
 namespace YL
 {
@@ -53,6 +49,10 @@ namespace YL
                 option.Conventions.Add(new ApplicationDescription("company", Configuration["sys:company"]));
                 option.Conventions.Add(new ApplicationDescription("customer", Configuration["sys:customer"]));
             }).SetCompatibilityVersion(CompatibilityVersion.Latest);
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info { Title = "API", Version = "v1" });
+            });
             //services.Configure<CookiePolicyOptions>(options =>
             //{
             //    // This lambda determines whether user consent for non-essential cookies is needed for a given request.
@@ -224,6 +224,12 @@ namespace YL
                     name: "areas",
                     template: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
                   );
+            });
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
             });
         }
     }
