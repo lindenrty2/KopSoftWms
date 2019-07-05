@@ -1,5 +1,6 @@
 ﻿using IServices;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using SqlSugar;
 using System;
 using System.Collections.Generic;
@@ -91,9 +92,41 @@ namespace KopSoftWms.Controllers
             var sd = _stockindetailServices.PageList(pid);
             return Content(sd);
         }
+         
+        [HttpGet]
+        public async Task<RouteData<Wms_StockInDto>> Get(long id)
+        {
+            Wms_stockin model = await _client.Queryable<Wms_stockin>().FirstAsync(c => c.StockInId == id && c.IsDel == 1);
+            if(model == null)
+            {
+                RouteData<Wms_stockin>.From(PubMessages.E2013_STOCKIN_NOTFOUND);
+            }
+            Wms_StockInDto dto = JsonConvert.DeserializeObject<Wms_StockInDto>(JsonConvert.SerializeObject(model));
+            List<Wms_StockMaterialDetailDto> details = await _client.Queryable<Wms_stockindetail,Wms_material>
+                ((sid,m) => new object[] {
+                   JoinType.Left,sid.MaterialId==m.MaterialId,
+                })
+                .Where(x => x.StockInId == model.StockInId)
+                .Select((sid,m) => new Wms_StockMaterialDetailDto()
+                {
+                    StockId = sid.StockInId.ToString(),
+                    StockDetailId = sid.StockInDetailId.ToString(),
+                    MaterialId = m.MaterialId.ToString(),
+                    MaterialNo = m.MaterialNo,
+                    MaterialName = m.MaterialName,
+                    PlanQty = (int)sid.PlanInQty * -1,
+                    ActQty = (int)sid.ActInQty * -1,
+                    Qty = 0
+                })
+                .MergeTable()
+                .ToListAsync();
+
+            dto.Details = details.ToArray();
+            return RouteData<Wms_StockInDto>.From(dto);
+        }
 
         [HttpGet]
-        public IActionResult Add(string id,long storeId)
+        public IActionResult Add(long id,long storeId)
         {
             var model = new Wms_stockin();
             if (id.IsEmpty())
@@ -103,7 +136,7 @@ namespace KopSoftWms.Controllers
             }
             else
             {
-                model = _stockinServices.QueryableToEntity(c => c.StockInId == SqlFunc.ToInt64(id) && c.IsDel == 1);
+                model = _stockinServices.QueryableToEntity(c => c.StockInId == id && c.IsDel == 1);
                 return View(model);
             }
         }
@@ -158,12 +191,12 @@ namespace KopSoftWms.Controllers
         /// <param name="remark"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<RouteData> DoScanComplate(long stockInId,long inventoryBoxId, Wms_StockInMaterialDetailDto[] materials,string remark)
+        public async Task<RouteData> DoScanComplate(long stockInId,long inventoryBoxId, Wms_StockMaterialDetailDto[] materials,string remark)
         {
             try
             {
                 _client.BeginTran();
-                RouteData result = await DoScanComplateCore(stockInId, inventoryBoxId, materials, remark);
+                RouteData result = await _stockinServices.DoScanComplate(stockInId, inventoryBoxId, materials, remark, this.UserDto);
                 if (!result.IsSccuess)
                 {
                     _client.RollbackTran();
@@ -179,89 +212,7 @@ namespace KopSoftWms.Controllers
             }
 
         }
-
-        /// <summary>
-        /// 扫描完成处理核心
-        /// </summary>
-        /// <param name="stockInId"></param>
-        /// <param name="inventoryBoxId"></param>
-        /// <param name="materials"></param>
-        /// <param name="remark"></param>
-        /// <returns></returns>
-        private async Task<RouteData> DoScanComplateCore(long stockInId, long inventoryBoxId, Wms_StockInMaterialDetailDto[] materials, string remark)
-        {
-            Wms_stockin stockin = _stockinServices.QueryableToEntity(x => x.StockInId == stockInId);
-            if (stockin == null) { return YL.Core.Dto.RouteData.From(PubMessages.E2013_STOCKIN_NOTFOUND); }
-            if (stockin.StockInStatus == StockInStatus.task_finish.ToByte()) { return YL.Core.Dto.RouteData.From(PubMessages.E2014_STOCKIN_ALLOW_FINISHED); }
-
-            Wms_inventorybox inventoryBox = _inventoryBoxServices.QueryableToEntity(x => x.InventoryBoxId == inventoryBoxId);
-            if (inventoryBox == null) { return YL.Core.Dto.RouteData.From(PubMessages.E1011_INVENTORYBOX_NOTFOUND); }
-            if (inventoryBox.Status != InventoryBoxStatus.Outed) { return YL.Core.Dto.RouteData.From(PubMessages.E1014_INVENTORYBOX_NOTOUTED); }
-
-            Wms_inventoryboxTask inventoryBoxTask = _inventoryBoxTaskServices.QueryableToEntity(x => x.InventoryBoxId == inventoryBoxId && x.Status == InventoryBoxTaskStatus.task_outed.ToByte());
-            if (inventoryBoxTask == null) { return YL.Core.Dto.RouteData.From(PubMessages.E1014_INVENTORYBOX_NOTOUTED); } //数据异常 
-
-            Wms_inventory[] inventories = _inventoryServices.QueryableToList(x => x.InventoryBoxId == inventoryBoxId).ToArray();
-            int count = inventories.Count(); //料格使用数量
-            foreach (Wms_StockInMaterialDetailDto material in materials)
-            {
-                Wms_stockindetail detail = _stockindetailServices.QueryableToEntity(x => x.StockInId == stockInId && x.MaterialId.ToString() == material.MaterialId);
-                if (detail == null) { return YL.Core.Dto.RouteData.From(PubMessages.E2001_STOCKINDETAIL_NOTFOUND, $"MaterialId='{material.MaterialId}'"); }
-                if (detail.Status == StockInStatus.task_finish.ToByte()) { return YL.Core.Dto.RouteData.From(PubMessages.E2002_STOCKINDETAIL_ALLOW_FINISHED); }
-
-                Wms_stockindetail_box detailbox = _stockindetailboxServices.QueryableToEntity(x => x.InventoryBoxTaskId == inventoryBoxTask.InventoryBoxTaskId && x.StockinDetailId == detail.StockInDetailId);
-                if (detailbox != null)
-                {
-                    detailbox.Qty += material.Qty;
-
-                    if (!_stockindetailboxServices.UpdateEntity(detailbox))
-                    {
-                        return YL.Core.Dto.RouteData.From(PubMessages.E0002_UPDATE_COUNT_FAIL);
-                    }
-                }
-                else
-                {
-                    count++;
-                    if (count > inventoryBox.Size)
-                    { 
-                        return YL.Core.Dto.RouteData<InventoryDetailDto[]>.From(PubMessages.E1010_INVENTORYBOX_BLOCK_OVERLOAD);
-                    }
-                    detailbox = new Wms_stockindetail_box()
-                    {
-                        DetailBoxId = PubId.SnowflakeId,
-                        InventoryBoxTaskId = inventoryBoxTask.InventoryBoxTaskId,
-                        InventoryBoxId = inventoryBox.InventoryBoxId,
-                        StockinDetailId = detail.StockInDetailId,
-                        Qty = material.Qty,
-                        Remark = remark,
-                        CreateDate = DateTime.Now,
-                        CreateBy = UserDto.UserId
-                    };
-
-                    if (!_stockindetailboxServices.Insert(detailbox))
-                    {
-                        return YL.Core.Dto.RouteData<InventoryDetailDto[]>.From(PubMessages.E2005_STOCKIN_BOXOUT_FAIL); 
-                    }
-                }
-                if (detail.Status == StockInStatus.task_confirm.ToByte())
-                {
-                    detail.Status = StockInStatus.task_working.ToByte();
-                    if (!_stockindetailServices.Update(detail))
-                    {
-                        return YL.Core.Dto.RouteData<InventoryDetailDto[]>.From(PubMessages.E2005_STOCKIN_BOXOUT_FAIL);
-                    }
-                }
-            }
-
-            if (stockin.StockInStatus == StockInStatus.task_confirm.ToByte())
-            {
-                stockin.StockInStatus = StockInStatus.task_working.ToByte();
-                _stockinServices.Update(stockin);
-            }
-
-            return YL.Core.Dto.RouteData.From(PubMessages.I2001_STOCKIN_SCAN_SCCUESS);
-        }
-
+        
         [HttpPost]
         public RouteData DoComplate(long storeId,long stockInId)
         {
@@ -298,9 +249,7 @@ namespace KopSoftWms.Controllers
                 _client.RollbackTran();
                 return YL.Core.Dto.RouteData.From(PubMessages.E2017_STOCKIN_FAIL,ex.Message);
             }
-            
-
-
+             
         }
 
         [HttpGet]

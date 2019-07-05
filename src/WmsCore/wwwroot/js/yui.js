@@ -313,7 +313,7 @@
             if (h === null || h === '') {
                 h = ($(window).height() - 50);
             };
-            layer.open({
+            return layer.open({
                 type: 2,
                 area: [w + 'px', h + 'px'],
                 fix: false, //不固定

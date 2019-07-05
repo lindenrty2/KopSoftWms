@@ -44,6 +44,10 @@
         function updatePwd() {
             yui.layershow("修改密码", "/User/UpdatePwd", 600, 400);
         };
+        function scan() {
+            var idx = yui.layershow("扫码操作", "/Scan/MainScanPage?storeId=@ViewData["CurrentStoreId"]", 1000, 800);
+            layer.full(idx);
+        };
     </script>
 </body>
 </html>

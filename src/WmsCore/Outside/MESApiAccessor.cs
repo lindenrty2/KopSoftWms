@@ -46,5 +46,6 @@ namespace WMSCore.Outside
         {
             return await _apiProxy.LogisticsFinish(arg);
         }
+         
     }
 }

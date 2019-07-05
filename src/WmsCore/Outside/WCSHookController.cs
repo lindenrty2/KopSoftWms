@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using SqlSugar;
 using System;
 using System.Threading.Tasks;
+using WebApiClient;
+using YL.Core.Dto;
 using YL.Core.Entity;
 using YL.Utils.Extensions;
 using YL.Utils.Pub;
@@ -162,6 +164,12 @@ namespace WMSCore.Outside
                     ErrorDesc = ex.ToString()
                 });
             }
+        }
+
+        [HttpPost("LogisticsFinish")]
+        public async Task<OutsideLogisticsFinishResponseResult> LogisticsFinish(OutsideLogisticsFinishResponse arg)
+        {
+            return await MESApiAccessor.Instance.LogisticsFinish(arg);
         }
 
     } 

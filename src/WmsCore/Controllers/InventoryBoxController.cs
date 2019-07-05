@@ -16,6 +16,7 @@ using YL.Utils.Pub;
 using YL.Utils.Table;
 using YL.Utils.Json;
 using static YL.Core.Dto.PubParams;
+using Newtonsoft.Json;
 
 namespace KopSoftWms.Controllers
 {
@@ -59,7 +60,35 @@ namespace KopSoftWms.Controllers
             return Content(sd);
         }
 
+        [HttpGet]
+        public async Task<RouteData<Wms_InventoryBoxDto>> Get(string inventoryBoxNo)
+        {
+            Wms_inventorybox box = await _client.Queryable<Wms_inventorybox>().FirstAsync(x => x.InventoryBoxNo == inventoryBoxNo);
+            if(box == null)
+            {
+                return RouteData<Wms_InventoryBoxDto>.From(PubMessages.E1011_INVENTORYBOX_NOTFOUND);
+            }
+            Wms_InventoryBoxDto dto = JsonConvert.DeserializeObject<Wms_InventoryBoxDto>( JsonConvert.SerializeObject(box));
 
+            var query = _client.Queryable<Wms_inventory, Wms_material, Sys_user>((i, m, u) => new object[] {
+                   JoinType.Left,i.MaterialId==m.MaterialId,
+                   JoinType.Left,i.ModifiedBy==u.UserId
+                 })
+               .Where((i, m, u) => i.InventoryBoxId == box.InventoryBoxId)
+               .Select((i, m, u) => new InventoryDetailDto
+               {
+                   InventoryPosition = i.Position,
+                   MaterialId = m.MaterialId.ToString(),
+                   MaterialNo = m.MaterialNo,
+                   MaterialOnlyId = m.MaterialOnlyId,
+                   MaterialName = m.MaterialName,
+                   OrderNo = i.OrderNo,
+                   IsLocked = i.IsLocked,
+                   Qty = i.Qty,
+               }).MergeTable();
+            dto.Details = (await query.ToListAsync()).ToArray();
+            return RouteData<Wms_InventoryBoxDto>.From(dto);
+        }
 
         [HttpGet]
         public IActionResult Add(string id)
@@ -193,7 +222,7 @@ namespace KopSoftWms.Controllers
                 var list = await query.ToListAsync();
                 return Bootstrap.GridData(list, list.Count).JilToJson();
             }
-        }
+        } 
 
         [HttpGet]
         public async Task<RouteData<InventoryDetailDto[]>> BackDetailList(string id)
@@ -998,5 +1027,6 @@ namespace KopSoftWms.Controllers
                 return false;
             }
         }
+         
     }
 }

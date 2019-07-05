@@ -383,7 +383,7 @@ namespace WMSCore.Outside
         [HttpPost("LogisticsControl")]
         public OutsideLogisticsControlResult LogisticsControl([FromBody]OutsideLogisticsControlArg arg)
         {
-            return null;
+            return WCSApiAccessor.Instance.LogisticsControl(arg).Result;
         }
 
         /// <summary>
@@ -392,7 +392,7 @@ namespace WMSCore.Outside
         [HttpGet("LogisticsEnquiry")]
         public OutsideLogisticsEnquiryResult LogisticsEnquiry(OutsideLogisticsEnquiryArg arg)
         {
-            return null;
+            return WCSApiAccessor.Instance.LogisticsEnquiry(arg).Result;
         }
 
         /// <summary>
@@ -401,6 +401,24 @@ namespace WMSCore.Outside
         [HttpGet("WarehousingStatusEnquiry")]
         public OutsideWarehousingStatusEnquiryResult WarehousingStatusEnquiry(OutsideWarehousingStatusEnquiryArg arg)
         {
+            Wms_mestask mesTask = _sqlClient.Queryable<Wms_mestask>().First(x => x.WarehousingId == arg.WarehousingId && x.WarehousingType == arg.WarehousingType);
+            if(mesTask == null)
+            {
+                return new OutsideWarehousingStatusEnquiryResult()
+                {
+                    Success = false,
+                    ErrorId = PubMessages.E3000_MES_STOCKINTASK_NOTFOUND.Code.ToString(),
+                    ErrorInfo = PubMessages.E3000_MES_STOCKINTASK_NOTFOUND.Message
+                };
+            }
+            return new OutsideWarehousingStatusEnquiryResult()
+            {
+                Success = true,
+                ErrorId = null,
+                ErrorInfo = null,
+                IsNormalWarehousing = mesTask.WorkStatus == MESTaskWorkStatus.WorkComplated.ToByte(),
+            };
+
             return null;
         }
 

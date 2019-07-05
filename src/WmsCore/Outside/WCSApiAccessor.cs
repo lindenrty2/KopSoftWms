@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebApiClient;
+using YL.Core.Dto;
 
 namespace WMSCore.Outside
 {
@@ -36,6 +37,16 @@ namespace WMSCore.Outside
         public async Task<CreateBackStockResult> CreateBackStockTask(BackStockInfo backStockInfo)
         {
             return await _apiProxy.CreateBackStockTask(backStockInfo);
+        }
+
+        public async Task<OutsideLogisticsEnquiryResult> LogisticsEnquiry(OutsideLogisticsEnquiryArg arg)
+        {
+            return await _apiProxy.LogisticsEnquiry(arg);
+        }
+
+        public async Task<OutsideLogisticsControlResult> LogisticsControl(OutsideLogisticsControlArg arg)
+        {
+            return await _apiProxy.LogisticsControl(arg);
         }
     }
 }
