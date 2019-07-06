@@ -9,6 +9,7 @@ namespace WMSCore.Outside
 {
     public class MESApiAccessor
     {
+        public static string Host { get; set; }
         public static MESApiAccessor _instance;
         public static MESApiAccessor Instance {
             get
@@ -25,7 +26,7 @@ namespace WMSCore.Outside
         private MESApiAccessor()
         {
             HttpApiConfig config = new HttpApiConfig();
-            config.HttpHost = new Uri("http://localhost:16001/MES/");
+            config.HttpHost = new Uri(Host);
             _apiProxy = HttpApi.Create<IMESApiProxy>(config);
         }
 

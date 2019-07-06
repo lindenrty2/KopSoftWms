@@ -12,7 +12,7 @@
 
         .group-body {
             margin: 8px
-        }
+        } 
     </style>
     <link rel="stylesheet" href="~/css/bootstrap-select.min.css" />
     <link rel="stylesheet" href="~/css/vue.element.min.css">
@@ -23,8 +23,9 @@
             <div class="group-header">
                 <label class="control-label">操作区</label>
             </div>
-            <div class="group-body">
-                <el-switch v-model="IsStockIn" class="control-label col-sm-2" active-text="入库" inactive-text="出库"></el-switch>
+            <div class="group-body" style="font-size:24px">
+                <el-switch v-model="IsStockIn" class="control-label " @@change='changeMode' active-text="" inactive-text=""></el-switch> 
+                <label>{{ModeName}}</label>
                 <input type="text" v-model="InputNo" style="width:80%" @@keyup.enter="onInputNo">
             </div>
         </div>
@@ -36,9 +37,9 @@
             </div>
             <div class="group-body">
                 <label>单号：</label>
-                <input type="text" v-model="StockNo" style="width:10%" readonly="readonly" value="">
+                <input type="text" v-model="StockNo" style="width:15%" readonly="readonly" value="">
                 <label>订单号：</label>
-                <input type="text" v-model="OrderNo" style="width:10%" readonly="readonly" value="">
+                <input type="text" v-model="OrderNo" style="width:15%" readonly="readonly" value="">
                 <label>备注：</label>
                 <input type="text" v-model="Remark" style="width:50%" readonly="readonly" value=""> 
             </div>
@@ -49,9 +50,9 @@
             </div>
             <div class="group-body">
                 <label>编号：</label>
-                <input type="text" style="width:10%" v-model="InventoryBoxNo" readonly="readonly" value="">
+                <input type="text" style="width:20%" v-model="InventoryBoxNo" readonly="readonly" value="">
                 <label>名称：</label>
-                <input type="text" style="width:15%" v-model="InventoryBoxName" readonly="readonly" value="">
+                <input type="text" style="width:25%" v-model="InventoryBoxName" readonly="readonly" value="">
             </div>
         </div>
         <div>
@@ -108,7 +109,8 @@
             el: "#app",
             data: {
                 submit: "确定",
-                IsStockIn:true,
+                IsStockIn: true,
+                ModeName:"入库",
                 InputNo: "",
                 StockId: '',
                 StockNo: '@ViewBag.StockNo',
@@ -132,17 +134,23 @@
                 var _self = this;
                 _self.$nextTick(function () {
                     if (_self.StockNo != '') {
-                        _self.onInputNo(_self.StockNo);
+                        _self.onInputNoCore(_self.StockNo);
                     }
                 });
             },
             methods: {
+                changeMode: function () {
+                    this.ModeName = this.IsStockIn ? "入库" : "出库";
+                },
                 handleDelete: function (index) { //删除行数
                     this.tableData.splice(index, 1)
                 },
-                onInputNo: function (e) {
-                    var _self = this;
+                onInputNo: function (e) { 
                     var inputNo = e.srcElement.value;
+                    this.onInputNoCore(inputNo);
+                },
+                onInputNoCore: function (inputNo) {
+                    var _self = this;
                     if (inputNo.length == 0) { return; }
                     else if (IsStockInNo(inputNo)) {
                         _self.onStockInNoInputed(inputNo);
@@ -156,10 +164,13 @@
                     else if (IsMaterialNo(inputNo)) {
                         _self.onMaterialNoInputed(inputNo);
                     }
+                    else { 
+                        layer.msg("未知编码", { icon: 2 });
+                    }
                     app.InputNo = "";
                 },
                 onStockInNoInputed: function (no) {
-                    var url = "/StockIn/Get?no=" + no;
+                    var url = "/StockIn/Get?storeId=@ViewBag.StoreId&no=" + no;
                     _self = this;
                     _self.StockId = "";
                     _self.StockNo = "";
@@ -172,11 +183,12 @@
                         }
                         else {
                             _self.IsStockIn = true;
-                            _self.StockId = res.data.StockInId;
-                            _self.StockNo = res.data.StockInNo;
-                            _self.OrderNo = res.data.OrderNo;
-                            _self.Remark = res.data.Remark;
-                            _self.StockDetails = res.data.details;
+                            _self.changeMode();
+                            _self.StockId = res.data.data.stockInId;
+                            _self.StockNo = res.data.data.stockInNo;
+                            _self.OrderNo = res.data.data.orderNo;
+                            _self.Remark = res.data.data.remark;
+                            _self.StockDetails = res.data.data.details;
                             _self.updateInventoryBoxDetail();
                         }
                     }).catch(function (res) {
@@ -184,7 +196,30 @@
                     });
                 },
                 onStockOutNoInputed: function (no) {
-
+                    var url = "/StockOut/Get?storeId=@ViewBag.StoreId&no=" + no;
+                    _self = this;
+                    _self.StockId = "";
+                    _self.StockNo = "";
+                    _self.OrderNo = "";
+                    _self.Remark = "";
+                    _self.StockDetails = [];
+                    yui.$axiosget(url).then(function (res) {
+                        if (!res.data.isSccuess) {
+                            layer.msg("出库单查询失败", { icon: 2 });
+                        }
+                        else {
+                            _self.IsStockIn = false;
+                            _self.changeMode();
+                            _self.StockId = res.data.data.stockOutId;
+                            _self.StockNo = res.data.data.stockOutNo;
+                            _self.OrderNo = res.data.data.orderNo;
+                            _self.Remark = res.data.data.remark;
+                            _self.StockDetails = res.data.data.details;
+                            _self.updateInventoryBoxDetail();
+                        }
+                    }).catch(function (res) {
+                        layer.msg("入库单查询发生错误" + res.data.message, { icon: 2 });
+                    });
                 },
                 onInventoryBoxNoInputed: function (no) {
                     _self = this;
@@ -198,7 +233,7 @@
                         }
                         else {
                             _self.InventoryBox = res.data.data;
-                            _self.InventoryBoxId = res.data.data.inventoryBoxId;
+                            _self.InventoryBoxId = res.data.data.id;
                             _self.InventoryBoxNo = res.data.data.inventoryBoxNo;
                             _self.InventoryBoxName = res.data.data.inventoryBoxName;
                             _self.InventoryDetails = res.data.data.details;
@@ -212,6 +247,7 @@
                     _self = this;
                     if (_self.InventoryBox == null) {
                         layer.msg("请先扫码料箱", { icon: 2 });
+                        return;
                     }
                     for (var i = 0; i < _self.tableData.length; i++) {
                         var material = _self.tableData[i];
@@ -224,11 +260,14 @@
                         layer.msg("料箱中没有该物料", { icon: 2 });
                         return;
                     }
-                    if (_self.InventoryBox.Size > _self.InventoryDetails.length + _self.NewMaterialCount + 1) {
+                    if (_self.InventoryBox.size < (_self.InventoryDetails.length + _self.NewMaterialCount + 1)) {
                         layer.msg("料箱无法装载更多物料", { icon: 2 });
+                        return;
+
                     }
                     if (this.StockDetails != null) {
-                        for (var stockDetail in this.StockDetails) {
+                        for (var i = 0; i < this.StockDetails.length; i++) {
+                            var stockDetail = this.StockDetails[i];
                             if (stockDetail.materialNo != no) {
                                 continue;
                             }
@@ -238,12 +277,12 @@
                                 MaterialNo: stockDetail.materialNo,
                                 MaterialName: stockDetail.materialName,
                                 IsLocked: false,
-                                PlanQty: stockDetail.PlanQty,
-                                ActQty: stockDetail.ActQty,
+                                PlanQty: stockDetail.planQty,
+                                ActQty: stockDetail.actQty,
                                 Qty: 1,
                             }
-                            this.tableData.unshift(list);
-                            NewMaterialCount += 1;
+                            _self.tableData.unshift(list);
+                            _self.NewMaterialCount += 1;
                             return;
                         }
                         layer.msg("入库单中没有该物料", { icon: 2 });
@@ -332,7 +371,7 @@
                     });
                     var data = null;
                     var url = null;
-                    if (IsStockIn) {
+                    if (_self.IsStockIn) {
                         url = '/StockIn/DoScanComplate';
                         data = {
                             stockInId: _self.StockId,
@@ -354,7 +393,9 @@
                     yui.$axiospostform(url, data)
                         .then(function (response) {
                             if (response.data.isSccuess) {
-                                parent.app.refreshL();
+                                if (typeof (parent.app.refreshL) != "undefined") {
+                                    parent.app.refreshL();
+                                }
                                 layer.msg("", { icon: 1, time: 1000 });
                                 setTimeout(function () {
                                     yui.layer_close3();

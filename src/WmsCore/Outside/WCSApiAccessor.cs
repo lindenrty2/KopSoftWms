@@ -9,6 +9,7 @@ namespace WMSCore.Outside
 {
     public class WCSApiAccessor
     {
+        public static string Host { get; set; }
         public static WCSApiAccessor _instance;
         public static WCSApiAccessor Instance {
             get
@@ -25,7 +26,7 @@ namespace WMSCore.Outside
         private WCSApiAccessor()
         {
             HttpApiConfig config = new HttpApiConfig();
-            config.HttpHost = new Uri("http://localhost:16001/WCS/");
+            config.HttpHost = new Uri(Host);
             _apiProxy = HttpApi.Create<IWCSApiProxy>(config);
         }
 

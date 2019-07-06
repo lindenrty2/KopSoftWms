@@ -142,7 +142,7 @@ namespace WMSCore.Outside
                     {
                         MesTaskId = task.MesTaskId,
                         StockInId = PubId.SnowflakeId,
-                        StockInNo = _serialnumServices.GetSerialnum(-1, "Wms_stockin"),
+                        StockInNo = task.WarehousingId,
                         StockInType = stockinDict.DictId,
                         OrderNo = task.ProductionPlanId,
                         SupplierId = -1,
@@ -325,7 +325,7 @@ namespace WMSCore.Outside
                     {
                         MesTaskId = task.MesTaskId,
                         StockOutId = PubId.SnowflakeId,
-                        StockOutNo = _serialnumServices.GetSerialnum(-1, "Wms_stockout"),
+                        StockOutNo = task.WarehousingId,
                         StockOutType = stockoutDict.DictId,
                         OrderNo = task.WarehousingId,
                         WarehouseId = material.WarehouseId,

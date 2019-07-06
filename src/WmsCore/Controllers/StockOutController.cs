@@ -1,5 +1,6 @@
 ﻿using IServices;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using SqlSugar;
 using System;
 using System.Collections.Generic;
@@ -97,14 +98,35 @@ namespace KopSoftWms.Controllers
         }
 
         [HttpGet]
-        public async Task<RouteData<Wms_stockout>> Get(long id)
+        public async Task<RouteData<Wms_StockOutDto>> Get(long storeId,string no)
         {
-            Wms_stockout model = await _client.Queryable<Wms_stockout>().FirstAsync(c => c.StockOutId == id && c.IsDel == 1);
+            Wms_stockout model = await _client.Queryable<Wms_stockout>().FirstAsync(c => c.StockOutNo == no && c.WarehouseId == storeId && c.IsDel == 1);
             if (model == null)
             {
-                RouteData<Wms_stockout>.From(PubMessages.E2013_STOCKIN_NOTFOUND);
+                RouteData<Wms_stockin>.From(PubMessages.E2013_STOCKIN_NOTFOUND);
             }
-            return RouteData<Wms_stockout>.From(model);
+            Wms_StockOutDto dto = JsonConvert.DeserializeObject<Wms_StockOutDto>(JsonConvert.SerializeObject(model));
+            List<Wms_StockMaterialDetailDto> details = await _client.Queryable<Wms_stockoutdetail, Wms_material>
+                ((sid, m) => new object[] {
+                   JoinType.Left,sid.MaterialId==m.MaterialId,
+                })
+                .Where((sid, m) => sid.StockOutId == model.StockOutId)
+                .Select((sid, m) => new Wms_StockMaterialDetailDto()
+                {
+                    StockId = sid.StockOutId.ToString(),
+                    StockDetailId = sid.StockOutDetailId.ToString(),
+                    MaterialId = m.MaterialId.ToString(),
+                    MaterialNo = m.MaterialNo,
+                    MaterialName = m.MaterialName,
+                    PlanQty = (int)sid.PlanOutQty * -1,
+                    ActQty = (int)sid.ActOutQty * -1,
+                    Qty = 0
+                })
+                .MergeTable()
+                .ToListAsync();
+
+            dto.Details = details.ToArray();
+            return RouteData<Wms_StockOutDto>.From(dto);
         }
 
         [HttpGet]

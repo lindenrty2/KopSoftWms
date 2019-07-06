@@ -86,6 +86,7 @@ namespace KopSoftWms.Controllers
                    IsLocked = i.IsLocked,
                    Qty = i.Qty,
                }).MergeTable();
+            dto.Id = box.InventoryBoxId.ToString();
             dto.Details = (await query.ToListAsync()).ToArray();
             return RouteData<Wms_InventoryBoxDto>.From(dto);
         }
@@ -588,7 +589,7 @@ namespace KopSoftWms.Controllers
             var query = _client.Queryable< Wms_stockindetail_box, Wms_stockindetail, Wms_stockin, Wms_material >(
                 (sidb,sid, si,m) => new object[] { 
                    JoinType.Left,sidb.StockinDetailId==sid.StockInDetailId ,
-                   JoinType.Left,sid.StockInId==sid.StockInId ,
+                   JoinType.Left,sid.StockInId==si.StockInId ,
                    JoinType.Left,sid.MaterialId==m.MaterialId && m.IsDel == DeleteFlag.Normal
                   })
                  .Where((sidb, sid, si, m) => sidb.InventoryBoxTaskId == inventoryBoxTaskId)

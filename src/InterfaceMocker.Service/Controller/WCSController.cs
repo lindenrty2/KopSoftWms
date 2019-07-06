@@ -57,7 +57,10 @@ namespace InterfaceMocker.Service
             string equipmentName = "设备" + DateTime.Now.ToString("HHmmss");
             lock (_logistics)
             {
-                _logistics.Add(arg.LogisticsId, new LogisticsTask() { EquipmentId = equipmentId, EquipmentName = equipmentName });
+                if (!_logistics.ContainsKey(arg.LogisticsId))
+                {
+                    _logistics.Add(arg.LogisticsId, new LogisticsTask() { EquipmentId = equipmentId, EquipmentName = equipmentName });
+                }
             }
             OutsideLogisticsControlResult result = new OutsideLogisticsControlResult()
             {
@@ -102,7 +105,7 @@ namespace InterfaceMocker.Service
                 Position = task.Step == -1 ? "终点" : $"坐标{task.Step}"
             };
 
-            if (task.Step < 0)
+            if (task.Step >= 0)
             {
                 task.Step++;
             }

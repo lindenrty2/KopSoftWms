@@ -94,9 +94,9 @@ namespace KopSoftWms.Controllers
         }
          
         [HttpGet]
-        public async Task<RouteData<Wms_StockInDto>> Get(long id)
+        public async Task<RouteData<Wms_StockInDto>> Get(long storeId, string no)
         {
-            Wms_stockin model = await _client.Queryable<Wms_stockin>().FirstAsync(c => c.StockInId == id && c.IsDel == 1);
+            Wms_stockin model = await _client.Queryable<Wms_stockin>().FirstAsync(c => c.StockInNo == no && c.WarehouseId == storeId && c.IsDel == 1);
             if(model == null)
             {
                 RouteData<Wms_stockin>.From(PubMessages.E2013_STOCKIN_NOTFOUND);
@@ -106,7 +106,7 @@ namespace KopSoftWms.Controllers
                 ((sid,m) => new object[] {
                    JoinType.Left,sid.MaterialId==m.MaterialId,
                 })
-                .Where(x => x.StockInId == model.StockInId)
+                .Where((sid,m) => sid.StockInId == model.StockInId)
                 .Select((sid,m) => new Wms_StockMaterialDetailDto()
                 {
                     StockId = sid.StockInId.ToString(),
@@ -114,8 +114,8 @@ namespace KopSoftWms.Controllers
                     MaterialId = m.MaterialId.ToString(),
                     MaterialNo = m.MaterialNo,
                     MaterialName = m.MaterialName,
-                    PlanQty = (int)sid.PlanInQty * -1,
-                    ActQty = (int)sid.ActInQty * -1,
+                    PlanQty = (int)sid.PlanInQty ,
+                    ActQty = (int)sid.ActInQty,
                     Qty = 0
                 })
                 .MergeTable()
