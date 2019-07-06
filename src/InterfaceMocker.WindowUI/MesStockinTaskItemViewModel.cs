@@ -42,13 +42,13 @@ namespace InterfaceMocker.WindowUI
         }
 
         [EventSubscriber]
-        public void HandleEvent(KeyValuePair<OutSideStockInResponse, OutSideStockInResponseResult> args)
+        public void HandleEvent(KeyValuePair<OutsideStockInResponse, OutsideStockInResponseResult> args)
         {
             if (args.Key.WarehouseId != this._data.WarehousingId) return;
-            System.Windows.Application.Current.Dispatcher.BeginInvoke((Action)(() => { 
+            this.UserControl.Dispatcher.Invoke(() => { 
                 this.Datas.Add(new TaskItemData("收到回馈", JsonConvert.SerializeObject(args.Key)));
                 this.Datas.Add(new TaskItemData("回馈结果", JsonConvert.SerializeObject(args.Value)));
-            }));
+            });
         }
     }
 }

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using WebApiClient;
 using WebApiClient.Attributes;
 using WMSCore.Outside;
+using YL.Core.Dto;
 
 namespace InterfaceMocker.WindowUI.WebApi
 {
@@ -28,5 +29,12 @@ namespace InterfaceMocker.WindowUI.WebApi
         [HttpPost("confirmBackStock")]
         ITask<ConfirmBackStockResult> ConfirmBackStock(WCSTaskResult result);
 
+        /// <summary>
+        /// 确认归库完成
+        /// </summary>
+        /// <param name="result"></param>
+        /// <returns></returns>
+        [HttpPost("logisticsFinish")]
+        ITask<OutsideLogisticsFinishResponseResult> LogisticsFinish(OutsideLogisticsFinishResponse result);
     }
 }

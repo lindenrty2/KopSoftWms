@@ -46,8 +46,7 @@
                     <Button Margin="5" Content="新入库任务" Click="NewStockIn_Click" />
                     <Button Margin="5" Content="新出库任务" Click="NewStockOut_Click" />
                     <Button Margin="5" Content="库存查询" />
-                    <Button Margin="5" Content="物流控制" />
-                    <Button Margin="5" Content="物流查询" />
+                    <Button Margin="5" Content="物流控制" Click="MesLogisticsControl_Click" />
                     <Button Margin="5" Content="清除" Click="MesTaskClear_Click"/>
                 </StackPanel>
                 <ScrollViewer Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">

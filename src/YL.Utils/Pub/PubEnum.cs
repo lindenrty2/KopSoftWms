@@ -266,6 +266,13 @@ namespace YL.Utils.Pub
         Responsed = 3,
     }
 
+    public enum ScanMode
+    {
+        Unknow = 0,
+        StockIn = 1,
+        StockOut = 2,
+        Free = 3
+    }
 
 
 }

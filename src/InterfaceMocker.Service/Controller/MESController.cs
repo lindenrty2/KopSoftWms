@@ -30,22 +30,34 @@ namespace InterfaceMocker.Service
         }
 
         [HttpPost]
-        public OutSideStockInResponseResult ConfirmBalanceMES(OutSideStockInResponse obj)
+        public OutsideStockInResponseResult ConfirmBalanceMES(OutsideStockInResponse obj)
         {
-            OutSideStockInResponseResult retModel = new OutSideStockInResponseResult();
+            OutsideStockInResponseResult retModel = new OutsideStockInResponseResult();
             retModel.WarehousingId = obj.WarehousingId;
             retModel.IsNormalExecution = true;
-            _eventBus.Post(new KeyValuePair<OutSideStockInResponse, OutSideStockInResponseResult>(obj, retModel), TimeSpan.Zero);
+            _eventBus.Post(new KeyValuePair<OutsideStockInResponse, OutsideStockInResponseResult>(obj, retModel), TimeSpan.Zero);
             return retModel;
         }
 
         [HttpPost]
-        public OutSideStockOutResponseResult ConfirmOutStockMES(OutSideStockOutResponse obj)
+        public OutsideStockOutResponseResult ConfirmOutStockMES(OutsideStockOutResponse obj)
         {
-            OutSideStockOutResponseResult retModel = new OutSideStockOutResponseResult();
+            OutsideStockOutResponseResult retModel = new OutsideStockOutResponseResult();
             retModel.WarehouseEntryId = obj.WarehouseEntryId;
             retModel.IsNormalExecution = true;
-            _eventBus.Post(new KeyValuePair<OutSideStockOutResponse, OutSideStockOutResponseResult>(obj, retModel), TimeSpan.Zero);
+            _eventBus.Post(new KeyValuePair<OutsideStockOutResponse, OutsideStockOutResponseResult>(obj, retModel), TimeSpan.Zero);
+            return retModel;
+        }
+
+        /// <summary>
+        /// 物流控制完成
+        /// </summary>
+        public OutsideLogisticsFinishResponseResult LogisticsFinish(OutsideLogisticsFinishResponse obj)
+        {
+            OutsideLogisticsFinishResponseResult retModel = new OutsideLogisticsFinishResponseResult();
+            retModel.LogisticsId = obj.LogisticsId;
+            retModel.IsNormalExecution = true;
+            _eventBus.Post(new KeyValuePair<OutsideLogisticsFinishResponseResult,OutsideLogisticsFinishResponse>(retModel,obj), TimeSpan.Zero);
             return retModel;
         }
     }
@@ -57,9 +69,9 @@ namespace InterfaceMocker.Service
         IActionResult GetMaterialInfo(int rfid);
 
         [OperationContract]
-        OutSideStockInResponseResult ConfirmBalanceMES(OutSideStockInResponse obj);
+        OutsideStockInResponseResult ConfirmBalanceMES(OutsideStockInResponse obj);
 
         [OperationContract]
-        OutSideStockOutResponseResult ConfirmOutStockMES(OutSideStockOutResponse obj);
+        OutsideStockOutResponseResult ConfirmOutStockMES(OutsideStockOutResponse obj);
     }
 }

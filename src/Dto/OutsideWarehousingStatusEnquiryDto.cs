@@ -44,7 +44,7 @@ namespace YL.Core.Dto
         /// <summary>
         /// 是否入库完成
         /// </summary>
-        public string IsNormalWarehousing { get; set; }
+        public bool IsNormalWarehousing { get; set; }
         /// <summary>
         /// 入库完成时间
         /// </summary>

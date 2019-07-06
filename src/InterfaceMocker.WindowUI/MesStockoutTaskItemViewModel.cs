@@ -31,7 +31,6 @@ namespace InterfaceMocker.WindowUI
         {
             return new TaskItemCommand[] {
                 new SimpleTaskItemCommand("重发",ReSend),
-
             };
         }
 
@@ -41,10 +40,8 @@ namespace InterfaceMocker.WindowUI
             this.Datas.Add(new TaskItemData("发送结果", JsonConvert.SerializeObject(result)));
         }
 
-
-
         [EventSubscriber]
-        public void HandleEvent(KeyValuePair<OutSideStockOutResponse, OutSideStockOutResponseResult> args)
+        public void HandleEvent(KeyValuePair<OutsideStockOutResponse, OutsideStockOutResponseResult> args)
         {
             //if (args.Key.WarehouseEntryId != this._data.WarehouseEntryId) return;
             //System.Windows.Application.Current.Dispatcher.BeginInvoke((Action)(() => {

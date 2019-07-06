@@ -11,6 +11,7 @@ namespace YL.Utils.Pub
 
         public static MessageItem E0002_UPDATE_COUNT_FAIL = new MessageItem(-2, "数据更新失败,可能有第三方更新了数据");
 
+
         public static MessageItem E1001_SUPPLIESTYPE_NOTFOUND = new MessageItem(-1001,"找不到物料类型定义");
         public static MessageItem E1002_SUPPLIESTYPE_WAREHOUSEID_NOTSET = new MessageItem(-1002, "物料类型没有指定仓库");
         public static MessageItem E1003_UNIT_NOTFOUND = new MessageItem(-1003, "找不到单位定义");
@@ -81,6 +82,8 @@ namespace YL.Utils.Pub
         public static MessageItem E2311_WCS_STOCKBACKTASK_NOTFOUND = new MessageItem(-2311, "WCS回调归库确认时发现任务不存在");
         public static MessageItem E2312_WCS_STOCKBACKTASK_NOTBACK = new MessageItem(-2312, "WCS回调归库确认时发现任务不处于出库状态");
 
+        public static MessageItem E3000_MES_STOCKINTASK_NOTFOUND = new MessageItem(-3000, "找不到对应的MES入库任务");
+        public static MessageItem E3100_MES_STOCKOUTTASK_NOTFOUND = new MessageItem(-3100, "找不到对应的MES出库任务");
     }
 
 

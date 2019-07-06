@@ -58,6 +58,20 @@ namespace InterfaceMocker.WindowUI
 
         }
 
+        private void MesLogisticsControl_Click(object sender, RoutedEventArgs e)
+        {
+            this.Dispatcher.BeginInvoke((Action)(() => {
+                WMSService.OutsideLogisticsControlArg data = new WMSService.OutsideLogisticsControlArg()
+                {
+                    LogisticsId = "L" + DateTime.Now.Ticks.ToString(),
+                    StartPoint = "Start1",
+                    Destination = "Dest1"
+                };
+                TaskItemControl taskControl = new TaskItemControl(new MesLogisticsTaskItemViewModel(data));
+                ctlMESTasks.Children.Add(taskControl);
+            }));
+        }
+
         private void MesTaskClear_Click(object sender, RoutedEventArgs e)
         {
             ctlMESTasks.Children.Clear();
@@ -82,9 +96,19 @@ namespace InterfaceMocker.WindowUI
             })); 
         }
 
+        [EventSubscriber]
+        public void HandleEvent(KeyValuePair<OutsideLogisticsControlArg , OutsideLogisticsControlResult> args)
+        {
+            this.Dispatcher.BeginInvoke((Action)(() => {
+                TaskItemControl taskControl = new TaskItemControl(new WCSLogisticsTaskItemViewModel(args.Key, args.Value));
+                ctlWCSTasks.Children.Add(taskControl);
+            }));
+        }
+
         private void WCSTaskClear_Click(object sender, RoutedEventArgs e)
         {
             ctlWCSTasks.Children.Clear();
         }
+
     }
 }

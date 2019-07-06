@@ -39,7 +39,7 @@ namespace YL.Core.Dto
         /// <summary>
         /// 是否正常接收
         /// </summary>
-        public string IsNormalExecution { get; set; }
+        public bool IsNormalExecution { get; set; }
         /// <summary>
         /// 错误编号
         /// </summary>

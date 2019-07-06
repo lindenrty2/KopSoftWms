@@ -5,12 +5,9 @@ using YL.Core.Entity;
 
 namespace YL.Core.Dto
 {
-    public class Wms_InventryBoxDto : Wms_inventorybox
+    public class Wms_StockOutDto : Wms_stockout
     {
 
-
-
-        public List<Wms_inventory> Detail { get; set; }
-
+        public Wms_StockMaterialDetailDto[] Details { get; set; }
     }
 }

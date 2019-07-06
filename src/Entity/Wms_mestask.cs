@@ -64,7 +64,7 @@ namespace YL.Core.Entity
         public byte WorkStatus { get; set; }
 
         /// <summary>
-        /// 操作状态
+        /// 通知状态
         /// </summary>
         [SugarColumn(IsNullable = false)]
         public byte NotifyStatus { get; set; }

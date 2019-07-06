@@ -238,8 +238,8 @@ namespace WMSService
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="OutSideStockInResult", Namespace="http://schemas.datacontract.org/2004/07/YL.Core.Dto")]
-    public partial class OutSideStockInResult : object
+    [System.Runtime.Serialization.DataContractAttribute(Name="OutsideStockInResult", Namespace="http://schemas.datacontract.org/2004/07/YL.Core.Dto")]
+    public partial class OutsideStockInResult : object
     {
         
         private string ErrorIdField;
@@ -462,8 +462,8 @@ namespace WMSService
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="OutSideStockOutResult", Namespace="http://schemas.datacontract.org/2004/07/YL.Core.Dto")]
-    public partial class OutSideStockOutResult : object
+    [System.Runtime.Serialization.DataContractAttribute(Name="OutsideStockOutResult", Namespace="http://schemas.datacontract.org/2004/07/YL.Core.Dto")]
+    public partial class OutsideStockOutResult : object
     {
         
         private string ErrorIdField;
@@ -472,7 +472,7 @@ namespace WMSService
         
         private bool SuccessField;
         
-        private bool WarehousingIdField;
+        private string WarehouseEntryIdField;
         
         [System.Runtime.Serialization.DataMemberAttribute()]
         public string ErrorId
@@ -514,7 +514,538 @@ namespace WMSService
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public bool WarehousingId
+        public string WarehouseEntryId
+        {
+            get
+            {
+                return this.WarehouseEntryIdField;
+            }
+            set
+            {
+                this.WarehouseEntryIdField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="OutsideMaterialStockEnquiryArg", Namespace="http://schemas.datacontract.org/2004/07/YL.Core.Dto")]
+    public partial class OutsideMaterialStockEnquiryArg : object
+    {
+        
+        private string SuppliesIdField;
+        
+        private string SuppliesNameField;
+        
+        private string SuppliesTypeField;
+        
+        private string SuppliesUnitField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string SuppliesId
+        {
+            get
+            {
+                return this.SuppliesIdField;
+            }
+            set
+            {
+                this.SuppliesIdField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string SuppliesName
+        {
+            get
+            {
+                return this.SuppliesNameField;
+            }
+            set
+            {
+                this.SuppliesNameField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string SuppliesType
+        {
+            get
+            {
+                return this.SuppliesTypeField;
+            }
+            set
+            {
+                this.SuppliesTypeField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string SuppliesUnit
+        {
+            get
+            {
+                return this.SuppliesUnitField;
+            }
+            set
+            {
+                this.SuppliesUnitField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="OutsideMaterialStockEnquiryResult", Namespace="http://schemas.datacontract.org/2004/07/YL.Core.Dto")]
+    public partial class OutsideMaterialStockEnquiryResult : object
+    {
+        
+        private string BalanceStockField;
+        
+        private string ErrorIDField;
+        
+        private string PaperStockField;
+        
+        private string SuccessField;
+        
+        private string SuppliesIdField;
+        
+        private string SuppliesNameField;
+        
+        private string SuppliesTypeField;
+        
+        private string SuppliesUnitField;
+        
+        private string WarehouseIdField;
+        
+        private string WarehouseNameField;
+        
+        private string WarehousePositionField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string BalanceStock
+        {
+            get
+            {
+                return this.BalanceStockField;
+            }
+            set
+            {
+                this.BalanceStockField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string ErrorID
+        {
+            get
+            {
+                return this.ErrorIDField;
+            }
+            set
+            {
+                this.ErrorIDField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string PaperStock
+        {
+            get
+            {
+                return this.PaperStockField;
+            }
+            set
+            {
+                this.PaperStockField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string Success
+        {
+            get
+            {
+                return this.SuccessField;
+            }
+            set
+            {
+                this.SuccessField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string SuppliesId
+        {
+            get
+            {
+                return this.SuppliesIdField;
+            }
+            set
+            {
+                this.SuppliesIdField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string SuppliesName
+        {
+            get
+            {
+                return this.SuppliesNameField;
+            }
+            set
+            {
+                this.SuppliesNameField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string SuppliesType
+        {
+            get
+            {
+                return this.SuppliesTypeField;
+            }
+            set
+            {
+                this.SuppliesTypeField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string SuppliesUnit
+        {
+            get
+            {
+                return this.SuppliesUnitField;
+            }
+            set
+            {
+                this.SuppliesUnitField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string WarehouseId
+        {
+            get
+            {
+                return this.WarehouseIdField;
+            }
+            set
+            {
+                this.WarehouseIdField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string WarehouseName
+        {
+            get
+            {
+                return this.WarehouseNameField;
+            }
+            set
+            {
+                this.WarehouseNameField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string WarehousePosition
+        {
+            get
+            {
+                return this.WarehousePositionField;
+            }
+            set
+            {
+                this.WarehousePositionField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="OutsideLogisticsControlArg", Namespace="http://schemas.datacontract.org/2004/07/YL.Core.Dto")]
+    public partial class OutsideLogisticsControlArg : object
+    {
+        
+        private string DestinationField;
+        
+        private string LogisticsIdField;
+        
+        private string StartPointField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string Destination
+        {
+            get
+            {
+                return this.DestinationField;
+            }
+            set
+            {
+                this.DestinationField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string LogisticsId
+        {
+            get
+            {
+                return this.LogisticsIdField;
+            }
+            set
+            {
+                this.LogisticsIdField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string StartPoint
+        {
+            get
+            {
+                return this.StartPointField;
+            }
+            set
+            {
+                this.StartPointField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="OutsideLogisticsControlResult", Namespace="http://schemas.datacontract.org/2004/07/YL.Core.Dto")]
+    public partial class OutsideLogisticsControlResult : object
+    {
+        
+        private string EquipmentIdField;
+        
+        private string EquipmentNameField;
+        
+        private string ErrorIdField;
+        
+        private string ErrorInfoField;
+        
+        private bool IsNormalExecutionField;
+        
+        private bool SuccessField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string EquipmentId
+        {
+            get
+            {
+                return this.EquipmentIdField;
+            }
+            set
+            {
+                this.EquipmentIdField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string EquipmentName
+        {
+            get
+            {
+                return this.EquipmentNameField;
+            }
+            set
+            {
+                this.EquipmentNameField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string ErrorId
+        {
+            get
+            {
+                return this.ErrorIdField;
+            }
+            set
+            {
+                this.ErrorIdField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string ErrorInfo
+        {
+            get
+            {
+                return this.ErrorInfoField;
+            }
+            set
+            {
+                this.ErrorInfoField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public bool IsNormalExecution
+        {
+            get
+            {
+                return this.IsNormalExecutionField;
+            }
+            set
+            {
+                this.IsNormalExecutionField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public bool Success
+        {
+            get
+            {
+                return this.SuccessField;
+            }
+            set
+            {
+                this.SuccessField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="OutsideLogisticsEnquiryArg", Namespace="http://schemas.datacontract.org/2004/07/YL.Core.Dto")]
+    public partial class OutsideLogisticsEnquiryArg : object
+    {
+        
+        private string EquipmentIdField;
+        
+        private string EquipmentNameField;
+        
+        private string LogisticsIdField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string EquipmentId
+        {
+            get
+            {
+                return this.EquipmentIdField;
+            }
+            set
+            {
+                this.EquipmentIdField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string EquipmentName
+        {
+            get
+            {
+                return this.EquipmentNameField;
+            }
+            set
+            {
+                this.EquipmentNameField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string LogisticsId
+        {
+            get
+            {
+                return this.LogisticsIdField;
+            }
+            set
+            {
+                this.LogisticsIdField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="OutsideLogisticsEnquiryResult", Namespace="http://schemas.datacontract.org/2004/07/YL.Core.Dto")]
+    public partial class OutsideLogisticsEnquiryResult : object
+    {
+        
+        private string EquipmentIdField;
+        
+        private string EquipmentNameField;
+        
+        private string PositionField;
+        
+        private string StatusField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string EquipmentId
+        {
+            get
+            {
+                return this.EquipmentIdField;
+            }
+            set
+            {
+                this.EquipmentIdField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string EquipmentName
+        {
+            get
+            {
+                return this.EquipmentNameField;
+            }
+            set
+            {
+                this.EquipmentNameField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string Position
+        {
+            get
+            {
+                return this.PositionField;
+            }
+            set
+            {
+                this.PositionField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string Status
+        {
+            get
+            {
+                return this.StatusField;
+            }
+            set
+            {
+                this.StatusField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="OutsideWarehousingStatusEnquiryArg", Namespace="http://schemas.datacontract.org/2004/07/YL.Core.Dto")]
+    public partial class OutsideWarehousingStatusEnquiryArg : object
+    {
+        
+        private string WarehousingIdField;
+        
+        private string WarehousingTypeField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string WarehousingId
         {
             get
             {
@@ -523,6 +1054,385 @@ namespace WMSService
             set
             {
                 this.WarehousingIdField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string WarehousingType
+        {
+            get
+            {
+                return this.WarehousingTypeField;
+            }
+            set
+            {
+                this.WarehousingTypeField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="OutsideWarehousingStatusEnquiryResult", Namespace="http://schemas.datacontract.org/2004/07/YL.Core.Dto")]
+    public partial class OutsideWarehousingStatusEnquiryResult : object
+    {
+        
+        private string ErrorIdField;
+        
+        private string ErrorInfoField;
+        
+        private bool IsNormalWarehousingField;
+        
+        private int RefreshStockField;
+        
+        private bool SuccessField;
+        
+        private string WarehouseIdField;
+        
+        private string WarehouseNameField;
+        
+        private string WarehousePositionField;
+        
+        private string WarehousingFinishTimeField;
+        
+        private string WarehousingIdField;
+        
+        private string WarehousingStepField;
+        
+        private string WarehousingTypeField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string ErrorId
+        {
+            get
+            {
+                return this.ErrorIdField;
+            }
+            set
+            {
+                this.ErrorIdField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string ErrorInfo
+        {
+            get
+            {
+                return this.ErrorInfoField;
+            }
+            set
+            {
+                this.ErrorInfoField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public bool IsNormalWarehousing
+        {
+            get
+            {
+                return this.IsNormalWarehousingField;
+            }
+            set
+            {
+                this.IsNormalWarehousingField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int RefreshStock
+        {
+            get
+            {
+                return this.RefreshStockField;
+            }
+            set
+            {
+                this.RefreshStockField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public bool Success
+        {
+            get
+            {
+                return this.SuccessField;
+            }
+            set
+            {
+                this.SuccessField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string WarehouseId
+        {
+            get
+            {
+                return this.WarehouseIdField;
+            }
+            set
+            {
+                this.WarehouseIdField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string WarehouseName
+        {
+            get
+            {
+                return this.WarehouseNameField;
+            }
+            set
+            {
+                this.WarehouseNameField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string WarehousePosition
+        {
+            get
+            {
+                return this.WarehousePositionField;
+            }
+            set
+            {
+                this.WarehousePositionField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string WarehousingFinishTime
+        {
+            get
+            {
+                return this.WarehousingFinishTimeField;
+            }
+            set
+            {
+                this.WarehousingFinishTimeField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string WarehousingId
+        {
+            get
+            {
+                return this.WarehousingIdField;
+            }
+            set
+            {
+                this.WarehousingIdField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string WarehousingStep
+        {
+            get
+            {
+                return this.WarehousingStepField;
+            }
+            set
+            {
+                this.WarehousingStepField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string WarehousingType
+        {
+            get
+            {
+                return this.WarehousingTypeField;
+            }
+            set
+            {
+                this.WarehousingTypeField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="OutsideWarehouseEntryStatusEnquiryArg", Namespace="http://schemas.datacontract.org/2004/07/YL.Core.Dto")]
+    public partial class OutsideWarehouseEntryStatusEnquiryArg : object
+    {
+        
+        private string WarehouseEntryIdField;
+        
+        private string WarehouseEntryTypeField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string WarehouseEntryId
+        {
+            get
+            {
+                return this.WarehouseEntryIdField;
+            }
+            set
+            {
+                this.WarehouseEntryIdField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string WarehouseEntryType
+        {
+            get
+            {
+                return this.WarehouseEntryTypeField;
+            }
+            set
+            {
+                this.WarehouseEntryTypeField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="OutsideWarehouseEntryStatusEnquiryResult", Namespace="http://schemas.datacontract.org/2004/07/YL.Core.Dto")]
+    public partial class OutsideWarehouseEntryStatusEnquiryResult : object
+    {
+        
+        private string ErrorIdField;
+        
+        private string ErrorInfoErrorIdField;
+        
+        private string IsNormalWarehouseEntryField;
+        
+        private int RefreshStockField;
+        
+        private bool SuccessField;
+        
+        private string WarehouseEntryFinishTimeField;
+        
+        private string WarehouseEntryIdField;
+        
+        private string WarehouseEntryStepField;
+        
+        private string WorkAreaNameField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string ErrorId
+        {
+            get
+            {
+                return this.ErrorIdField;
+            }
+            set
+            {
+                this.ErrorIdField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string ErrorInfoErrorId
+        {
+            get
+            {
+                return this.ErrorInfoErrorIdField;
+            }
+            set
+            {
+                this.ErrorInfoErrorIdField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string IsNormalWarehouseEntry
+        {
+            get
+            {
+                return this.IsNormalWarehouseEntryField;
+            }
+            set
+            {
+                this.IsNormalWarehouseEntryField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int RefreshStock
+        {
+            get
+            {
+                return this.RefreshStockField;
+            }
+            set
+            {
+                this.RefreshStockField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public bool Success
+        {
+            get
+            {
+                return this.SuccessField;
+            }
+            set
+            {
+                this.SuccessField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string WarehouseEntryFinishTime
+        {
+            get
+            {
+                return this.WarehouseEntryFinishTimeField;
+            }
+            set
+            {
+                this.WarehouseEntryFinishTimeField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string WarehouseEntryId
+        {
+            get
+            {
+                return this.WarehouseEntryIdField;
+            }
+            set
+            {
+                this.WarehouseEntryIdField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string WarehouseEntryStep
+        {
+            get
+            {
+                return this.WarehouseEntryStepField;
+            }
+            set
+            {
+                this.WarehouseEntryStepField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string WorkAreaName
+        {
+            get
+            {
+                return this.WorkAreaNameField;
+            }
+            set
+            {
+                this.WorkAreaNameField = value;
             }
         }
     }
@@ -536,10 +1446,25 @@ namespace WMSService
         System.Threading.Tasks.Task<string> PingAsync();
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IMESHookController/Warehousing", ReplyAction="http://tempuri.org/IMESHookController/WarehousingResponse")]
-        System.Threading.Tasks.Task<WMSService.OutSideStockInResult> WarehousingAsync(WMSService.OutsideStockInDto data);
+        System.Threading.Tasks.Task<WMSService.OutsideStockInResult> WarehousingAsync(WMSService.OutsideStockInDto data);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IMESHookController/WarehouseEntry", ReplyAction="http://tempuri.org/IMESHookController/WarehouseEntryResponse")]
-        System.Threading.Tasks.Task<WMSService.OutSideStockOutResult> WarehouseEntryAsync(WMSService.OutsideStockOutDto data);
+        System.Threading.Tasks.Task<WMSService.OutsideStockOutResult> WarehouseEntryAsync(WMSService.OutsideStockOutDto data);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IMESHookController/MaterialStockEnquiry", ReplyAction="http://tempuri.org/IMESHookController/MaterialStockEnquiryResponse")]
+        System.Threading.Tasks.Task<WMSService.OutsideMaterialStockEnquiryResult> MaterialStockEnquiryAsync(WMSService.OutsideMaterialStockEnquiryArg arg);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IMESHookController/LogisticsControl", ReplyAction="http://tempuri.org/IMESHookController/LogisticsControlResponse")]
+        System.Threading.Tasks.Task<WMSService.OutsideLogisticsControlResult> LogisticsControlAsync(WMSService.OutsideLogisticsControlArg arg);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IMESHookController/LogisticsEnquiry", ReplyAction="http://tempuri.org/IMESHookController/LogisticsEnquiryResponse")]
+        System.Threading.Tasks.Task<WMSService.OutsideLogisticsEnquiryResult> LogisticsEnquiryAsync(WMSService.OutsideLogisticsEnquiryArg arg);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IMESHookController/WarehousingStatusEnquiry", ReplyAction="http://tempuri.org/IMESHookController/WarehousingStatusEnquiryResponse")]
+        System.Threading.Tasks.Task<WMSService.OutsideWarehousingStatusEnquiryResult> WarehousingStatusEnquiryAsync(WMSService.OutsideWarehousingStatusEnquiryArg arg);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IMESHookController/WarehouseEntryStatusEnquiry", ReplyAction="http://tempuri.org/IMESHookController/WarehouseEntryStatusEnquiryResponse")]
+        System.Threading.Tasks.Task<WMSService.OutsideWarehouseEntryStatusEnquiryResult> WarehouseEntryStatusEnquiryAsync(WMSService.OutsideWarehouseEntryStatusEnquiryArg arg);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
@@ -597,14 +1522,39 @@ namespace WMSService
             return base.Channel.PingAsync();
         }
         
-        public System.Threading.Tasks.Task<WMSService.OutSideStockInResult> WarehousingAsync(WMSService.OutsideStockInDto data)
+        public System.Threading.Tasks.Task<WMSService.OutsideStockInResult> WarehousingAsync(WMSService.OutsideStockInDto data)
         {
             return base.Channel.WarehousingAsync(data);
         }
         
-        public System.Threading.Tasks.Task<WMSService.OutSideStockOutResult> WarehouseEntryAsync(WMSService.OutsideStockOutDto data)
+        public System.Threading.Tasks.Task<WMSService.OutsideStockOutResult> WarehouseEntryAsync(WMSService.OutsideStockOutDto data)
         {
             return base.Channel.WarehouseEntryAsync(data);
+        }
+        
+        public System.Threading.Tasks.Task<WMSService.OutsideMaterialStockEnquiryResult> MaterialStockEnquiryAsync(WMSService.OutsideMaterialStockEnquiryArg arg)
+        {
+            return base.Channel.MaterialStockEnquiryAsync(arg);
+        }
+        
+        public System.Threading.Tasks.Task<WMSService.OutsideLogisticsControlResult> LogisticsControlAsync(WMSService.OutsideLogisticsControlArg arg)
+        {
+            return base.Channel.LogisticsControlAsync(arg);
+        }
+        
+        public System.Threading.Tasks.Task<WMSService.OutsideLogisticsEnquiryResult> LogisticsEnquiryAsync(WMSService.OutsideLogisticsEnquiryArg arg)
+        {
+            return base.Channel.LogisticsEnquiryAsync(arg);
+        }
+        
+        public System.Threading.Tasks.Task<WMSService.OutsideWarehousingStatusEnquiryResult> WarehousingStatusEnquiryAsync(WMSService.OutsideWarehousingStatusEnquiryArg arg)
+        {
+            return base.Channel.WarehousingStatusEnquiryAsync(arg);
+        }
+        
+        public System.Threading.Tasks.Task<WMSService.OutsideWarehouseEntryStatusEnquiryResult> WarehouseEntryStatusEnquiryAsync(WMSService.OutsideWarehouseEntryStatusEnquiryArg arg)
+        {
+            return base.Channel.WarehouseEntryStatusEnquiryAsync(arg);
         }
         
         public virtual System.Threading.Tasks.Task OpenAsync()

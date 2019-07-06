@@ -1,10 +1,12 @@
-﻿using System;
+﻿using InterfaceMocker.Service;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WebApiClient;
 using WMSCore.Outside;
+using YL.Core.Dto;
 
 namespace InterfaceMocker.WindowUI.WebApi
 {
@@ -39,6 +41,15 @@ namespace InterfaceMocker.WindowUI.WebApi
         public async Task<ConfirmBackStockResult> ConfirmBackStock(WCSTaskResult result)
         {
             return await _apiProxy.ConfirmBackStock(result);
+        }
+
+        public async Task<OutsideLogisticsFinishResponseResult> LogisticsFinish(OutsideLogisticsFinishResponse result)
+        {
+            if (WCSController._logistics.ContainsKey(result.LogisticsId))
+            {
+                WCSController._logistics[result.LogisticsId].Step = -1;
+            }
+            return await _apiProxy.LogisticsFinish(result);
         }
     }
 }

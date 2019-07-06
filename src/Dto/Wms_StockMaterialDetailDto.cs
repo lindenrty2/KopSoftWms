@@ -7,9 +7,9 @@ namespace YL.Core.Dto
     public class Wms_StockMaterialDetailDto
     {
 
-        public string StockInId { get; set; }
+        public string StockId { get; set; }
 
-        public string StockInDetailId { get; set; }
+        public string StockDetailId { get; set; }
 
         public string MaterialId { get; set; }
 

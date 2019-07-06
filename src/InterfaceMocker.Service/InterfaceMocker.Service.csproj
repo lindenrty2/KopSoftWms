@@ -5,9 +5,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\Dto\OutsideLogisticsControlDto.cs" Link="Do\OutsideLogisticsControlDto.cs" />
+    <Compile Include="..\Dto\OutsideLogisticsEnquiryDto.cs" Link="Do\OutsideLogisticsEnquiryDto.cs" />
+    <Compile Include="..\Dto\OutsideLogisticsFinishDto.cs" Link="Do\OutsideLogisticsFinishDto.cs" />
     <Compile Include="..\Dto\OutsideMaterialDto.cs" Link="Do\OutsideMaterialDto.cs" />
+    <Compile Include="..\Dto\OutsideMaterialStockEnquiryDto.cs" Link="Do\OutsideMaterialStockEnquiryDto.cs" />
     <Compile Include="..\Dto\OutsideStockInDto.cs" Link="Do\OutsideStockInDto.cs" />
     <Compile Include="..\Dto\OutsideStockOutDto.cs" Link="Do\OutsideStockOutDto.cs" />
+    <Compile Include="..\Dto\OutsideWarehouseEntryStatusEnquiryDto.cs" Link="Do\OutsideWarehouseEntryStatusEnquiryDto.cs" />
+    <Compile Include="..\Dto\OutsideWarehousingStatusEnquiryDto.cs" Link="Do\OutsideWarehousingStatusEnquiryDto.cs" />
     <Compile Include="..\WmsCore\Outside\IWCSApiData.cs" Link="Do\IWCSApiData.cs" />
     <Compile Include="..\YL.Utils\Pub\MessageItem.cs" Link="Do\MessageItem.cs" />
   </ItemGroup>
