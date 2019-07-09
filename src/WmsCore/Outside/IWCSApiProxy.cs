@@ -16,7 +16,7 @@ namespace WMSCore.Outside
         /// </summary>
         /// <param name="outStockInfo"></param>
         /// <returns></returns>
-        [HttpPost("createOutStock")]
+        [HttpPost("createOutStock.ashx")]
         ITask<CreateOutStockResult> CreateOutStockTask([JsonContent] OutStockInfo outStockInfo);
 
         /// <summary>
@@ -24,19 +24,19 @@ namespace WMSCore.Outside
         /// </summary>
         /// <param name="backStockInfo"></param>
         /// <returns></returns>
-        [HttpPost("createBackStock")]
+        [HttpPost("createBackStock.ashx")]
         ITask<CreateBackStockResult> CreateBackStockTask([JsonContent] BackStockInfo backStockInfo);
 
         /// <summary>
         /// 物流控制
         /// </summary>
-        [HttpPost("logisticsControlWCS")]
+        [HttpPost("logisticsControlWCS.ashx")]
         ITask<OutsideLogisticsControlResult> LogisticsControl([JsonContent] OutsideLogisticsControlArg arg);
 
         /// <summary>
         /// 物流（状态）查询
         /// </summary>
-        [HttpPost("logisticsEnquiryWCS")]
+        [HttpPost("logisticsEnquiryWCS.ashx")]
         ITask<OutsideLogisticsEnquiryResult> LogisticsEnquiry([JsonContent] OutsideLogisticsEnquiryArg arg);
          
     }

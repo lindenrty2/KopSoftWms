@@ -19,7 +19,7 @@ namespace InterfaceMocker.WindowUI.WebApi
         /// <param name="result"></param>
         /// <returns></returns>
         [HttpPost("confirmOutStock")]
-        ITask<ConfirmOutStockResult> ConfirmOutStock(WCSTaskResult result);
+        ITask<ConfirmOutStockResult> ConfirmOutStock([JsonContent]WCSTaskResult result);
 
         /// <summary>
         /// 确认归库完成
@@ -27,7 +27,7 @@ namespace InterfaceMocker.WindowUI.WebApi
         /// <param name="result"></param>
         /// <returns></returns>
         [HttpPost("confirmBackStock")]
-        ITask<ConfirmBackStockResult> ConfirmBackStock(WCSTaskResult result);
+        ITask<ConfirmBackStockResult> ConfirmBackStock([JsonContent]WCSTaskResult result);
 
         /// <summary>
         /// 确认归库完成
@@ -35,6 +35,6 @@ namespace InterfaceMocker.WindowUI.WebApi
         /// <param name="result"></param>
         /// <returns></returns>
         [HttpPost("logisticsFinish")]
-        ITask<OutsideLogisticsFinishResponseResult> LogisticsFinish(OutsideLogisticsFinishResponse result);
+        ITask<OutsideLogisticsFinishResponseResult> LogisticsFinish([JsonContent]OutsideLogisticsFinishResponse result);
     }
 }

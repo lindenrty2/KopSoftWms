@@ -49,7 +49,7 @@ namespace WMSCore.Outside
         /// <param name="result"></param>
         /// <returns></returns>
         [HttpPost("confirmOutStock")]
-        public Task<ConfirmOutStockResult> ConfirmOutStock(WCSTaskResult result)
+        public Task<ConfirmOutStockResult> ConfirmOutStock([FromBody]WCSTaskResult result)
         {
             try
             {
@@ -110,7 +110,7 @@ namespace WMSCore.Outside
         /// <param name="result"></param>
         /// <returns></returns>
         [HttpPost("confirmBackStock")]
-        public Task<ConfirmBackStockResult> ConfirmBackStock(WCSTaskResult result)
+        public Task<ConfirmBackStockResult> ConfirmBackStock([FromBody]WCSTaskResult result)
         {
             try
             {
@@ -167,7 +167,7 @@ namespace WMSCore.Outside
         }
 
         [HttpPost("LogisticsFinish")]
-        public async Task<OutsideLogisticsFinishResponseResult> LogisticsFinish(OutsideLogisticsFinishResponse arg)
+        public async Task<OutsideLogisticsFinishResponseResult> LogisticsFinish([FromBody]OutsideLogisticsFinishResponse arg)
         {
             return await MESApiAccessor.Instance.LogisticsFinish(arg);
         }

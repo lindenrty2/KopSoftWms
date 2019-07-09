@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebApiClient;
+using WebApiClient.Attributes;
 using YL.Core.Dto;
 
 namespace WMSCore.Outside
@@ -30,22 +31,22 @@ namespace WMSCore.Outside
             _apiProxy = HttpApi.Create<IWCSApiProxy>(config);
         }
 
-        public async Task<CreateOutStockResult> CreateOutStockTask(OutStockInfo outStockInfo)
+        public async Task<CreateOutStockResult> CreateOutStockTask([JsonContent]OutStockInfo outStockInfo)
         {
             return await _apiProxy.CreateOutStockTask(outStockInfo);
         }
 
-        public async Task<CreateBackStockResult> CreateBackStockTask(BackStockInfo backStockInfo)
+        public async Task<CreateBackStockResult> CreateBackStockTask([JsonContent]BackStockInfo backStockInfo)
         {
             return await _apiProxy.CreateBackStockTask(backStockInfo);
         }
 
-        public async Task<OutsideLogisticsEnquiryResult> LogisticsEnquiry(OutsideLogisticsEnquiryArg arg)
+        public async Task<OutsideLogisticsEnquiryResult> LogisticsEnquiry([JsonContent]OutsideLogisticsEnquiryArg arg)
         {
             return await _apiProxy.LogisticsEnquiry(arg);
         }
 
-        public async Task<OutsideLogisticsControlResult> LogisticsControl(OutsideLogisticsControlArg arg)
+        public async Task<OutsideLogisticsControlResult> LogisticsControl([JsonContent]OutsideLogisticsControlArg arg)
         {
             return await _apiProxy.LogisticsControl(arg);
         }

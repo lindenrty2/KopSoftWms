@@ -23,7 +23,7 @@ namespace InterfaceMocker.Service
             return "OK";
         }
 
-        [HttpPost("createOutStock")]
+        [HttpPost("createOutStock.ashx")]
         public CreateOutStockResult CreateOutStock([FromBody]OutStockInfo outStockInfo)
         {
             CreateOutStockResult result = new CreateOutStockResult()
@@ -34,7 +34,7 @@ namespace InterfaceMocker.Service
             return result;
         }
 
-        [HttpPost("createBackStock")]
+        [HttpPost("createBackStock.ashx")]
         public CreateBackStockResult CreateBackStock([FromBody]BackStockInfo backStockInfo)
         {
             CreateBackStockResult result = new CreateBackStockResult()
@@ -50,7 +50,7 @@ namespace InterfaceMocker.Service
         /// <summary>
         /// 物流控制
         /// </summary>
-        [HttpPost("LogisticsControlWCS")]
+        [HttpPost("LogisticsControlWCS.ashx")]
         public async Task<OutsideLogisticsControlResult> LogisticsControl([FromBody]OutsideLogisticsControlArg arg)
         {
             string equipmentId = "E" + DateTime.Now.ToString("HHmmss");
@@ -76,7 +76,7 @@ namespace InterfaceMocker.Service
         /// <summary>
         /// 物流（状态）查询
         /// </summary>
-        [HttpPost("LogisticsEnquiryWCS")]
+        [HttpPost("LogisticsEnquiryWCS.ashx")]
         public async Task<OutsideLogisticsEnquiryResult> LogisticsEnquiry([FromBody] OutsideLogisticsEnquiryArg arg)
         {
             LogisticsTask task = null;
