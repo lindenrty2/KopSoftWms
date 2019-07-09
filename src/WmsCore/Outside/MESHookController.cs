@@ -406,20 +406,50 @@ namespace WMSCore.Outside
             {
                 return new OutsideWarehousingStatusEnquiryResult()
                 {
-                    Success = false,
+                    Success = "false",
                     ErrorId = PubMessages.E3000_MES_STOCKINTASK_NOTFOUND.Code.ToString(),
                     ErrorInfo = PubMessages.E3000_MES_STOCKINTASK_NOTFOUND.Message
                 };
             }
+
+            IEnumerable<Wms_stockin> stockinList = _sqlClient.Queryable<Wms_stockin>().Where(x => x.MesTaskId == mesTask.MesTaskId).ToList();
+            List<WarehousingStatusInfo> statusInfoList = new List<WarehousingStatusInfo>();
+            foreach(Wms_stockin stockin in stockinList)
+            {
+                var stockinDetailList = _sqlClient.Queryable<Wms_stockindetail,Wms_stockindetail_box>(
+                   (sid,sidb) =>  new object[] {
+                       JoinType.Left,sid.StockInDetailId == sidb.StockinDetailId, 
+                   }
+                ).Where(x => x.StockInId == stockin.StockInId)
+                .Select( (sid,sidb) => new {
+                    sid.WarehouseId,
+                    sid.StockInDetailId,
+                    sidb.InventoryBoxId, 
+                    sidb.Qty,
+                    sid.Status
+
+                }).MergeTable().ToList();
+                foreach(var detail in stockinDetailList)
+                {
+                    statusInfoList.Add(new WarehousingStatusInfo()
+                    {
+                        WarehouseId = detail.WarehouseId.ToString(),
+                        WarehousePosition = null,
+                        WarehouseName = null,//TODO
+                        InventoryBoxId = detail.InventoryBoxId.ToString(),
+                        
+                    });
+                }
+            }
+
             return new OutsideWarehousingStatusEnquiryResult()
             {
-                Success = true,
+                Success = "true",
                 ErrorId = null,
                 ErrorInfo = null,
                 IsNormalWarehousing = mesTask.WorkStatus == MESTaskWorkStatus.WorkComplated.ToByte(),
             };
-
-            return null;
+             
         }
 
         /// <summary>

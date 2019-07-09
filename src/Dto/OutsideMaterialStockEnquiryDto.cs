@@ -66,6 +66,20 @@ namespace YL.Core.Dto
         public string SuppliesUnit { get; set; }
 
         /// <summary>
+        /// 物料信息
+        /// </summary>
+        public OutsideMaterialStockEnquiryItem[] MaterialStockInfo { get; set; }
+       
+
+    }
+
+
+    /// <summary>
+    /// 物料库存信息
+    /// </summary>
+    public  class OutsideMaterialStockEnquiryItem
+    {
+        /// <summary>
         /// 账面库存
         /// </summary>
         public string PaperStock { get; set; }
@@ -89,5 +103,18 @@ namespace YL.Core.Dto
         /// </summary>
         public string WarehousePosition { get; set; }
 
+        /// <summary>
+        /// 货架位置
+        /// </summary>
+        public string StorageRackPosition { get; set; }
+        /// <summary>
+        /// 料箱编号
+        /// </summary>
+        public string InventoryBoxNo { get; set; }
+
+        /// <summary>
+        /// 料格序号
+        /// </summary>
+        public string Position { get; set; }
     }
 }

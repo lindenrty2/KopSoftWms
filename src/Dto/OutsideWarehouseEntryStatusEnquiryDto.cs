@@ -29,13 +29,36 @@ namespace YL.Core.Dto
         /// <summary>
         /// 是否正确收到命令
         /// </summary>
-        public bool Success { get; set; }
+        public string Success { get; set; }
 
+        /// <summary>
+        /// 错误编号
+        /// </summary>
+        public string ErrorId { get; set; }
+
+        /// <summary>
+        /// 错误内容
+        /// </summary>
+        public string ErrorInfoErrorId { get; set; }
+
+        /// <summary>
+        /// 是否出库完成
+        /// </summary>
+        public string IsNormalWarehouseEntry { get; set; }
         /// <summary>
         /// 出库单编号
         /// </summary>
         public string WarehouseEntryId { get; set; }
 
+        public WarehouseEntryStatusInfo[] WarehouseEntryStatusInfoList { get; set; }
+
+
+    }
+
+    public class WarehouseEntryStatusInfo
+    {
+
+        public string SuppliesId { get; set; }
         /// <summary>
         /// 出库当前阶段
         /// </summary>
@@ -60,17 +83,6 @@ namespace YL.Core.Dto
         /// 更新后库存
         /// </summary>
         public int RefreshStock { get; set; }
-
-        /// <summary>
-        /// 错误编号
-        /// </summary>
-        public string ErrorId { get; set; }
-
-        /// <summary>
-        /// 错误内容
-        /// </summary>
-        public string ErrorInfoErrorId { get; set; }
- 
 
 
     }
