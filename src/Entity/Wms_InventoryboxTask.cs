@@ -10,7 +10,7 @@ namespace YL.Core.Entity
         /// <summary>
         /// 入库任务Id
         /// </summary>
-        [SugarColumn(IsPrimaryKey = true)]
+        [SugarColumn(ColumnName="Id", IsPrimaryKey = true)]
         public long InventoryBoxTaskId { get; set; }
         
 
@@ -41,7 +41,7 @@ namespace YL.Core.Entity
         /// <summary>
         /// 数据
         /// </summary>
-        [SugarColumn(Length = 4000, IsNullable = true)]
+        [SugarColumn(Length = 3000, IsNullable = true)]
         public string Data { get; set; }
 
         /// <summary>
@@ -81,7 +81,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
-        [SugarColumn(IsNullable = false, DefaultValue = "1")]
-        public byte? Status { get; set; }
+        [SugarColumn(IsNullable = false)]
+        public int? Status { get; set; }
     }
 }

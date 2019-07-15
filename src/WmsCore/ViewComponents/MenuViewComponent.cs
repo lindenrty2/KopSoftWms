@@ -1,6 +1,7 @@
 ﻿using IServices;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Primitives;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -34,14 +35,25 @@ namespace KopSoftWms.ViewComponents
         {
             var claims = _httpContext.HttpContext.User.Claims;
             var roleId = claims.SingleOrDefault(c => c.Type == ClaimTypes.Role).Value.ToInt64();
-            var menus = await GetItemsAsync(roleId);
+
+            long currentStoreId = 0;
+            var queryDictionary = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(_httpContext.HttpContext.Request.QueryString.Value);
+            if (queryDictionary.TryGetValue("storeId", out StringValues tryStoreId))
+            {
+                if (tryStoreId.Count > 0)
+                {
+                    currentStoreId = tryStoreId[0].ToInt64(); 
+                }
+            }
+
+            var menus = await GetItemsAsync(currentStoreId,roleId);
             //var sd = await _roleServices.GetMenu(roleId).ToListAsync();
             return View(menus);
         }
 
-        private Task<List<PermissionMenu>> GetItemsAsync(long roleId)
+        private Task<List<PermissionMenu>> GetItemsAsync(long storeId,long roleId)
         {
-            Task<List<PermissionMenu>> t1 = Task.Factory.StartNew(() => _roleServices.GetMenu(roleId));
+            Task<List<PermissionMenu>> t1 = Task.Factory.StartNew(() => _roleServices.GetMenu(storeId, roleId));
             return t1;
         }
     }

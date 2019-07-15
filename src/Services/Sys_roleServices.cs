@@ -95,23 +95,23 @@ namespace Services
             return ret;
         }
 
-        public List<PermissionMenu> GetMenu(long roleId, string menuType = "menu")
+        public List<PermissionMenu> GetMenu(long warehouseId,long roleId, string menuType = "menu")
         {
             var listAll = _client.Queryable<Sys_rolemenu, Sys_menu>
                 ((s, c) => new object[] {
-                   JoinType.Left,s.MenuId==c.MenuId,
+                   JoinType.Left,s.MenuId==c.MenuId && (s.WarehouseId == null || s.WarehouseId == 0 || s.WarehouseId == warehouseId),
                  })
                  .Select((s, c) => new
                  {
                      RoleId = s.RoleId.ToString(),
-                     c.IsDel,
+                     IsDel = (int)c.IsDel,
                      c.MenuName,
                      c.MenuUrl,
                      c.MenuType,
                      c.MenuIcon,
-                     c.MenuParent,
-                     c.Status,
-                     c.MenuId,
+                     MenuParent = (long)c.MenuParent,
+                     Status = (int)c.Status,
+                     MenuId = (long)c.MenuId,
                      c.Sort
                  }).MergeTable().Where((s) => s.IsDel == 1 && s.MenuType == menuType && s.Status == 1 && s.RoleId == roleId.ToString()).OrderBy(s => s.Sort).ToList();
             var listParent = listAll.Where(s => s.MenuParent == -1).ToList();

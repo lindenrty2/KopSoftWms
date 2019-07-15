@@ -102,6 +102,6 @@ namespace YL.Core.Entity
         /// Default:1
         /// Nullable:False
         /// </summary>
-        public byte IsDel { get; set; }
+        public int IsDel { get; set; }
     }
 }

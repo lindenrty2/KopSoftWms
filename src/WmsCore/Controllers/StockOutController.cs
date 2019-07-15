@@ -130,11 +130,12 @@ namespace KopSoftWms.Controllers
         }
 
         [HttpGet]
-        public IActionResult Add(string id)
+        public IActionResult Add(long id, long storeId)
         {
             var model = new Wms_stockout();
-            if (id.IsEmpty())
+            if (id == 0)
             {
+                model.WarehouseId = storeId;
                 return View(model);
             }
             else

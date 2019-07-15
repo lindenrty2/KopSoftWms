@@ -22,7 +22,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:False
         /// </summary>
-        [SugarColumn(IsPrimaryKey = true)]
+        [SugarColumn(ColumnName = "Id", IsPrimaryKey = true)]
         public long InventoryBoxId { get; set; }
 
         /// <summary>
@@ -64,14 +64,14 @@ namespace YL.Core.Entity
         /// <summary>
         /// 格数
         /// </summary>
-        [SugarColumn(DefaultValue = "1", IsNullable = false)]
-        public int Size { get; set; } = 1;
+        [SugarColumn(IsNullable = false)]
+        public int Size { get; set; }
 
         /// <summary>
         /// 已使用格数
         /// </summary>
-        [SugarColumn(DefaultValue = "1", IsNullable = false)]
-        public int UsedSize { get; set; } = 0;
+        [SugarColumn(IsNullable = false)]
+        public int UsedSize { get; set; } 
 
         /// <summary>
         /// Desc:备注
@@ -95,7 +95,7 @@ namespace YL.Core.Entity
         /// Nullable:False
         /// </summary>
         [SugarColumn()]
-        public byte IsDel { get; set; }
+        public int IsDel { get; set; }
 
         /// <summary>
         /// Desc:创建人

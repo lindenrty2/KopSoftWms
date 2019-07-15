@@ -18,7 +18,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:False
         /// </summary>
-        [SugarColumn(IsPrimaryKey = true)]
+        [SugarColumn(ColumnName = "Id", IsPrimaryKey = true)]
         public long MenuId { get; set; }
 
         /// <summary>
@@ -67,7 +67,7 @@ namespace YL.Core.Entity
         /// Nullable:True
         /// </summary>
         [SugarColumn(IsNullable = true)]
-        public byte? Status { get; set; }
+        public int? Status { get; set; }
 
         /// <summary>
         /// Desc:menu btn
@@ -83,7 +83,7 @@ namespace YL.Core.Entity
         /// Nullable:True
         /// </summary>
         [SugarColumn()]
-        public byte IsDel { get; set; } = 1;
+        public int IsDel { get; set; } = 1;
 
         /// <summary>
         /// Desc:备注

@@ -19,7 +19,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:False
         /// </summary>
-        [SugarColumn(IsPrimaryKey = true)] 
+        [SugarColumn(ColumnName = "Id", IsPrimaryKey = true)] 
         public long RoleMenuId { get; set; }
         
         /// <summary>
@@ -31,7 +31,7 @@ namespace YL.Core.Entity
         public long? RoleId { get; set; }
 
         [SugarColumn(IsNullable = true/*, IsIdentity = true*/)]
-        public long WarehouseId { get; set; }
+        public long? WarehouseId { get; set; }
 
         /// <summary>
         /// Desc:

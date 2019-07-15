@@ -43,7 +43,7 @@ namespace YL.Core.Entity
         /// Nullable:True
         /// </summary>
         [SugarColumn()]
-        public byte IsDel { get; set; } = 1;
+        public int IsDel { get; set; } = 1;
 
         /// <summary>
         /// Desc:备注

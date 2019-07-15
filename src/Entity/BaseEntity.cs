@@ -11,7 +11,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
-        public byte? IsDel { get; set; } = 1;
+        public int? IsDel { get; set; } = 1;
 
         /// <summary>
         /// Desc:备注

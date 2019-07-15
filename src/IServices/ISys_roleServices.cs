@@ -14,7 +14,7 @@ namespace IServices
 
         List<PermissionMenu> GetMenu();
 
-        List<PermissionMenu> GetMenu(long roleId, string menuType = "menu");
+        List<PermissionMenu> GetMenu(long warehouseId,long roleId, string menuType = "menu");
 
         DbResult<bool> Insert(Sys_role role, long userId, string[] menuId);
 

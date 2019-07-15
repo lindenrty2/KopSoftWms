@@ -21,7 +21,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:False
         /// </summary>
-        [SugarColumn(IsPrimaryKey = true)]
+        [SugarColumn(ColumnName = "Id",IsPrimaryKey = true)]
         public long StockInId { get; set; }
 
         /// <summary>
@@ -74,7 +74,7 @@ namespace YL.Core.Entity
         /// Nullable:True
         /// </summary>
         [SugarColumn(IsNullable = true)]
-        public byte? StockInStatus { get; set; }
+        public int? StockInStatus { get; set; }
 
         /// <summary>
         /// Desc:备注
@@ -90,7 +90,7 @@ namespace YL.Core.Entity
         /// Nullable:True
         /// </summary>
         [SugarColumn()]
-        public byte IsDel { get; set; }
+        public int IsDel { get; set; }
 
         /// <summary>
         /// Desc:创建人

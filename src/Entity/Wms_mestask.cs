@@ -11,11 +11,13 @@ namespace YL.Core.Entity
         /// <summary>
         /// MES任务Id
         /// </summary>
+        [SugarColumn(ColumnName = "Id",IsPrimaryKey = true)]
         public long MesTaskId { get; set; }
         /// <summary>
         /// MES任务类型
         /// </summary>
-        public byte MesTaskType { get; set; }
+        [SugarColumn()]
+        public int MesTaskType { get; set; }
         /// <summary>
         /// 单号
         /// </summary>
@@ -54,26 +56,26 @@ namespace YL.Core.Entity
         /// <summary>
         /// 物料信息列表
         /// </summary>
-        [SugarColumn(Length = 4096, DefaultValue = "", IsNullable = false)]
+        [SugarColumn(Length = 3000, DefaultValue = "", IsNullable = false)]
         public string SuppliesInfoJson { get; set; }
 
         /// <summary>
         /// 操作状态
         /// </summary>
         [SugarColumn(IsNullable = false)]
-        public byte WorkStatus { get; set; }
+        public int WorkStatus { get; set; }
 
         /// <summary>
         /// 通知状态
         /// </summary>
         [SugarColumn(IsNullable = false)]
-        public byte NotifyStatus { get; set; }
+        public int NotifyStatus { get; set; }
 
         /// <summary>
         /// 是否删除
         /// </summary>
         [SugarColumn(DefaultValue = "1", IsNullable = false)]
-        public byte IsDel { get; set; }
+        public int IsDel { get; set; }
         
         /// <summary>
         /// Desc:创建时间

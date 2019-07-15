@@ -69,22 +69,20 @@ namespace KopSoftWms.Controllers
             ViewBag.nickname = UserDtoCache.UserNickname;
             ViewBag.headimg = UserDtoCache.HeadImg;
 
-            //菜单
-            var menus = _roleServices.GetMenu(UserDtoCache.RoleId.Value, type + "_menu");
-            GetMemoryCache.Set(type + "menu", menus);
-            ViewData["type"] = type;
-            ViewData["menu"] = menus;
 
             var stores = _warehouseServices.Queryable().ToList().ToArray();
             ViewData["stores"] = stores;
-            if(storeId == 0 && stores.Length > 0)
+            if (storeId == 0 && stores.Length > 0)
             {
-                ViewData["currentStoreId"] = stores.First().WarehouseId;
+                storeId = stores.First().WarehouseId;
             }
-            else
-            {
-                ViewData["currentStoreId"] = storeId;
-            }
+            ViewData["currentStoreId"] = storeId;
+
+            //菜单
+            var menus = _roleServices.GetMenu(storeId, UserDtoCache.RoleId.Value, type + "_menu");
+            GetMemoryCache.Set(type + storeId + "menu", menus);
+            ViewData["type"] = type;
+            ViewData["menu"] = menus;
 
             return View();
         }

@@ -21,7 +21,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:False
         /// </summary>
-        [SugarColumn(IsPrimaryKey = true)]
+        [SugarColumn(ColumnName = "Id", IsPrimaryKey = true)]
         public int SerialNumberId { get; set; }
 
         /// <summary>
@@ -29,7 +29,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:False
         /// </summary>
-        [SugarColumn(Length = 30/*, IsIdentity = true*/)]
+        [SugarColumn(Length = 30)]
         public string SerialNumber { get; set; }
 
         [SugarColumn()]
@@ -73,7 +73,7 @@ namespace YL.Core.Entity
         /// Nullable:False
         /// </summary>
         [SugarColumn()]
-        public byte IsDel { get; set; }
+        public int IsDel { get; set; }
 
         /// <summary>
         /// Desc:
@@ -89,7 +89,7 @@ namespace YL.Core.Entity
         /// Nullable:True
         /// </summary>
         [SugarColumn(IsNullable = true)]
-        public long? CreateBy { get; set; }
+        public Int64? CreateBy { get; set; }
 
         /// <summary>
         /// Desc:创建时间
@@ -105,7 +105,7 @@ namespace YL.Core.Entity
         /// Nullable:False
         /// </summary>
         [SugarColumn(IsNullable = true)]
-        public long? ModifiedBy { get; set; }
+        public Int64? ModifiedBy { get; set; }
 
         /// <summary>
         /// Desc:修改时间

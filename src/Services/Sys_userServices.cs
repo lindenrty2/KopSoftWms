@@ -37,7 +37,7 @@ namespace Services
                 flag = false;
                 return (flag, PubConst.Login2, null);
             }
-            if (sys.IsEabled == 0)
+            if (sys.IsEabled != 1)
             {
                 flag = false;
                 return (flag, PubConst.Login3, null);

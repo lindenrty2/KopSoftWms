@@ -20,7 +20,7 @@ namespace YL.Core.Dto
 
         public string Mobile { get; set; }
 
-        public byte? IsEabled { get; set; }
+        public int? IsEabled { get; set; }
 
         public string LoginIp { get; set; }
 
@@ -28,9 +28,9 @@ namespace YL.Core.Dto
 
         public int? LoginTime { get; set; }
 
-        public byte? Sex { get; set; }
+        public int? Sex { get; set; }
 
-        public byte? IsDel { get; set; }
+        public int? IsDel { get; set; }
 
         public string Remark { get; set; }
 

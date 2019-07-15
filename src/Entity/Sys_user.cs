@@ -19,7 +19,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:False
         /// </summary>
-        [SugarColumn(IsPrimaryKey = true)]
+        [SugarColumn(ColumnName = "Id", IsPrimaryKey = true)]
         public long UserId { get; set; }
 
         /// <summary>
@@ -97,8 +97,8 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
-        [SugarColumn()]
-        public byte IsEabled { get; set; } = 1;
+        [SugarColumn(DefaultValue = "1")]
+        public int IsEabled { get; set; }
 
         /// <summary>
         /// Desc:
@@ -130,7 +130,7 @@ namespace YL.Core.Entity
         /// Nullable:True
         /// </summary>
         [SugarColumn(IsNullable = true)]
-        public byte? Sex { get; set; }
+        public int? Sex { get; set; }
 
         /// <summary>
         /// Desc:1未删除   0删除
@@ -138,7 +138,7 @@ namespace YL.Core.Entity
         /// Nullable:True
         /// </summary>
         [SugarColumn()]
-        public byte IsDel { get; set; } = 1;
+        public int IsDel { get; set; } = 1;
 
         /// <summary>
         /// Desc:备注

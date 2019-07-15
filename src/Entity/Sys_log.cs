@@ -19,7 +19,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
-        [SugarColumn(IsPrimaryKey = true)] 
+        [SugarColumn(ColumnName = "Id", IsPrimaryKey = true)] 
         public long LogId { get; set; }
 
         /// <summary>
@@ -43,7 +43,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
-        [SugarColumn(Length = 10000)]
+        [SugarColumn(Length = 3000)]
         public string Description { get; set; }
 
         /// <summary>

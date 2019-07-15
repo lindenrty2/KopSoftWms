@@ -44,17 +44,8 @@ namespace YL.NetCore.Attributes
             var cache = services.GetService(typeof(IMemoryCache)) as IMemoryCache;
             var roleServices = services.GetService(typeof(ISys_roleServices)) as ISys_roleServices;
             var warehouseServices = services.GetService(typeof(IWms_warehouseServices)) as IWms_warehouseServices;
-            Wms_warehouse[] stores = null;
-            if (viewData != null)
-            {
-                if (context.HttpContext.User != null)
-                {
-                    // ReSharper disable once PossibleNullReferenceException
-                    viewData["menu"] = cache.Get(type + "menu") ?? roleServices?.GetMenu(claims.SingleOrDefault(c => c.Type == ClaimTypes.Role).Value.ToInt64(), type + "_menu");
-                    stores = (Wms_warehouse[])cache.Get("stores") ?? warehouseServices?.Queryable().ToArray();
-                    viewData["stores"] = stores;
-                }
-            }
+            Wms_warehouse[] stores = (Wms_warehouse[])cache.Get("stores") ?? warehouseServices?.Queryable().ToArray();
+
             long currentStoreId = 0;
             if (queryDictionary.TryGetValue("storeId", out StringValues tryStoreId))
             {
@@ -64,9 +55,19 @@ namespace YL.NetCore.Attributes
                     viewData["currentStoreId"] = currentStoreId;
                 }
             }
-            else if(stores != null && stores.Length > 0)
+            else if (stores != null && stores.Length > 0)
             {
                 currentStoreId = stores.First().WarehouseId;
+            }
+
+            if (viewData != null)
+            {
+                if (context.HttpContext.User != null)
+                {
+                    // ReSharper disable once PossibleNullReferenceException
+                    viewData["menu"] = cache.Get(type + currentStoreId + "menu") ?? roleServices?.GetMenu(currentStoreId,claims.SingleOrDefault(c => c.Type == ClaimTypes.Role).Value.ToInt64(), type + "_menu");
+                    viewData["stores"] = stores;
+                }
             }
             if (viewBag != null)
             {

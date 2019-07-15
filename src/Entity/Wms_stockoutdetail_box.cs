@@ -7,7 +7,7 @@ namespace YL.Core.Entity
 {
     public partial class Wms_stockoutdetail_box
     {
-        [SugarColumn(IsPrimaryKey = true)]
+        [SugarColumn(ColumnName = "Id", IsPrimaryKey = true)]
         public long DetailBoxId { get; set; }
 
         [SugarColumn(DefaultValue = "0", IsNullable = false)]

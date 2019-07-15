@@ -129,7 +129,7 @@ namespace KopSoftWms.Controllers
         public IActionResult Add(long id,long storeId)
         {
             var model = new Wms_stockin();
-            if (id.IsEmpty())
+            if (id == 0)
             {
                 model.WarehouseId = storeId;
                 return View(model);

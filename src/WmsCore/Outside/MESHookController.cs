@@ -435,8 +435,7 @@ namespace WMSCore.Outside
                     {
                         WarehouseId = detail.WarehouseId.ToString(),
                         WarehousePosition = null,
-                        WarehouseName = null,//TODO
-                        InventoryBoxId = detail.InventoryBoxId.ToString(),
+                        WarehouseName = null,//TODO 
                         
                     });
                 }

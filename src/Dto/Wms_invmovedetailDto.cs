@@ -42,7 +42,7 @@ namespace YL.Core.Dto
         /// Default:
         /// Nullable:True
         /// </summary>
-        public byte? Status { get; set; }
+        public int? Status { get; set; }
 
         /// <summary>
         /// Desc:物料
@@ -90,7 +90,7 @@ namespace YL.Core.Dto
         /// Default:
         /// Nullable:True
         /// </summary>
-        public byte? IsDel { get; set; }
+        public int? IsDel { get; set; }
 
         /// <summary>
         /// Desc:
