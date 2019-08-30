@@ -10,7 +10,7 @@ namespace YL.Utils.Pub
         public static MessageItem I1002_BOXOUT_SCCUESS = new MessageItem(1002, "料箱归库成功");
 
         public static MessageItem E0002_UPDATE_COUNT_FAIL = new MessageItem(-2, "数据更新失败,可能有第三方更新了数据");
-
+        public static MessageItem E0003_FILEUPLOAD_FAIL = new MessageItem(-3, "文件上传失败"); 
 
         public static MessageItem E1001_SUPPLIESTYPE_NOTFOUND = new MessageItem(-1001,"找不到物料类型定义");
         public static MessageItem E1002_SUPPLIESTYPE_WAREHOUSEID_NOTSET = new MessageItem(-1002, "物料类型没有指定仓库");
@@ -32,6 +32,8 @@ namespace YL.Utils.Pub
         public static MessageItem E1018_INVENTORYBOX_ALLOW_BACKED = new MessageItem(-1018, "料箱已归库");
         public static MessageItem E1019_INVENTORY_LOCKED = new MessageItem(-1019, "物料被锁定,无法出入库");
         public static MessageItem E1020_INVENTORYBOX_MATERIAL_LOCKED = new MessageItem(-1020, "料箱中的物料被其他任务锁定,无法使用");
+        public static MessageItem E1021_INVENTORYRECORD_FAIL = new MessageItem(-1021, "物料库存记录更新失败"); 
+
 
         public static MessageItem I2000_STOCKOUT_SCAN_SCCUESS = new MessageItem(2000, "创建出库单成功");
         public static MessageItem I2001_STOCKIN_SCAN_SCCUESS = new MessageItem(2001, "入库扫码关联成功");
@@ -84,6 +86,12 @@ namespace YL.Utils.Pub
 
         public static MessageItem E3000_MES_STOCKINTASK_NOTFOUND = new MessageItem(-3000, "找不到对应的MES入库任务");
         public static MessageItem E3100_MES_STOCKOUTTASK_NOTFOUND = new MessageItem(-3100, "找不到对应的MES出库任务");
+
+
+        public static MessageItem I4100_MATERIAL_IMPORT_SCCUESS = new MessageItem(4100, "物料导入成功");
+        public static MessageItem E4100_MATERIAL_IMPORT_FAIL = new MessageItem(-4100, "物料导入失败");
+        public static MessageItem E4101_MATERIAL_IMPORT_NOTSUPPORT = new MessageItem(-4101, "物料不支持该类型的文件导入");
+        public static MessageItem E4102_MATERIAL_IMPORT_EXIST_NOTMATCH = new MessageItem(-4102, "物料已存在且内容不符");
     }
 
 

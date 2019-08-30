@@ -412,31 +412,61 @@ namespace WMSCore.Outside
                 };
             }
 
-            IEnumerable<Wms_stockin> stockinList = _sqlClient.Queryable<Wms_stockin>().Where(x => x.MesTaskId == mesTask.MesTaskId).ToList();
+            var stockinList = _sqlClient.Queryable<Wms_stockin,Wms_warehouse>(
+                (s, w) => new object[] {
+                   JoinType.Left,s.WarehouseId==w.WarehouseId
+                 })
+                 .Where((s, w) => s.MesTaskId == mesTask.MesTaskId )
+                 .Select((s,w) => new {
+                     s.WarehouseId,
+                     w.WarehouseName,
+                     s.StockInId,
+                     s.StockInNo,
+                     s.StockInStatus,
+                     s.StockInType
+                 })
+                .ToList();
             List<WarehousingStatusInfo> statusInfoList = new List<WarehousingStatusInfo>();
-            foreach(Wms_stockin stockin in stockinList)
+            foreach(var stockin in stockinList)
             {
-                var stockinDetailList = _sqlClient.Queryable<Wms_stockindetail,Wms_stockindetail_box>(
-                   (sid,sidb) =>  new object[] {
-                       JoinType.Left,sid.StockInDetailId == sidb.StockinDetailId, 
+                var stockinDetailList = _sqlClient.Queryable<Wms_stockindetail,Wms_stockindetail_box,Wms_inventorybox,Wms_material>(
+                   (sid,sidb,ib,m) =>  new object[] {
+                       JoinType.Left,sid.StockInDetailId == sidb.StockinDetailId,
+                       JoinType.Left,sidb.InventoryBoxId == ib.InventoryBoxId,
+                       JoinType.Left,sid.MaterialId == m.MaterialId,
                    }
-                ).Where(x => x.StockInId == stockin.StockInId)
-                .Select( (sid,sidb) => new {
-                    sid.WarehouseId,
+                )
+                .Where((sid, sidb, ib, m) => sid.StockInId == stockin.StockInId)
+                .Select( (sid,sidb,ib, m) => new {
+                    sid.WarehouseId, 
+                    sid.MaterialId,
+                    m.MaterialNo,
+                    m.MaterialOnlyId,
                     sid.StockInDetailId,
                     sidb.InventoryBoxId, 
+                    ib.InventoryBoxNo,
                     sidb.Qty,
-                    sid.Status
-
+                    sid.Status,
+                    sid.CreateBy,
+                    sid.CreateDate,
+                    sid.ModifiedBy,
+                    sid.ModifiedDate
                 }).MergeTable().ToList();
                 foreach(var detail in stockinDetailList)
                 {
                     statusInfoList.Add(new WarehousingStatusInfo()
                     {
+                        IsNormalWarehousing = detail.Status == StockInStatus.task_finish.ToByte(),
                         WarehouseId = detail.WarehouseId.ToString(),
                         WarehousePosition = null,
-                        WarehouseName = null,//TODO 
-                        
+                        WarehouseName = stockin.WarehouseName,
+                        InventoryBoxNo = detail.InventoryBoxNo,
+                        Position = "0",//TODO
+                        StorageRackPosition = "",
+                        SuppliesId = string.IsNullOrWhiteSpace(detail.MaterialOnlyId) ? detail.MaterialId.ToString() : detail.MaterialOnlyId.ToString(),
+                        RefreshStock = 0, //TODO
+                        WarehousingStep = ((StockInStatus)detail.Status).ToString(),
+                        WarehousingFinishTime = detail.ModifiedDate?.ToString("yyyyMMddHHmmss")
                     });
                 }
             }
@@ -446,6 +476,9 @@ namespace WMSCore.Outside
                 Success = "true",
                 ErrorId = null,
                 ErrorInfo = null,
+                WarehousingId = arg.WarehousingId,
+                WarehousingType = arg.WarehousingType,
+                WarehousingStatusInfoList = statusInfoList.ToArray(),
                 IsNormalWarehousing = mesTask.WorkStatus == MESTaskWorkStatus.WorkComplated.ToByte(),
             };
              

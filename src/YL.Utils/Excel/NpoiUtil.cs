@@ -7,12 +7,30 @@ using System.Reflection;
 using NPOI.HPSF;
 using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
+using NPOI.SS.Util;
 using NPOI.XSSF.UserModel;
 using YL.Utils.Extensions;
 using YL.Utils.Pub;
 
 namespace YL.Utils.Excel
 {
+    public class NpoiColumnAttribute : Attribute
+    {
+        private string _columnIndex = "";
+        public string ColumnIndex { get { return _columnIndex; } }
+
+        private string _title = "";
+        public string Title { get { return _title; } }
+
+        public NpoiColumnAttribute(string columnIndex,string title)
+        {
+            _columnIndex = columnIndex;
+            _title = title;
+        }
+
+
+    }
+
     /// <summary>
     /// NPOI linux 报错
     /// https://www.cnblogs.com/Robbery/p/10115234.html
@@ -317,6 +335,63 @@ namespace YL.Utils.Excel
             workbook.Write(stream);
             var buffer = stream.ToArray();
             return buffer;
+        }
+
+        public static T[] Import<T>(Stream stream, ExcelVersion version = ExcelVersion.V2007)
+        {
+            IWorkbook workbook = null;
+            try
+            {
+                Type dataType = typeof(T);
+                ConstructorInfo dataConstructor = dataType.GetConstructor(new Type[] { });
+                if(dataConstructor == null)
+                {
+                    throw new TypeInitializationException(dataType.FullName,null);
+                }
+                Dictionary<int, PropertyInfo> columnMap = new Dictionary<int, PropertyInfo>();
+                PropertyInfo[] properties = dataType.GetProperties();
+                foreach(PropertyInfo property in properties)
+                {
+                    if (!property.CanWrite) continue;
+                    NpoiColumnAttribute attribute = (NpoiColumnAttribute)property.GetCustomAttribute(typeof(NpoiColumnAttribute));
+                    if (attribute == null || string.IsNullOrWhiteSpace( attribute.ColumnIndex) ) continue;
+                    columnMap.Add(CellReference.ConvertColStringToIndex(attribute.ColumnIndex), property);
+                }
+
+                if (version == ExcelVersion.V2007)
+                {
+                    workbook = new XSSFWorkbook(stream);
+                }
+                else
+                {
+                    workbook = new HSSFWorkbook(stream);
+                }
+                ISheet sheet = workbook.GetSheetAt(0);
+                int currentRow = 1;
+                List<T> result = new List<T>();
+                while (true)
+                {
+                    IRow row = sheet.GetRow(currentRow);
+                    if (row == null || row.Cells.Count == 0 || row.GetCell(0).IsNull())
+                    {
+                        break;
+                    }
+                    T t = (T)dataConstructor.Invoke(new object[] { });
+                    foreach(KeyValuePair<int, PropertyInfo> column in columnMap)
+                    {
+                        ICell cell = row.GetCell(column.Key);
+                        column.Value.SetValue(t, cell.StringCellValue);
+                    }
+                    result.Add(t);
+                    currentRow++;
+                }
+                return result.ToArray();
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
         }
 
         private DocumentSummaryInformation SetDocumentSummaryInformation()

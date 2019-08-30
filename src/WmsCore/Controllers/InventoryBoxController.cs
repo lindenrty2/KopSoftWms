@@ -825,13 +825,17 @@ namespace KopSoftWms.Controllers
                     Wms_stockoutdetail stockoutdetail = string.IsNullOrEmpty(detail.StockOutDetailId) ? null : stockoutdetails.FirstOrDefault(x => x.StockOutDetailId == detail.StockOutDetailId.ToInt64());
                     if (mode == 1 && stockindetail == null )
                     {
+                        _client.RollbackTran();
                         return YL.Core.Dto.RouteData.From(PubMessages.E2016_STOCKINDETAIL_INVENTORYBOXTASK_NOTMATCH);
                     }
                     else if(mode == 2 && stockoutdetail == null)
                     {
+                        _client.RollbackTran();
                         return YL.Core.Dto.RouteData.From(PubMessages.E2116_STOCKOUTDETAIL_INVENTORYBOXTASK_NOTMATCH);
                     }
-
+                    int? beforeQty = null;
+                    int qty = 0;
+                    int afterQty = 0;
                     Wms_inventory inventory = string.IsNullOrEmpty(detail.InventoryId) ? null : inventories.FirstOrDefault(x => x.InventoryId == detail.InventoryId.ToInt64());
                     if (inventory == null)
                     {
@@ -850,6 +854,10 @@ namespace KopSoftWms.Controllers
                         };
                         inventories.Add(inventory);
                     }
+                    else
+                    {
+                        beforeQty = inventory.Qty;
+                    }
                     if (inventory.MaterialId.ToString() != detail.MaterialId)
                     {
                         _client.RollbackTran();
@@ -857,20 +865,25 @@ namespace KopSoftWms.Controllers
                     }
                     if (inventory.IsLocked && detail.OrderNo != inventory.OrderNo)
                     {
+                        _client.RollbackTran();
                         return YL.Core.Dto.RouteData.From(PubMessages.E1019_INVENTORY_LOCKED , $"料箱编号{inventoryBox.InventoryBoxNo},物料编号{detail.MaterialNo}");
                     }
                     if (mode == 1)
                     {
                         inventory.Qty += detail.Qty; //加上入库数量
+                        qty = detail.Qty;
                     }
                     else if (mode == 2)
                     {
                         inventory.Qty -= detail.Qty; //减去出库数量
+                        qty -= detail.Qty;
                     }
                     else
                     {
+                        qty = detail.Qty - inventory.Qty;
                         inventory.Qty = detail.Qty; //手动出入库，直接填入最终数量
                     }
+                    afterQty = inventory.Qty;
                     inventory.ModifiedDate = DateTime.Now;
                     inventory.ModifiedBy = this.UserDto.UserId;
 
@@ -904,6 +917,31 @@ namespace KopSoftWms.Controllers
                         }
                         updatedStockoutdetails.Add(stockoutdetail);
                     }
+
+                    Wms_inventoryrecord record = new Wms_inventoryrecord()
+                    {
+                        InventoryrecordId = PubId.SnowflakeId,
+                        StockInDetailId = stockindetail.StockInDetailId,
+                        InventoryBoxId = inventoryBox.InventoryBoxId,
+                        InventoryBoxNo = inventoryBox.InventoryBoxNo,
+                        InventoryId = inventory.InventoryId,
+                        InventoryPosition = inventory.Position,
+                        MaterialId = detail.MaterialId.ToInt64(),
+                        MaterialName = detail.MaterialName,
+                        BeforeQty = beforeQty,
+                        Qty = qty,
+                        AfterQty = afterQty,
+                        CreateBy = this.UserDto.UserId,
+                        CreateDate = DateTime.Now,
+                        IsDel = DeleteFlag.Normal
+                    };
+                    if(_client.Insertable(record).ExecuteCommand() == 0)
+                    {
+                        _client.RollbackTran();
+                        return YL.Core.Dto.RouteData.From(PubMessages.E1021_INVENTORYRECORD_FAIL);
+                    }
+
+
 
                 }
                 if (mode != 4)
@@ -957,6 +995,7 @@ namespace KopSoftWms.Controllers
                 inventoryBox.ModifiedDate = DateTime.Now; 
                 _inventoryBoxServices.UpdateEntity(inventoryBox);
 
+
                 foreach(Wms_stockin stockin in relationStockins)
                 {
                     if(_client.Queryable<Wms_stockindetail>().Any(x => x.Status != StockInStatus.task_finish.ToByte()))
@@ -975,8 +1014,7 @@ namespace KopSoftWms.Controllers
                         }
                     }
                 }
-
-
+                
                 _client.CommitTran();
                 return YL.Core.Dto.RouteData.From(PubMessages.I2000_STOCKOUT_SCAN_SCCUESS);
             }

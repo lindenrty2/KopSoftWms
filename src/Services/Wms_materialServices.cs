@@ -1,7 +1,13 @@
 using IRepository;
 using IServices;
+using Microsoft.AspNetCore.Http;
 using SqlSugar;
 using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using YL.Core.Dto;
 using YL.Core.Entity;
 using YL.Utils.Excel;
 using YL.Utils.Extensions;
@@ -118,5 +124,118 @@ namespace Services
             var buffer = NpoiUtil.Export(list, ExcelVersion.V2007);
             return buffer;
         }
+
+        public async Task<RouteData> ImportList(IFormFile file)
+        {
+            try
+            {
+                MaterialImportData[] importList = null;
+                using (Stream stream = file.OpenReadStream())
+                {
+                    importList = NpoiUtil.Import<MaterialImportData>(
+                        stream, file.FileName.EndsWith("xlsx") ? ExcelVersion.V2007 : ExcelVersion.V2003);
+                    stream.Close();
+                    stream.Dispose(); 
+                }
+                List<Sys_dict> typeDicts = await _client.Queryable<Sys_dict>().Where(x => x.DictType == PubDictType.material.ToByte().ToString()).ToListAsync();
+                List<Sys_dict> unitDicts = await _client.Queryable<Sys_dict>().Where(x => x.DictType == PubDictType.unit.ToByte().ToString()).ToListAsync();
+                foreach (MaterialImportData importData in importList)
+                {
+
+                    Wms_material material = null;
+                    if (string.IsNullOrWhiteSpace(importData.MaterialOnlyId))
+                    {
+                        material = await _client.Queryable<Wms_material>().FirstAsync(x => x.MaterialNo == importData.MaterialNo);
+                    }
+                    else
+                    {
+                        material = await _client.Queryable<Wms_material>().FirstAsync(x => x.MaterialOnlyId == importData.MaterialOnlyId);
+                    }
+
+                    if (material == null)
+                    {
+                        Sys_dict typeDict = typeDicts.FirstOrDefault(x => x.DictName == importData.MaterialType);
+                        if (typeDict == null)
+                        {
+                            return RouteData<Wms_material>.From(PubMessages.E1001_SUPPLIESTYPE_NOTFOUND);
+                        }
+                        else if (typeDict.WarehouseId == null)
+                        {
+                            return RouteData<Wms_material>.From(PubMessages.E1002_SUPPLIESTYPE_WAREHOUSEID_NOTSET);
+                        }
+
+                        Sys_dict unitDict = unitDicts.FirstOrDefault(x => x.DictName == importData.Unit);
+                        if (unitDict == null)
+                        {
+                            return RouteData<Wms_material>.From(PubMessages.E1003_UNIT_NOTFOUND);
+                        }
+                        long warehouseId = typeDict.WarehouseId.Value;
+
+                        material = new Wms_material()
+                        {
+                            MaterialId = PubId.SnowflakeId,
+                            MaterialOnlyId = importData.MaterialOnlyId ?? "",
+                            MaterialNo = importData.MaterialNo ?? "",
+                            MaterialName = importData.MaterialName,
+                            MaterialType = typeDict.DictId,
+                            WarehouseId = warehouseId,
+                            Unit = unitDict.DictId,
+                        };
+                        this.Insert(material);
+                    }
+                    else
+                    {
+                        string unit = unitDicts.FirstOrDefault(x => x.DictId == material.Unit).DictName;
+                        string type = typeDicts.FirstOrDefault(x => x.DictId == material.MaterialType).DictName;
+                        if (material.MaterialNo != importData.MaterialNo)
+                        {
+                            return RouteData.From(PubMessages.E4102_MATERIAL_IMPORT_EXIST_NOTMATCH,
+                                $",物料编号不匹配,已保存的值为[{material.MaterialNo}],导入值为[{importData.MaterialNo}]");
+                        }
+                        else if (material.MaterialOnlyId != importData.MaterialOnlyId)
+                        {
+                            return RouteData.From(PubMessages.E4102_MATERIAL_IMPORT_EXIST_NOTMATCH,
+                                $",物料唯一Id不匹配,已保存的值为[{material.MaterialOnlyId}],导入值为[{importData.MaterialOnlyId}]");
+                        }
+                        else if (material.MaterialName != importData.MaterialName)
+                        {
+                            return RouteData.From(PubMessages.E4102_MATERIAL_IMPORT_EXIST_NOTMATCH,
+                                $",物料({importData.MaterialNo},{importData.MaterialOnlyId})名称不匹配,已保存的值为[{material.MaterialName}],导入值为[{importData.MaterialName}]");
+                        }
+                        else if (type != importData.MaterialType)
+                        {
+                            return RouteData.From(PubMessages.E4102_MATERIAL_IMPORT_EXIST_NOTMATCH,
+                                $",物料({importData.MaterialNo},{importData.MaterialOnlyId})单位不匹配,已保存的值为[{type}],导入值为[{importData.MaterialType}]");
+                        }
+
+                    } 
+                }
+                return RouteData.From(PubMessages.I4100_MATERIAL_IMPORT_SCCUESS);
+            }
+            catch
+            {
+                return RouteData.From(PubMessages.E4100_MATERIAL_IMPORT_FAIL);
+            } 
+        }
+    }
+
+    public class MaterialImportData
+    {
+        [NpoiColumn("B","物料编号")]
+        public string MaterialNo { get; set; }
+         
+        [NpoiColumn("C", "物料唯一Id")]
+        public string MaterialOnlyId { get; set; } 
+
+        [NpoiColumn("D", "物料名称")]
+        public string MaterialName { get; set; }
+
+        [NpoiColumn("E", "物料类型")]
+        public string MaterialType { get; set; }
+
+        [NpoiColumn("F", "物料单位")]
+        public string Unit { get; set; }
+
+        public string Result { get; set; }
     }
 }

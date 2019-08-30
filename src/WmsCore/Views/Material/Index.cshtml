@@ -31,6 +31,11 @@
                             <button id="btn_delete" v-on:click="deleteL" type="button" class="btn btn-default">
                                 <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>删除
                             </button>
+                            <input id="fileImport" @@change="onImportL($event)" type="file" style="display:none"
+                                   accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" >
+                            <button id="btnImport" v-on:click="importL" type="button" class="btn btn-default">
+                                <span class="glyphicon glyphicon-import" aria-hidden="true"></span>导入
+                            </button>
                             <button id="btn_export" v-on:click="exportL" type="button" class="btn btn-default">
                                 <span class="glyphicon glyphicon-export" aria-hidden="true"></span>导出
                             </button>
@@ -199,6 +204,45 @@
                     } else {
                         layer.alert("请选中行", { icoon: 3, skin: "layer-ext-moon" });
                     }
+                },
+                onImportL: function (e) {
+                    _self = this;
+                    var fileName = e.target.value;
+                    if (fileName == '') {
+                        return;
+                    }
+                    this.file = event.target.files;
+                    let formdata = new FormData()
+                    formdata.append('file', this.file[0])
+
+                    $.ajax({
+                        url: "/Material/Import",
+                        data: formdata,
+                        type: "POST",
+                        dataType: "json",
+                        cache: false, //上传文件无需缓存
+                        processData: false, //用于对data参数进行序列化处理 这里必须false
+                        contentType: false, //必须
+                        success: function (res) {
+                            e.target.value = '';
+                            if (res.isSccuess) {
+                                _self.searchL();
+                                layer.alert("导入成功", { icoon: 1, skin: "layer-ext-moon" });
+                            }
+                            else {
+                                _self.searchL();
+                                layer.alert(res.message, { icoon: 3, skin: "layer-ext-moon" });
+                            }
+                        },
+                        error: function (res) {
+                            e.target.value = '';
+                            layer.alert("上传失败", { icoon: 3, skin: "layer-ext-moon" });
+                        }
+                    })
+                },
+                importL: function () {
+                    var _self = this;
+                    $('#fileImport').click();
                 },
                 exportL: function () {
                     var _self = this;

@@ -27,10 +27,74 @@ namespace YL.Core.Entity
         /// <summary>
         /// Desc:
         /// Default:
+        /// Nullable:False
+        /// </summary>
+        [SugarColumn(IsNullable = false)]
+        public long InventoryBoxId { get; set; }
+
+        /// <summary>
+        /// Desc:
+        /// Default:
+        /// Nullable:False
+        /// </summary>
+        [SugarColumn(IsNullable = false,Length = 32)]
+        public string InventoryBoxNo { get; set; }
+
+        /// <summary>
+        /// Desc:
+        /// Default:
+        /// Nullable:False
+        /// </summary>
+        [SugarColumn(IsNullable = false)]
+        public long InventoryId { get; set; }
+
+        /// <summary>
+        /// Desc:
+        /// Default:
+        /// Nullable:False
+        /// </summary>
+        [SugarColumn(IsNullable = false)]
+        public int InventoryPosition { get; set; }
+
+        /// <summary>
+        /// Desc:
+        /// Default:
+        /// Nullable:False
+        /// </summary>
+        [SugarColumn(IsNullable = false)]
+        public long MaterialId { get; set; }
+
+        /// <summary>
+        /// Desc:
+        /// Default:
+        /// Nullable:False
+        /// </summary>
+        [SugarColumn(IsNullable = false,Length = 60)]
+        public string MaterialName { get; set; }
+
+        /// <summary>
+        /// Desc:
+        /// Default:
         /// Nullable:True
         /// </summary>
-        [SugarColumn(IsNullable = true/*, IsIdentity = true*/)]
+        [SugarColumn(IsNullable = true, IndexGroupNameList = new String[] { "StockIn" })]
         public long? StockInDetailId { get; set; }
+
+        /// <summary>
+        /// Desc:
+        /// Default:
+        /// Nullable:True
+        /// </summary>
+        [SugarColumn(IsNullable = true,IndexGroupNameList = new String[] { "StockOut" })]
+        public long? StockOutDetailId { get; set; }
+
+        /// <summary>
+        /// Desc:
+        /// Default:
+        /// Nullable:True
+        /// </summary>
+        [SugarColumn(IsNullable = true)]
+        public int? BeforeQty { get; set; }
 
         /// <summary>
         /// Desc:
@@ -39,6 +103,14 @@ namespace YL.Core.Entity
         /// </summary>
         [SugarColumn(IsNullable = true)]
         public int Qty { get; set; }
+
+        /// <summary>
+        /// Desc:
+        /// Default:
+        /// Nullable:True
+        /// </summary>
+        [SugarColumn(IsNullable = true)]
+        public int AfterQty { get; set; }
 
         /// <summary>
         /// Desc:备注

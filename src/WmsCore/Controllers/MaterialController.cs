@@ -1,4 +1,5 @@
 ﻿using IServices;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SqlSugar;
 using System.Linq;
@@ -8,6 +9,7 @@ using YL.Core.Entity;
 using YL.Core.Entity.Fluent.Validation;
 using YL.NetCore.Attributes;
 using YL.NetCore.NetCoreApp;
+using YL.Utils.Excel;
 using YL.Utils.Extensions;
 using YL.Utils.Files;
 using YL.Utils.Pub;
@@ -158,6 +160,22 @@ namespace KopSoftWms.Controllers
                 return File(JsonL((false, PubConst.File8)).ToBytes(), ContentType.ContentTypeJson);
             }
             return File(buffer, ContentType.ContentTypeFile, DateTimeExt.GetDateTimeS(DateTimeExt.DateTimeFormatString) + "-" + EncoderUtil.UrlHttpUtilityEncoder("物料") + ".xlsx");
+        }
+
+
+
+        [HttpPost]
+        public async Task<RouteData> Import([FromForm]IFormFile file)
+        {
+            if(file == null)
+            {
+                return YL.Core.Dto.RouteData.From(PubMessages.E0003_FILEUPLOAD_FAIL);
+            }
+            if(!file.FileName.EndsWith(".xls") && !file.FileName.EndsWith(".xlsx"))
+            {
+                return YL.Core.Dto.RouteData.From(PubMessages.E4101_MATERIAL_IMPORT_NOTSUPPORT);
+            }
+            return await _materialServices.ImportList(file);
         }
     }
 }

@@ -30,16 +30,16 @@ namespace Services
             {
                 bootstrap.offset = bootstrap.offset / bootstrap.limit + 1;
             }
-            var query = _client.Queryable<Wms_inventoryrecord, Wms_stockindetail, Wms_material, Sys_user, Sys_user, Sys_user, Wms_stockin>
-                ((s, p, d, c, u, o, i) => new object[] {
+            var query = _client.Queryable<Wms_inventoryrecord, Wms_stockindetail, Wms_material, Sys_user, Sys_user, Wms_stockin>
+                ((s, p, d, c, u, i) => new object[] {
                    JoinType.Left,s.StockInDetailId==p.StockInDetailId && p.IsDel == 1,
                    JoinType.Left,p.MaterialId==d.MaterialId && d.IsDel == 1,
                    JoinType.Left,s.CreateBy==c.UserId && c.IsDel == 1,
                    JoinType.Left,s.ModifiedBy==u.UserId && u.IsDel == 1,
                    JoinType.Left,p.StockInId==i.StockInId && i.IsDel == 1
                  })
-                 .Where((s, p, d, c, u, o, i) => p.WarehouseId == bootstrap.storeId  )
-                 .Select((s, p, d, c, u, o, i) => new
+                 .Where((s, p, d, c, u, i) => p.WarehouseId == bootstrap.storeId  )
+                 .Select((s, p, d, c, u, i) => new
                  {
                      InventoryrecordId = s.InventoryrecordId.ToString(),
                      i.StockInNo,
@@ -48,7 +48,6 @@ namespace Services
                      d.MaterialName,
                      s.IsDel,
                      s.Remark,
-                     OName = o.UserNickname,
                      CName = c.UserNickname,
                      s.CreateDate,
                      UName = u.UserNickname,
