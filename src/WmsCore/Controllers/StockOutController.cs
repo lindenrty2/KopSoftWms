@@ -146,8 +146,9 @@ namespace KopSoftWms.Controllers
         }
 
         [HttpGet]
-        public IActionResult Detail(string id, string pid)
+        public IActionResult Detail(string id, string pid, long storeId)
         {
+            ViewData["currentStoreId"] = storeId;
             var model = new Wms_stockoutdetail();
             if (id.IsEmptyZero())
             {

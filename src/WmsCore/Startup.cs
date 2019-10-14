@@ -135,7 +135,15 @@ namespace YL
                 Type[] entityTypes = typeof(BaseEntity).Assembly.GetTypes().Where(x => x.Namespace == "YL.Core.Entity" && x.Name != typeof(BaseEntity).Name ).ToArray();
                 foreach (Type type in entityTypes)
                 {
-                    db.CodeFirst.InitTables(type);
+                    try
+                    {
+                        db.CodeFirst.InitTables(type);
+                    }
+                    catch(Exception ex)
+                    {
+                        logger.Log(NLog.LogLevel.Error, ex, $"创建表{type}失败");
+
+                    }
                 }
                 InitTableData<Sys_dept>(db, "Sys_dept.json");
                 InitTableData<Sys_dict>(db, "Sys_dict.json");

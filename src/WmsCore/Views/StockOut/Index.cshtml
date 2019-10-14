@@ -404,7 +404,7 @@
                     yui.layershow("出库操作(" + no + ")", "/StockOut/Work?storeId=@ViewData["currentStoreId"]&pid=" + val, 1600, 900);
                 },
                 addDetailL: function (val) {
-                    yui.layershow("出库明细", "/StockOut/Detail?pid=" + val, 600, 500);
+                    yui.layershow("出库明细", "/StockOut/Detail?storeId=@ViewData["currentStoreId"]&pid=" + val, 600, 500);
                 },
                 htmlL: function (val, type) {
                     var index = layer.load(1, {

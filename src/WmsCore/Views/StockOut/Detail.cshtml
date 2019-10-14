@@ -154,7 +154,7 @@
                     if (type === 1) {
                         _self.urlM = "/Material/Search?storeId=@ViewData["currentStoreId"]";
                     } else {
-                        _self.urlM = "/Material/Search?storeId=@ViewData["currentStoreId"]&text" + val;
+                        _self.urlM = "/Material/Search?storeId=@ViewData["currentStoreId"]&text=" + val;
                     }
                     yui.$axiosget(_self.urlM).then(function (res) {
                         _self.MaterialList = res.data.rows;
@@ -181,10 +181,10 @@
                         layer.msg("计划数量为正整数", { icon: 2 });
                         return false;
                     }
-                    if (!yui.signlessInteger(_self.ActOutQty)) {
-                        layer.msg("实际数量为正整数", { icon: 2 });
-                        return false;
-                    }
+                    //if (!yui.signlessInteger(_self.ActOutQty)) {
+                    //    layer.msg("实际数量为正整数", { icon: 2 });
+                    //    return false;
+                    //}
                     var index = layer.load(1, {
                         shade: [0.1, '#fff'] //0.1透明度的白色背景
                     });
