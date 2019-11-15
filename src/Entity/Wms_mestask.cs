@@ -93,6 +93,12 @@ namespace YL.Core.Entity
         [SugarColumn(IsNullable = true)]
         public DateTime? ModifiedDate { get; set; }
 
+        /// <summary>
+        /// 工位号
+        /// </summary>
+        [SugarColumn(Length = 50, IsNullable = true)]
+        public string WorkStationId { get; set; }
+
         public Wms_mestask()
         {
             IsDel = 1;

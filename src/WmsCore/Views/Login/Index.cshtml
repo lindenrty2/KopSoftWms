@@ -52,7 +52,7 @@
         </div>
         <div class="login-box">
             <div class="login-logo">
-                <a href="http://kopsoft.cn/" target="_blank"><b>@Html.Raw(@ViewBag.company)</b></a>
+                <a href="" target="_blank"><b>@Html.Raw(@ViewBag.company)</b></a>
             </div>
             <div class="login-box-body" :keydown.enter="checkLogin">
                 <form method="post" onsubmit="return false">
@@ -83,7 +83,7 @@
         var app = new Vue({
             el: '#app',
             data: {
-                UserNickname: 'william',
+                UserNickname: 'testuser',
                 Pwd: '000000',
                 disabled: false,
                 submit: "登录",

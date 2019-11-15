@@ -65,6 +65,19 @@ namespace YL.Core.Entity
         public long MaterialId { get; set; }
 
         /// <summary>
+        /// Desc:产品编号
+        /// Default:
+        /// Nullable:False
+        /// </summary>
+        [SugarColumn(Length = 20)]
+        public string MaterialOnlyId { get; set; }
+        /// <summary>
+        /// 物料编号
+        /// </summary>
+        [SugarColumn(Length = 20)]
+        public string MaterialNo { get; set; } 
+
+        /// <summary>
         /// Desc:
         /// Default:
         /// Nullable:False
@@ -137,6 +150,14 @@ namespace YL.Core.Entity
         public long? CreateBy { get; set; }
 
         /// <summary>
+        /// Desc:创建人名
+        /// Default:
+        /// Nullable:True
+        /// </summary>
+        [SugarColumn(IsNullable = true)]
+        public string CreateUser { get; set; }
+
+        /// <summary>
         /// Desc:创建时间
         /// Default:
         /// Nullable:True
@@ -151,6 +172,14 @@ namespace YL.Core.Entity
         /// </summary>
         [SugarColumn(IsNullable = true)]
         public long? ModifiedBy { get; set; }
+
+        /// <summary>
+        /// Desc:修改人名
+        /// Default:
+        /// Nullable:True
+        /// </summary>
+        [SugarColumn(IsNullable = true)]
+        public string ModifiedUser { get; set; }
 
         /// <summary>
         /// Desc:修改时间

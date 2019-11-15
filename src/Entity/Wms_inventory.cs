@@ -32,13 +32,23 @@ namespace YL.Core.Entity
         /// </summary>
         [SugarColumn(IsNullable = true/*, IsIdentity = true*/)]
         public long? MaterialId { get; set; }
-
         /// <summary>
-        /// 物料名（非DB字段）
+        /// Desc:产品编号
+        /// Default:
+        /// Nullable:False
         /// </summary>
-        [SugarColumn(IsIgnore = true)]
+        [SugarColumn(Length = 20)]
+        public string MaterialOnlyId { get; set; }
+        /// <summary>
+        /// 物料编号
+        /// </summary>
+        [SugarColumn(Length = 20)]
+        public string MaterialNo { get; set; }
+        /// <summary>
+        /// 物料名
+        /// </summary>
+        [SugarColumn(Length = 60)]
         public string MaterialName { get; set; }
-
         /// <summary>
         /// Desc:储存箱Id
         /// Default:
@@ -46,7 +56,6 @@ namespace YL.Core.Entity
         /// </summary>
         [SugarColumn(IsNullable = true/*, IsIdentity = true*/)]
         public long InventoryBoxId { get; set; }
-
         /// <summary>
         /// 订单号
         /// </summary>
@@ -99,6 +108,13 @@ namespace YL.Core.Entity
         /// </summary>
         [SugarColumn(IsNullable = true)]
         public long? CreateBy { get; set; }
+        /// <summary>
+        /// Desc:创建人名
+        /// Default:
+        /// Nullable:True
+        /// </summary>
+        [SugarColumn(Length = 50, IsNullable = true)]
+        public string CreateUser { get; set; }
 
         /// <summary>
         /// Desc:创建时间
@@ -115,6 +131,14 @@ namespace YL.Core.Entity
         /// </summary>
         [SugarColumn(IsNullable = true)]
         public long? ModifiedBy { get; set; }
+         
+        /// <summary>
+        /// Desc:修改人名
+        /// Default:
+        /// Nullable:True
+        /// </summary>
+        [SugarColumn(Length = 50 ,IsNullable = true)]
+        public string ModifiedUser { get; set; }
 
         /// <summary>
         /// Desc:修改时间

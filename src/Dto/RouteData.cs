@@ -92,7 +92,10 @@ namespace YL.Core.Dto
         {
             return RouteData<T>.From(1, "", data);
         }
-         
-        
+        public static RouteData<T> From(RouteData route)
+        {
+            return RouteData<T>.From(route.Code,route.Message);
+        }
+
     }
 }

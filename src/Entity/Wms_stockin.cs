@@ -41,6 +41,14 @@ namespace YL.Core.Entity
         public long? StockInType { get; set; }
 
         /// <summary>
+        /// Desc:入库类型名称
+        /// Default:
+        /// Nullable:True
+        /// </summary>
+        [SugarColumn(Length = 50, IsNullable = true)]
+        public string StockInTypeName { get; set; }
+
+        /// <summary>
         /// 仓库Id
         /// </summary>
         [SugarColumn(IsNullable = false)]
@@ -50,7 +58,7 @@ namespace YL.Core.Entity
         /// Mes任务Id
         /// </summary>
         [SugarColumn(IsNullable = false)]
-        public long MesTaskId { get; set; }
+        public long? MesTaskId { get; set; }
 
         /// <summary>
         /// Desc:供应商
@@ -74,7 +82,7 @@ namespace YL.Core.Entity
         /// Nullable:True
         /// </summary>
         [SugarColumn(IsNullable = true)]
-        public int? StockInStatus { get; set; }
+        public int StockInStatus { get; set; }
 
         /// <summary>
         /// Desc:备注
@@ -115,6 +123,14 @@ namespace YL.Core.Entity
         /// </summary>
         [SugarColumn(IsNullable = true)]
         public long? ModifiedBy { get; set; }
+
+        /// <summary>
+        /// Desc:修改人名
+        /// Default:
+        /// Nullable:True
+        /// </summary>
+        [SugarColumn(Length = 50, IsNullable = true)]
+        public string ModifiedUser { get; set; }
 
         /// <summary>
         /// Desc:修改时间

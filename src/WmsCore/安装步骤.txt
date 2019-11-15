@@ -2,6 +2,8 @@
 2.安装netcore2.2 runtime
   (下载地址:https://dotnet.microsoft.com/download)
   安装完成以后在命令行窗口输入dotnet，如果没有提示错误则安装成功
+  Window2012Server以下版本需要更新至SP2并打全补丁
+  Window2012Server以上也请先打全补丁
 3.新建数据库
 4.修改appsettings.json的DbType为Oracle，
    并修改OracleConnectionString为对应数据库的连接

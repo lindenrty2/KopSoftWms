@@ -37,6 +37,7 @@ namespace Services
                      WarehouseId = s.WarehouseId.ToString(),
                      s.WarehouseNo,
                      s.WarehouseName,
+                     s.IFAddress,
                      s.IsDel,
                      s.Remark,
                      CName = c.UserNickname,

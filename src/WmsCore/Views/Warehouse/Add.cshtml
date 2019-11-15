@@ -18,7 +18,7 @@
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-sm-2 control-label">外部仓库</label><input name="IsOutside" type="checkbox">
+                <label class="col-sm-2 control-label">外部仓库</label>
                 <div class="col-sm-10"> 
                     <input class="form-control" v-model="IFAddress" type="text">
                 </div>
@@ -49,7 +49,7 @@
                 Remark: "@Model.Remark",
                 WarehouseName: "@Model.WarehouseName",
                 WarehouseNo: "@Model.WarehouseNo",
-                IFAddress: "@Model.IFAddress"
+                IFAddress: "@Model.IFAddress.Replace("\\","\\\\")"
             },
             computed: {
                 count: function () {
@@ -74,7 +74,8 @@
                         id: _self.WarehouseId,
                         WarehouseName: _self.WarehouseName,
                         WarehouseNo: _self.WarehouseNo,
-                        Remark: _self.Remark
+                        Remark: _self.Remark,
+                        IFAddress: _self.IFAddress
                     };
                     yui.$axiospostform('/Warehouse/AddOrUpdate', data)
                         .then(function (response) {

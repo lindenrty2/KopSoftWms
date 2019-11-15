@@ -5,12 +5,14 @@ using System.Text;
 namespace YL.Utils.Pub
 {
     public class PubMessages
-    { 
-        public static MessageItem I1001_BOXBACK_SCCUESS = new MessageItem(1001, "料箱出库成功");
-        public static MessageItem I1002_BOXOUT_SCCUESS = new MessageItem(1002, "料箱归库成功");
+    {
 
         public static MessageItem E0002_UPDATE_COUNT_FAIL = new MessageItem(-2, "数据更新失败,可能有第三方更新了数据");
-        public static MessageItem E0003_FILEUPLOAD_FAIL = new MessageItem(-3, "文件上传失败"); 
+        public static MessageItem E0003_FILEUPLOAD_FAIL = new MessageItem(-3, "文件上传失败");
+        public static MessageItem E0004_DATABASE_UPDATE_FAIL = new MessageItem(-4, "数据库更新失败");
+
+        public static MessageItem I1001_BOXBACK_SCCUESS = new MessageItem(1001, "料箱出库成功");
+        public static MessageItem I1002_BOXOUT_SCCUESS = new MessageItem(1002, "料箱归库成功");
 
         public static MessageItem E1001_SUPPLIESTYPE_NOTFOUND = new MessageItem(-1001,"找不到物料类型定义");
         public static MessageItem E1002_SUPPLIESTYPE_WAREHOUSEID_NOTSET = new MessageItem(-1002, "物料类型没有指定仓库");

@@ -41,13 +41,19 @@ namespace YL.Core.Entity
         public string OrderNo { get; set; }
 
         /// <summary>
-        /// Desc:出库类型
+        /// Desc:出库类型Id
         /// Default:
         /// Nullable:True
         /// </summary>
         [SugarColumn(IsNullable = true)]
         public long? StockOutType { get; set; }
-
+        /// <summary>
+        /// Desc:出库类型名称
+        /// Default:
+        /// Nullable:True
+        /// </summary>
+        [SugarColumn(Length = 50)]
+        public string StockOutTypeName { get; set; }
         /// <summary>
         /// Desc:Mes任务Id
         /// Default:
@@ -111,6 +117,13 @@ namespace YL.Core.Entity
         public long? CreateBy { get; set; }
 
         /// <summary>
+        /// Desc:创建人名
+        /// Default:
+        /// Nullable:True
+        /// </summary>
+        [SugarColumn(Length = 50, IsNullable = true)]
+        public string CreateUser { get; set; }
+        /// <summary>
         /// Desc:创建时间
         /// Default:
         /// Nullable:True
@@ -126,6 +139,13 @@ namespace YL.Core.Entity
         [SugarColumn(IsNullable = true)]
         public long? ModifiedBy { get; set; }
 
+        /// <summary>
+        /// Desc:修改人名
+        /// Default:
+        /// Nullable:True
+        /// </summary>
+        [SugarColumn(Length = 50, IsNullable = true)]
+        public string ModifiedUser { get; set; }
         /// <summary>
         /// Desc:修改时间
         /// Default:

@@ -46,7 +46,7 @@ namespace YL.Core.Entity
         /// Nullable:True
         /// </summary>
         [SugarColumn(IsNullable = true)]
-        public int? Status { get; set; }
+        public int Status { get; set; }
 
         /// <summary>
         /// Desc:物料
@@ -55,6 +55,30 @@ namespace YL.Core.Entity
         /// </summary>
         [SugarColumn(IsNullable = true/*, IsIdentity = true*/)]
         public long? MaterialId { get; set; }
+
+        /// <summary>
+        /// Desc:物料编号
+        /// Default:
+        /// Nullable:False
+        /// </summary>
+        [SugarColumn(Length = 20, IsNullable = true)]
+        public string MaterialOnlyId { get; set; }
+
+        /// <summary>
+        /// Desc:物料编号
+        /// Default:
+        /// Nullable:False
+        /// </summary>
+        [SugarColumn(Length = 20/*, IsIdentity = true*/)]
+        public string MaterialNo { get; set; }
+
+        /// <summary>
+        /// Desc:物料名称
+        /// Default:
+        /// Nullable:False
+        /// </summary>
+        [SugarColumn(Length = 60/*, IsIdentity = true*/)]
+        public string MaterialName { get; set; }
 
         /// <summary>
         /// Desc:计划数量
@@ -128,6 +152,14 @@ namespace YL.Core.Entity
         /// </summary>
         [SugarColumn(IsNullable = true)]
         public long? ModifiedBy { get; set; }
+
+        /// <summary>
+        /// Desc:修改人
+        /// Default:
+        /// Nullable:True
+        /// </summary>
+        [SugarColumn(Length = 50, IsNullable = true)]
+        public string ModifiedUser { get; set; }
 
         /// <summary>
         /// Desc:修改时间

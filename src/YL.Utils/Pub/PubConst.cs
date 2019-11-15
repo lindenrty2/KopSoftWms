@@ -94,6 +94,9 @@ namespace YL.Utils.Pub
         public const string File7 = "上传失败";
         public const string File8 = "无数据";
 
+        public const string Format_Date = "yyyy/MM/dd";
+        public const string Format_DateTime = "yyyy/MM/dd HH:mm:ss";
+
     }
 
     public static class DeleteFlag
