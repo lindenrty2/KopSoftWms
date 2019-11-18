@@ -112,8 +112,8 @@
                     _self.$refs.InventoryBox.parentNode.parentNode.classList.add("active");
                     _self.$refs.InventoryBox.classList.add("active");
                     _self.$refs.storeId = '@ViewData["currentStoreId"]';
-                    _self.$refs.datemin.value = _self.getCurrentMonthFirst();
-                    _self.$refs.datemax.value = _self.getCurrentMonthLast();
+                    _self.$refs.datemin.value = '1900-01-01';
+                    _self.$refs.datemax.value = '2099-01-01';
                     //_self.datemin = _self.getCurrentMonthFirst();
                     //_self.datemax = _self.getCurrentMonthLast();
                     $('#datemin').datetimepicker({
@@ -143,9 +143,9 @@
                 searchInventoryBox: function (val, type) {
                     var _self = this;
                     if (type === 1) {
-                        _self.url = "/InventoryBox/Search";
+                        _self.url = "/InventoryBox/Search?storeId=@ViewData["currentStoreId"]";
                     } else {
-                        _self.url = "/InventoryBox/Search?text=" + val;
+                        _self.url = "/InventoryBox/Search?storeId=@ViewData["currentStoreId"]&text=" + val;
                     }
                     yui.$axiosget(_self.url).then(function (res) {
                         _self.InventoryBoxList = res.data.rows;
@@ -238,8 +238,8 @@
                         sortable: true
                     },
                     {
-                        field: 'StorageRackNo',
-                        title: '货架编号',
+                        field: 'ReservoirAreaName',
+                        title: '库区名称',
                         align: 'center',
                         sortable: true
                     },
@@ -255,19 +255,19 @@
                         align: 'center',
                         sortable: true,
                         formatter: function (value, row, index) {
-                            if (value == 0) {
+                            if (value == 'None') {
                                 return "未部署";
                             }
-                            else if (value == 1) {
+                            else if (value == 'InPosition') {
                                 return "在库";
                             }
-                            else if (value == 2) {
+                            else if (value == 'Outing') {
                                 return "出库中";
                             }
-                            else if (value == 3) {
+                            else if (value == 'Outed') {
                                 return "出库完成";
                             }
-                            else if (value == 4) {
+                            else if (value == 'Backing') {
                                 return "归库中";
                             }
                             else {

@@ -11,7 +11,7 @@
     "Remark": "入库单",
     "CreateBy": 1,
     "CreateDate": "2019-01-07 11:16:09",
-    "ModifiedBy": 504990858139926528,
+    "ModifiedBy": 2,
     "ModifiedDate": "2019-05-08 14:24:25"
   },
   {
@@ -26,7 +26,7 @@
     "Remark": "出库单",
     "CreateBy": 1,
     "CreateDate": "2019-02-13 09:24:58",
-    "ModifiedBy": 504990858139926528,
+    "ModifiedBy": 2,
     "ModifiedDate": "2019-05-08 14:26:40"
   },
   {
@@ -41,7 +41,7 @@
     "Remark": "库存移动",
     "CreateBy": 1,
     "CreateDate": "2019-03-03 13:16:43",
-    "ModifiedBy": 504990858139926528,
+    "ModifiedBy": 2,
     "ModifiedDate": "2019-05-08 14:29:19"
   }
 ]

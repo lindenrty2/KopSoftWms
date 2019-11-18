@@ -1,0 +1,284 @@
+﻿<div class="content-wrapper">
+    <section class="content-header">
+        <h1>
+            基础资料
+            <small>物料管理</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i> 首页</a></li>
+            <li><a href="#">基础资料</a></li>
+            <li class="active">物料管理</li>
+        </ol>
+    </section>
+    <section class="content">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box">
+                    <div class="box-body">
+                        <div class="input-group">
+                            <span class="input-group-addon">日期范围</span>
+                            <input type="text" v-model="datemin" ref="datemin" id="datemin" class="form-control" style="width:120px;">
+                            <input type="text" v-model="datemax" ref="datemax" id="datemax" class="form-control" style="width:120px;margin-left:10px;">
+                            <button name="search" v-on:click="searchL" type="submit" class="btn btn-success" style="margin-left:10px;"><i class="fa fa-search"></i> 搜物料</button>
+                        </div>
+                        <div id="toolbar" class="btn-group">
+                            <button id="btn_delete" v-on:click="deleteL" type="button" class="btn btn-default">
+                                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>删除
+                            </button>
+                            <input id="fileImport" @@change="onImportL($event)" type="file" style="display:none"
+                                   accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
+                            <button id="btnImport" v-on:click="importL" type="button" class="btn btn-default">
+                                <span class="glyphicon glyphicon-import" aria-hidden="true"></span>导入
+                            </button>
+                            <button id="btn_export" v-on:click="exportL" type="button" class="btn btn-default">
+                                <span class="glyphicon glyphicon-export" aria-hidden="true"></span>导出
+                            </button>
+                        </div>
+                        <table id="bootstraptable" class="table table-bordered text-nowrap table-hover"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+@section scripts{
+    <script type="text/javascript">
+        var app = new Vue({
+            el: '#app',
+            data: {
+                datemin: '',
+                datemax: '',
+                storeId: '0',
+            },
+            mounted: function () {
+                var _self = this;
+                _self.$nextTick(function () {
+                    //显示active
+                    _self.$refs.Material.parentNode.parentNode.classList.add("active");
+                    _self.$refs.Material.classList.add("active");
+                    _self.$refs.storeId = '@ViewData["currentStoreId"]';
+
+                    _self.datemin = "1900-01-01";
+                    _self.datemax = "2099-01-01";
+                    $('#datemin').datetimepicker({
+                        format: 'yyyy-mm-dd',
+                        minView: 2,
+                        autoclose: true,
+                        language: "zh-CN"
+                    });
+                    $('#datemax').datetimepicker({
+                        format: 'yyyy-mm-dd',
+                        minView: 2,
+                        autoclose: true,
+                        language: "zh-CN"
+                    });
+                    setTimeout(function () {
+                        _self.loadL();
+                        $("div[class='pull-right search']")[0].children[0].setAttribute("placeholder", "物料编号或名称");
+                    }, 500);
+                });
+            },
+            methods: {
+                loadL: function () {
+                    _self = this;
+                    var obj = [{
+                        checkbox: true,             //是否显示复选框
+                        visible: true
+                    },
+                    {
+                        field: 'MesTaskId',
+                        title: 'Id',
+                        visible: false
+                    }, {
+                        field: 'MesTaskType',
+                        title: '任务类型',
+                        align: 'center',
+                        sortable: true
+                    }, {
+                        field: 'WarehousingType',
+                        title: '出入库类型',
+                        align: 'center',
+                        sortable: true
+                    }, {
+                        field: 'WarehousingTime',
+                        title: '出入库时间',
+                        align: 'center',
+                        sortable: true
+                    }, {
+                        field: 'ProductionPlanId',
+                        title: '生产令号',
+                        align: 'center',
+                        sortable: true
+                    },
+                    {
+                        field: 'BatchPlanId',
+                        title: '批次号',
+                        align: 'center',
+                        sortable: true
+                    },
+                    {
+                        field: 'WorkAreaName',
+                        title: '作业区',
+                        align: 'center',
+                        sortable: true
+                    }
+                    ,
+                    {
+                        field: 'SuppliesKinds',
+                        align: 'center',
+                        title: '物料类型'
+                    },
+                    {
+                        field: 'SuppliesInfoJson',
+                        title: '物料详细',
+                        align: 'center',
+                        sortable: true
+                    }, {
+                        field: 'WorkStatus',
+                        align: 'center',
+                        title: '作业状态',
+                        sortable: true
+                    }, {
+                        field: 'NotifyStatus',
+                        align: 'center',
+                        title: 'Mes回馈状态',
+                        sortable: true
+                    }, {
+                        field: 'CreateDate',
+                        title: '接收时间',
+                        align: 'center',
+                        sortable: true,
+                        formatter: function (value, row, index) {
+                            return _self.jsonDateFormat(value);
+                        }
+                    }];
+                    yui.table("bootstraptable", "/Material/List", obj, "POST", "StorageRackId");
+                },
+                searchL: function () {
+                    $("#bootstraptable").bootstrapTable('refresh');
+                },
+                editL: function () {
+                    var arr = $("#bootstraptable").bootstrapTable('getSelections');
+                    if (arr.length > 0) {
+                        var index = layer.confirm("您确定要修改吗？", { btn: ["确定", "取消"] }, function () {
+                            layer.close(index);
+                            var id = arr[0].MaterialId;
+                            yui.layershow("修改物料", "/Material/Add?storeId=@ViewData["currentStoreId"]&id=" + id, 550, 600);
+                        }, function () {
+
+                        });
+                    } else {
+                        layer.alert("请选中行", { icoon: 3, skin: "layer-ext-moon" });
+                    }
+                },
+                deleteL: function () {
+                    var _self = this;
+                    var arr = $("#bootstraptable").bootstrapTable('getSelections');
+                    if (arr.length > 0) {
+                        var index = layer.confirm("您确定要删除吗？", { btn: ["确定", "取消"] }, function () {
+                            var id = arr[0].MaterialId;
+                            yui.$axiosget('/Material/Delete?id=' + id)
+                                .then(function (response) {
+                                    if (response.data.Item1) {
+                                        layer.msg(response.data.Item2 || errorMsg, { icon: 1 });
+                                        _self.searchL();
+                                    } else {
+                                        layer.msg(response.data.Item2 || errorMsg, { icon: 5 });
+                                    }
+                                })
+                                .catch(function (error) {
+                                    layer.msg(error.message, { icon: 5 });
+                                });
+                            layer.close(index);
+                        });
+                    } else {
+                        layer.alert("请选中行", { icoon: 3, skin: "layer-ext-moon" });
+                    }
+                },
+                onImportL: function (e) {
+                    _self = this;
+                    var fileName = e.target.value;
+                    if (fileName == '') {
+                        return;
+                    }
+                    this.file = event.target.files;
+                    let formdata = new FormData()
+                    formdata.append('file', this.file[0])
+
+                    $.ajax({
+                        url: "/Material/Import",
+                        data: formdata,
+                        type: "POST",
+                        dataType: "json",
+                        cache: false, //上传文件无需缓存
+                        processData: false, //用于对data参数进行序列化处理 这里必须false
+                        contentType: false, //必须
+                        success: function (res) {
+                            e.target.value = '';
+                            if (res.isSccuess) {
+                                _self.searchL();
+                                layer.alert("导入成功", { icoon: 1, skin: "layer-ext-moon" });
+                            }
+                            else {
+                                _self.searchL();
+                                layer.alert(res.message, { icoon: 3, skin: "layer-ext-moon" });
+                            }
+                        },
+                        error: function (res) {
+                            e.target.value = '';
+                            layer.alert("上传失败", { icoon: 3, skin: "layer-ext-moon" });
+                        }
+                    })
+                },
+                importL: function () {
+                    var _self = this;
+                    $('#fileImport').click();
+                },
+                exportL: function () {
+                    var _self = this;
+                    var data = {
+                        datemin: _self.$refs.datemin.value,
+                        datemax: _self.$refs.datemax.value,
+                    };
+                    var index = layer.confirm("您确定要导出吗？", { btn: ["确定", "取消"] }, function () {
+                        axios.get('/Material/Export?' + Qs.stringify(data), {
+                            headers: {
+                                'promise': 'promise'
+                            },
+                            responseType: 'arraybuffer'
+                        }).then(function (response) {
+                            var type = response.headers['content-type']
+                            if (type === "application/json") {
+                                var enc = new TextDecoder('utf-8')
+                                var res = JSON.parse(enc.decode(new Uint8Array(response.data)))
+                                layer.msg(res.Item2, { icon: 2 });
+                            } else {
+                                console.info(response);
+                                let disposition = response.headers['content-disposition']
+                                let fileName = decodeURI(disposition.substring(disposition.indexOf('filename=') + 9, disposition.indexOf('filename*=') - 2))
+                                console.info(fileName);
+                                let blob = new Blob([response.data], { type: 'application/ms-excelapplication/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8' })
+                                if (window.navigator.msSaveOrOpenBlob) {
+                                    navigator.msSaveBlob(blob, fileName);
+                                } else {
+                                    var link = document.createElement('a');
+                                    link.href = window.URL.createObjectURL(blob);
+                                    link.download = fileName;
+                                    document.body.appendChild(link);
+                                    link.click();
+                                    document.body.removeChild(link);
+                                    window.URL.revokeObjectURL(link.href);
+                                }
+                            }
+                            }).catch(function (error) {
+                                location.href = "/Material/Export?" + Qs.stringify(data);
+                            //layer.msg(error.message, { icon: 5 });
+                        });
+                        layer.close(index);
+                    });
+                    //location.href = "/Material/Export?" + Qs.stringify(data);
+                }
+            }
+        });
+    </script>
+}

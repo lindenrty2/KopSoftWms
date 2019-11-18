@@ -17,6 +17,7 @@ using YL.Utils.Table;
 using YL.Utils.Json;
 using static YL.Core.Dto.PubParams;
 using Newtonsoft.Json;
+using IServices.Outside;
 
 namespace KopSoftWms.Controllers
 {
@@ -26,8 +27,8 @@ namespace KopSoftWms.Controllers
         private readonly IWms_inventoryBoxTaskServices _inventoryBoxTaskServices;
         private readonly IWms_inventoryServices _inventoryServices;
         private readonly IWms_storagerackServices _storagerackServices;
-        private readonly SqlSugarClient _client;
 
+        private readonly SqlSugarClient _client; 
         public InventoryBoxController(
             IWms_storagerackServices storagerackServices,
             IWms_inventoryBoxServices inventoryBoxServices,
@@ -45,50 +46,60 @@ namespace KopSoftWms.Controllers
 
         [HttpGet]
         [CheckMenu]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             long currentStoreId = (long)ViewData["currentStoreId"];
-            ViewBag.StorageRack = _storagerackServices.QueryableToList(c => c.WarehouseId == currentStoreId && c.IsDel == 1);
+            IWMSApiProxy wmsAccessor = WMSApiManager.Get(currentStoreId.ToString(),_client);
+            ViewBag.StorageRack = (await wmsAccessor.GetStorageRackList( null, 1, 100, null, null, null, null)).Data;
+            //ViewBag.StorageRack = _storagerackServices.QueryableToList(c => c.WarehouseId == currentStoreId && c.IsDel == 1);
             return View();
         }
 
         [HttpPost]
         [OperationLog(LogType.select)]
-        public ContentResult List([FromForm]PubParams.InventoryBoxBootstrapParams bootstrap)
+        public async Task<string> List([FromForm]PubParams.InventoryBoxBootstrapParams bootstrap)
         {
-            var sd = _inventoryBoxServices.PageList(bootstrap);
-            return Content(sd);
+            IWMSApiProxy wmsAccessor = WMSApiManager.Get(bootstrap.storeId.ToString(), _client);
+            RouteData<Wms_inventorybox[]> result = (await wmsAccessor.GetInventoryBoxList(null,null,bootstrap.offset,bootstrap.limit,bootstrap.search,bootstrap.order.Split(","),bootstrap.datemin,bootstrap.datemax));
+            if (!result.IsSccuess)
+            {
+                return new PageGridData().JilToJson();
+            }
+            return result.ToGridJson();
+            //var sd = _inventoryBoxServices.PageList(bootstrap);
+            //return Content(sd);
         }
 
         [HttpGet]
         public async Task<RouteData<Wms_InventoryBoxDto>> Get(string inventoryBoxNo)
         {
-            Wms_inventorybox box = await _client.Queryable<Wms_inventorybox>().FirstAsync(x => x.InventoryBoxNo == inventoryBoxNo);
-            if(box == null)
-            {
-                return RouteData<Wms_InventoryBoxDto>.From(PubMessages.E1011_INVENTORYBOX_NOTFOUND);
-            }
-            Wms_InventoryBoxDto dto = JsonConvert.DeserializeObject<Wms_InventoryBoxDto>( JsonConvert.SerializeObject(box));
+            throw new NotSupportedException();
+            //Wms_inventorybox box = await _client.Queryable<Wms_inventorybox>().FirstAsync(x => x.InventoryBoxNo == inventoryBoxNo);
+            //if(box == null)
+            //{
+            //    return RouteData<Wms_InventoryBoxDto>.From(PubMessages.E1011_INVENTORYBOX_NOTFOUND);
+            //}
+            //Wms_InventoryBoxDto dto = JsonConvert.DeserializeObject<Wms_InventoryBoxDto>( JsonConvert.SerializeObject(box));
 
-            var query = _client.Queryable<Wms_inventory, Wms_material, Sys_user>((i, m, u) => new object[] {
-                   JoinType.Left,i.MaterialId==m.MaterialId,
-                   JoinType.Left,i.ModifiedBy==u.UserId
-                 })
-               .Where((i, m, u) => i.InventoryBoxId == box.InventoryBoxId)
-               .Select((i, m, u) => new InventoryDetailDto
-               {
-                   InventoryPosition = i.Position,
-                   MaterialId = m.MaterialId.ToString(),
-                   MaterialNo = m.MaterialNo,
-                   MaterialOnlyId = m.MaterialOnlyId,
-                   MaterialName = m.MaterialName,
-                   OrderNo = i.OrderNo,
-                   IsLocked = i.IsLocked,
-                   Qty = i.Qty,
-               }).MergeTable();
-            dto.Id = box.InventoryBoxId.ToString();
-            dto.Details = (await query.ToListAsync()).ToArray();
-            return RouteData<Wms_InventoryBoxDto>.From(dto);
+            //var query = _client.Queryable<Wms_inventory, Wms_material, Sys_user>((i, m, u) => new object[] {
+            //       JoinType.Left,i.MaterialId==m.MaterialId,
+            //       JoinType.Left,i.ModifiedBy==u.UserId
+            //     })
+            //   .Where((i, m, u) => i.InventoryBoxId == box.InventoryBoxId)
+            //   .Select((i, m, u) => new InventoryDetailDto
+            //   {
+            //       InventoryPosition = i.Position,
+            //       MaterialId = m.MaterialId.ToString(),
+            //       MaterialNo = m.MaterialNo,
+            //       MaterialOnlyId = m.MaterialOnlyId,
+            //       MaterialName = m.MaterialName,
+            //       OrderNo = i.OrderNo,
+            //       IsLocked = i.IsLocked,
+            //       Qty = i.Qty,
+            //   }).MergeTable();
+            //dto.Id = box.InventoryBoxId.ToString();
+            //dto.Details = (await query.ToListAsync()).ToArray();
+            //return RouteData<Wms_InventoryBoxDto>.From(dto);
         }
 
         [HttpGet]
@@ -161,19 +172,26 @@ namespace KopSoftWms.Controllers
         }
 
         [HttpGet]
-        public IActionResult Search(long storeId, string text)
-        {
-            var bootstrap = new InventoryBoxBootstrapParams()
+        public async Task<string> Search(long storeId, string text)
+        { 
+            IWMSApiProxy wmsAccessor = WMSApiManager.Get(storeId.ToString(), _client);
+            RouteData<Wms_inventorybox[]> result = (await wmsAccessor.GetInventoryBoxList(null, null, 0, 20, text, null, null, null));
+            if (!result.IsSccuess)
             {
-                limit = 100,
-                offset = 0,
-                sort = "CreateDate",
-                search = text,
-                order = "desc",
-                storeId = storeId
-            };
-            var json = _inventoryBoxServices.PageList(bootstrap);
-            return Content(json);
+                return new PageGridData().JilToJson();
+            }
+            return result.ToGridJson();
+            //var bootstrap = new InventoryBoxBootstrapParams()
+            //{
+            //    limit = 100,
+            //    offset = 0,
+            //    sort = "CreateDate",
+            //    search = text,
+            //    order = "desc",
+            //    storeId = storeId
+            //};
+            //var json = _inventoryBoxServices.PageList(bootstrap);
+            //return Content(json);
         }
 
 

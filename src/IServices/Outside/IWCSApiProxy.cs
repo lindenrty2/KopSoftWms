@@ -6,7 +6,7 @@ using WebApiClient;
 using WebApiClient.Attributes;
 using YL.Core.Dto;
 
-namespace WMSCore.Outside
+namespace IServices.Outside
 {
     public interface IWCSApiProxy : IHttpApi
     {

@@ -37,14 +37,27 @@
             public long storeId { get; set; }
         }
 
-        public static object GridData(object data, int total)
+        public static PageGridData GridData(object data, int total)
         {
-            var jsonData = new
-            {
-                total,
-                rows = data
-            };
-            return jsonData;
+            return new PageGridData(data, total);
+        }
+    }
+
+    public class PageGridData
+    {
+        public int total { get; set; }
+        public object rows { get; set; }
+
+        public PageGridData()
+        {
+            rows = new object[0];
+            total = 0;
+        }
+
+        public PageGridData(object r, int t)
+        {
+            total = t;
+            rows = r;
         }
     }
 }

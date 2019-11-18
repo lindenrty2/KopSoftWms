@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using WebApiClient;
 using WebApiClient.Attributes;
-using WMSCore.Outside;
+using IServices.Outside;
 using YL.Core.Dto;
 
 namespace InterfaceMocker.WindowUI.WebApi

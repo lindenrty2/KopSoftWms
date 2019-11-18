@@ -1,37 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using IServices.Outside;
+using System;
 using System.Threading.Tasks;
 using WebApiClient;
-using WebApiClient.Attributes;
 using YL.Core.Dto;
 using YL.Core.Entity;
 
 namespace WMSCore.Outside
 {
-    public class WMSApiAccessor : IWMSApiProxy
+    public class WMSApiAccessor : IWMSApiAccessor,IWMSApiProxy
     {
 
-        public string Host { get; set; }
-        public static Dictionary<string, WMSApiAccessor> _instanceMap = new Dictionary<string, WMSApiAccessor>();
-        public static WMSApiAccessor Get(string key)
-        {
-            return _instanceMap[key];
-        }
-
-        public static WMSApiAccessor Regist(string key,string host)
-        {
-            WMSApiAccessor accessor = new WMSApiAccessor(host);
-            _instanceMap.Add(key, accessor);
-            return accessor;
-        }
+        public Wms_warehouse Warehouse { get; } 
 
         private IWMSApiProxy _apiProxy = null;
-        private WMSApiAccessor(string url)
+        public WMSApiAccessor(Wms_warehouse warehouse)
         {
-            this.Host = url;
+            this.Warehouse = warehouse;
             HttpApiConfig config = new HttpApiConfig();
-            config.HttpHost = new Uri(url);
+            config.HttpHost = new Uri(warehouse.IFAddress);
             _apiProxy = HttpApi.Create<IWMSApiProxy>(config);
         }
 

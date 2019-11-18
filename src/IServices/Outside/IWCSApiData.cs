@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using YL.Utils.Pub;
 
-namespace WMSCore.Outside
+namespace IServices.Outside
 {
     public class BackStockInfo
     {

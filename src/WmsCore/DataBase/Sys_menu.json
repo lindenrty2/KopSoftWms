@@ -10,9 +10,9 @@
     "MenuType": "wms_menu",
     "IsDel": 1,
     "Remark": null,
-    "CreateBy": null,
+    "CreateBy": 2,
     "CreateDate": "2018-09-24 12:10:42",
-    "ModifiedBy": null,
+    "ModifiedBy": 2,
     "ModifiedDate": null
   },
   {
@@ -26,9 +26,9 @@
     "MenuType": "wms_menu",
     "IsDel": 1,
     "Remark": null,
-    "CreateBy": null,
+    "CreateBy": 2,
     "CreateDate": "2018-09-24 12:12:56",
-    "ModifiedBy": null,
+    "ModifiedBy": 2,
     "ModifiedDate": null
   },
   {
@@ -224,9 +224,9 @@
     "ModifiedDate": null
   },
   {
-    "MenuId": 40,
+    "MenuId": 15,
     "MenuName": "料箱管理",
-    "MenuUrl": "/InventoryBoxRack",
+    "MenuUrl": "/InventoryBox",
     "MenuIcon": "&#xe61a;",
     "MenuParent": 11,
     "Sort": 14,
@@ -240,7 +240,7 @@
     "ModifiedDate": null
   },
   {
-    "MenuId": 22,
+    "MenuId": 16,
     "MenuName": "日志管理",
     "MenuUrl": "#",
     "MenuIcon": "&#xe62e;",
@@ -256,7 +256,7 @@
     "ModifiedDate": null
   },
   {
-    "MenuId": 23,
+    "MenuId": 17,
     "MenuName": "系统日志",
     "MenuUrl": "/Log",
     "MenuIcon": null,
@@ -272,7 +272,7 @@
     "ModifiedDate": null
   },
   {
-    "MenuId": 24,
+    "MenuId": 18,
     "MenuName": "入库管理",
     "MenuUrl": "/StockIn",
     "MenuIcon": null,
@@ -288,7 +288,7 @@
     "ModifiedDate": null
   },
   {
-    "MenuId": 25,
+    "MenuId": 19,
     "MenuName": "条码系统",
     "MenuUrl": "#",
     "MenuIcon": null,
@@ -304,23 +304,7 @@
     "ModifiedDate": null
   },
   {
-    "MenuId": 26,
-    "MenuName": "报表管理",
-    "MenuUrl": "#",
-    "MenuIcon": null,
-    "MenuParent": -1,
-    "Sort": 26,
-    "Status": 1,
-    "MenuType": "menu",
-    "IsDel": 1,
-    "Remark": null,
-    "CreateBy": null,
-    "CreateDate": "2018-12-26 14:29:30",
-    "ModifiedBy": null,
-    "ModifiedDate": null
-  },
-  {
-    "MenuId": 27,
+    "MenuId": 20,
     "MenuName": "出库管理",
     "MenuUrl": "/StockOut",
     "MenuIcon": null,
@@ -336,23 +320,7 @@
     "ModifiedDate": null
   },
   {
-    "MenuId": 28,
-    "MenuName": "设备报修",
-    "MenuUrl": "/Devicerepair",
-    "MenuIcon": null,
-    "MenuParent": 15,
-    "Sort": 28,
-    "Status": 1,
-    "MenuType": "menu",
-    "IsDel": 1,
-    "Remark": null,
-    "CreateBy": null,
-    "CreateDate": "2019-05-17 10:39:13",
-    "ModifiedBy": null,
-    "ModifiedDate": null
-  },
-  {
-    "MenuId": 29,
+    "MenuId": 21,
     "MenuName": "库存查询",
     "MenuUrl": "/Inventory",
     "MenuIcon": null,
@@ -368,7 +336,7 @@
     "ModifiedDate": null
   },
   {
-    "MenuId": 30,
+    "MenuId": 22,
     "MenuName": "库存记录",
     "MenuUrl": "/InventoryRecord",
     "MenuIcon": null,
@@ -384,7 +352,7 @@
     "ModifiedDate": null
   },
   {
-    "MenuId": 31,
+    "MenuId": 23,
     "MenuName": "登录统计",
     "MenuUrl": "/Log/Bar",
     "MenuIcon": null,
@@ -400,14 +368,14 @@
     "ModifiedDate": null
   },
   {
-    "MenuId": 33,
-    "MenuName": "库存移动",
-    "MenuUrl": "/InventoryMove",
+    "MenuId": 24,
+    "MenuName": "MES任务记录",
+    "MenuUrl": "/MesTask",
     "MenuIcon": null,
-    "MenuParent": 11,
-    "Sort": 33,
+    "MenuParent": 6,
+    "Sort": 30,
     "Status": 1,
-    "MenuType": "wms_menu2",
+    "MenuType": "wms_menu",
     "IsDel": 1,
     "Remark": null,
     "CreateBy": null,

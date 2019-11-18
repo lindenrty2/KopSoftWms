@@ -54,12 +54,41 @@ namespace YL.Core.Entity
         public long? ReservoirAreaId { get; set; }
 
         /// <summary>
+        /// 库区名字
+        /// </summary>
+        [SugarColumn(Length = 64)]
+        public string ReservoirAreaName { get; set; }
+
+        /// <summary>
         /// Desc:货架Id
         /// Default:
         /// Nullable:True
         /// </summary>
         [SugarColumn(IsNullable = true/*, IsIdentity = true*/)]
         public long? StorageRackId { get; set; }
+
+        /// <summary>
+        /// 货架名字
+        /// </summary>
+        [SugarColumn(Length = 64)]
+        public string StorageRackName { get; set; }
+
+        /// <summary>
+        /// 行
+        /// </summary>
+        [SugarColumn()]
+        public int? Row { get; set; }
+        /// <summary>
+        /// 列
+        /// </summary>
+        [SugarColumn()]
+        public int? Column { get; set; }
+        /// <summary>
+        /// 层
+        /// </summary>
+        [SugarColumn()]
+        public int? Floor { get; set; }
+
 
         /// <summary>
         /// 格数

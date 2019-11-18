@@ -15,6 +15,10 @@
 
   <ItemGroup>
     <Content Remove="bundleconfig.json" />
+    <Content Remove="DataBase\Wms_inventorybox.json" />
+    <Content Remove="DataBase\Wms_reservoirarea.json" />
+    <Content Remove="DataBase\Wms_storagerack.json" />
+    <Content Remove="DataBase\Wms_warehouse.json" />
     <Content Remove="wwwroot\js\vqypa.min.js" />
   </ItemGroup>
 
@@ -24,6 +28,18 @@
 
   <ItemGroup>
     <None Include="bundleconfig.json" />
+    <None Include="DataBase\Wms_inventorybox.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="DataBase\Wms_reservoirarea.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="DataBase\Wms_storagerack.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="DataBase\Wms_warehouse.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Views\Carrier\Add.cshtml" />
     <None Include="Views\Carrier\Index.cshtml" />
     <None Include="Views\Customer\Add.cshtml" />
@@ -220,7 +236,6 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\upload\head\" />
-    <Folder Include="DataBase\" />
   </ItemGroup>
 
   <ItemGroup>

@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using WMSCore.Outside;
+using IServices.Outside;
 using YL.Core.Dto;
 
 namespace InterfaceMocker.WindowUI

@@ -1,4 +1,5 @@
 ﻿using IServices;
+using IServices.Outside;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using SqlSugar;
@@ -6,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
-using System.Threading.Tasks;
 using YL.Core.Dto;
 using YL.Core.Entity;
 using YL.Utils.Extensions;
@@ -120,10 +120,14 @@ namespace WMSCore.Outside
         private RouteData CreateWMSStockin(Wms_mestask mesTask, OutsideMaterialDto[] suppliesInfoList)
         {
             Dictionary<long, List<Wms_MaterialInventoryDto>> map = new Dictionary<long, List<Wms_MaterialInventoryDto>>();
+            Sys_dict[] typeDicts = _sqlClient.Queryable<Sys_dict>()
+                     .Where(x => x.DictType == PubDictType.material.ToByte().ToString())
+                     .ToArray();
+
             foreach (OutsideMaterialDto materialDto in suppliesInfoList)
             {
-                Sys_dict typeDict = _sqlClient.Queryable<Sys_dict>()
-                       .First(x => x.DictType == PubDictType.material.ToByte().ToString() && x.DictName == materialDto.SuppliesType);
+
+                Sys_dict typeDict = typeDicts.FirstOrDefault(x => x.DictName == materialDto.SuppliesType);
                 if (typeDict == null)
                 {
                     return RouteData<Wms_material>.From(PubMessages.E1001_SUPPLIESTYPE_NOTFOUND, $"SuppliesType = {materialDto.SuppliesType}");
@@ -160,7 +164,7 @@ namespace WMSCore.Outside
             {
                 try
                 {
-                    IWMSApiProxy proxy = WMSApiAccessor.Get(keyValue.Key.ToString());
+                    IWMSApiProxy proxy = WMSApiManager.Get(keyValue.Key.ToString(),_sqlClient);
                     OutsideStockInRequestDto request = new OutsideStockInRequestDto()
                     {
                         MesTaskId = mesTask.MesTaskId,
@@ -302,7 +306,7 @@ namespace WMSCore.Outside
             {
                 try
                 {
-                    IWMSApiProxy proxy = WMSApiAccessor.Get(keyValue.Key.ToString());
+                    IWMSApiProxy proxy = WMSApiManager.Get(keyValue.Key.ToString(),_sqlClient);
                     OutsideStockOutRequestDto request = new OutsideStockOutRequestDto()
                     {
                         MesTaskId = mesTask.MesTaskId,

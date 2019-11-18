@@ -14,7 +14,6 @@
     <Compile Include="..\Dto\OutsideStockOutDto.cs" Link="Do\OutsideStockOutDto.cs" />
     <Compile Include="..\Dto\OutsideWarehouseEntryStatusEnquiryDto.cs" Link="Do\OutsideWarehouseEntryStatusEnquiryDto.cs" />
     <Compile Include="..\Dto\OutsideWarehousingStatusEnquiryDto.cs" Link="Do\OutsideWarehousingStatusEnquiryDto.cs" />
-    <Compile Include="..\WmsCore\Outside\IWCSApiData.cs" Link="Do\IWCSApiData.cs" />
     <Compile Include="..\YL.Utils\Pub\MessageItem.cs" Link="Do\MessageItem.cs" />
   </ItemGroup>
 

@@ -7,11 +7,12 @@ using WebApiClient.Attributes;
 using YL.Core.Dto;
 using YL.Core.Entity;
 
-namespace WMSCore.Outside
+namespace IServices.Outside
 {
 
     public interface IWMSApiProxy : IHttpApi
     {
+
         //-----------------------------------------------------------------
         /// <summary>
         /// 获取物料定义信息

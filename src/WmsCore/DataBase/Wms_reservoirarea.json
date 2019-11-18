@@ -1,0 +1,50 @@
+[
+  {
+    "ReservoirAreaId": 1,
+    "ReservoirAreaNo": "KQ0001",
+    "ReservoirAreaName": "库区0001",
+    "WarehouseId": 1,
+    "Remark": null,
+    "IsDel": 1,
+    "CreateBy": 2,
+    "CreateDate": "2019-08-31 18:47:22",
+    "ModifiedBy": 2,
+    "ModifiedDate": "2019-08-31 18:47:22"
+  },
+  {
+    "ReservoirAreaId": 2,
+    "ReservoirAreaNo": "KQ0002",
+    "ReservoirAreaName": "库区0002",
+    "WarehouseId": 1,
+    "Remark": null,
+    "IsDel": 1,
+    "CreateBy": 2,
+    "CreateDate": "2019-08-31 18:47:22",
+    "ModifiedBy": 2,
+    "ModifiedDate": "2019-08-31 18:47:22"
+  },
+  {
+    "ReservoirAreaId": 3,
+    "ReservoirAreaNo": "KQ0003",
+    "ReservoirAreaName": "库区0003",
+    "WarehouseId": 1,
+    "Remark": null,
+    "IsDel": 1,
+    "CreateBy": 2,
+    "CreateDate": "2019-08-31 18:47:22",
+    "ModifiedBy": 2,
+    "ModifiedDate": "2019-08-31 18:47:22"
+  },
+  {
+    "ReservoirAreaId": 4,
+    "ReservoirAreaNo": "KQ0004",
+    "ReservoirAreaName": "库区0004",
+    "WarehouseId": 1,
+    "Remark": null,
+    "IsDel": 1,
+    "CreateBy": 2,
+    "CreateDate": "2019-08-31 18:47:22",
+    "ModifiedBy": 2,
+    "ModifiedDate": "2019-08-31 18:47:22"
+  }
+]

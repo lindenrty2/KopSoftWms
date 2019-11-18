@@ -1,101 +1,13 @@
 [
   {
-    "DeptId": 492573722524254208,
+    "DeptId": 1,
     "DeptNo": null,
-    "DeptName": "技术一部",
+    "DeptName": "IT部",
     "IsDel": 1,
-    "Remark": "负责机台1",
-    "CreateBy": 491786087098744832,
+    "Remark": "IT部",
+    "CreateBy": 2,
     "CreateDate": "2018-09-22 09:36:33",
-    "ModifiedBy": 491786087098744832,
+    "ModifiedBy": 2,
     "ModifiedDate": "2018-09-22 10:01:39"
-  },
-  {
-    "DeptId": 492616866888417280,
-    "DeptNo": null,
-    "DeptName": "技术二部",
-    "IsDel": 1,
-    "Remark": "负责机台2",
-    "CreateBy": 491786087098744832,
-    "CreateDate": "2018-09-21 16:42:56",
-    "ModifiedBy": 491786087098744832,
-    "ModifiedDate": "2018-09-22 15:49:11"
-  },
-  {
-    "DeptId": 492617342476353536,
-    "DeptNo": null,
-    "DeptName": "技术三部",
-    "IsDel": 1,
-    "Remark": "负责机台3",
-    "CreateBy": 491786087098744832,
-    "CreateDate": "2018-09-21 16:44:19",
-    "ModifiedBy": 491786087098744832,
-    "ModifiedDate": "2018-09-22 15:48:28"
-  },
-  {
-    "DeptId": 492967145194389504,
-    "DeptNo": null,
-    "DeptName": "技术四部",
-    "IsDel": 1,
-    "Remark": "负责机台4",
-    "CreateBy": 491786087098744832,
-    "CreateDate": "2018-09-22 15:55:26",
-    "ModifiedBy": 491786087098744832,
-    "ModifiedDate": "2018-09-23 10:45:55"
-  },
-  {
-    "DeptId": 493259536275079168,
-    "DeptNo": "4",
-    "DeptName": "技术五部",
-    "IsDel": 1,
-    "Remark": "机台5",
-    "CreateBy": 491786087098744832,
-    "CreateDate": "2018-09-23 11:15:10",
-    "ModifiedBy": 504990858139926528,
-    "ModifiedDate": "2019-02-17 17:06:23"
-  },
-  {
-    "DeptId": 518051525495357440,
-    "DeptNo": "kt004",
-    "DeptName": "销售部门",
-    "IsDel": 1,
-    "Remark": "销售部门",
-    "CreateBy": 504990858139926528,
-    "CreateDate": "2018-11-30 21:11:54",
-    "ModifiedBy": 504990858139926528,
-    "ModifiedDate": "2018-12-22 19:42:25"
-  },
-  {
-    "DeptId": 518051575634067456,
-    "DeptNo": "kt003",
-    "DeptName": "采购部门",
-    "IsDel": 1,
-    "Remark": "采购部门",
-    "CreateBy": 504990858139926528,
-    "CreateDate": "2018-11-30 21:12:06",
-    "ModifiedBy": 504990858139926528,
-    "ModifiedDate": "2018-12-22 19:42:13"
-  },
-  {
-    "DeptId": 518053174372728832,
-    "DeptNo": "kt002",
-    "DeptName": "制造一部",
-    "IsDel": 1,
-    "Remark": "制造一部",
-    "CreateBy": 504990858139926528,
-    "CreateDate": "2018-11-30 21:18:28",
-    "ModifiedBy": 504990858139926528,
-    "ModifiedDate": "2018-12-22 19:42:00"
-  },
-  {
-    "DeptId": 518053238646243328,
-    "DeptNo": "kt001",
-    "DeptName": "制造二部",
-    "IsDel": 1,
-    "Remark": "制造二部",
-    "CreateBy": 504990858139926528,
-    "CreateDate": "2018-11-30 21:18:43",
-    "ModifiedBy": 504990858139926528,
-    "ModifiedDate": "2018-12-22 19:41:49"
   }
 ]

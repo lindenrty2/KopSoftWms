@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using WMSCore.Outside;
+using IServices.Outside;
 using YL.Core.Dto;
 
 namespace InterfaceMocker.Service

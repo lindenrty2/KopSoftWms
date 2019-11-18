@@ -1,0 +1,50 @@
+[
+  {
+    "WarehouseId": 1,
+    "WarehouseNo": "CK00001",
+    "WarehouseName": "仓库00001",
+    "IFAddress": null,
+    "IsDel": 1,
+    "Remark": null,
+    "CreateBy": 2,
+    "CreateDate": "2019-08-31 18:46:34",
+    "ModifiedBy": 2,
+    "ModifiedDate": "2019-10-14 21:57:12"
+  },
+  {
+    "WarehouseId": 2,
+    "WarehouseNo": "CK00002",
+    "WarehouseName": "仓库00002",
+    "IFAddress": null,
+    "IsDel": 1,
+    "Remark": null,
+    "CreateBy": 2,
+    "CreateDate": "2019-10-14 21:56:47",
+    "ModifiedBy": 2,
+    "ModifiedDate": "2019-10-14 21:57:12"
+  },
+  {
+    "WarehouseId": 3,
+    "WarehouseNo": "CK00003",
+    "WarehouseName": "仓库00003",
+    "IFAddress": null,
+    "IsDel": 1,
+    "Remark": null,
+    "CreateBy": 2,
+    "CreateDate": "2019-10-14 21:56:59",
+    "ModifiedBy": 2,
+    "ModifiedDate": "2019-10-14 21:57:12"
+  },
+  {
+    "WarehouseId": 4,
+    "WarehouseNo": "CK00004",
+    "WarehouseName": "仓库00004",
+    "IFAddress": null,
+    "IsDel": 1,
+    "Remark": null,
+    "CreateBy": 2,
+    "CreateDate": "2019-10-14 21:57:12",
+    "ModifiedBy": 2,
+    "ModifiedDate": "2019-10-14 21:57:12"
+  }
+]

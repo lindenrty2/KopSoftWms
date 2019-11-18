@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 using NLog;
 using Repository;
 using Services;
+using Services.Outside;
 using SoapCore;
 using SqlSugar;
 using Swashbuckle.AspNetCore.Swagger;
@@ -115,22 +116,35 @@ namespace YL
             var bulid = services.BuildServiceProvider();
             ServiceResolve.SetServiceResolve(bulid);
 
-            InitDataBase(sqlSugarConfig.Item1, sqlSugarConfig.Item2);
+
+
+            SqlSugarClient db = new SqlSugarClient(new ConnectionConfig()
+            {
+                DbType = sqlSugarConfig.Item1,
+                ConnectionString = sqlSugarConfig.Item2,
+                InitKeyType = InitKeyType.Attribute,
+                IsAutoCloseConnection = true,
+            });
+
+            //OutputDataBase(db);
+            InitDataBase(db);
+            InitSystemData(db);
+            db.Close();
         }
 
-        private static void InitDataBase(DbType dbType,string connStr)
+        private static void OutputDataBase(SqlSugarClient db)
+        {
+            System.IO.File.WriteAllText("d:\\Wms_reservoirarea.json", db.Queryable<Wms_reservoirarea>().ToList().ToJson());
+            System.IO.File.WriteAllText("d:\\Wms_storagerack.json", db.Queryable<Wms_storagerack>().ToList().ToJson());
+            System.IO.File.WriteAllText("d:\\Wms_inventorybox.json", db.Queryable<Wms_inventorybox>().ToList().ToJson());
+        }
+
+        private static bool InitDataBase(SqlSugarClient db)
         {
             Logger logger = LogManager.GetLogger("Startup");
             try
             {
                 logger.Log(NLog.LogLevel.Info, "数据库整备开始");
-                SqlSugarClient db = new SqlSugarClient(new ConnectionConfig()
-                {
-                    DbType = dbType,
-                    ConnectionString = connStr,
-                    InitKeyType = InitKeyType.Attribute,
-                    IsAutoCloseConnection = true,
-                });
                 db.MappingTables = SqlSugarConfig.listTable;
                 Type[] entityTypes = typeof(BaseEntity).Assembly.GetTypes().Where(x => x.Namespace == "YL.Core.Entity" && x.Name != typeof(BaseEntity).Name ).ToArray();
                 foreach (Type type in entityTypes)
@@ -152,14 +166,19 @@ namespace YL
                 InitTableData<Sys_rolemenu>(db, "Sys_rolemenu.json");
                 InitTableData<Sys_serialnum>(db, "Sys_serialnum.json");
                 InitTableData<Sys_user>(db, "Sys_user.json");
+                InitTableData<Wms_warehouse>(db, "Wms_warehouse.json");
+                InitTableData<Wms_reservoirarea>(db, "Wms_reservoirarea.json");
+                InitTableData<Wms_storagerack>(db, "Wms_storagerack.json");
+                InitTableData<Wms_inventorybox>(db, "Wms_inventorybox.json");
 
-                db.Close();
                 logger.Log(NLog.LogLevel.Info, "数据库整备结束");
+                return true;
             }
             catch(Exception ex)
             {
                 logger.Log(NLog.LogLevel.Error, ex, "数据库整备失败");
                 throw new InvalidOperationException("数据库整备失败");
+                return false;
             }
         }
 
@@ -202,6 +221,18 @@ namespace YL
                     services.AddTransient<WCSHookController>();
                     break;
             }
+        }
+
+        private void InitSystemData(SqlSugarClient db)
+        {
+            Wms_warehouse[] warehouses = db.Queryable<Wms_warehouse>().ToArray();
+            foreach(Wms_warehouse warehouse in warehouses)
+            {
+                WMSApiManager.Regist(warehouse);
+            }
+
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

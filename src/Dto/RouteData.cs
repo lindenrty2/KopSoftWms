@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using YL.Utils.Json;
 using YL.Utils.Pub;
+using YL.Utils.Table;
 
 namespace YL.Core.Dto
 {
@@ -62,39 +64,51 @@ namespace YL.Core.Dto
     {
         public T Data { get; set; }
 
-        public static RouteData<T> From(int code, string message,T data = default(T))
+        public int TotalCount { get; set; }
+
+        public static RouteData<T> From(int code, string message,T data = default(T),int totalCount = -1)
         {
             return new RouteData<T>()
             {
                 Code = code,
                 Message = message,
-                Data = data
-
+                Data = data,
+                TotalCount = totalCount
             };
         } 
 
-        public static RouteData<T> From(MessageItem messageItem, T data = default(T))
+        public static RouteData<T> From(MessageItem messageItem, T data = default(T), int totalCount = -1)
         {
-            return RouteData<T>.From(messageItem.Code, messageItem.Message, data);
+            return RouteData<T>.From(messageItem.Code, messageItem.Message, data, totalCount);
         }
 
-        public static RouteData<T> From(MessageItem messageItem,string addition, T data = default(T))
+        public static RouteData<T> From(MessageItem messageItem,string addition, T data = default(T), int totalCount = -1)
         {
-            return RouteData<T>.From(messageItem.Code, messageItem.Message + "\r\n" + addition, data);
+            return RouteData<T>.From(messageItem.Code, messageItem.Message + "\r\n" + addition, data, totalCount);
         }
 
-        public static RouteData<T> From(MessageItem messageItem, Exception ex, T data = default(T))
+        public static RouteData<T> From(MessageItem messageItem, Exception ex, T data = default(T), int totalCount = -1)
         {
-            return RouteData<T>.From(messageItem.Code, messageItem.Message + "\r\n" + ex.ToString(), data);
+            return RouteData<T>.From(messageItem.Code, messageItem.Message + "\r\n" + ex.ToString(), data, totalCount);
         }
 
-        public static RouteData<T> From(T data)
+        public static RouteData<T> From(T data, int totalCount = -1)
         {
-            return RouteData<T>.From(1, "", data);
+            return RouteData<T>.From(1, "", data, totalCount);
         }
-        public static RouteData<T> From(RouteData route)
+        public static RouteData<T> From(RouteData route, int totalCount = -1)
         {
-            return RouteData<T>.From(route.Code,route.Message);
+            return RouteData<T>.From(route.Code,route.Message,default(T), totalCount);
+        }
+
+        public PageGridData ToGridData()
+        {
+            return new PageGridData(this.Data, this.TotalCount);
+        }
+
+        public string ToGridJson()
+        {
+            return this.ToGridData().JilToJson();
         }
 
     }
