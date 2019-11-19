@@ -60,7 +60,7 @@ namespace KopSoftWms.Controllers
         public async Task<string> List([FromForm]PubParams.InventoryBoxBootstrapParams bootstrap)
         {
             IWMSApiProxy wmsAccessor = WMSApiManager.Get(bootstrap.storeId.ToString(), _client);
-            RouteData<Wms_inventorybox[]> result = (await wmsAccessor.GetInventoryBoxList(null,null,bootstrap.offset,bootstrap.limit,bootstrap.search,bootstrap.order.Split(","),bootstrap.datemin,bootstrap.datemax));
+            RouteData<Wms_inventorybox[]> result = (await wmsAccessor.GetInventoryBoxList(null,null,bootstrap.pageIndex,bootstrap.limit,bootstrap.search,bootstrap.order.Split(","),bootstrap.datemin,bootstrap.datemax));
             if (!result.IsSccuess)
             {
                 return new PageGridData().JilToJson();
@@ -73,33 +73,32 @@ namespace KopSoftWms.Controllers
         [HttpGet]
         public async Task<RouteData<Wms_InventoryBoxDto>> Get(string inventoryBoxNo)
         {
-            throw new NotSupportedException();
-            //Wms_inventorybox box = await _client.Queryable<Wms_inventorybox>().FirstAsync(x => x.InventoryBoxNo == inventoryBoxNo);
-            //if(box == null)
-            //{
-            //    return RouteData<Wms_InventoryBoxDto>.From(PubMessages.E1011_INVENTORYBOX_NOTFOUND);
-            //}
-            //Wms_InventoryBoxDto dto = JsonConvert.DeserializeObject<Wms_InventoryBoxDto>( JsonConvert.SerializeObject(box));
+            Wms_inventorybox box = await _client.Queryable<Wms_inventorybox>().FirstAsync(x => x.InventoryBoxNo == inventoryBoxNo);
+            if (box == null)
+            {
+                return RouteData<Wms_InventoryBoxDto>.From(PubMessages.E1011_INVENTORYBOX_NOTFOUND);
+            }
+            Wms_InventoryBoxDto dto = JsonConvert.DeserializeObject<Wms_InventoryBoxDto>(JsonConvert.SerializeObject(box));
 
-            //var query = _client.Queryable<Wms_inventory, Wms_material, Sys_user>((i, m, u) => new object[] {
-            //       JoinType.Left,i.MaterialId==m.MaterialId,
-            //       JoinType.Left,i.ModifiedBy==u.UserId
-            //     })
-            //   .Where((i, m, u) => i.InventoryBoxId == box.InventoryBoxId)
-            //   .Select((i, m, u) => new InventoryDetailDto
-            //   {
-            //       InventoryPosition = i.Position,
-            //       MaterialId = m.MaterialId.ToString(),
-            //       MaterialNo = m.MaterialNo,
-            //       MaterialOnlyId = m.MaterialOnlyId,
-            //       MaterialName = m.MaterialName,
-            //       OrderNo = i.OrderNo,
-            //       IsLocked = i.IsLocked,
-            //       Qty = i.Qty,
-            //   }).MergeTable();
-            //dto.Id = box.InventoryBoxId.ToString();
-            //dto.Details = (await query.ToListAsync()).ToArray();
-            //return RouteData<Wms_InventoryBoxDto>.From(dto);
+            var query = _client.Queryable<Wms_inventory, Wms_material, Sys_user>((i, m, u) => new object[] {
+                   JoinType.Left,i.MaterialId==m.MaterialId,
+                   JoinType.Left,i.ModifiedBy==u.UserId
+                 })
+               .Where((i, m, u) => i.InventoryBoxId == box.InventoryBoxId)
+               .Select((i, m, u) => new InventoryDetailDto
+               {
+                   InventoryPosition = i.Position,
+                   MaterialId = m.MaterialId.ToString(),
+                   MaterialNo = m.MaterialNo,
+                   MaterialOnlyId = m.MaterialOnlyId,
+                   MaterialName = m.MaterialName,
+                   OrderNo = i.OrderNo,
+                   IsLocked = i.IsLocked,
+                   Qty = i.Qty,
+               }).MergeTable();
+            dto.Id = box.InventoryBoxId.ToString();
+            dto.Details = (await query.ToListAsync()).ToArray();
+            return RouteData<Wms_InventoryBoxDto>.From(dto);
         }
 
         [HttpGet]
@@ -175,7 +174,7 @@ namespace KopSoftWms.Controllers
         public async Task<string> Search(long storeId, string text)
         { 
             IWMSApiProxy wmsAccessor = WMSApiManager.Get(storeId.ToString(), _client);
-            RouteData<Wms_inventorybox[]> result = (await wmsAccessor.GetInventoryBoxList(null, null, 0, 20, text, null, null, null));
+            RouteData<Wms_inventorybox[]> result = (await wmsAccessor.GetInventoryBoxList(null, null, 1, 20, text, null, null, null));
             if (!result.IsSccuess)
             {
                 return new PageGridData().JilToJson();

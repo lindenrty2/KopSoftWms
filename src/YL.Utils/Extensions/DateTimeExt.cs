@@ -13,6 +13,12 @@ namespace YL.Utils.Extensions
         public const string SnokId = "yyyyMMddHHmmssffff";
         public static DateTime DateTime => DateTime.Now;
 
+        public static DateTime SerialNumberToDateTime(this string str)
+        {
+            if (str == null || str.Length != 14) return DateTime.MinValue;
+            return new DateTime(int.Parse(str.Substring(0, 4)), int.Parse(str.Substring(4, 2)), int.Parse(str.Substring(6, 2)), int.Parse(str.Substring(8, 2)), int.Parse(str.Substring(10, 2)), int.Parse(str.Substring(12, 2)));
+        }
+
         public static DateTime ToDateTime(this string str)
         {
             return DateTime.TryParse(str, out DateTime date) == true ? date : DateTime.MinValue;

@@ -1,7 +1,10 @@
 ﻿using IServices;
+using IServices.Outside;
 using Microsoft.AspNetCore.Mvc;
 using SqlSugar;
 using System.Linq;
+using WMSCore.Outside;
+using YL.Core.Dto;
 using YL.Core.Entity;
 using YL.Core.Entity.Fluent.Validation;
 using YL.NetCore.Attributes;
@@ -9,6 +12,8 @@ using YL.NetCore.NetCoreApp;
 using YL.Utils.Extensions;
 using YL.Utils.Pub;
 using YL.Utils.Table;
+using YL.Utils.Json;
+using System.Threading.Tasks;
 
 namespace KopSoftWms.Controllers
 
@@ -18,9 +23,14 @@ namespace KopSoftWms.Controllers
         private readonly IWms_reservoirareaServices _reservoirareaServices;
         private readonly IWms_storagerackServices _storagerackServices;
 
-        public ReservoirareaController(IWms_storagerackServices storagerackServices,
+        private readonly SqlSugarClient _client;
+
+        public ReservoirareaController(
+            SqlSugarClient client,
+            IWms_storagerackServices storagerackServices,
             IWms_reservoirareaServices reservoirareaServices)
         {
+            _client = client;
             _storagerackServices = storagerackServices;
             _reservoirareaServices = reservoirareaServices;
         }
@@ -34,10 +44,18 @@ namespace KopSoftWms.Controllers
 
         [HttpPost]
         [OperationLog(LogType.select)]
-        public ContentResult List([FromForm]Bootstrap.BootstrapParams bootstrap)
+        public async Task<string> List([FromForm]Bootstrap.BootstrapParams bootstrap)
         {
-            var sd = _reservoirareaServices.PageList(bootstrap);
-            return Content(sd);
+            //var sd = _reservoirareaServices.PageList(bootstrap);
+            //return Content(sd);
+
+            IWMSApiProxy wmsAccessor = WMSApiManager.Get(bootstrap.storeId.ToString(), _client);
+            RouteData<Wms_reservoirarea[]> result = await wmsAccessor.GetReservoirAreaList( bootstrap.pageIndex, bootstrap.limit, bootstrap.search, bootstrap.order.Split(","), bootstrap.datemin, bootstrap.datemax);
+            if (!result.IsSccuess)
+            {
+                return new PageGridData().JilToJson();
+            }
+            return result.ToGridJson();
         }
 
         [HttpGet]

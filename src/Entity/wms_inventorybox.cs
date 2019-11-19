@@ -56,7 +56,7 @@ namespace YL.Core.Entity
         /// <summary>
         /// 库区名字
         /// </summary>
-        [SugarColumn(Length = 64)]
+        [SugarColumn(Length = 64, IsNullable = true)]
         public string ReservoirAreaName { get; set; }
 
         /// <summary>
@@ -70,23 +70,23 @@ namespace YL.Core.Entity
         /// <summary>
         /// 货架名字
         /// </summary>
-        [SugarColumn(Length = 64)]
+        [SugarColumn(Length = 64,IsNullable =true)]
         public string StorageRackName { get; set; }
 
         /// <summary>
         /// 行
         /// </summary>
-        [SugarColumn()]
+        [SugarColumn(IsNullable = true)]
         public int? Row { get; set; }
         /// <summary>
         /// 列
         /// </summary>
-        [SugarColumn()]
+        [SugarColumn(IsNullable = true)]
         public int? Column { get; set; }
         /// <summary>
         /// 层
         /// </summary>
-        [SugarColumn()]
+        [SugarColumn(IsNullable = true)]
         public int? Floor { get; set; }
 
 

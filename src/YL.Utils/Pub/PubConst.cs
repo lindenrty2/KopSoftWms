@@ -7,6 +7,7 @@ namespace YL.Utils.Pub
     public static class PubConst
     {
         public static long InterfaceUserId = 1;
+        public static string InterfaceUserName = "外部接口";
 
         public const string Login1 = "登录成功";
         public const string Login2 = "账号或密码错误";

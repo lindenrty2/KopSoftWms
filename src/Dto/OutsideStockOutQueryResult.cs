@@ -10,7 +10,7 @@ namespace YL.Core.Dto
         /// <summary>
         /// 对接用出库唯一Id
         /// </summary>
-        public long StockOutId { get; set; }
+        public string StockOutId { get; set; }
         /// <summary>
         /// 出库编号
         /// </summary>
@@ -26,23 +26,31 @@ namespace YL.Core.Dto
         /// <summary>
         /// MES任务Id
         /// </summary>
-        public long MesTaskId { get; set; }
+        public string MesTaskId { get; set; }
         /// <summary>
         /// 出库状态
         /// </summary>
         public StockOutStatus StockOutStatus { get; set; }
         /// <summary>
+        /// 出库状态值
+        /// </summary>
+        public int StockOutStatusValue { get { return (int)StockOutStatus; } }
+        /// <summary>
         /// 备注
         /// </summary>
         public string Remark { get; set; }
         /// <summary>
+        /// 创建人
+        /// </summary>
+        public string CreateBy { get; set; }
+        /// <summary>
+        /// 创建人名
+        /// </summary>
+        public string CreateDate { get; set; }
+        /// <summary>
         /// 最后修改人
         /// </summary>
-        public string ModifiedBy { get; set; }
-        /// <summary>
-        /// 最后修改人名
-        /// </summary>
-        public string ModifiedUser { get; set; }
+        public string ModifiedBy { get; set; } 
         /// <summary>
         /// 最后修改时间
         /// </summary>
@@ -85,17 +93,25 @@ namespace YL.Core.Dto
         /// </summary>
         public StockOutStatus Status { get; set; }
         /// <summary>
+        /// 状态值
+        /// </summary>
+        public int StatusValue { get { return (int)Status; } }
+        /// <summary>
         /// 备注
         /// </summary>
         public string Remark { get; set; }
         /// <summary>
+        /// 创建人
+        /// </summary>
+        public string CreateBy { get; set; }
+        /// <summary>
+        /// 创建时间
+        /// </summary>
+        public string CreateDate { get; set; }
+        /// <summary>
         /// 最后修改人
         /// </summary>
-        public string ModifiedBy { get; set; }
-        /// <summary>
-        /// 最后修改人名
-        /// </summary>
-        public string ModifiedUser { get; set; }
+        public string ModifiedBy { get; set; } 
         /// <summary>
         /// 最后修改时间
         /// </summary>

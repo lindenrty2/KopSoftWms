@@ -109,6 +109,14 @@ namespace YL.Core.Entity
         public long? CreateBy { get; set; }
 
         /// <summary>
+        /// Desc:修改人名
+        /// Default:
+        /// Nullable:True
+        /// </summary>
+        [SugarColumn(Length = 50, IsNullable = true)]
+        public string CreateUser { get; set; }
+
+        /// <summary>
         /// Desc:创建时间
         /// Default:
         /// Nullable:True

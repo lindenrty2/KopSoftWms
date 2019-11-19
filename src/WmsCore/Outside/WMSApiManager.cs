@@ -28,9 +28,9 @@ namespace WMSCore.Outside
             }
             else
             {
+                accessor = new WMSApiAccessor(warehouse);
                 _instanceMap.Add(key, accessor);
             }
-            _instanceMap.Add(key, accessor);
             return accessor;
         }
         

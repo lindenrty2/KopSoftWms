@@ -1,4 +1,5 @@
 ﻿using IServices;
+using IServices.Outside;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using SqlSugar;
@@ -15,6 +16,7 @@ using YL.NetCore.NetCoreApp;
 using YL.Utils.Extensions;
 using YL.Utils.Pub;
 using YL.Utils.Table;
+using YL.Utils.Json;
 
 namespace KopSoftWms.Controllers
 {
@@ -74,10 +76,18 @@ namespace KopSoftWms.Controllers
         /// <returns></returns>
         [HttpPost]
         [OperationLog(LogType.select)]
-        public ContentResult List([FromForm]PubParams.StockInBootstrapParams bootstrap)
+        public async Task<string> List([FromForm]PubParams.StockInBootstrapParams bootstrap)
         {
-            var sd = _stockinServices.PageList(bootstrap);
-            return Content(sd);
+            //var sd = _stockinServices.PageList(bootstrap);
+            //return Content(sd);
+             
+            IWMSApiProxy wmsAccessor = WMSApiManager.Get(bootstrap.storeId.ToString(), _client);
+            RouteData<OutsideStockInQueryResult[]> result = await wmsAccessor.QueryStockInList(null, null, bootstrap.pageIndex, bootstrap.limit, bootstrap.search, bootstrap.order.Split(","), bootstrap.datemin, bootstrap.datemax);
+            if (!result.IsSccuess)
+            {
+                return new PageGridData().JilToJson();
+            }
+            return result.ToGridJson();
         }
 
         /// <summary>
@@ -87,10 +97,18 @@ namespace KopSoftWms.Controllers
         /// <returns></returns>
         [HttpPost]
         [OperationLog(LogType.select)]
-        public ContentResult ListDetail(string pid)
+        public async Task<string> ListDetail(int storeId,string pid)
         {
-            var sd = _stockindetailServices.PageList(pid);
-            return Content(sd);
+            //var sd = _stockindetailServices.PageList(pid);
+            //return Content(sd);
+
+            IWMSApiProxy wmsAccessor = WMSApiManager.Get(storeId.ToString(), _client);
+            RouteData<OutsideStockInQueryResult> result = await wmsAccessor.QueryStockIn(SqlFunc.ToInt64(pid));
+            if (!result.IsSccuess)
+            {
+                return null;
+            }
+            return new PageGridData(result.Data.Details, result.Data.Details.Length).JilToJson();
         }
          
         [HttpGet]
@@ -153,6 +171,7 @@ namespace KopSoftWms.Controllers
             }
             else
             {
+                
                 model = _stockindetailServices.QueryableToEntity(c => c.StockInDetailId == SqlFunc.ToInt64(id) && c.IsDel == 1);
                 return View(model);
             }

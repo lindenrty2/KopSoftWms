@@ -1,40 +1,50 @@
-﻿using IServices;
+﻿using IServices.Outside;
 using Microsoft.AspNetCore.Mvc;
+using SqlSugar;
+using System.Threading.Tasks;
+using WMSCore.Outside;
 using YL.Core.Dto;
-using YL.NetCore.NetCoreApp;
 using YL.NetCore.Attributes;
+using YL.NetCore.NetCoreApp;
+using YL.Utils.Json;
 using YL.Utils.Pub;
+using YL.Utils.Table;
 
 namespace KopSoftWms.Controllers
 {
     public class InventoryController : BaseController
     {
-        private readonly IWms_inventoryServices _inventoryServices;
-        private readonly IWms_storagerackServices _storagerackServices;
+        private readonly SqlSugarClient _client;
 
         public InventoryController(
-            IWms_storagerackServices storagerackServices,
-            IWms_inventoryServices inventoryServices
+            SqlSugarClient client
             )
         {
-            _storagerackServices = storagerackServices;
-            _inventoryServices = inventoryServices;
+            _client = client;
         }
 
         [HttpGet]
         [CheckMenu]
         public IActionResult Index()
         {
-            ViewBag.StorageRack = _storagerackServices.QueryableToList(c => c.IsDel == 1);
+            //ViewBag.StorageRack = _storagerackServices.QueryableToList(c => c.IsDel == 1);
             return View();
         }
 
         [HttpPost]
         [OperationLog(LogType.select)]
-        public ContentResult List([FromForm]PubParams.InventoryBootstrapParams bootstrap)
+        public async Task<string> List([FromForm]PubParams.InventoryBootstrapParams bootstrap)
         {
-            var sd = _inventoryServices.PageList(bootstrap);
-            return Content(sd);
+            //var sd = _inventoryServices.PageList(bootstrap);
+            //return Content(sd);
+             
+            IWMSApiProxy wmsAccessor = WMSApiManager.Get(bootstrap.storeId.ToString(), _client);
+            RouteData<OutsideInventoryDto[]> result = (await wmsAccessor.QueryInventory(null,null,null,null,bootstrap.pageIndex, bootstrap.limit, bootstrap.search, bootstrap.order.Split(","), bootstrap.datemin, bootstrap.datemax));
+            if (!result.IsSccuess)
+            {
+                return new PageGridData().JilToJson();
+            }
+            return result.ToGridJson();
         }
     }
 }

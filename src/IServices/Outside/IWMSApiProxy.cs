@@ -6,6 +6,7 @@ using WebApiClient;
 using WebApiClient.Attributes;
 using YL.Core.Dto;
 using YL.Core.Entity;
+using YL.Utils.Pub;
 
 namespace IServices.Outside
 {
@@ -131,6 +132,18 @@ namespace IServices.Outside
         [HttpGet("/StockOut/{stockOutId}")]
         Task<RouteData<OutsideStockOutQueryResult>> QueryStockOut(long stockOutId);
 
+        /// <summary>
+        /// 获取出库列表
+        /// </summary>
+        /// <param name="offset"></param>
+        /// <param name="limit"></param>
+        /// <param name="search"></param>
+        /// <param name="v"></param>
+        /// <param name="datemin"></param>
+        /// <param name="datemax"></param>
+        /// <returns></returns>
+        [HttpGet("/StockOut/List")]
+        Task<RouteData<OutsideStockOutQueryResult[]>> QueryStockOutList(long? stockOutType, StockOutStatus? stockOutStatus, int pageIndex, int pageSize, string search, string[] order, string datemin, string datemax);
 
         //-----------------------------------------------------------------
         /// <summary>
@@ -150,6 +163,18 @@ namespace IServices.Outside
         [HttpGet("/StockIn/{stockInId}")]
         Task<RouteData<OutsideStockInQueryResult>> QueryStockIn(long stockInId);
 
+        /// <summary>
+        /// 获取入库列表
+        /// </summary>
+        /// <param name="offset"></param>
+        /// <param name="limit"></param>
+        /// <param name="search"></param>
+        /// <param name="v"></param>
+        /// <param name="datemin"></param>
+        /// <param name="datemax"></param>
+        /// <returns></returns>
+        [HttpGet("/StockIn/List")]
+        Task<RouteData<OutsideStockInQueryResult[]>> QueryStockInList(long? stockInType, StockInStatus? stockInStatus, int pageIndex, int pageSize, string search, string[] order, string datemin, string datemax);
 
 
         //-----------------------------------------------------------------
@@ -167,7 +192,7 @@ namespace IServices.Outside
         /// <param name="datemax"></param>
         /// <returns></returns>
         [HttpGet("Inventory/List/{pageIndex}")]
-        Task<RouteData<OutsideInventoryDto[]>> QueryInventory(long? reservoirAreaId, long? storageRackId, long? inventoryId, long? materialId, int pageIndex, int pageSize, string search, string[] order, string datemin, string datemax);
+        Task<RouteData<OutsideInventoryDto[]>> QueryInventory(long? reservoirAreaId, long? storageRackId, long? inventoryBoxId, long? materialId, int pageIndex, int pageSize, string search, string[] order, string datemin, string datemax);
 
 
         /// <summary>
@@ -183,7 +208,7 @@ namespace IServices.Outside
         /// <param name="datemax"></param>
         /// <returns></returns>
         [HttpGet("InventoryRecord/List/{pageIndex}")]
-        Task<RouteData<OutsideInventoryRecordDto[]>> QueryInventoryRecord(long? reservoirAreaId, long? storageRackId, long? inventoryId, long? materialId, int pageIndex, int pageSize, string search, string[] order, string datemin, string datemax);
+        Task<RouteData<OutsideInventoryRecordDto[]>> QueryInventoryRecord(long? reservoirAreaId, long? storageRackId, long? inventoryBoxId, long? materialId, int pageIndex, int pageSize, string search, string[] order, string datemin, string datemax);
 
 
 

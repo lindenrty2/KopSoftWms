@@ -29,19 +29,7 @@
                         <div class="input-group">
                             <span class="input-group-addon">日期范围</span>
                             <input type="text" ref="datemin" id="datemin" class="form-control" style="width:120px;">
-                            <input type="text" ref="datemax" id="datemax" class="form-control" style="width:120px;margin-left:10px;">
-                            <select class="form-control" v-model="StorageRackId" style="width:150px;margin-left:10px;">
-                                <option value="">全部货架</option>
-                                @{
-                                    if (ViewBag.StorageRack != null || ViewBag.StorageRack.Count > 0)
-                                    {
-                                        foreach (var item in ViewBag.StorageRack)
-                                        {
-                                            <option value="@item.StorageRackId">@(item.StorageRackNo + "|" + item.StorageRackName)</option>
-                                        }
-                                    }
-                                }
-                            </select>
+                            <input type="text" ref="datemax" id="datemax" class="form-control" style="width:120px;margin-left:10px;"> 
                             <select size="1" id="MaterialId" style="width:150px;" v-model="MaterialId" class="selectpicker" data-live-search="true"></select>
                         </div>
                         <div class="input-group" style="margin-top:5px;margin-left:-10px">

@@ -2,12 +2,12 @@
     <section class="content-header">
         <h1>
             基础资料
-            <small>物料管理</small>
+            <small>MES任务管理</small>
         </h1>
         <ol class="breadcrumb">
             <li><a href="#"><i class="fa fa-dashboard"></i> 首页</a></li>
             <li><a href="#">基础资料</a></li>
-            <li class="active">物料管理</li>
+            <li class="active">MES任务管理</li>
         </ol>
     </section>
     <section class="content">
@@ -19,12 +19,9 @@
                             <span class="input-group-addon">日期范围</span>
                             <input type="text" v-model="datemin" ref="datemin" id="datemin" class="form-control" style="width:120px;">
                             <input type="text" v-model="datemax" ref="datemax" id="datemax" class="form-control" style="width:120px;margin-left:10px;">
-                            <button name="search" v-on:click="searchL" type="submit" class="btn btn-success" style="margin-left:10px;"><i class="fa fa-search"></i> 搜物料</button>
+                            <button name="search" v-on:click="searchL" type="submit" class="btn btn-success" style="margin-left:10px;"><i class="fa fa-search"></i> 搜索</button>
                         </div>
                         <div id="toolbar" class="btn-group">
-                            <button id="btn_delete" v-on:click="deleteL" type="button" class="btn btn-default">
-                                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>删除
-                            </button>
                             <input id="fileImport" @@change="onImportL($event)" type="file" style="display:none"
                                    accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
                             <button id="btnImport" v-on:click="importL" type="button" class="btn btn-default">
@@ -54,8 +51,8 @@
                 var _self = this;
                 _self.$nextTick(function () {
                     //显示active
-                    _self.$refs.Material.parentNode.parentNode.classList.add("active");
-                    _self.$refs.Material.classList.add("active");
+                    _self.$refs.MesTask.parentNode.parentNode.classList.add("active");
+                    _self.$refs.MesTask.classList.add("active");
                     _self.$refs.storeId = '@ViewData["currentStoreId"]';
 
                     _self.datemin = "1900-01-01";
@@ -147,53 +144,12 @@
                         field: 'CreateDate',
                         title: '接收时间',
                         align: 'center',
-                        sortable: true,
-                        formatter: function (value, row, index) {
-                            return _self.jsonDateFormat(value);
-                        }
+                        sortable: true
                     }];
-                    yui.table("bootstraptable", "/Material/List", obj, "POST", "StorageRackId");
+                    yui.table("bootstraptable", "/MesTask/List", obj, "POST", "MasTaskId");
                 },
                 searchL: function () {
                     $("#bootstraptable").bootstrapTable('refresh');
-                },
-                editL: function () {
-                    var arr = $("#bootstraptable").bootstrapTable('getSelections');
-                    if (arr.length > 0) {
-                        var index = layer.confirm("您确定要修改吗？", { btn: ["确定", "取消"] }, function () {
-                            layer.close(index);
-                            var id = arr[0].MaterialId;
-                            yui.layershow("修改物料", "/Material/Add?storeId=@ViewData["currentStoreId"]&id=" + id, 550, 600);
-                        }, function () {
-
-                        });
-                    } else {
-                        layer.alert("请选中行", { icoon: 3, skin: "layer-ext-moon" });
-                    }
-                },
-                deleteL: function () {
-                    var _self = this;
-                    var arr = $("#bootstraptable").bootstrapTable('getSelections');
-                    if (arr.length > 0) {
-                        var index = layer.confirm("您确定要删除吗？", { btn: ["确定", "取消"] }, function () {
-                            var id = arr[0].MaterialId;
-                            yui.$axiosget('/Material/Delete?id=' + id)
-                                .then(function (response) {
-                                    if (response.data.Item1) {
-                                        layer.msg(response.data.Item2 || errorMsg, { icon: 1 });
-                                        _self.searchL();
-                                    } else {
-                                        layer.msg(response.data.Item2 || errorMsg, { icon: 5 });
-                                    }
-                                })
-                                .catch(function (error) {
-                                    layer.msg(error.message, { icon: 5 });
-                                });
-                            layer.close(index);
-                        });
-                    } else {
-                        layer.alert("请选中行", { icoon: 3, skin: "layer-ext-moon" });
-                    }
                 },
                 onImportL: function (e) {
                     _self = this;
@@ -206,7 +162,7 @@
                     formdata.append('file', this.file[0])
 
                     $.ajax({
-                        url: "/Material/Import",
+                        url: "/MasTask/Import",
                         data: formdata,
                         type: "POST",
                         dataType: "json",
@@ -241,7 +197,7 @@
                         datemax: _self.$refs.datemax.value,
                     };
                     var index = layer.confirm("您确定要导出吗？", { btn: ["确定", "取消"] }, function () {
-                        axios.get('/Material/Export?' + Qs.stringify(data), {
+                        axios.get('/MasTask/Export?' + Qs.stringify(data), {
                             headers: {
                                 'promise': 'promise'
                             },

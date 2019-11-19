@@ -1,4 +1,5 @@
 ﻿using IServices;
+using IServices.Outside;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using SqlSugar;
@@ -6,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WMSCore.Outside;
 using YL.Core.Dto;
 using YL.Core.Entity;
 using YL.Core.Entity.Fluent.Validation;
@@ -14,6 +16,7 @@ using YL.NetCore.NetCoreApp;
 using YL.Utils.Extensions;
 using YL.Utils.Pub;
 using YL.Utils.Table;
+using YL.Utils.Json;
 
 namespace KopSoftWms.Controllers
 {
@@ -67,18 +70,26 @@ namespace KopSoftWms.Controllers
         }
 
         [HttpGet]
-        public IActionResult Search(string text)
+        public async Task<string> Search(string storeId,string text)
         {
-            var bootstrap = new Bootstrap.BootstrapParams
+            //var bootstrap = new Bootstrap.BootstrapParams
+            //{
+            //    limit = 100,
+            //    offset = 0,
+            //    sort = "CreateDate",
+            //    search = text,
+            //    order = "desc"
+            //};
+            //var json = _customerServices.PageList(bootstrap);
+            //return Content(json);
+
+            IWMSApiProxy wmsAccessor = WMSApiManager.Get(storeId.ToString(), _client);
+            RouteData<OutsideStockInQueryResult[]> result = await wmsAccessor.QueryStockInList(null, null, 1, 20, text, new string[0], null, null);
+            if (!result.IsSccuess)
             {
-                limit = 100,
-                offset = 0,
-                sort = "CreateDate",
-                search = text,
-                order = "desc"
-            };
-            var json = _customerServices.PageList(bootstrap);
-            return Content(json);
+                return new PageGridData().JilToJson();
+            }
+            return result.ToGridJson();
         }
 
         [HttpGet]
@@ -155,11 +166,9 @@ namespace KopSoftWms.Controllers
                 model.StockOutId = pid.ToInt64();
                 return View(model);
             }
-            else
-            {
-                model = _stockoutdetailServices.QueryableToEntity(c => c.StockOutDetailId == SqlFunc.ToInt64(id) && c.IsDel == 1);
-                return View(model);
-            }
+
+            model = _stockoutdetailServices.QueryableToEntity(c => c.StockOutDetailId == SqlFunc.ToInt64(id) && c.IsDel == 1);
+            return View(model);
         }
 
         /// <summary>
@@ -169,10 +178,18 @@ namespace KopSoftWms.Controllers
         /// <returns></returns>
         [HttpPost]
         [OperationLog(LogType.select)]
-        public ContentResult List([FromForm]PubParams.StockOutBootstrapParams bootstrap)
+        public async Task<string> List([FromForm]PubParams.StockOutBootstrapParams bootstrap)
         {
-            var sd = _stockoutServices.PageList(bootstrap);
-            return Content(sd);
+            //var sd = _stockoutServices.PageList(bootstrap);
+            //return Content(sd);
+
+            IWMSApiProxy wmsAccessor = WMSApiManager.Get(bootstrap.storeId.ToString(), _client);
+            RouteData<OutsideStockInQueryResult[]> result = await wmsAccessor.QueryStockInList(null, null, bootstrap.pageIndex, bootstrap.limit, bootstrap.search, bootstrap.order.Split(","), bootstrap.datemin, bootstrap.datemax);
+            if (!result.IsSccuess)
+            {
+                return new PageGridData().JilToJson();
+            }
+            return result.ToGridJson();
         }
 
         /// <summary>
@@ -182,10 +199,18 @@ namespace KopSoftWms.Controllers
         /// <returns></returns>
         [HttpPost]
         [OperationLog(LogType.select)]
-        public ContentResult ListDetail(string pid)
+        public async Task<string> ListDetail(int storeId,string pid)
         {
-            var sd = _stockoutdetailServices.PageList(pid);
-            return Content(sd);
+            //var sd = _stockoutdetailServices.PageList(pid);
+            //return Content(sd);
+
+            IWMSApiProxy wmsAccessor = WMSApiManager.Get(storeId.ToString(), _client);
+            RouteData<OutsideStockOutQueryResult> result = await wmsAccessor.QueryStockOut(SqlFunc.ToInt64(pid));
+            if (!result.IsSccuess)
+            {
+                return null;
+            }
+            return new PageGridData(result.Data.Details, result.Data.Details.Length).JilToJson();
         }
 
         

@@ -1,7 +1,11 @@
 ﻿using IServices;
+using IServices.Outside;
 using Microsoft.AspNetCore.Mvc;
 using SqlSugar;
 using System.Linq;
+using System.Threading.Tasks;
+using WMSCore.Outside;
+using YL.Core.Dto;
 using YL.Core.Entity;
 using YL.Core.Entity.Fluent.Validation;
 using YL.NetCore.Attributes;
@@ -21,7 +25,10 @@ namespace KopSoftWms.Controllers
         private readonly IWms_materialServices _materialServices;
         private readonly IWms_inventoryBoxServices _inventoryBoxServices;
 
+        private readonly SqlSugarClient _client;
+
         public StorageRackController(
+            SqlSugarClient client,
             IWms_warehouseServices warehouseServices,
             IWms_storagerackServices storagerackServices,
             IWms_reservoirareaServices reservoirareaServices,
@@ -29,6 +36,7 @@ namespace KopSoftWms.Controllers
             IWms_inventoryBoxServices inventoryBoxServices
             )
         {
+            _client = client;
             _warehouseServices = warehouseServices;
             _storagerackServices = storagerackServices;
             _reservoirareaServices = reservoirareaServices;
@@ -49,38 +57,70 @@ namespace KopSoftWms.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet]
-        public ContentResult GetReservoirarea(string id)
+        public async Task<string> GetReservoirarea(string id)
         {
-            var json = _reservoirareaServices.Queryable().Where(c => c.IsDel == 1 && c.WarehouseId == SqlFunc.ToInt64(id))
-                .Select(c => new { ReservoirAreaId = c.ReservoirAreaId.ToString(), c.ReservoirAreaName })
-                .ToList();
-            return Content(json.JilToJson());
+            //var json = _reservoirareaServices.Queryable().Where(c => c.IsDel == 1 && c.WarehouseId == SqlFunc.ToInt64(id))
+            //    .Select(c => new { ReservoirAreaId = c.ReservoirAreaId.ToString(), c.ReservoirAreaName })
+            //    .ToList();
+            //return Content(json.JilToJson());
+
+            IWMSApiProxy wmsAccessor = WMSApiManager.Get(id.ToString(), _client);
+            RouteData<Wms_reservoirarea[]> result = (await wmsAccessor.GetReservoirAreaList(1, 100, null, null, null, null));
+            if (!result.IsSccuess)
+            {
+                return new PageGridData().JilToJson();
+            }
+            return result.ToGridJson();
         }
 
         [HttpGet]
-        public ContentResult GetReservoirarea2(string id)
+        public async Task<string> GetReservoirarea2(string id)
         {
-            var json = _reservoirareaServices.Queryable().Where(c => c.IsDel == 1 && c.WarehouseId == SqlFunc.ToInt64(id))
-                .Select(c => new { value = c.ReservoirAreaId.ToString(), name = c.ReservoirAreaName })
-                .ToList();
-            return Content(json.JilToJson());
+            //var json = _reservoirareaServices.Queryable().Where(c => c.IsDel == 1 && c.WarehouseId == SqlFunc.ToInt64(id))
+            //    .Select(c => new { value = c.ReservoirAreaId.ToString(), name = c.ReservoirAreaName })
+            //    .ToList();
+            //return Content(json.JilToJson());
+
+            IWMSApiProxy wmsAccessor = WMSApiManager.Get(id.ToString(), _client);
+            RouteData<Wms_reservoirarea[]> result = (await wmsAccessor.GetReservoirAreaList(1, 100, null, null, null, null));
+            if (!result.IsSccuess)
+            {
+                return new PageGridData().JilToJson();
+            }
+            return result.ToGridJson();
         }
 
         [HttpGet]
-        public ContentResult GetStoragerack(string id)
+        public async Task<string> GetStoragerackAsync(string id)
         {
-            var json = _storagerackServices.Queryable().Where(c => c.IsDel == 1 && c.ReservoirAreaId == SqlFunc.ToInt64(id))
-                .Select(c => new { value = c.StorageRackId.ToString(), name = c.StorageRackName })
-                .ToList();
-            return Content(json.JilToJson());
+            //var json = _storagerackServices.Queryable().Where(c => c.IsDel == 1 && c.ReservoirAreaId == SqlFunc.ToInt64(id))
+            //    .Select(c => new { value = c.StorageRackId.ToString(), name = c.StorageRackName })
+            //    .ToList();
+            //return Content(json.JilToJson());
+
+            IWMSApiProxy wmsAccessor = WMSApiManager.Get(id.ToString(), _client);
+            RouteData<Wms_storagerack[]> result = (await wmsAccessor.GetStorageRackList(SqlFunc.ToInt64(id), 1, 100, null, null, null, null));
+            if (!result.IsSccuess)
+            {
+                return new PageGridData().JilToJson();
+            }
+            return result.ToGridJson();
         }
 
         [HttpPost]
         [OperationLog(LogType.select)]
-        public ContentResult List([FromForm]Bootstrap.BootstrapParams bootstrap)
+        public async Task<string> List([FromForm]Bootstrap.BootstrapParams bootstrap)
         {
-            var sd = _storagerackServices.PageList(bootstrap);
-            return Content(sd);
+            //var sd = _storagerackServices.PageList(bootstrap);
+            //return Content(sd);
+
+            IWMSApiProxy wmsAccessor = WMSApiManager.Get(bootstrap.storeId.ToString(), _client);
+            RouteData<Wms_storagerack[]> result = await wmsAccessor.GetStorageRackList(null, bootstrap.pageIndex, bootstrap.limit, bootstrap.search, bootstrap.order.Split(","), bootstrap.datemin, bootstrap.datemax);
+            if (!result.IsSccuess)
+            {
+                return new PageGridData().JilToJson();
+            }
+            return result.ToGridJson();
         }
 
         [HttpGet]
@@ -150,18 +190,34 @@ namespace KopSoftWms.Controllers
         }
 
         [HttpGet]
-        public IActionResult Search(string text)
+        public async Task<string> Search(string text)
         {
+            //var bootstrap = new Bootstrap.BootstrapParams
+            //{
+            //    limit = 100,
+            //    offset = 0,
+            //    sort = "CreateDate",
+            //    search = text,
+            //    order = "desc"
+            //};
+            //var json = _storagerackServices.PageList(bootstrap);
+            //return Content(json);
+
             var bootstrap = new Bootstrap.BootstrapParams
             {
                 limit = 100,
-                offset = 0,
+                offset = 1,
                 sort = "CreateDate",
                 search = text,
                 order = "desc"
             };
-            var json = _storagerackServices.PageList(bootstrap);
-            return Content(json);
+            IWMSApiProxy wmsAccessor = WMSApiManager.Get(bootstrap.storeId.ToString(), _client);
+            RouteData<Wms_storagerack[]> result = await wmsAccessor.GetStorageRackList(null, bootstrap.offset, bootstrap.limit, bootstrap.search, bootstrap.order.Split(","), bootstrap.datemin, bootstrap.datemax);
+            if (!result.IsSccuess)
+            {
+                return new PageGridData().JilToJson();
+            }
+            return result.ToGridJson();
         }
     }
 }

@@ -1,9 +1,11 @@
 ﻿using IServices;
+using IServices.Outside;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SqlSugar;
 using System.Linq;
 using System.Threading.Tasks;
+using WMSCore.Outside;
 using YL.Core.Dto;
 using YL.Core.Entity;
 using YL.Core.Entity.Fluent.Validation;
@@ -14,7 +16,8 @@ using YL.Utils.Extensions;
 using YL.Utils.Files;
 using YL.Utils.Pub;
 using YL.Utils.Security;
-using YL.Utils.Table;
+using YL.Utils.Table; 
+using YL.Utils.Json;
 
 namespace KopSoftWms.Controllers
 {
@@ -22,11 +25,15 @@ namespace KopSoftWms.Controllers
     {
         private readonly IWms_materialServices _materialServices;
         private readonly IWms_inventoryServices _inventoryServices;
+        private readonly SqlSugarClient _client;
 
-        public MaterialController(IWms_materialServices materialServices,
+        public MaterialController(
+            SqlSugarClient client,
+            IWms_materialServices materialServices,
             IWms_inventoryServices inventoryServices
             )
         {
+            _client = client;
             _materialServices = materialServices;
             _inventoryServices = inventoryServices;
         }
@@ -40,10 +47,18 @@ namespace KopSoftWms.Controllers
 
         [HttpPost]
         [OperationLog(LogType.select)]
-        public ContentResult List([FromForm]Bootstrap.BootstrapParams bootstrap)
+        public async Task<string> List([FromForm]Bootstrap.BootstrapParams bootstrap)
         {
-            var sd = _materialServices.PageList(bootstrap);
-            return Content(sd);
+            //var sd = _materialServices.PageList(bootstrap);
+            //return Content(sd);
+
+            IWMSApiProxy wmsAccessor = WMSApiManager.Get(bootstrap.storeId.ToString(), _client);
+            RouteData<Wms_MaterialDto[]> result = (await wmsAccessor.GetMateralList(bootstrap.pageIndex, bootstrap.limit, bootstrap.search, bootstrap.order.Split(","), bootstrap.datemin, bootstrap.datemax));
+            if (!result.IsSccuess)
+            {
+                return new PageGridData().JilToJson();
+            }
+            return result.ToGridJson();
         }
 
         [HttpGet]
@@ -118,19 +133,27 @@ namespace KopSoftWms.Controllers
         /// <param name="text"></param>
         /// <returns></returns>
         [HttpGet]
-        public IActionResult Search(long storeId,string text)
+        public async Task<string> Search(long storeId,string text)
         {
-            var bootstrap = new Bootstrap.BootstrapParams
+            //var bootstrap = new Bootstrap.BootstrapParams
+            //{
+            //    limit = 100,
+            //    offset = 0,
+            //    sort = "CreateDate",
+            //    search = text,
+            //    order = "desc",
+            //    storeId = storeId
+            //};
+            //var json = _materialServices.PageList(bootstrap);
+            //return Content(json);
+
+            IWMSApiProxy wmsAccessor = WMSApiManager.Get(storeId.ToString(), _client);
+            RouteData<Wms_MaterialDto[]> result = (await wmsAccessor.GetMateralList(1, 100, text, new string[0], null,null));
+            if (!result.IsSccuess)
             {
-                limit = 100,
-                offset = 0,
-                sort = "CreateDate",
-                search = text,
-                order = "desc",
-                storeId = storeId
-            };
-            var json = _materialServices.PageList(bootstrap);
-            return Content(json);
+                return new PageGridData().JilToJson();
+            }
+            return result.ToGridJson();
         }
 
         /// <summary>
@@ -146,7 +169,7 @@ namespace KopSoftWms.Controllers
             {
                 return RouteData<Wms_material>.From(PubMessages.E1005_MATERIALNO_NOTFOUND);
             }
-            return RouteData<Wms_material>.From(material);
+            return RouteData<Wms_material>.From(material); 
         }
 
 

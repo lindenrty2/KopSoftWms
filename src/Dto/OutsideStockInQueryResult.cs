@@ -10,7 +10,7 @@ namespace YL.Core.Dto
         /// <summary>
         ///  对接用入库唯一Id
         /// </summary>
-        public long StockInId { get; set; }
+        public string StockInId { get; set; }
         /// <summary>
         /// 出库编号
         /// </summary>
@@ -26,15 +26,27 @@ namespace YL.Core.Dto
         /// <summary>
         /// MES任务Id
         /// </summary>
-        public long MesTaskId { get; set; }
+        public string MesTaskId { get; set; }
         /// <summary>
         /// 入库状态
         /// </summary>
         public StockInStatus StockInStatus { get; set; }
         /// <summary>
+        /// 状态值
+        /// </summary>
+        public int StockInStatusValue { get { return (int)StockInStatus; } }
+        /// <summary>
         /// 备注
         /// </summary>
         public string Remark { get; set; }
+        /// <summary>
+        /// 创建人
+        /// </summary>
+        public string CreateBy { get; set; }
+        /// <summary>
+        /// 创建时间
+        /// </summary>
+        public string CreateDate { get; set; }
         /// <summary>
         /// 最后修改人
         /// </summary>
@@ -82,9 +94,21 @@ namespace YL.Core.Dto
         /// </summary>
         public StockInStatus Status { get; set; }
         /// <summary>
+        /// 状态值
+        /// </summary>
+        public int StatusValue { get { return (int)Status; } }
+        /// <summary>
         /// 备注
         /// </summary>
         public string Remark { get; set; }
+        /// <summary>
+        /// 创建人
+        /// </summary>
+        public string CreateBy { get; set; }
+        /// <summary>
+        /// 创建时间
+        /// </summary>
+        public string CreateDate { get; set; }
         /// <summary>
         /// 最后修改人
         /// </summary>

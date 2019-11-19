@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using WebApiClient;
 using YL.Core.Dto;
 using YL.Core.Entity;
+using YL.Utils.Pub;
 
 namespace WMSCore.Outside
 {
@@ -94,6 +95,16 @@ namespace WMSCore.Outside
         public Task<RouteData<OutsideInventoryRecordDto[]>> QueryInventoryRecord(long? reservoirAreaId, long? storageRackId,long? inventoryBoxId, long? materialId, int pageIndex, int pageSize, string search, string[] order, string datemin, string datemax)
         {
             return _apiProxy.QueryInventoryRecord(reservoirAreaId, storageRackId, inventoryBoxId,materialId, pageIndex, pageSize, search, order, datemin, datemax);
+        }
+
+        public Task<RouteData<OutsideStockOutQueryResult[]>> QueryStockOutList(long? stockOutType, StockOutStatus? stockOutStatus, int pageIndex, int pageSize, string search, string[] order, string datemin, string datemax)
+        {
+            return _apiProxy.QueryStockOutList(stockOutType, stockOutStatus, pageIndex, pageSize, search, order, datemin, datemax);
+        }
+
+        public Task<RouteData<OutsideStockInQueryResult[]>> QueryStockInList(long? stockInType, StockInStatus? stockInStatus, int pageIndex, int pageSize, string search, string[] order, string datemin, string datemax)
+        {
+            return _apiProxy.QueryStockInList(stockInType, stockInStatus, pageIndex, pageSize, search, order, datemin, datemax);
         }
 
         public void Dispose()

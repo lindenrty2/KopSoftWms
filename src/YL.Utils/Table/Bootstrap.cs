@@ -17,6 +17,20 @@
             /// 页面显示行数
             /// </summary>
             public int limit { get; set; }
+            /// <summary>
+            /// 页码
+            /// </summary>
+            public int pageIndex
+            {
+                get
+                {
+                    if (offset != 0)
+                    {
+                        return offset / limit + 1;
+                    }
+                    return 1;
+                }
+            }
 
             /// <summary>
             /// 排序字段

@@ -72,5 +72,13 @@ namespace YL.Core.Dto
         {
             public string Status { get; set; }
         }
+
+        /// <summary>
+        /// Mes任务
+        /// </summary>
+        public class MesTaskBootstrapParams : BootstrapParams
+        {
+
+        }
     }
 }
