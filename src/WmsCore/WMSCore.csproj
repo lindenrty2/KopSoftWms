@@ -151,6 +151,9 @@
     <Content Update="Views\Material\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\MesTask\Detail.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\Reservoirarea\Add.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>

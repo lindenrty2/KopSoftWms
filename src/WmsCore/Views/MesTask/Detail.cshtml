@@ -1,0 +1,79 @@
+﻿@using YL.Utils.Json;
+@{
+    Layout = "_LayoutH";
+    @model YL.Core.Entity.Wms_mestask
+}
+@section styles{
+    <link rel="stylesheet" href="~/css/bootstrap-select.min.css" />
+}
+<div id="app" v-cloak>
+    <table id="bootstraptable" class="table table-bordered text-nowrap table-hover"></table>
+</div>
+
+@section scripts{
+    <script src="~/js/bootstrap-select.min.js"></script>
+    <script src="~/js/defaults-zh_CN.min.js"></script>
+    <script src="~/js/common.wms.js"></script>
+    <script>
+
+
+        var app = new Vue({
+            el: "#app",
+            data: {
+                MesTaskId: "@Model.MesTaskId",
+                MesTaskType:"@Model.MesTaskType",
+                urlM: ''
+            },
+            mounted: function () {
+                _self = this;
+                _self.$nextTick(function () {
+                    _self.$refs.storeId = '@ViewData["currentStoreId"]';
+                    _self.$refs.datemin = "1900-01-01";
+                    _self.$refs.datemax = "2099-01-01";
+                    var obj = null;
+
+                    if (_self.MesTaskType == "1") {
+                        obj = [{ checkbox: true, visible: true },
+                            { field: 'WarehouseName', title: '仓库名', visible: true },
+                            { field: 'StockInId', title: '入库任务Id', align: 'center', sortable: true },
+                            { field: 'StockInNo', title: '入库编号', align: 'center', sortable: true },
+                            { field: 'OrderNo', title: '生产令号', align: 'center', sortable: true },
+                            { field: 'StockInTypeName', title: '入库类型名', align: 'center', sortable: true },
+                            { field: 'StockInStatus', title: '入库状态', align: 'center', sortable: true, formatter: StockInStatusFormatter }, 
+                            { field: 'StockInTypeName', title: '入库类型名', align: 'center', sortable: true },
+                            { field: 'Remark', title: '备注', align: 'center', sortable: true },
+                            { field: 'ModifiedBy', title: '更新者', align: 'center', sortable: true },
+                            { field: 'ModifiedDate', title: '最后更新时间', align: 'center', sortable: true }
+                        ];
+                    }
+                    else {
+                        obj = [{ checkbox: true, visible: true },
+                            { field: 'WarehouseName', title: '仓库名', visible: true },
+                            { field: 'StockOutId', title: '出库任务Id', align: 'center', sortable: true },
+                            { field: 'StockOutNo', title: '出库编号', align: 'center', sortable: true },
+                            { field: 'OrderNo', title: '生产令号', align: 'center', sortable: true },
+                            { field: 'StockOutTypeName', title: '出库类型名', align: 'center', sortable: true },
+                            { field: 'StockOutStatus', title: '出库状态', align: 'center', sortable: true, formatter: StockOutStatusFormatter }, 
+                            { field: 'StockOutTypeName', title: '出库类型名', align: 'center', sortable: true },
+                            { field: 'Remark', title: '备注', align: 'center', sortable: true },
+                            { field: 'ModifiedBy', title: '更新者', align: 'center', sortable: true },
+                            { field: 'ModifiedDate', title: '最后更新时间', align: 'center', sortable: true }
+                        ];
+                    }
+                    var qParams = {
+                        id: "@Model.MesTaskIdStr",
+                        mesTaskType: "@Model.MesTaskType"
+                    };
+                    yui.table("bootstraptable", "/MesTask/DetailList", obj, "GET", "StockOutId", true, qParams);
+                })
+            },
+            computed: {
+                count: function () {
+                    return this.strLength(this.Remark, false);
+                }
+            },
+            watch: {},
+            methods: {}
+        });
+    </script>
+}

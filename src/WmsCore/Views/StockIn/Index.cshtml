@@ -70,7 +70,7 @@
                             </button>
                             <button id="btn_edit" v-on:click="editL" type="button" class="btn btn-default">
                                 <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>修改
-                            </button> 
+                            </button>
                             <button id="btn_delete" v-on:click="deleteL" type="button" class="btn btn-default">
                                 <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>删除
                             </button>
@@ -84,6 +84,7 @@
 </div>
 @section scripts{
     <script src="~/lib/lodop/LodopFuncs.js"></script>
+    <script src="~/js/common.wms.js"></script>
     <script type="text/javascript">
         var app = new Vue({
             el: '#app',
@@ -219,22 +220,7 @@
                         title: '状态',
                         align: 'center',
                         sortable: true,
-                        formatter: function (value, row, index) {
-                            switch (value) {
-                                case 'task_canceled':
-                                    return '<span class="label label-danger radius">入库任务取消</span>';
-                                case 'initial':
-                                    return '<span class="label label-default radius">入库任务创建中</span>'; 
-                                case 'task_confirm':
-                                    return '<span class="label label-info radius">入库任务确认</span>'; 
-                                case 'task_working':
-                                    return '<span class="label label-primary radius">入库中</span>';
-                                case 'task_finish':
-                                    return '<span class="label label-success radius">入库完成</span>'; 
-                                default:
-                                    return '<span class="label label-success radius">-</span>';
-                            }
-                        }
+                        formatter: StockInStatusFormatter
                     }, {
                         field: 'Remark',
                         align: 'center',
@@ -339,23 +325,8 @@
                         title: '状态',
                         align: 'center',
                         sortable: true,
-                        formatter: function (value, row, index) {
-                            switch (value) {
-                                case 'task_canceled':
-                                    return '<span class="label label-danger radius">已取消</span>';
-                                case 'initial':
-                                    return '<span class="label label-default radius">待审核</span>';
-                                case 'task_confirm':
-                                    return '<span class="label label-info radius">待操作</span>';
-                                case 'task_working':
-                                    return '<span class="label label-primary radius">入库中</span>';
-                                case 'task_finish':
-                                    return '<span class="label label-success radius">入库完成</span>';
-                                default:
-                                    return '<span class="label label-success radius">-</span>';
-                            }
-                        }
-                    }, 
+                        formatter: StockInStatusFormatter
+                    },
                     {
                         field: 'Remark',
                         align: 'center',
@@ -369,7 +340,7 @@
                         field: 'CreateDate',
                         align: 'center',
                         title: '创建时间',
-                        sortable: true 
+                        sortable: true
                     }, {
                         field: 'ModifiedBy',
                         align: 'center',
@@ -379,7 +350,7 @@
                         field: 'ModifiedDate',
                         title: '修改时间',
                         align: 'center',
-                        sortable: true 
+                        sortable: true
                     }];
 
                     yui.table2("bootstraptable", "/StockIn/List", "/StockIn/ListDetail?storeId=@ViewData["currentStoreId"]", obj, objSub, "POST", "StockInId", "StockInId", true, qParams);
@@ -391,7 +362,7 @@
                 addDetailL: function (val) {
                     yui.layershow("入库明细", "/StockIn/Detail?storeId=@ViewData["currentStoreId"]&pid=" + val, 600, 500);
                 },
-                workL: function (val,no) { 
+                workL: function (val,no) {
                     yui.layershow("入库操作(" + no + ")", "/StockIn/Work?storeId=@ViewData["currentStoreId"]&pid=" + val, 1600, 900);
                 },
                 htmlL: function (val, type) {

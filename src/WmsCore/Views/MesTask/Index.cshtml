@@ -39,6 +39,7 @@
     </section>
 </div>
 @section scripts{
+    <script src="~/js/common.wms.js"></script>
     <script type="text/javascript">
         var app = new Vue({
             el: '#app',
@@ -83,6 +84,22 @@
                         visible: true
                     },
                     {
+                        field: 'StockInStatusValue',
+                        title: '操作',
+                        align: 'center',
+                        sortable: true,
+                        formatter: function (value, row, index) {
+                            var html = [];
+                            html.push('<button id="showDetailL" type="button" class="btn btn-link" style="margin-top:-8px;">详细</button>');
+                            return html.join('');
+                        },
+                        events: {
+                            'click #showDetailL': function (e, value, row, index) {
+                                app.showDetailL(row.MesTaskIdStr);
+                            }
+                        },
+                    },
+                    {
                         field: 'MesTaskId',
                         title: 'Id',
                         visible: false
@@ -118,8 +135,7 @@
                         title: '作业区',
                         align: 'center',
                         sortable: true
-                    }
-                    ,
+                    },
                     {
                         field: 'SuppliesKinds',
                         align: 'center',
@@ -185,6 +201,9 @@
                             layer.alert("上传失败", { icoon: 3, skin: "layer-ext-moon" });
                         }
                     })
+                },
+                showDetailL: function (id) {
+                    yui.layershow("任务详细", "/MesTask/Detail?id=" + id, 1400, 600);
                 },
                 importL: function () {
                     var _self = this;

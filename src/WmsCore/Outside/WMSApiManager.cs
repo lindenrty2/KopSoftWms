@@ -1,6 +1,7 @@
 ﻿using IServices.Outside;
 using Services.Outside;
 using SqlSugar;
+using System;
 using System.Collections.Generic;
 using YL.Core.Entity;
 
@@ -39,6 +40,15 @@ namespace WMSCore.Outside
         {
             _warehouseMap.Add(warehouse.WarehouseId.ToString(),warehouse);
         }
-         
+
+        public static IWMSApiProxy[] GetAll(ISqlSugarClient client)
+        {
+            List<IWMSApiProxy> accessorList = new List<IWMSApiProxy>();
+            foreach (KeyValuePair<string,Wms_warehouse> keyValuePair in _warehouseMap)
+            {
+                accessorList.Add(Get(keyValuePair.Key, client));
+            }
+            return accessorList.ToArray();
+        }
     }
 }
