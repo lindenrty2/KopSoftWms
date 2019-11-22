@@ -84,7 +84,7 @@ namespace KopSoftWms.Controllers
             //return Content(json);
 
             IWMSApiProxy wmsAccessor = WMSApiManager.Get(storeId.ToString(), _client);
-            RouteData<OutsideStockInQueryResult[]> result = await wmsAccessor.QueryStockInList(null, null, 1, 20, text, new string[0], null, null);
+            RouteData<OutsideStockOutQueryResult[]> result = await wmsAccessor.QueryStockOutList(null, null, 1, 20, text, new string[0], null, null);
             if (!result.IsSccuess)
             {
                 return new PageGridData().JilToJson();
@@ -184,7 +184,7 @@ namespace KopSoftWms.Controllers
             //return Content(sd);
 
             IWMSApiProxy wmsAccessor = WMSApiManager.Get(bootstrap.storeId.ToString(), _client);
-            RouteData<OutsideStockInQueryResult[]> result = await wmsAccessor.QueryStockInList(null, null, bootstrap.pageIndex, bootstrap.limit, bootstrap.search, bootstrap.order.Split(","), bootstrap.datemin, bootstrap.datemax);
+            RouteData<OutsideStockOutQueryResult[]> result = await wmsAccessor.QueryStockOutList(null, null, bootstrap.pageIndex, bootstrap.limit, bootstrap.search, bootstrap.order.Split(","), bootstrap.datemin, bootstrap.datemax);
             if (!result.IsSccuess)
             {
                 return new PageGridData().JilToJson();

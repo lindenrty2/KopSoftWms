@@ -8,6 +8,7 @@ namespace YL.Core.Entity
 {
     public class Wms_mestask
     {
+        public string MesTaskIdStr { get { return MesTaskId.ToString(); } }
         /// <summary>
         /// MES任务Id
         /// </summary>

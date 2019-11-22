@@ -88,9 +88,9 @@ namespace WMSCore.Controllers
             if (mesTaskType == MesTaskTypes.StockIn)
             {
                 List<OutsideStockInQueryResult> totalResult = new List<OutsideStockInQueryResult>();
-                foreach (IWMSApiProxy proxy in proxies)
+                foreach (IWMSApiAccessor proxy in proxies)
                 {
-                    Wms_warehouse warehouse = ((IWMSApiAccessor)proxy).Warehouse;
+                    Wms_warehouse warehouse = proxy.Warehouse;
                     RouteData<OutsideStockInQueryResult[]> result = await proxy.QueryStockInList(null, null, 1, 100, null, new string[0], null, null);
                     foreach (OutsideStockInQueryResult item in result.Data)
                     {

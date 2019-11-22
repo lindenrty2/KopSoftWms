@@ -201,17 +201,6 @@
                         title: '出库类型',
                         align: 'center',
                         sortable: true
-                    }
-                        , {
-                        field: 'CustomerNo',
-                        title: '客户编号',
-                        align: 'center',
-                        sortable: true
-                    }, {
-                        field: 'CustomerName',
-                        title: '客户名称',
-                        align: 'center',
-                        sortable: true
                     },
                     {
                         field: 'StockOutStatus',
@@ -232,10 +221,7 @@
                         field: 'CreateDate',
                         align: 'center',
                         title: '创建时间',
-                        sortable: true,
-                        formatter: function (value, row, index) {
-                            return _self.jsonDateFormat(value);
-                        }
+                        sortable: true
                     }, {
                         field: 'UName',
                         align: 'center',
@@ -245,10 +231,7 @@
                         field: 'ModifiedDate',
                         title: '修改时间',
                         align: 'center',
-                        sortable: true,
-                        formatter: function (value, row, index) {
-                            return _self.jsonDateFormat(value);
-                        }
+                        sortable: true
                     }];
                     var qParams = {
                         StockOutStatus: _self.StockOutStatus,

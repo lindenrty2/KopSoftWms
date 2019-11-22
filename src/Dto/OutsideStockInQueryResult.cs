@@ -7,6 +7,7 @@ namespace YL.Core.Dto
 {
     public class OutsideStockInQueryResult
     {
+        public string WarehouseName { get; set; }
         /// <summary>
         ///  对接用入库唯一Id
         /// </summary>
@@ -59,8 +60,6 @@ namespace YL.Core.Dto
         /// 详细进度列表
         /// </summary>
         public object[] Details { get; set; }
-        
-
     }
 
     public class OutsideStockInQueryResultDetail
