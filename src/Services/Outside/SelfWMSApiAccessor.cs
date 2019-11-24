@@ -11,7 +11,7 @@ using YL.Utils.Pub;
 
 namespace Services.Outside
 {
-    public class SelfWMSApiAccessor : IWMSApiProxy
+    public class SelfWMSApiAccessor : IWMSApiAccessor
     {
         private ISqlSugarClient _sqlClient;
         private Wms_warehouse _warehouse;
@@ -710,6 +710,7 @@ namespace Services.Outside
                     MaterialTypeName = typeDict.DictName,
                     WarehouseId = _warehouse.WarehouseId,
                     Unit = unitDict.DictId,
+                    UnitName = unitDict.DictName,
                     CreateBy = PubConst.InterfaceUserId,
                     CreateUser = PubConst.InterfaceUserName,
                     CreateDate = DateTime.Now,

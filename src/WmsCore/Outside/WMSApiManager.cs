@@ -9,9 +9,9 @@ namespace WMSCore.Outside
 {
     public class WMSApiManager
     {
-        public static Dictionary<string, IWMSApiProxy> _instanceMap = new Dictionary<string, IWMSApiProxy>();
+        public static Dictionary<string, IWMSApiAccessor> _instanceMap = new Dictionary<string, IWMSApiAccessor>();
         public static Dictionary<string, Wms_warehouse> _warehouseMap = new Dictionary<string, Wms_warehouse>();
-        public static IWMSApiProxy Get(string key,ISqlSugarClient sqlSugar)
+        public static IWMSApiAccessor Get(string key,ISqlSugarClient sqlSugar)
         {
             if(_instanceMap.ContainsKey(key))
             {
@@ -22,7 +22,7 @@ namespace WMSCore.Outside
                 return null;
             }
             Wms_warehouse warehouse = _warehouseMap[key];
-            IWMSApiProxy accessor = null;
+            IWMSApiAccessor accessor = null;
             if (string.IsNullOrWhiteSpace(warehouse.IFAddress))
             {
                 accessor = new SelfWMSApiAccessor(warehouse,sqlSugar);
@@ -41,9 +41,9 @@ namespace WMSCore.Outside
             _warehouseMap.Add(warehouse.WarehouseId.ToString(),warehouse);
         }
 
-        public static IWMSApiProxy[] GetAll(ISqlSugarClient client)
+        public static IWMSApiAccessor[] GetAll(ISqlSugarClient client)
         {
-            List<IWMSApiProxy> accessorList = new List<IWMSApiProxy>();
+            List<IWMSApiAccessor> accessorList = new List<IWMSApiAccessor>();
             foreach (KeyValuePair<string,Wms_warehouse> keyValuePair in _warehouseMap)
             {
                 accessorList.Add(Get(keyValuePair.Key, client));

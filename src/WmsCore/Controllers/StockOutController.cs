@@ -83,7 +83,7 @@ namespace KopSoftWms.Controllers
             //var json = _customerServices.PageList(bootstrap);
             //return Content(json);
 
-            IWMSApiProxy wmsAccessor = WMSApiManager.Get(storeId.ToString(), _client);
+            IWMSApiAccessor wmsAccessor = WMSApiManager.Get(storeId.ToString(), _client);
             RouteData<OutsideStockOutQueryResult[]> result = await wmsAccessor.QueryStockOutList(null, null, 1, 20, text, new string[0], null, null);
             if (!result.IsSccuess)
             {
@@ -183,7 +183,7 @@ namespace KopSoftWms.Controllers
             //var sd = _stockoutServices.PageList(bootstrap);
             //return Content(sd);
 
-            IWMSApiProxy wmsAccessor = WMSApiManager.Get(bootstrap.storeId.ToString(), _client);
+            IWMSApiAccessor wmsAccessor = WMSApiManager.Get(bootstrap.storeId.ToString(), _client);
             RouteData<OutsideStockOutQueryResult[]> result = await wmsAccessor.QueryStockOutList(null, null, bootstrap.pageIndex, bootstrap.limit, bootstrap.search, bootstrap.order.Split(","), bootstrap.datemin, bootstrap.datemax);
             if (!result.IsSccuess)
             {
@@ -204,7 +204,7 @@ namespace KopSoftWms.Controllers
             //var sd = _stockoutdetailServices.PageList(pid);
             //return Content(sd);
 
-            IWMSApiProxy wmsAccessor = WMSApiManager.Get(storeId.ToString(), _client);
+            IWMSApiAccessor wmsAccessor = WMSApiManager.Get(storeId.ToString(), _client);
             RouteData<OutsideStockOutQueryResult> result = await wmsAccessor.QueryStockOut(SqlFunc.ToInt64(pid));
             if (!result.IsSccuess)
             {

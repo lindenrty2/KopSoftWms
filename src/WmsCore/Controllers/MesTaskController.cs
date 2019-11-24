@@ -83,7 +83,7 @@ namespace WMSCore.Controllers
             {
                 return "";
             }
-            IWMSApiProxy[] proxies = WMSApiManager.GetAll(_client);
+            IWMSApiAccessor[] proxies = WMSApiManager.GetAll(_client);
 
             if (mesTaskType == MesTaskTypes.StockIn)
             {

@@ -65,7 +65,7 @@
                 datemin: '',
                 datemax: '',
                 StorageRackId: '',
-                storeId: '0'
+                storeId: @ViewData["currentStoreId"]
             },
             mounted: function () {
                 var _self = this;
@@ -172,10 +172,7 @@
                         field: 'CreateDate',
                         align: 'center',
                         title: '创建时间',
-                        sortable: true,
-                        formatter: function (value, row, index) {
-                            return _self.jsonDateFormat(value);
-                        }
+                        sortable: true
                     }, {
                         field: 'UName',
                         align: 'center',
@@ -185,10 +182,7 @@
                         field: 'ModifiedDate',
                         title: '修改时间',
                         align: 'center',
-                        sortable: true,
-                        formatter: function (value, row, index) {
-                            return _self.jsonDateFormat(value);
-                        }
+                        sortable: true
                     }];
                     //var qParams = {
                     //    StorageRackId: _self.StorageRackId

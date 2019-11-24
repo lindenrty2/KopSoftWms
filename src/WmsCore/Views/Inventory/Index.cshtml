@@ -91,7 +91,7 @@
                 MaterialId: '',
                 MaterialList: [],
                 url:'',
-                storeId:'0'
+                storeId:'@ViewData["currentStoreId"]'
             },
             mounted: function () {
                 var _self = this;
@@ -131,9 +131,9 @@
                 searchMaterial: function (val, type) {
                     var _self = this;
                     if (type === 1) {
-                        _self.url = "/Material/Search";
+                        _self.url = "/Material/Search=" + _self.storeId;
                     } else {
-                        _self.url = "/Material/Search?text=" + val;
+                        _self.url = "/Material/Search?storeId=" + _self.storeId + "&text=" + val;
                     }
                     yui.$axiosget(_self.url).then(function (res) {
                         _self.MaterialList = res.data.rows;
@@ -258,15 +258,15 @@
                     yui.table("bootstraptable", "/Inventory/List", obj, "POST", "InventoryId", true, qParams);
                 },
                 searchL: function () {
-                    var qParams = {
-                        StorageRackId: _self.StorageRackId,
-                        MaterialId: _self.MaterialId
-                    };
-                    var query = {
-                        silent: true,
-                        query: qParams
-                    };
-                    $("#bootstraptable").bootstrapTable('refresh', query);
+                    //var qParams = {
+                    //    StorageRackId: _self.StorageRackId,
+                    //    MaterialId: _self.MaterialId
+                    //};
+                    //var query = {
+                    //    silent: true,
+                    //    query: qParams
+                    //};
+                    $("#bootstraptable").bootstrapTable('refresh'); //query
                 },
             }
         });

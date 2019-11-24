@@ -26,11 +26,11 @@ namespace InterfaceMocker.WindowUI.WebApi
         /// </summary>
         /// <param name="result"></param>
         /// <returns></returns>
-        [HttpPost("confirmBackStock")]
+        [HttpPost("ConfirmBalance")]
         ITask<ConfirmBackStockResult> ConfirmBackStock([JsonContent]WCSTaskResult result);
 
         /// <summary>
-        /// 确认归库完成
+        /// 物流控制
         /// </summary>
         /// <param name="result"></param>
         /// <returns></returns>

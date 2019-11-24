@@ -76,6 +76,7 @@
 @section scripts{
     <script src="~/js/bootstrap-select.min.js"></script>
     <script src="~/js/defaults-zh_CN.min.js"></script>
+    <script src="~/js/common.wms.js"></script>
     <script type="text/javascript">
 
         $(function () {
@@ -164,148 +165,49 @@
                 },
                 loadL: function () {
                     _self = this;
-                    var obj = [{
-                        checkbox: true,             //是否显示复选框
-                        visible: true
-                    },
-                    {
-                        field: 'InventoryBoxId',
-                        title: 'Id',
-                        visible: false
-                    },
-                    {
-                        field: '',
-                        title: '操作',
-                        align: 'center',
-                        sortable: true,
-                        formatter: function (value, row, index) {
-                            var html = [];
-                            html.push('<button id="ViewDetailL" type="button" class="btn btn-link" style="margin-top:-8px;margin-left:-10px;">详细</button>');
-                            if (row.Status == 1) {
-                                html.push('<button id="OutL" type="button" class="btn btn-link" style="margin-top:-8px;margin-left:-10px;">出库</button>');
-                            }
-                            else if(row.Status == 3){
-                                html.push('<button id="BackL" type="button" class="btn btn-link" style="margin-top:-8px;margin-left:-10px;">归库</button>');
-                            }
-                            return html.join('');
-                        },
-                        events: {
-                            'click #ViewDetailL': function (e, value, row, index) {
-                                app.ShowDetailL(row.InventoryBoxId);
+                    var obj = [
+                        { checkbox: true, visible: true },
+                        { field: 'InventoryBoxId', title: 'Id', visible: false },
+                        {
+                            field: '', title: '操作', align: 'center', sortable: true,
+                            formatter: function (value, row, index) {
+                                var html = [];
+                                html.push('<button id="ViewDetailL" type="button" class="btn btn-link" style="margin-top:-8px;margin-left:-10px;">详细</button>');
+                                if (row.Status == 1 || row.Status == 'InPosition') {
+                                    html.push('<button id="OutL" type="button" class="btn btn-link" style="margin-top:-8px;margin-left:-10px;">出库</button>');
+                                }
+                                else if (row.Status == 3 || row.Status == 'Outed') {
+                                    html.push('<button id="BackL" type="button" class="btn btn-link" style="margin-top:-8px;margin-left:-10px;">归库</button>');
+                                }
+                                return html.join('');
                             },
-                            'click #OutL': function (e, value, row, index) {
-                                app.OutL(row.InventoryBoxId);
+                            events: {
+                                'click #ViewDetailL': function (e, value, row, index) {
+                                    app.ShowDetailL(row.InventoryBoxId);
+                                },
+                                'click #OutL': function (e, value, row, index) {
+                                    app.OutL(row.InventoryBoxId);
+                                },
+                                'click #BackL': function (e, value, row, index) {
+                                    app.BackL(row.InventoryBoxId);
+                                }
                             },
-                            'click #BackL': function (e, value, row, index) {
-                                app.BackL(row.InventoryBoxId);
-                            }
                         },
-                    },
-                    {
-                        field: 'InventoryBoxNo',
-                        title: '料箱编号',
-                        align: 'center',
-                        sortable: true
-                    },
-                    {
-                        field: 'InventoryBoxName',
-                        title: '料箱名称',
-                        align: 'center',
-                        sortable: true
-                    },
-                    {
-                        field: 'Row',
-                        title: '行',
-                        align: 'center',
-                        sortable: true
-                    },
-                    {
-                        field: 'Floor',
-                        title: '排',
-                        align: 'center',
-                        sortable: true
-                    },
-                    {
-                        field: 'Column',
-                        title: '列',
-                        align: 'center',
-                        sortable: true
-                    },
-                    {
-                        field: 'Size',
-                        title: '料箱格数',
-                        align: 'center',
-                        sortable: true
-                    },
-                    {
-                        field: 'ReservoirAreaName',
-                        title: '库区名称',
-                        align: 'center',
-                        sortable: true
-                    },
-                    {
-                        field: 'StorageRackName',
-                        title: '货架名称',
-                        align: 'center',
-                        sortable: true
-                    },
-                    {
-                        field: 'Status',
-                        title: '状态',
-                        align: 'center',
-                        sortable: true,
-                        formatter: function (value, row, index) {
-                            if (value == 'None') {
-                                return "未部署";
-                            }
-                            else if (value == 'InPosition') {
-                                return "在库";
-                            }
-                            else if (value == 'Outing') {
-                                return "出库中";
-                            }
-                            else if (value == 'Outed') {
-                                return "出库完成";
-                            }
-                            else if (value == 'Backing') {
-                                return "归库中";
-                            }
-                            else {
-                                return "异常";
-                            }
-                        }
-                    },
-                    {
-                        field: 'Remark',
-                        align: 'center',
-                        title: '备注'
-                    }, {
-                        field: 'CName',
-                        title: '创建人',
-                        align: 'center',
-                        sortable: true
-                    }, {
-                        field: 'CreateDate',
-                        align: 'center',
-                        title: '创建时间',
-                        sortable: true,
-                        formatter: function (value, row, index) {
-                            return _self.jsonDateFormat(value);
-                        }
-                    }, {
-                        field: 'UName',
-                        align: 'center',
-                        title: '修改人',
-                        sortable: true
-                    }, {
-                        field: 'ModifiedDate',
-                        title: '修改时间',
-                        align: 'center',
-                        sortable: true,
-                        formatter: function (value, row, index) {
-                            return _self.jsonDateFormat(value);
-                        }
-                    }];
+                        { field: 'InventoryBoxNo', title: '料箱编号', align: 'center', sortable: true },
+                        { field: 'InventoryBoxName', title: '料箱名称', align: 'center', sortable: true },
+                        { field: 'Row', title: '行', align: 'center', sortable: true },
+                        { field: 'Floor', title: '排', align: 'center', sortable: true },
+                        { field: 'Column', title: '列', align: 'center', sortable: true },
+                        { field: 'Size', title: '料箱格数', align: 'center', sortable: true },
+                        { field: 'ReservoirAreaName', title: '库区名称', align: 'center', sortable: true },
+                        { field: 'StorageRackName', title: '货架名称', align: 'center', sortable: true },
+                        { field: 'Status', title: '状态', align: 'center', sortable: true, formatter: InventoryBoxStatusFormatter },
+                        { field: 'Remark', align: 'center', title: '备注' },
+                        { field: 'CreateUser', title: '创建人', align: 'center', sortable: true },
+                        { field: 'CreateDate', align: 'center', title: '创建时间', sortable: true, formatter: DateTimeFormatter },
+                        { field: 'ModifiedUser', align: 'center', title: '修改人', sortable: true },
+                        { field: 'ModifiedDate', title: '修改时间', align: 'center', sortable: true, formatter: DateTimeFormatter }
+                    ];
                     var qParams = {
                     };
                     yui.table("bootstraptable", "/InventoryBox/List", obj, "POST", "InventoryBoxId", true, qParams);
@@ -354,21 +256,21 @@
                         layer.alert("请选中行", { icoon: 3, skin: "layer-ext-moon" });
                     }
                 },
-                ShowDetailL: function (val) { 
+                ShowDetailL: function (val) {
                     yui.layershow("料箱详细", "/InventoryBox/Detail?storeId=@ViewData["currentStoreId"]&id=" + val, 1000, 800);
                 },
                 OutL: function (val) {
                     var _self = this;
-                    var index = layer.confirm("您确定要出库吗？", { btn: ["确定", "取消"] }, function () { 
+                    var index = layer.confirm("您确定要出库吗？", { btn: ["确定", "取消"] }, function () {
                         var data = {
                             inventoryBoxId: val,
                         };
                         yui.$axiospostform('/InventoryBox/DoInventoryBoxOut', data)
                             .then(function (response) {
                                 if (response.data.isSccuess) {
-                                    layer.msg(response.data.message, { icon: 1, time: 1000 }); 
+                                    layer.msg(response.data.message, { icon: 1, time: 1000 });
                                 } else {
-                                    layer.msg(response.data.message || errorMsg, { icon: 5 }); 
+                                    layer.msg(response.data.message || errorMsg, { icon: 5 });
                                 }
                                 _self.searchL();
                                 layer.close(index);
@@ -378,7 +280,7 @@
                             });
                     });
                 },
-                BackL: function (val) { 
+                BackL: function (val) {
                     yui.layershow("料箱归库操作", "/InventoryBox/BoxBack?storeId=@ViewData["currentStoreId"]&inventoryBoxId=" + val, 1000, 800);
                 },
             }

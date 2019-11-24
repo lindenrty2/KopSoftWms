@@ -44,6 +44,14 @@ namespace WMSCore.Outside
             return "OK";
         }
 
+
+        [HttpPost("getLocation")]
+        public Task<GetLocationResult> GetLocation([FromBody]GetLocationArg result)
+        {
+            return Task.FromResult(new GetLocationResult());
+        }
+
+
         /// <summary>
         /// 确认出库完成
         /// </summary>
@@ -110,7 +118,7 @@ namespace WMSCore.Outside
         /// </summary>
         /// <param name="result"></param>
         /// <returns></returns>
-        [HttpPost("confirmBackStock")]
+        [HttpPost("confirmBalance")]
         public Task<ConfirmBackStockResult> ConfirmBackStock([FromBody]WCSTaskResult result)
         {
             try

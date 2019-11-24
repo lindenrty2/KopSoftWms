@@ -87,78 +87,21 @@
             methods: {
                 loadL: function () {
                     _self = this;
-                    var obj = [{
-                        checkbox: true,             //是否显示复选框
-                        visible: true
-                    },
-                    {
-                        field: 'MaterialId',
-                        title: 'Id',
-                        visible: false
-                    }, {
-                        field: 'MaterialNo',
-                        title: '物料编号',
-                        align: 'center',
-                        sortable: true
-                    }, {
-                        field: 'MaterialName',
-                        title: '物料名称',
-                        align: 'center',
-                        sortable: true
-                    }, {
-                        field: 'MaterialType',
-                        title: '物料分类',
-                        align: 'center',
-                        sortable: true
-                    }, {
-                        field: 'Unit',
-                        title: '单位类别',
-                        align: 'center',
-                        sortable: true
-                    },
-                    {
-                        field: 'Qty',
-                        title: '安全库存',
-                        align: 'center',
-                        sortable: true
-                    },
-                    {
-                        field: 'WarehouseName',
-                        title: '所属仓库',
-                        align: 'center',
-                        sortable: true
-                    }
-                        , {
-                        field: 'Remark',
-                        align: 'center',
-                        title: '备注'
-                    }, {
-                        field: 'CName',
-                        title: '创建人',
-                        align: 'center',
-                        sortable: true
-                    }, {
-                        field: 'CreateDate',
-                        align: 'center',
-                        title: '创建时间',
-                        sortable: true,
-                        formatter: function (value, row, index) {
-                            return _self.jsonDateFormat(value);
-                        }
-                    }, {
-                        field: 'UName',
-                        align: 'center',
-                        title: '修改人',
-                        sortable: true
-                    }, {
-                        field: 'ModifiedDate',
-                        title: '修改时间',
-                        align: 'center',
-                        sortable: true,
-                        formatter: function (value, row, index) {
-                            return _self.jsonDateFormat(value);
-                        }
-                    }];
+                    var obj = [
+                        { checkbox: true, visible: true },
+                        { field: 'MaterialId', title: 'Id', visible: false },
+                        { field: 'MaterialNo', title: '物料编号', align: 'center', sortable: true },
+                        { field: 'MaterialName', title: '物料名称', align: 'center', sortable: true },
+                        { field: 'MaterialType', title: '物料分类', align: 'center', sortable: true },
+                        { field: 'Unit', title: '单位类别', align: 'center', sortable: true },
+                        //{ field: 'Qty', title: '安全库存', align: 'center', sortable: true },
+                        //{ field: 'WarehouseName', title: '所属仓库', align: 'center', sortable: true },
+                        { field: 'Remark', align: 'center', title: '备注' },
+                        { field: 'CName', title: '创建人', align: 'center', sortable: true },
+                        { field: 'CreateDate', align: 'center', title: '创建时间', sortable: true },
+                        { field: 'UName', align: 'center', title: '修改人', sortable: true },
+                        { field: 'ModifiedDate', title: '修改时间', align: 'center', sortable: true }
+                    ];
                     yui.table("bootstraptable", "/Material/List", obj, "POST", "StorageRackId");
                 },
                 showL: function () {

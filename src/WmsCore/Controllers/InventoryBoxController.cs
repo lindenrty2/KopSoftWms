@@ -49,7 +49,7 @@ namespace KopSoftWms.Controllers
         public async Task<IActionResult> Index()
         {
             long currentStoreId = (long)ViewData["currentStoreId"];
-            IWMSApiProxy wmsAccessor = WMSApiManager.Get(currentStoreId.ToString(),_client);
+            IWMSApiAccessor wmsAccessor = WMSApiManager.Get(currentStoreId.ToString(),_client);
             ViewBag.StorageRack = (await wmsAccessor.GetStorageRackList( null, 1, 100, null, null, null, null)).Data;
             //ViewBag.StorageRack = _storagerackServices.QueryableToList(c => c.WarehouseId == currentStoreId && c.IsDel == 1);
             return View();
@@ -59,7 +59,7 @@ namespace KopSoftWms.Controllers
         [OperationLog(LogType.select)]
         public async Task<string> List([FromForm]PubParams.InventoryBoxBootstrapParams bootstrap)
         {
-            IWMSApiProxy wmsAccessor = WMSApiManager.Get(bootstrap.storeId.ToString(), _client);
+            IWMSApiAccessor wmsAccessor = WMSApiManager.Get(bootstrap.storeId.ToString(), _client);
             RouteData<Wms_inventorybox[]> result = (await wmsAccessor.GetInventoryBoxList(null,null,bootstrap.pageIndex,bootstrap.limit,bootstrap.search,bootstrap.order.Split(","),bootstrap.datemin,bootstrap.datemax));
             if (!result.IsSccuess)
             {
@@ -172,8 +172,8 @@ namespace KopSoftWms.Controllers
 
         [HttpGet]
         public async Task<string> Search(long storeId, string text)
-        { 
-            IWMSApiProxy wmsAccessor = WMSApiManager.Get(storeId.ToString(), _client);
+        {
+            IWMSApiAccessor wmsAccessor = WMSApiManager.Get(storeId.ToString(), _client);
             RouteData<Wms_inventorybox[]> result = (await wmsAccessor.GetInventoryBoxList(null, null, 1, 20, text, null, null, null));
             if (!result.IsSccuess)
             {
@@ -268,7 +268,7 @@ namespace KopSoftWms.Controllers
                     Qty = i.Qty,
                     InventoryBoxId = i.InventoryBoxId.ToString(),
                     InventoryId = i.InventoryId.ToString(),
-                    OrderNo = i.OrderNo
+                    OrderNo = i.OrderNo, 
                 }).MergeTable();
                 var list = await query.ToListAsync();
                 return RouteData<InventoryDetailDto[]>.From(list.ToArray());
@@ -448,6 +448,7 @@ namespace KopSoftWms.Controllers
                 Data = null,
                 OperaterDate = DateTime.Now,
                 OperaterId = UserDto.UserId,
+                OperaterUser = UserDto.UserName,
                 Status = InventoryBoxTaskStatus.task_outing.ToByte()
             };
             if (!await SendWCSOutCommand(task))
@@ -459,6 +460,7 @@ namespace KopSoftWms.Controllers
 
             inventoryBox.Status = InventoryBoxStatus.Outing;
             inventoryBox.ModifiedBy = UserDto.UserId;
+            inventoryBox.ModifiedUser = UserDto.UserName;
             inventoryBox.ModifiedDate = DateTime.Now;
             _inventoryBoxServices.Update(inventoryBox);
 
@@ -807,7 +809,7 @@ namespace KopSoftWms.Controllers
         /// <summary>
         /// 归库
         /// </summary>
-        /// <param name="mode">1:基于入库单,2:基于出库单,3:手工</param>
+        /// <param name="mode">1:基于入库单,2:基于出库单,3:手工,4料箱离库</param>
         /// <param name="inventoryBoxTaskId"></param>
         /// <param name="details"></param>
         /// <returns></returns>
@@ -834,6 +836,10 @@ namespace KopSoftWms.Controllers
 
                 Wms_stockoutdetail[] stockoutdetails = mode != 3 ? GetStockOutDetails(inventoryBoxTaskId) : new Wms_stockoutdetail[0];
                 List<Wms_stockoutdetail> updatedStockoutdetails = new List<Wms_stockoutdetail>();
+
+
+
+                _client.BeginTran();
 
                 List<Wms_stockin> relationStockins = new List<Wms_stockin>(); 
                 foreach (InventoryDetailDto detail in details)
@@ -956,11 +962,9 @@ namespace KopSoftWms.Controllers
                     {
                         _client.RollbackTran();
                         return YL.Core.Dto.RouteData.From(PubMessages.E1021_INVENTORYRECORD_FAIL);
-                    }
-
-
-
+                    } 
                 }
+                //离库的情况下不发WCS命令
                 if (mode != 4)
                 {
                     if (!await SendWCSBackCommand(task))
@@ -969,8 +973,7 @@ namespace KopSoftWms.Controllers
                     }
                 }
 
-                _client.BeginTran();
-
+                //更新库存
                 foreach (Wms_inventory inventoriy in updatedInventories)
                 {
                     if(inventoriy.InventoryId == 0)
@@ -983,6 +986,7 @@ namespace KopSoftWms.Controllers
                         _inventoryServices.Update(inventoriy); 
                     }
                 }
+                //更新入库详细
                 foreach (Wms_stockindetail stockindetail in updatedStockindetails)
                 {
                     if(_client.Updateable(stockindetail).ExecuteCommand() == 0)
@@ -992,6 +996,7 @@ namespace KopSoftWms.Controllers
 
                     }
                 }
+                //更新出库详细
                 foreach (Wms_stockoutdetail stockoutdetial in updatedStockoutdetails)
                 {
                     if (_client.Updateable(stockoutdetial).ExecuteCommand() == 0)
@@ -1005,9 +1010,19 @@ namespace KopSoftWms.Controllers
                 task.OperaterId = UserDto.UserId;
                 task.OperaterDate = DateTime.Now; 
                 _inventoryBoxTaskServices.UpdateEntity(task);
+                 
+                if(mode == 4)
+                {
+                    inventoryBox.StorageRackId = null;
+                    inventoryBox.StorageRackName = "";
+                    inventoryBox.Status = InventoryBoxStatus.None;
+                }
+                else
+                {
+                    inventoryBox.Status = InventoryBoxStatus.Backing;
 
+                }
                 inventoryBox.UsedSize = inventories.Count;
-                inventoryBox.Status = mode == 4 ? InventoryBoxStatus.None : InventoryBoxStatus.Backing;
                 inventoryBox.ModifiedBy = UserDto.UserId;
                 inventoryBox.ModifiedDate = DateTime.Now; 
                 _inventoryBoxServices.UpdateEntity(inventoryBox);

@@ -149,10 +149,7 @@
                     var _self = this;
                     var inputNo = e.srcElement.value; 
                     if (inputNo.length == 0) { return; }
-                    else if (inputNo[0] == 'I') {
-                         
-                    }
-                    else {
+                    else if (IsMaterialNo(inputNo)) {
                         for (var i = 0; i < _self.tableData.length; i++) {
                             var material = _self.tableData[i];
                             if (material.materialNo == inputNo && material.orderNo ) {

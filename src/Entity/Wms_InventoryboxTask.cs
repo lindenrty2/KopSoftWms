@@ -45,13 +45,19 @@ namespace YL.Core.Entity
         public string Data { get; set; }
 
         /// <summary>
-        /// Desc:审核人
+        /// Desc:操作人
         /// Default:
         /// Nullable:True
         /// </summary>
         [SugarColumn(IsNullable = true)]
         public long? OperaterId { get; set; }
-
+        /// <summary>
+        /// Desc:操作人名
+        /// Default:
+        /// Nullable:True
+        /// </summary>
+        [SugarColumn(Length=60, IsNullable = true)]
+        public string OperaterUser { get; set; }
         /// <summary>
         /// Desc:操作时间
         /// Default:
@@ -61,13 +67,19 @@ namespace YL.Core.Entity
         public DateTime? OperaterDate { get; set; }
 
         /// <summary>
-        /// Desc:
+        /// Desc:修改人
         /// Default:
         /// Nullable:True
         /// </summary>
         [SugarColumn(IsNullable = true)]
         public long? ModifiedBy { get; set; }
-
+        /// <summary>
+        /// Desc:修改人名
+        /// Default:
+        /// Nullable:True
+        /// </summary>
+        [SugarColumn(Length = 60, IsNullable = true)]
+        public string ModifiedUser { get; set; }
         /// <summary>
         /// Desc:
         /// Default:

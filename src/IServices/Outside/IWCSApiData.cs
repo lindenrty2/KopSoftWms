@@ -6,6 +6,109 @@ using YL.Utils.Pub;
 
 namespace IServices.Outside
 {
+    /// <summary>
+    /// 获取库位参数
+    /// </summary>
+    public class GetLocationArg
+    {
+        /// <summary>
+        /// 可用通道，KEY是通道编号，value是通道当前任务数量
+        /// </summary>
+        Dictionary<string, int> DicChannel { get; set; }
+        /// <summary>
+        /// 托盘条码
+        /// </summary>
+        public string TrayBarcode { get; set; }
+        /// <summary>
+        /// 在没有高低货位区分时默认1
+        /// </summary>
+        public string Height { get; set; }
+        /// <summary>
+        /// 1=正常申请库位 2=满入申请库位 3=空车入库
+        /// </summary>
+        public string Type { get; set; }
+        /// <summary>
+        /// 区域
+        /// </summary>
+        public string Region { get; set; }
+        /// <summary>
+        ///  如果是满入申请，则需要将获取到的任务ID上传给WMS。正常申请则为空。
+        /// </summary>
+        public string TaskId { get; set; }
+        /// <summary>
+        /// 预留信息
+        /// </summary>
+        public string Other { get; set; }
+          
+
+    }
+
+    public class GetLocationResult
+    {
+        /// <summary>
+        /// 成功与否
+        /// </summary>
+        public bool Successd { get; set; }
+        /// <summary>
+        /// 返回code如果失败则返回失败原因
+        /// </summary>
+        public String ReasonCode { get; set; }
+        public String Reason { get; set; }
+        /// <summary>
+        /// 库位ID
+        /// </summary>
+        public String LocationId { get; set; }
+        /// <summary>
+        /// 库位编码
+        /// </summary>
+        public String LocationCode { get; set; }
+        /// <summary>
+        /// 库位排
+        /// </summary>
+        public String LocationRow { get; set; }
+        /// <summary>
+        /// 库位列
+        /// </summary>
+        public String LocationColumn { get; set; }
+        /// <summary>
+        /// 库位层
+        /// </summary>
+        public String LocationFloor { get; set; }
+        /// <summary>
+        /// 通道
+        /// </summary>
+        public String LocationChannel { get; set; }
+        /// <summary>
+        /// 入库口编码
+        /// </summary>
+        public String StationCode { get; set; }
+        /// <summary>
+        /// 任务ID唯一号，后续确认库存时需要反馈
+        /// </summary>
+        public String TaskId { get; set; }
+        /// <summary>
+        /// 标签卡条码
+        /// </summary>
+        public string LOTID { get; set; }
+        /// <summary>
+        /// 工装号
+        /// </summary>
+        public string TOOLNO { get; set; }
+        /// <summary>
+        /// 规格代码
+        /// </summary>
+        public string ITNBR { get; set; }
+        /// <summary>
+        /// 规格名称
+        /// </summary>
+        public string ITDSC { get; set; }
+        /// <summary>
+        /// 版本
+        /// </summary>
+        public string VERSION { get; set; }
+
+    }
+
     public class BackStockInfo
     {
         public string TaskId { get; set; }

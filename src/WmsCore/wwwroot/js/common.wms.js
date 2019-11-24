@@ -83,3 +83,27 @@ function StockOutStatusFormatter(value, row, index) {
     }
 }
 
+function InventoryBoxStatusFormatter(value, row, index) {
+    if (value == 'None') {
+        return "未部署";
+    }
+    else if (value == 'InPosition') {
+        return "在库";
+    }
+    else if (value == 'Outing') {
+        return "出库中";
+    }
+    else if (value == 'Outed') {
+        return "出库完成";
+    }
+    else if (value == 'Backing') {
+        return "归库中";
+    }
+    else {
+        return "异常";
+    }
+}
+
+function DateTimeFormatter (value, row, index) {
+    return _self.jsonDateFormat(value);
+}

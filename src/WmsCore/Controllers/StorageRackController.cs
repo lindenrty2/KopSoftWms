@@ -64,7 +64,7 @@ namespace KopSoftWms.Controllers
             //    .ToList();
             //return Content(json.JilToJson());
 
-            IWMSApiProxy wmsAccessor = WMSApiManager.Get(id.ToString(), _client);
+            IWMSApiAccessor wmsAccessor = WMSApiManager.Get(id.ToString(), _client);
             RouteData<Wms_reservoirarea[]> result = (await wmsAccessor.GetReservoirAreaList(1, 100, null, null, null, null));
             if (!result.IsSccuess)
             {
@@ -81,7 +81,7 @@ namespace KopSoftWms.Controllers
             //    .ToList();
             //return Content(json.JilToJson());
 
-            IWMSApiProxy wmsAccessor = WMSApiManager.Get(id.ToString(), _client);
+            IWMSApiAccessor wmsAccessor = WMSApiManager.Get(id.ToString(), _client);
             RouteData<Wms_reservoirarea[]> result = (await wmsAccessor.GetReservoirAreaList(1, 100, null, null, null, null));
             if (!result.IsSccuess)
             {
@@ -98,7 +98,7 @@ namespace KopSoftWms.Controllers
             //    .ToList();
             //return Content(json.JilToJson());
 
-            IWMSApiProxy wmsAccessor = WMSApiManager.Get(id.ToString(), _client);
+            IWMSApiAccessor wmsAccessor = WMSApiManager.Get(id.ToString(), _client);
             RouteData<Wms_storagerack[]> result = (await wmsAccessor.GetStorageRackList(SqlFunc.ToInt64(id), 1, 100, null, null, null, null));
             if (!result.IsSccuess)
             {
@@ -114,7 +114,7 @@ namespace KopSoftWms.Controllers
             //var sd = _storagerackServices.PageList(bootstrap);
             //return Content(sd);
 
-            IWMSApiProxy wmsAccessor = WMSApiManager.Get(bootstrap.storeId.ToString(), _client);
+            IWMSApiAccessor wmsAccessor = WMSApiManager.Get(bootstrap.storeId.ToString(), _client);
             RouteData<Wms_storagerack[]> result = await wmsAccessor.GetStorageRackList(null, bootstrap.pageIndex, bootstrap.limit, bootstrap.search, bootstrap.order.Split(","), bootstrap.datemin, bootstrap.datemax);
             if (!result.IsSccuess)
             {
@@ -211,7 +211,7 @@ namespace KopSoftWms.Controllers
                 search = text,
                 order = "desc"
             };
-            IWMSApiProxy wmsAccessor = WMSApiManager.Get(bootstrap.storeId.ToString(), _client);
+            IWMSApiAccessor wmsAccessor = WMSApiManager.Get(bootstrap.storeId.ToString(), _client);
             RouteData<Wms_storagerack[]> result = await wmsAccessor.GetStorageRackList(null, bootstrap.offset, bootstrap.limit, bootstrap.search, bootstrap.order.Split(","), bootstrap.datemin, bootstrap.datemax);
             if (!result.IsSccuess)
             {

@@ -164,7 +164,7 @@ namespace WMSCore.Outside
             {
                 try
                 {
-                    IWMSApiProxy proxy = WMSApiManager.Get(keyValue.Key.ToString(),_sqlClient);
+                    IWMSApiAccessor proxy = WMSApiManager.Get(keyValue.Key.ToString(),_sqlClient);
                     OutsideStockInRequestDto request = new OutsideStockInRequestDto()
                     {
                         MesTaskId = mesTask.MesTaskId,
@@ -306,7 +306,7 @@ namespace WMSCore.Outside
             {
                 try
                 {
-                    IWMSApiProxy proxy = WMSApiManager.Get(keyValue.Key.ToString(),_sqlClient);
+                    IWMSApiAccessor proxy = WMSApiManager.Get(keyValue.Key.ToString(),_sqlClient);
                     OutsideStockOutRequestDto request = new OutsideStockOutRequestDto()
                     {
                         MesTaskId = mesTask.MesTaskId,

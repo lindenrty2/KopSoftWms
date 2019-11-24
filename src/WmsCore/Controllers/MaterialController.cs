@@ -52,7 +52,7 @@ namespace KopSoftWms.Controllers
             //var sd = _materialServices.PageList(bootstrap);
             //return Content(sd);
 
-            IWMSApiProxy wmsAccessor = WMSApiManager.Get(bootstrap.storeId.ToString(), _client);
+            IWMSApiAccessor wmsAccessor = WMSApiManager.Get(bootstrap.storeId.ToString(), _client);
             RouteData<Wms_MaterialDto[]> result = (await wmsAccessor.GetMateralList(bootstrap.pageIndex, bootstrap.limit, bootstrap.search, bootstrap.order.Split(","), bootstrap.datemin, bootstrap.datemax));
             if (!result.IsSccuess)
             {
@@ -147,7 +147,7 @@ namespace KopSoftWms.Controllers
             //var json = _materialServices.PageList(bootstrap);
             //return Content(json);
 
-            IWMSApiProxy wmsAccessor = WMSApiManager.Get(storeId.ToString(), _client);
+            IWMSApiAccessor wmsAccessor = WMSApiManager.Get(storeId.ToString(), _client);
             RouteData<Wms_MaterialDto[]> result = (await wmsAccessor.GetMateralList(1, 100, text, new string[0], null,null));
             if (!result.IsSccuess)
             {

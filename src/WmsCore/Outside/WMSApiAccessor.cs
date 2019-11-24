@@ -8,7 +8,7 @@ using YL.Utils.Pub;
 
 namespace WMSCore.Outside
 {
-    public class WMSApiAccessor : IWMSApiAccessor,IWMSApiProxy
+    public class WMSApiAccessor : IWMSApiAccessor, IWMSApiProxy
     {
 
         public Wms_warehouse Warehouse { get; } 

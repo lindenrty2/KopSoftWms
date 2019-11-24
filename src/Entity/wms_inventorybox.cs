@@ -133,7 +133,13 @@ namespace YL.Core.Entity
         /// </summary>
         [SugarColumn(IsNullable = true)]
         public long? CreateBy { get; set; }
-
+        /// <summary>
+        /// Desc:修改人名
+        /// Default:
+        /// Nullable:True
+        /// </summary>
+        [SugarColumn(Length = 60, IsNullable = true)]
+        public string CreateUser { get; set; } 
         /// <summary>
         /// Desc:创建时间
         /// Default:
@@ -149,7 +155,13 @@ namespace YL.Core.Entity
         /// </summary>
         [SugarColumn(IsNullable = true)]
         public long? ModifiedBy { get; set; }
-
+        /// <summary>
+        /// Desc:修改人名
+        /// Default:
+        /// Nullable:True
+        /// </summary>
+        [SugarColumn(Length = 60,IsNullable = true)]
+        public string ModifiedUser { get; set; }
         /// <summary>
         /// Desc:修改时间
         /// Default:
