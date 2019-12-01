@@ -12,7 +12,22 @@
 
         .group-body {
             margin: 8px
-        } 
+        }
+
+        .inventory_position_table {
+            width: 75px;
+            height: 75px;
+            text-align: center;
+            display: inline-table;
+        }
+        .inventory_position_table td {
+            padding: 2px !important;
+            text-align: center !important;
+        }
+        .inventory_position_table .selected {
+            background: red;
+            color: white;
+        }
     </style>
     <link rel="stylesheet" href="~/css/bootstrap-select.min.css" />
     <link rel="stylesheet" href="~/css/vue.element.min.css">
@@ -72,11 +87,19 @@
                     <el-table-column label="现有数" prop="NowQty" align="center"></el-table-column>
                     <el-table-column label="计划数" prop="PlanQty" align="center"></el-table-column>
                     <el-table-column label="已出库数" prop="ActQty" align="center"></el-table-column>
-                    <el-table-column label="料箱位置" align="center">
+                    <el-table-column label="物料位置" prop="Position" align="center" >
                         <template slot-scope="scope">
-                            <Table style="width:60px;height:60px;">
-
-                            </Table>
+                            <table v-if="InventoryBox.size==1" class="inventory_position_table tablesize_1">
+                                <tr>
+                                    <td :class="scope.row.Position==1?'selected':''" ><span onclick=''>1</span></td>
+                                </tr>
+                            </table>
+                            <table v-if="InventoryBox.size==2" class="inventory_position_table tablesize_2">
+                                <tr>
+                                    <td :class="scope.row.Position==1?'selected':''" ><span onclick=''>1</span></td>
+                                    <td :class="scope.row.Position==2?'selected':''" ><span onclick=''>2</span></td>
+                                </tr>
+                            </table>
                         </template>
                     </el-table-column>
                     <el-table-column label="操作数量" align="center">
@@ -117,18 +140,18 @@
             data: {
                 submit: "确定",
                 IsStockIn: true,
-                ModeName:"入库",
+                ModeName: "入库",
                 InputNo: "",
                 StockId: '',
                 StockNo: '@ViewBag.StockNo',
                 StockDetails: null,
                 OrderNo: '',
                 Remark: '',
-                InventoryBoxId : "0",
+                InventoryBoxId: "0",
                 InventoryBoxNo: "未扫描",
                 InventoryBoxName: "-",
                 InventoryBox: null,
-                NewMaterialCount:0,
+                NewMaterialCount: 0,
                 InventoryDetails: null,
                 tableData: []
             },
@@ -153,7 +176,7 @@
                     this.tableData.splice(index, 1);
                     _self.NewMaterialCount = this.tableData.length;
                 },
-                onInputNo: function (e) { 
+                onInputNo: function (e) {
                     var inputNo = e.srcElement.value;
                     this.onInputNoCore(inputNo);
                 },
@@ -172,7 +195,7 @@
                     else if (IsMaterialNo(inputNo)) {
                         _self.onMaterialNoInputed(inputNo);
                     }
-                    else { 
+                    else {
                         layer.msg("未知编码", { icon: 2 });
                     }
                     app.InputNo = "";
@@ -306,13 +329,13 @@
                             }
                             else {
                                 var list = {
-                                    InventoryId:null,
+                                    InventoryId: null,
                                     MaterialId: res.data.data.materialId,
                                     MaterialNo: res.data.data.materialNo,
                                     MaterialName: res.data.data.materialName,
                                     IsLocked: false,
                                     OrderNo: res.data.data.orderNo,
-                                    NowQty:0,
+                                    NowQty: 0,
                                     PlanQty: 0,
                                     ActQty: 0,
                                     Qty: 1,
@@ -345,11 +368,11 @@
                     else { //有单出入库
                         if (this.IsStockIn) return; //有单入库时初始不显示任何物料，等待关联
                         var inventoryLength = this.InventoryDetails.length;
-                        for (var ii = 0; ii < inventoryLength; ii++ ) {
+                        for (var ii = 0; ii < inventoryLength; ii++) {
                             var inventoryDetail = this.InventoryDetails[ii];
                             var canOutput = false;
                             var detailLength = this.StockDetails.length;
-                            for (var i = 0; i < detailLength;i++) {
+                            for (var i = 0; i < detailLength; i++) {
                                 var stockDetail = this.StockDetails[i];
                                 if (stockDetail.materialId != inventoryDetail.materialId) continue;
                                 if (this.OrderNo != inventoryDetail.orderNo) continue;
@@ -362,6 +385,7 @@
                                 MaterialNo: inventoryDetail.materialNo,
                                 MaterialName: inventoryDetail.materialName,
                                 IsLocked: inventoryDetail.isLocked,
+                                Position: inventoryDetail.inventoryPosition,
                                 NowQty: inventoryDetail.qty,
                                 PlanQty: stockDetail.planQty,
                                 ActQty: stockDetail.actQty,
@@ -432,5 +456,8 @@
                 }
             }
         });
+
+
+      
     </script>
 }
