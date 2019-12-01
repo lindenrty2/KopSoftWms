@@ -113,7 +113,7 @@
                     if (obj.length > 0) {
                         var arr = [];
                         for (var item in obj) {
-                            arr.push(obj[item].MenuId);
+                            arr.push(obj[item].WarehouseId + '|' + obj[item].MenuId);
                         }
                     }
                     _self.checkedNames = arr;

@@ -1,0 +1,180 @@
+﻿<div class="content-wrapper">
+    <section class="content-header">
+        <h1>
+            仓库管理
+            <small>WCS任务管理</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i> 首页</a></li>
+            <li><a href="#">仓库管理</a></li>
+            <li class="active">WCS任务管理</li>
+        </ol>
+    </section>
+    <section class="content">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box">
+                    <div class="box-body">
+                        <div class="input-group">
+                            <span class="input-group-addon">日期范围</span>
+                            <input type="text" v-model="datemin" ref="datemin" id="datemin" class="form-control" style="width:120px;">
+                            <input type="text" v-model="datemax" ref="datemax" id="datemax" class="form-control" style="width:120px;margin-left:10px;">
+                            <button name="search" v-on:click="searchL" type="submit" class="btn btn-success" style="margin-left:10px;"><i class="fa fa-search"></i> 搜索</button>
+                        </div>
+                        <div id="toolbar" class="btn-group">
+                        </div>
+                        <table id="bootstraptable" class="table table-bordered text-nowrap table-hover"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+@section scripts{
+    <script src="~/js/common.wms.js"></script>
+    <script type="text/javascript">
+        var app = new Vue({
+            el: '#app',
+            data: {
+                datemin: '',
+                datemax: '',
+                storeId: '0',
+            },
+            mounted: function () {
+                var _self = this;
+                _self.$nextTick(function () {
+                    //显示active
+                    _self.$refs.WcsTask.parentNode.parentNode.classList.add("active");
+                    _self.$refs.WcsTask.classList.add("active");
+                    _self.$refs.storeId = '@ViewData["currentStoreId"]';
+
+                    _self.datemin = "1900-01-01";
+                    _self.datemax = "2099-01-01";
+                    $('#datemin').datetimepicker({
+                        format: 'yyyy-mm-dd',
+                        minView: 2,
+                        autoclose: true,
+                        language: "zh-CN"
+                    });
+                    $('#datemax').datetimepicker({
+                        format: 'yyyy-mm-dd',
+                        minView: 2,
+                        autoclose: true,
+                        language: "zh-CN"
+                    });
+                    setTimeout(function () {
+                        _self.loadL();
+                        $("div[class='pull-right search']")[0].children[0].setAttribute("placeholder", "物料编号或名称");
+                    }, 500);
+                });
+            },
+            methods: {
+                loadL: function () {
+                    _self = this;
+                    var obj = [
+                        { checkbox: true, visible: true },
+                        {
+                            field: 'WorkStatus', title: '操作', align: 'center', sortable: true,
+                            formatter: function (value, row, index) {
+                                var html = [];
+                                if (value == 'Failed' || value == 'Working') {
+                                    html.push('<button id="repeatL" type="button" class="btn btn-link" style="margin-top:-8px;">重发</button>');
+                                }
+                                if (value == 'Working') {
+                                    html.push('<button id="setSccuessL" type="button" class="btn btn-link" style="margin-top:-8px;">成功</button>');
+                                    html.push('<button id="setFailL" type="button" class="btn btn-link" style="margin-top:-8px;">失败</button>');
+                                }
+                                return html.join('');
+                            },
+                            events: {
+                                'click #repeatL': function (e, value, row, index) {
+                                    app.repeatL(row.WcsTaskIdStr);
+                                },
+                                'click #setSccuessL': function (e, value, row, index) {
+                                    app.setWCSTaskStatusL(row.WcsTaskIdStr,true);
+                                },
+                                'click #setFailL': function (e, value, row, index) {
+                                    app.setWCSTaskStatusL(row.WcsTaskIdStr,false);
+                                },
+                                'click #showDetailL': function (e, value, row, index) {
+                                    app.showDetailL(row.WcsTaskIdStr);
+                                }
+                            },
+                        },
+                        { field: 'WcsTaskId', title: 'Id', visible: false },
+                        { field: 'TaskType', title: '任务类型', align: 'center', sortable: true, formatter: WCSTaskTypeFormatter},
+                        { field: 'Desc', title: '描述', align: 'center', sortable: true },
+                        { field: 'WorkStatus', align: 'center', title: '作业状态', sortable: true, formatter: WCSWorkStatusFormatter},
+                        { field: 'NotifyStatus', align: 'center', title: 'WCS回馈状态', sortable: true, formatter: WCSNotifyStatusFormatter },
+                        { field: 'RequestDate', title: '发送时间', align: 'center', sortable: true, formatter: DateTimeFormatter },
+                        { field: 'ResponseDate', title: '回馈时间', align: 'center', sortable: true, formatter: DateTimeFormatter }
+                    ];
+                    yui.table("bootstraptable", "/WcsTask/List", obj, "POST", "MasTaskId",true , null, "RequestDate");
+                },
+                searchL: function () {
+                    $("#bootstraptable").bootstrapTable('refresh');
+                },
+                repeatL: function (wcsTaskId) {
+                    var index = layer.confirm("您确定要重发吗?", { btn: ["确定", "取消"] }, function () {
+                        layer.close(index);
+
+                        var url = "/WcsTask/RepeatWCSTaskStatus";
+                        var data = {
+                            storeId: '@ViewData["currentStoreId"]',
+                            wcsTaskId: wcsTaskId
+                        };
+                        yui.$axiospostform(url, data)
+                            .then(function (response) {
+                                if (response.data.isSccuess) {
+                                    layer.msg(response.data.message, { icon: 1, time: 1000 });
+                                    $("#bootstraptable").bootstrapTable('refresh');
+                                    return false;
+                                }
+                                else {
+                                    layer.msg(response.data.message, { icon: 5 });
+                                }
+                                layer.close(index);
+                            })
+                            .catch(function (error) {
+                                layer.close(index);
+                            });
+                    }, function () {
+
+                    });
+                },
+                setWCSTaskStatusL: function (wcsTaskId, isSccuess) {
+                    var index = layer.confirm("您确定要将任务人工设置为" + (isSccuess?"成功":"失败") + "吗?", { btn: ["确定", "取消"] }, function () {
+                        layer.close(index);
+
+                         var url = "/WcsTask/SetWCSTaskStatus";
+                        var data = {
+                            storeId: '@ViewData["currentStoreId"]',
+                            wcsTaskId: wcsTaskId,
+                            isSccuess: isSccuess
+                        };
+                        yui.$axiospostform(url, data)
+                            .then(function (response) {
+                                if (response.data.isSccuess) {
+                                    layer.msg(response.data.message, { icon: 1, time: 1000 });
+                                    $("#bootstraptable").bootstrapTable('refresh');
+                                    return false;
+                                }
+                                else {
+                                    layer.msg(response.data.message, { icon: 5 });
+                                }
+                                layer.close(index);
+                            })
+                            .catch(function (error) {
+                                layer.close(index);
+                            });
+                    }, function () {
+
+                    });
+                },
+                showDetailL: function (id) {
+                    yui.layershow("任务详细", "/WcsTask/Detail?id=" + id, 1400, 600);
+                },
+            }
+        });
+    </script>
+}

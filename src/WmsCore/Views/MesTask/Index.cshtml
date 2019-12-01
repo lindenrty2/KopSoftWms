@@ -95,17 +95,17 @@
                             },
                         },
                         { field: 'MesTaskId', title: 'Id', visible: false },
-                        { field: 'MesTaskType', title: '任务类型', align: 'center', sortable: true },
+                        { field: 'MesTaskType', title: '任务类型', align: 'center', sortable: true, formatter: MESTaskTypeFormatter },
                         { field: 'WarehousingType', title: '出入库类型', align: 'center', sortable: true },
                         { field: 'WarehousingTime', title: '出入库时间', align: 'center', sortable: true, formatter: DateTimeFormatter },
                         { field: 'ProductionPlanId', title: '生产令号', align: 'center', sortable: true },
                         { field: 'BatchPlanId', title: '批次号', align: 'center', sortable: true },
                         { field: 'WorkAreaName', title: '作业区', align: 'center', sortable: true },
                         { field: 'SuppliesKinds', align: 'center', title: '物料类型' },
-                        { field: 'SuppliesInfoJson', title: '物料详细', align: 'center', sortable: true },
-                        { field: 'WorkStatus', align: 'center', title: '作业状态', sortable: true },
-                        { field: 'NotifyStatus', align: 'center', title: 'Mes回馈状态', sortable: true },
-                        { field: 'CreateDate', title: '接收时间', align: 'center', sortable: true }
+                        { field: 'SuppliesInfoJson', title: '物料详细', align: 'center', sortable: true, visible: false },
+                        { field: 'WorkStatus', align: 'center', title: '作业状态', sortable: true, formatter: MESWorkStatusFormatter },
+                        { field: 'NotifyStatus', align: 'center', title: 'Mes回馈状态', sortable: true, formatter: MESNotifyStatusFormatter },
+                        { field: 'CreateDate', title: '接收时间', align: 'center', sortable: true, formatter: DateTimeFormatter }
                     ];
                     yui.table("bootstraptable", "/MesTask/List", obj, "POST", "MasTaskId");
                 },

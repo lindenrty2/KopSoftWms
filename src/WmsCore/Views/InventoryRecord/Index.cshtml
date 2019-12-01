@@ -102,88 +102,34 @@
             methods: {
                 loadL: function () {
                     _self = this;
-                    var obj = [{
-                        checkbox: false,             //是否显示复选框
-                        visible: false
-                    },
-                    {
-                        field: 'InventoryrecordId',
-                        title: 'Id',
-                        visible: false
-                    }, {
-                        field: 'StockInNo',
-                        title: '入库单号',
-                        align: 'center',
-                        sortable: true
-                    },
-                    {
-                        field: 'StorageRackNo',
-                        title: '货架编号',
-                        align: 'center',
-                        sortable: true
-                    }, {
-                        field: 'StorageRackName',
-                        title: '货架名称',
-                        align: 'center',
-                        sortable: true
-                    },
-                    {
-                        field: 'InventoryBoxNo',
-                        title: '料箱编号',
-                        align: 'center',
-                        sortable: true
-                    },
-                    {
-                        field: 'InventoryBoxName',
-                        title: '料箱名',
-                        align: 'center',
-                        sortable: true
-                    },
-                    {
-                        field: 'MaterialNo',
-                        title: '物料编号',
-                        align: 'center',
-                        sortable: true
-                    }, {
-                        field: 'MaterialName',
-                        title: '物料名称',
-                        align: 'center',
-                        sortable: true
-                    },
-                    {
-                        field: 'Qty',
-                        title: '数量',
-                        align: 'center',
-                        sortable: true,
-                        formatter: function (value, row, index) {
-                            return '<span class="label label-success radius">' + value + '</span>';
-                        }
-                    },
-                    {
-                        field: 'Remark',
-                        align: 'center',
-                        title: '备注'
-                    }, {
-                        field: 'CName',
-                        title: '创建人',
-                        align: 'center',
-                        sortable: true
-                    }, {
-                        field: 'CreateDate',
-                        align: 'center',
-                        title: '创建时间',
-                        sortable: true
-                    }, {
-                        field: 'UName',
-                        align: 'center',
-                        title: '修改人',
-                        sortable: true
-                    }, {
-                        field: 'ModifiedDate',
-                        title: '修改时间',
-                        align: 'center',
-                        sortable: true
-                    }];
+                    var obj = [
+                        { checkbox: false, visible: false },
+                        { field: 'inventoryrecordId', title: 'Id', visible: false },
+                        { field: 'stockNo', title: '出入库单号', align: 'center', sortable: true },
+                        //{ field: 'storageRackNo', title: '货架编号', align: 'center', sortable: true },
+                        { field: 'inventoryBoxNo', title: '料箱编号', align: 'center', sortable: true },
+                        { field: 'position', title: '料格位置', align: 'center', sortable: true },
+                        { field: 'materialNo', title: '物料编号', align: 'center', sortable: true },
+                        { field: 'materialOnlyNo', title: '物料唯一编号', align: 'center', sortable: true },
+                        { field: 'materialName', title: '物料名称', align: 'center', sortable: true },
+                        {
+                            field: 'qty', title: '操作数量', align: 'center', sortable: true,
+                            formatter: function (value, row, index) {
+                                return '<span class="label label-success radius">' + value + '</span>';
+                            }
+                        },
+                        {
+                            field: 'afterQty', title: '操作后数量', align: 'center', sortable: true,
+                            formatter: function (value, row, index) {
+                                return '<span class="label label-success radius">' + value + '</span>';
+                            }
+                        },
+                        { field: 'remark', align: 'center', title: '备注' },
+                        { field: 'createBy', title: '创建人', align: 'center', sortable: true },
+                        { field: 'createDate', align: 'center', title: '创建时间', sortable: true },
+                        { field: 'modifiedBy', align: 'center', title: '修改人', sortable: true },
+                        { field: 'modifiedDate', title: '修改时间', align: 'center', sortable: true }
+                    ];
                     //var qParams = {
                     //    StorageRackId: _self.StorageRackId
                     //};

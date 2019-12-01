@@ -17,8 +17,8 @@ namespace YL.Core.Entity
         /// <summary>
         /// MES任务类型
         /// </summary>
-        [SugarColumn()]
-        public int MesTaskType { get; set; }
+        [SugarColumn(Length = 2)]
+        public MESTaskTypes MesTaskType { get; set; }
         /// <summary>
         /// 单号
         /// </summary>
@@ -63,14 +63,14 @@ namespace YL.Core.Entity
         /// <summary>
         /// 操作状态
         /// </summary>
-        [SugarColumn(IsNullable = false)]
-        public int WorkStatus { get; set; }
+        [SugarColumn(Length = 2, IsNullable = false)]
+        public MESTaskWorkStatus WorkStatus { get; set; }
 
         /// <summary>
         /// 通知状态
         /// </summary>
-        [SugarColumn(IsNullable = false)]
-        public int NotifyStatus { get; set; }
+        [SugarColumn(Length=2,IsNullable = false)]
+        public MESTaskNotifyStatus NotifyStatus { get; set; }
 
         /// <summary>
         /// 是否删除

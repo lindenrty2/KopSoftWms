@@ -38,7 +38,7 @@ namespace KopSoftWms.Controllers
             //var sd = _inventoryServices.PageList(bootstrap);
             //return Content(sd);
 
-            IWMSApiAccessor wmsAccessor = WMSApiManager.Get(bootstrap.storeId.ToString(), _client);
+            IWMSBaseApiAccessor wmsAccessor = WMSApiManager.GetBaseApiAccessor(bootstrap.storeId.ToString(), _client);
             RouteData<OutsideInventoryDto[]> result = (await wmsAccessor.QueryInventory(null,null,null,null,bootstrap.pageIndex, bootstrap.limit, bootstrap.search, bootstrap.order.Split(","), bootstrap.datemin, bootstrap.datemax));
             if (!result.IsSccuess)
             {

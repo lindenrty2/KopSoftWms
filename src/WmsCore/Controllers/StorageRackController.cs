@@ -64,7 +64,7 @@ namespace KopSoftWms.Controllers
             //    .ToList();
             //return Content(json.JilToJson());
 
-            IWMSApiAccessor wmsAccessor = WMSApiManager.Get(id.ToString(), _client);
+            IWMSBaseApiAccessor wmsAccessor = WMSApiManager.GetBaseApiAccessor(id.ToString(), _client);
             RouteData<Wms_reservoirarea[]> result = (await wmsAccessor.GetReservoirAreaList(1, 100, null, null, null, null));
             if (!result.IsSccuess)
             {
@@ -74,37 +74,38 @@ namespace KopSoftWms.Controllers
         }
 
         [HttpGet]
-        public async Task<string> GetReservoirarea2(string id)
+        public async Task<string> GetReservoirarea2(long id)
         {
             //var json = _reservoirareaServices.Queryable().Where(c => c.IsDel == 1 && c.WarehouseId == SqlFunc.ToInt64(id))
             //    .Select(c => new { value = c.ReservoirAreaId.ToString(), name = c.ReservoirAreaName })
             //    .ToList();
-            //return Content(json.JilToJson());
-
-            IWMSApiAccessor wmsAccessor = WMSApiManager.Get(id.ToString(), _client);
+            //return Content(json.JilToJson()); 
+            IWMSBaseApiAccessor wmsAccessor = WMSApiManager.GetBaseApiAccessor(id.ToString(), _client);
+            if (wmsAccessor == null) return "";
             RouteData<Wms_reservoirarea[]> result = (await wmsAccessor.GetReservoirAreaList(1, 100, null, null, null, null));
             if (!result.IsSccuess)
             {
                 return new PageGridData().JilToJson();
             }
-            return result.ToGridJson();
+            return result.Data.JilToJson();
         }
 
         [HttpGet]
-        public async Task<string> GetStoragerackAsync(string id)
+        public async Task<string> GetStoragerack(long id)
         {
             //var json = _storagerackServices.Queryable().Where(c => c.IsDel == 1 && c.ReservoirAreaId == SqlFunc.ToInt64(id))
             //    .Select(c => new { value = c.StorageRackId.ToString(), name = c.StorageRackName })
             //    .ToList();
             //return Content(json.JilToJson());
 
-            IWMSApiAccessor wmsAccessor = WMSApiManager.Get(id.ToString(), _client);
+            IWMSBaseApiAccessor wmsAccessor = WMSApiManager.GetBaseApiAccessor(id.ToString(), _client);
+            if (wmsAccessor == null) return "";
             RouteData<Wms_storagerack[]> result = (await wmsAccessor.GetStorageRackList(SqlFunc.ToInt64(id), 1, 100, null, null, null, null));
             if (!result.IsSccuess)
             {
                 return new PageGridData().JilToJson();
             }
-            return result.ToGridJson();
+            return result.Data.JilToJson();
         }
 
         [HttpPost]
@@ -114,7 +115,7 @@ namespace KopSoftWms.Controllers
             //var sd = _storagerackServices.PageList(bootstrap);
             //return Content(sd);
 
-            IWMSApiAccessor wmsAccessor = WMSApiManager.Get(bootstrap.storeId.ToString(), _client);
+            IWMSBaseApiAccessor wmsAccessor = WMSApiManager.GetBaseApiAccessor(bootstrap.storeId.ToString(), _client);
             RouteData<Wms_storagerack[]> result = await wmsAccessor.GetStorageRackList(null, bootstrap.pageIndex, bootstrap.limit, bootstrap.search, bootstrap.order.Split(","), bootstrap.datemin, bootstrap.datemax);
             if (!result.IsSccuess)
             {
@@ -211,7 +212,7 @@ namespace KopSoftWms.Controllers
                 search = text,
                 order = "desc"
             };
-            IWMSApiAccessor wmsAccessor = WMSApiManager.Get(bootstrap.storeId.ToString(), _client);
+            IWMSBaseApiAccessor wmsAccessor = WMSApiManager.GetBaseApiAccessor(bootstrap.storeId.ToString(), _client);
             RouteData<Wms_storagerack[]> result = await wmsAccessor.GetStorageRackList(null, bootstrap.offset, bootstrap.limit, bootstrap.search, bootstrap.order.Split(","), bootstrap.datemin, bootstrap.datemax);
             if (!result.IsSccuess)
             {

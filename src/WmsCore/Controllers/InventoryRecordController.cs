@@ -33,18 +33,18 @@ namespace KopSoftWms.Controllers
 
         [HttpPost]
         [OperationLog(LogType.select)]
-        public async Task<string> List([FromForm]PubParams.InventoryBootstrapParams bootstrap)
+        public async Task<PageGridData> List([FromForm]PubParams.InventoryBootstrapParams bootstrap)
         {
             //var sd = _inventoryrecordServices.PageList(bootstrap);
             //return Content(sd);
 
-            IWMSApiAccessor wmsAccessor = WMSApiManager.Get(bootstrap.storeId.ToString(), _client);
+            IWMSBaseApiAccessor wmsAccessor = WMSApiManager.GetBaseApiAccessor(bootstrap.storeId.ToString(), _client);
             RouteData<OutsideInventoryRecordDto[]> result = (await wmsAccessor.QueryInventoryRecord(null, null, null, null, bootstrap.pageIndex, bootstrap.limit, bootstrap.search, bootstrap.order.Split(","), bootstrap.datemin, bootstrap.datemax));
             if (!result.IsSccuess)
             {
-                return new PageGridData().JilToJson();
+                return new PageGridData();
             }
-            return result.ToGridJson();
+            return result.ToGridData();
         }
     }
 }

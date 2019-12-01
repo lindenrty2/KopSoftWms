@@ -84,25 +84,6 @@ namespace Services
             var list = query.ToPageList(bootstrap.offset, bootstrap.limit, ref totalNumber);
             return Bootstrap.GridData(list, totalNumber).JilToJson();
         }
-
-        public async Task<Wms_inventorybox> AutoSelectBox(bool isFullBox)
-        {
-            var query = _client.Queryable<Wms_inventorybox, Wms_storagerack>
-                ((ib, sr) => new object[] {
-                   JoinType.Left,ib.StorageRackId==sr.StorageRackId && sr.IsDel == 1
-                 })
-                 .Where((ib, sr) => ib.UsedSize < ib.Size 
-                 && ib.Status == InventoryBoxStatus.InPosition);
-            if (isFullBox)
-            {
-                query = query.Where((ib, sr) => ib.Size == 1);
-            }
-            else
-            {
-                query = query.Where((ib, sr) => ib.Size > 1);  
-            }
-            return await query.FirstAsync();
-        }
-
+         
     }
 }

@@ -16,6 +16,15 @@ namespace YL.Core.Entity
             CreateDate = DateTime.Now;
         }
 
+        [SugarColumn(IsIgnore = true)]
+        public string StockOutIdStr
+        {
+            get
+            {
+                return StockOutId.ToString();
+            }
+        }
+
         /// <summary>
         /// Desc:
         /// Default:

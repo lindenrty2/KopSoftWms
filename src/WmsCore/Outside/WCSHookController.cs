@@ -1,6 +1,7 @@
 ﻿using IServices;
 using IServices.Outside;
 using Microsoft.AspNetCore.Mvc;
+using Services.Outside;
 using SqlSugar;
 using System;
 using System.Threading.Tasks;
@@ -22,6 +23,12 @@ namespace WMSCore.Outside
         private readonly IWms_inventoryBoxServices _inventoryBoxServices;
         private readonly IWms_inventoryBoxTaskServices _inventoryBoxTaskServices;
         private readonly SqlSugarClient _client;
+        private readonly SysUserDto UserDto = new SysUserDto() {
+            UserId = PubConst.InterfaceUserId,
+            UserName = PubConst.InterfaceUserName,
+            UserNickname = PubConst.InterfaceUserName
+        };
+
         public WCSHookController(
             SqlSugarClient client,
             IWms_stockinServices stockinServices,
@@ -58,59 +65,10 @@ namespace WMSCore.Outside
         /// <param name="result"></param>
         /// <returns></returns>
         [HttpPost("confirmOutStock")]
-        public Task<ConfirmOutStockResult> ConfirmOutStock([FromBody]WCSTaskResult result)
+        public async Task<ConfirmOutStockResult> ConfirmOutStock([FromBody]WCSTaskResult result)
         {
-            try
-            {
-                long taskId = result.TaskId.ToInt64();
-                if (taskId == 0)
-                {
-                    return Task.FromResult(new ConfirmOutStockResult(PubMessages.E2302_WCS_TASKID_INVAILD));
-                }
-                Wms_inventoryboxTask boxTask = _inventoryBoxTaskServices.QueryableToEntity(x => x.InventoryBoxTaskId == taskId);
-                if (boxTask == null)
-                {
-                    return Task.FromResult(new ConfirmOutStockResult(PubMessages.E2303_WCS_STOCKOUTTASK_NOTFOUND));
-                }
-                if (boxTask.Status != InventoryBoxTaskStatus.task_outing.ToByte() && boxTask.Status != InventoryBoxTaskStatus.task_outed.ToByte())
-                {
-                    return Task.FromResult(new ConfirmOutStockResult(PubMessages.E2304_WCS_STOCKOUTTASK_NOTOUT));
-                }
-
-                Wms_inventorybox box = _inventoryBoxServices.QueryableToEntity(x => x.InventoryBoxId == boxTask.InventoryBoxId);
-                if (box == null)
-                {
-                    return Task.FromResult(new ConfirmOutStockResult(PubMessages.E1011_INVENTORYBOX_NOTFOUND));
-                }
-                if (box.Status != InventoryBoxStatus.Outing && box.Status != InventoryBoxStatus.Outed)
-                {
-                    return Task.FromResult(new ConfirmOutStockResult(PubMessages.E1008_INVENTORYBOX_NOTOUT));
-                }
-
-                _client.BeginTran();
-
-                boxTask.Status = InventoryBoxTaskStatus.task_outed.ToByte();
-                boxTask.ModifiedBy = PubConst.InterfaceUserId;
-                boxTask.ModifiedDate = DateTime.Now;
-                _inventoryBoxTaskServices.UpdateEntity(boxTask);
-
-                box.Status = InventoryBoxStatus.Outed;
-                box.ModifiedBy = PubConst.InterfaceUserId;
-                box.ModifiedDate = DateTime.Now;
-                _inventoryBoxServices.UpdateEntity(box);
-
-                _client.CommitTran();
-                return Task.FromResult(new ConfirmOutStockResult());
-            }
-            catch(Exception ex)
-            {
-                _client.RollbackTran();
-                return Task.FromResult(new ConfirmOutStockResult() {
-                    Successd = false,
-                    Code = "-1",
-                    ErrorDesc = ex.ToString()
-                });
-            }
+            SelfWMSOperationApiAccessor accessor = new SelfWMSOperationApiAccessor(null, _client,this.UserDto);
+            return await accessor.ConfirmOutStock(result);
         }
 
         /// <summary>
@@ -119,60 +77,10 @@ namespace WMSCore.Outside
         /// <param name="result"></param>
         /// <returns></returns>
         [HttpPost("confirmBalance")]
-        public Task<ConfirmBackStockResult> ConfirmBackStock([FromBody]WCSTaskResult result)
+        public async Task<ConfirmBackStockResult> ConfirmBackStock([FromBody]WCSTaskResult result)
         {
-            try
-            {
-                long taskId = result.TaskId.ToInt64();
-                if (taskId == 0)
-                {
-                    return Task.FromResult(new ConfirmBackStockResult(PubMessages.E2302_WCS_TASKID_INVAILD));
-                }
-                Wms_inventoryboxTask boxTask = _inventoryBoxTaskServices.QueryableToEntity(x => x.InventoryBoxTaskId == taskId);
-                if (boxTask == null)
-                {
-                    return Task.FromResult(new ConfirmBackStockResult(PubMessages.E2311_WCS_STOCKBACKTASK_NOTFOUND));
-                }
-                if (boxTask.Status != InventoryBoxTaskStatus.task_backing.ToByte() && boxTask.Status != InventoryBoxTaskStatus.task_backed.ToByte())
-                {
-                    return Task.FromResult(new ConfirmBackStockResult(PubMessages.E2312_WCS_STOCKBACKTASK_NOTBACK));
-                }
-
-                Wms_inventorybox box = _inventoryBoxServices.QueryableToEntity(x => x.InventoryBoxId == boxTask.InventoryBoxId);
-                if (box == null)
-                {
-                    return Task.FromResult(new ConfirmBackStockResult(PubMessages.E1011_INVENTORYBOX_NOTFOUND));
-                }
-                if (box.Status != InventoryBoxStatus.Backing && box.Status != InventoryBoxStatus.InPosition)
-                {
-                    return Task.FromResult(new ConfirmBackStockResult(PubMessages.E1008_INVENTORYBOX_NOTOUT));
-                }
-
-                _client.BeginTran();
-
-                boxTask.Status = InventoryBoxTaskStatus.task_backed.ToByte();
-                boxTask.ModifiedBy = PubConst.InterfaceUserId;
-                boxTask.ModifiedDate = DateTime.Now;
-                _inventoryBoxTaskServices.UpdateEntity(boxTask);
-
-                box.Status = InventoryBoxStatus.InPosition;
-                box.ModifiedBy = PubConst.InterfaceUserId;
-                box.ModifiedDate = DateTime.Now;
-                _inventoryBoxServices.UpdateEntity(box);
-
-                _client.CommitTran();
-                return Task.FromResult(new ConfirmBackStockResult());
-            }
-            catch (Exception ex)
-            {
-                _client.RollbackTran();
-                return Task.FromResult(new ConfirmBackStockResult()
-                {
-                    Successd = false,
-                    Code = "-1",
-                    ErrorDesc = ex.ToString()
-                });
-            }
+            SelfWMSOperationApiAccessor accessor = new SelfWMSOperationApiAccessor(null, _client, this.UserDto);
+            return await accessor.ConfirmBackStock(result);
         }
 
         [HttpPost("LogisticsFinish")]

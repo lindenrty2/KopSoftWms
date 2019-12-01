@@ -6,24 +6,25 @@
 @section styles{
     <link rel="stylesheet" href="~/css/bootstrap-select.min.css" />
 }
-<div id="app" v-cloak>
-    <div>
-        <button id="box1OutL" type="button" class="btn btn-outL margin-left:20px" onclick="app.boxOutL(true);">完整箱出库</button>
-        <button id="box9OutL" type="button" class="btn btn-outL margin-left:20px" onclick="app.boxOutL(false);">2宫格箱出库</button>
-        <button id="box9OutL" type="button" class="btn btn-outL margin-left:20px" onclick="app.boxOutL(false);">3宫格箱出库</button>
-        <button id="box9OutL" type="button" class="btn btn-outL margin-left:20px" onclick="app.boxOutL(false);">6宫格箱出库</button>
-        <button id="scanL" type="button" class="btn btn-scanL" onclick="app.scanL();">扫码操作</button>
-        <span id="ctlOutedBoxList">
+    <div id="app" v-cloak>
+        <div>
+            <button id="box1OutL" type="button" class="btn btn-outL margin-left:20px" onclick="app.boxOutL(1);">完整箱出库</button>
+            <button id="box9OutL" type="button" class="btn btn-outL margin-left:20px" onclick="app.boxOutL(2);">2宫格箱出库</button>
+            <button id="box9OutL" type="button" class="btn btn-outL margin-left:20px" onclick="app.boxOutL(3);">3宫格箱出库</button>
+            <button id="box9OutL" type="button" class="btn btn-outL margin-left:20px" onclick="app.boxOutL(6);">6宫格箱出库</button>
+            <button id="scanL" type="button" class="btn btn-scanL" onclick="app.scanL();">扫码操作</button>
+            <span id="ctlOutedBoxList">
 
-        </span>
-        <button id="complateL" type="button" class="btn btn-scanL" onclick="app.complateL();">入库完成</button>
+            </span>
+            <button id="complateL" type="button" class="btn btn-scanL" onclick="app.complateL();">入库完成</button>
+        </div>
+        <table id="bootstraptable" class="table table-bordered text-nowrap table-hover"></table> 
     </div>
-    <table id="bootstraptable" class="table table-bordered text-nowrap table-hover"></table>
-</div>
 
 @section scripts{
     <script src="~/js/bootstrap-select.min.js"></script>
     <script src="~/js/defaults-zh_CN.min.js"></script>
+    <script src="~/js/common.wms.js"></script>
     <script>
         var app = new Vue({
             el: "#app",
@@ -43,125 +44,61 @@
 
                     _self.$refs.datemin = "1900-01-01";
                     _self.$refs.datemax = "2099-01-01";
-                    var obj = [{
-                        checkbox: true,             //是否显示复选框
-                        visible: true
-                    },
-                    {
-                        field: 'Detail.StockInDetailId',
-                        title: '详细ID',
-                        visible: false
-                    },
-                    {
-                        field: 'Detail.Status',
-                        title: '状态',
-                        visible: true,
-                        sortable: true,
-                        formatter: function (value, row, index) {
-                            var html = [];
-                            if(value == -1) {
-                                return '<span class="label label-danger radius">已取消</span>';
-                            }
-                            else if (value == 1) { //任务创建中
-                                return '<span class="label label-default radius">任务创建中</span>';
-                            }
-                            else if (value == 2) { //待操作
-                                return '<span class="label label-default radius">待操作</span>';
-                            }
-                            else if (value == 3) { //进行中
-                                return '<span class="label label-primary radius">进行中</span>';
-                            }
-                            else if (value == 4) { //已完成
-                                return '<span class="label label-success radius">已完成</span>';
-                            }
-                            return html.join('');
-                        },
-
-                    },
-                    {
-                        field: 'Detail.MaterialNo',
-                        title: '物料编号',
-                        align: 'center',
-                        sortable: true
-                    },
-                    {
-                        field: 'Detail.MaterialName',
-                        title: '物料名称',
-                        align: 'center',
-                        sortable: true
-                    },
-                    {
-                        field: 'Detail.PlanInQty',
-                        title: '计划数量',
-                        align: 'center',
-                        sortable: true
-                    }
-                    , {
-                        field: 'Detail.ActInQty',
-                        title: '实际数量',
-                        align: 'center',
-                        sortable: true
-                    },
-                    {
-                        field: 'Detail.Remark',
-                        title: '备注',
-                        align: 'left',
-                        sortable: true
-                    },
-                    {
-                        field: 'Detail.ModifiedDate',
-                        title: '最后更新时间',
-                        align: 'center',
-                        sortable: true,
-                        formatter: function (value, row, index) {
-                            return _self.jsonDateFormat(value);
+                    var obj = [
+                        { checkbox: true, visible: true },
+                        { field: 'Detail.StockInDetailId', title: '详细ID', visible: false },
+                        { field: 'Detail.Status', title: '状态', visible: true, sortable: true, formatter: StockStatusFormatter },
+                        { field: 'Detail.MaterialNo', title: '物料编号', align: 'center', sortable: true },
+                        { field: 'Detail.MaterialName', title: '物料名称', align: 'center', sortable: true },
+                        { field: 'Detail.PlanInQty', title: '计划数量', align: 'center', sortable: true },
+                        { field: 'Detail.ActInQty', title: '实际数量', align: 'center', sortable: true },
+                        { field: 'Detail.Remark', title: '备注', align: 'left', sortable: true },
+                        { field: 'Detail.ModifiedDate', title: '最后更新时间', align: 'center', sortable: true, formatter: DateTimeFormatter },
+                        {
+                            field: 'Tasks', title: '操作', visible: true, sortable: true,
+                            formatter: function (value, row, index) {
+                                var html = [];
+                                for (var i = 0; i < value.length; i++) {
+                                    var item = value[i];
+                                    if (item.TaskStatus == 1) { //任务已确认
+                                    }
+                                    else if (item.TaskStatus == 2) { //出库中
+                                        html.push(
+                                            '<span class="label label-primary radius">料箱[' + item.InventoryBoxName + ']出库中</span>'
+                                        );
+                                    }
+                                    else if (item.TaskStatus == 3) { //出库完成
+                                        html.push(
+                                            '<span class="label label-primary radius">料箱[' + item.InventoryBoxName + ']出库完成</span>'
+                                        );
+                                        app.addOutedBox(item.InventoryBoxTaskId, item.InventoryBoxName);
+                                    }
+                                    else if (item.TaskStatus == 4) { //归库中
+                                        html.push(
+                                            '<span class="label label-primary radius">料箱[' + item.InventoryBoxName + ']归库中</span>'
+                                        );
+                                        app.removeOutedBox(item.InventoryBoxTaskId);
+                                    }
+                                    else if (item.TaskStatus == 5) { //归库完成
+                                        html.push(
+                                            '<span class="label label-success radius">料箱[' + item.InventoryBoxName + ']归库完成</span>'
+                                        );
+                                        app.removeOutedBox(item.InventoryBoxTaskId);
+                                    }
+                                }
+                                return html.join('<br/>');
+                            },
+                            events: {
+                            },
                         }
-                    },
-                    {
-                        field: 'Tasks',
-                        title: '操作',
-                        visible: true,
-                        sortable: true,
-                        formatter: function (value, row, index) {
-                            var html = [];
-                            for (var i = 0; i < value.length; i++) {
-                                var item = value[i];
-                                if (item.TaskStatus == 1) { //任务已确认
-                                }
-                                else if (item.TaskStatus == 2) { //出库中
-                                    html.push(
-                                        '<span class="label label-primary radius">料箱[' + item.InventoryBoxName + ']出库中</span>'
-                                    );
-                                }
-                                else if (item.TaskStatus == 3) { //出库完成
-                                    html.push(
-                                        '<span class="label label-primary radius">料箱[' + item.InventoryBoxName + ']出库完成</span>'
-                                    );
-                                    app.addOutedBox(item.InventoryBoxTaskId, item.InventoryBoxName);
-                                }
-                                else if (item.TaskStatus == 4) { //归库中
-                                    html.push(
-                                        '<span class="label label-primary radius">料箱[' + item.InventoryBoxName + ']归库中</span>'
-                                    );
-                                    app.removeOutedBox(item.InventoryBoxTaskId);
-                                }
-                                else if (item.TaskStatus == 5) { //归库完成
-                                    html.push(
-                                        '<span class="label label-success radius">料箱[' + item.InventoryBoxName + ']归库完成</span>'
-                                    );
-                                    app.removeOutedBox(item.InventoryBoxTaskId);
-                                }
-                            }
-                            return html.join('<br/>');
-                        },
-                        events: {
-                        },
-                    }
                     ];
                     var qParams = {
                         pid: "@Model.StockInId"
                     };
                     yui.table("bootstraptable", "/StockIn/WorkList", obj, "GET", "StockInDetailId", true, qParams);
+
+                     
+
                 });
             },
             computed: {
@@ -179,14 +116,14 @@
                 removeOutedBox: function (ibTaskId) {
                     $("#ob" + ibTaskId).remove();
                 },
-                boxOutL: function (isfullbox) {
-                    var index = layer.confirm("您确定要出库" + (isfullbox?"":"多宫格") + "料箱吗？", { btn: ["确定", "取消"] }, function () {
+                boxOutL: function (size) {
+                    var index = layer.confirm("您确定要出库" + (size == 1 ? "完整" : size+"宫格") + "料箱吗？", { btn: ["确定", "取消"] }, function () {
                         layer.close(index);
-                        
+
                         var url = "/InventoryBox/DoAutoSelectBox";
                         var data = {
                             storeId: '@ViewData["currentStoreId"]',
-                            isfullbox: isfullbox
+                            requestSize: size
                         };
                         yui.$axiospostform(url, data)
                             .then(function (response) {
@@ -213,11 +150,11 @@
                 },
                 scanL: function (detailId) {
                     yui.layershow("扫码操作", "/Scan/MainScanPage?stockNo=@Model.StockInNo&storeId=@ViewData["currentStoreId"]", 1000, 800);
-                }, 
+                },
                 complateL: function (isfullbox) {
                     var index = layer.confirm("入库单与实际入库数量不匹配，您确定要将入库单标记为完成吗？", { btn: ["确定", "取消"] }, function () {
                         layer.close(index);
-                        
+
                         var url = "/StockIn/DoComplate";
                         var data = {
                             storeId: '@ViewData["currentStoreId"]',
@@ -242,7 +179,7 @@
                             });
                     }, function () {
 
-                    }); 
+                    });
                 },
                 refreshL: function () {
                     $("button[name='refresh']").click();

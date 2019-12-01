@@ -30,19 +30,19 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
-        [SugarColumn(IsNullable = true/*, IsIdentity = true*/)]
+        [SugarColumn(IsNullable = false/*, IsIdentity = true*/)]
         public long? MaterialId { get; set; }
         /// <summary>
         /// Desc:产品编号
         /// Default:
         /// Nullable:False
         /// </summary>
-        [SugarColumn(Length = 20)]
+        [SugarColumn(Length = 30, IsNullable = true)]
         public string MaterialOnlyId { get; set; }
         /// <summary>
         /// 物料编号
         /// </summary>
-        [SugarColumn(Length = 20)]
+        [SugarColumn(Length = 30, IsNullable = true)]
         public string MaterialNo { get; set; }
         /// <summary>
         /// 物料名

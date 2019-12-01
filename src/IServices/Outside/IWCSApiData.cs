@@ -112,6 +112,9 @@ namespace IServices.Outside
     public class BackStockInfo
     {
         public string TaskId { get; set; }
+        public string GetRow { get; set; }
+        public string GetColumn { get; set; }
+        public string GetFloor { get; set; }
     }
 
     public class CreateBackStockResult

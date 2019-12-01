@@ -8,13 +8,13 @@ using YL.Utils.Pub;
 
 namespace WMSCore.Outside
 {
-    public class WMSApiAccessor : IWMSApiAccessor, IWMSApiProxy
+    public class WMSBaseApiAccessor : IWMSBaseApiAccessor, IWMSApiProxy
     {
 
         public Wms_warehouse Warehouse { get; } 
 
         private IWMSApiProxy _apiProxy = null;
-        public WMSApiAccessor(Wms_warehouse warehouse)
+        public WMSBaseApiAccessor(Wms_warehouse warehouse)
         {
             this.Warehouse = warehouse;
             HttpApiConfig config = new HttpApiConfig();

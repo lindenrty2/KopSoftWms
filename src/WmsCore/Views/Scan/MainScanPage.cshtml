@@ -69,9 +69,16 @@
                     <el-table-column label="序号" type="index" width="60" align="center"></el-table-column>
                     <el-table-column label="物料编号" prop="MaterialNo" align="center"></el-table-column>
                     <el-table-column label="物料名" prop="MaterialName" align="center"></el-table-column>
-                    <el-table-column label="现有数" prop="PlanQty" align="center"></el-table-column>
+                    <el-table-column label="现有数" prop="NowQty" align="center"></el-table-column>
                     <el-table-column label="计划数" prop="PlanQty" align="center"></el-table-column>
                     <el-table-column label="已出库数" prop="ActQty" align="center"></el-table-column>
+                    <el-table-column label="料箱位置" align="center">
+                        <template slot-scope="scope">
+                            <Table style="width:60px;height:60px;">
+
+                            </Table>
+                        </template>
+                    </el-table-column>
                     <el-table-column label="操作数量" align="center">
                         <template slot-scope="scope">
                             <input type="number" style="text-align:center;width:100px" v-model="scope.row.Qty" min="1" value="1">
@@ -143,7 +150,8 @@
                     this.ModeName = this.IsStockIn ? "入库" : "出库";
                 },
                 handleDelete: function (index) { //删除行数
-                    this.tableData.splice(index, 1)
+                    this.tableData.splice(index, 1);
+                    _self.NewMaterialCount = this.tableData.length;
                 },
                 onInputNo: function (e) { 
                     var inputNo = e.srcElement.value;
@@ -184,7 +192,7 @@
                         else {
                             _self.IsStockIn = true;
                             _self.changeMode();
-                            _self.StockId = res.data.data.stockInId;
+                            _self.StockId = res.data.data.stockInIdStr;
                             _self.StockNo = res.data.data.stockInNo;
                             _self.OrderNo = res.data.data.orderNo;
                             _self.Remark = res.data.data.remark;
@@ -210,7 +218,7 @@
                         else {
                             _self.IsStockIn = false;
                             _self.changeMode();
-                            _self.StockId = res.data.data.stockOutId;
+                            _self.StockId = res.data.data.stockOutIdStr;
                             _self.StockNo = res.data.data.stockOutNo;
                             _self.OrderNo = res.data.data.orderNo;
                             _self.Remark = res.data.data.remark;
@@ -237,6 +245,7 @@
                             _self.InventoryBoxNo = res.data.data.inventoryBoxNo;
                             _self.InventoryBoxName = res.data.data.inventoryBoxName;
                             _self.InventoryDetails = res.data.data.details;
+                            _self.NewMaterialCount = 0;
                             _self.updateInventoryBoxDetail();
                         }
                     }).catch(function (res) {
@@ -272,6 +281,8 @@
                                 continue;
                             }
                             var list = {
+                                StockId: stockDetail.stockId,
+                                StockDetailId: stockDetail.stockDetailId,
                                 InventoryId: null,
                                 MaterialId: stockDetail.materialId,
                                 MaterialNo: stockDetail.materialNo,
@@ -301,6 +312,7 @@
                                     MaterialName: res.data.data.materialName,
                                     IsLocked: false,
                                     OrderNo: res.data.data.orderNo,
+                                    NowQty:0,
                                     PlanQty: 0,
                                     ActQty: 0,
                                     Qty: 1,
@@ -332,11 +344,15 @@
                     }
                     else { //有单出入库
                         if (this.IsStockIn) return; //有单入库时初始不显示任何物料，等待关联
-                        for (var inventoryDetail in this.InventoryDetails) {
+                        var inventoryLength = this.InventoryDetails.length;
+                        for (var ii = 0; ii < inventoryLength; ii++ ) {
+                            var inventoryDetail = this.InventoryDetails[ii];
                             var canOutput = false;
-                            for (var stockDetail in this.StockDetails) {
-                                if (stockDetail.MaterialId != inventoryDetail.MaterialId) continue;
-                                if (this.OrderNo != inventoryDetail.OrderNo) continue;
+                            var detailLength = this.StockDetails.length;
+                            for (var i = 0; i < detailLength;i++) {
+                                var stockDetail = this.StockDetails[i];
+                                if (stockDetail.materialId != inventoryDetail.materialId) continue;
+                                if (this.OrderNo != inventoryDetail.orderNo) continue;
                                 canOutput = true;
                             }
                             if (!canOutput) continue;
@@ -346,8 +362,9 @@
                                 MaterialNo: inventoryDetail.materialNo,
                                 MaterialName: inventoryDetail.materialName,
                                 IsLocked: inventoryDetail.isLocked,
-                                PlanInQty: 0,
-                                ActInQty: 0,
+                                NowQty: inventoryDetail.qty,
+                                PlanQty: stockDetail.planQty,
+                                ActQty: stockDetail.actQty,
                                 Qty: 0,
                             }
                             this.tableData.unshift(list);

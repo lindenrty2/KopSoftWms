@@ -130,228 +130,116 @@
             methods: {
                 loadL: function () {
                     _self = this;
-                    var obj = [{
-                        checkbox: true,             //是否显示复选框
-                        visible: true
-                    },
-                    {
-                        field: 'StockInId',
-                        title: 'Id',
-                        visible: false
-                    }, {
-                        field: 'StockInStatusValue',
-                        title: '操作',
-                        align: 'center',
-                        sortable: true,
-                        formatter: function (value, row, index) {
-                            var html = [];
-                            if (value == 1) {
-                                html.push('<button id="addDetailL" type="button" class="btn btn-link" style="margin-top:-8px;">添加明细</button>'
-                                    , '<button id="auditinL" type="button" class="btn btn-link" style="margin-top:-8px;margin-left:-10px;">审核</button>'
-                                );
-                            }
-                            else if (value == 2 || value == 3 ) {
+                    var obj = [
+                        { checkbox: true, visible: true },
+                        { field: 'StockInId', title: 'Id', visible: false },
+                        {
+                            field: 'StockInStatusValue', title: '操作', align: 'center', sortable: true,
+                            formatter: function (value, row, index) {
+                                var html = [];
+                                if (value == 1) {
+                                    html.push('<button id="addDetailL" type="button" class="btn btn-link" style="margin-top:-8px;">添加明细</button>'
+                                        , '<button id="auditinL" type="button" class="btn btn-link" style="margin-top:-8px;margin-left:-10px;">审核</button>'
+                                    );
+                                }
+                                else if (value == 2 || value == 3) {
+                                    html.push(
+                                        '<button id="workL" type="button" class="btn btn-link" style="margin-top:-8px;margin-left:-10px;">操作</button>'
+                                    );
+                                }
                                 html.push(
-                                    '<button id="workL" type="button" class="btn btn-link" style="margin-top:-8px;margin-left:-10px;">操作</button>'
+                                    '<button id="previewL" type="button" class="btn btn-link" style="margin-top:-8px;margin-left:-10px;">预览</button>'
+                                    , '<button id="printL" type="button" class="btn btn-link" style="margin-top:-8px;margin-left:-10px;">打印</button>'
                                 );
-                            }
-                            html.push(
-                                '<button id="previewL" type="button" class="btn btn-link" style="margin-top:-8px;margin-left:-10px;">预览</button>'
-                                , '<button id="printL" type="button" class="btn btn-link" style="margin-top:-8px;margin-left:-10px;">打印</button>'
-                            );
-                            return html.join('');
-                        },
-                        events: {
-                            'click #addDetailL': function (e, value, row, index) {
-                                if (value === 1) {
-                                    app.addDetailL(row.StockInId);
-                                } else {
-                                    layer.msg("初始转态才允许添加！", { icon: 5 });
+                                return html.join('');
+                            },
+                            events: {
+                                'click #addDetailL': function (e, value, row, index) {
+                                    if (value === 1) {
+                                        app.addDetailL(row.StockInId);
+                                    } else {
+                                        layer.msg("初始转态才允许添加！", { icon: 5 });
+                                    }
+                                },
+                                'click #auditinL': function (e, value, row, index) {
+                                    if (value === 1) {
+                                        app.auditinL(row.StockInId);
+                                    } else {
+                                        layer.msg("初始转态才允许审核！", { icon: 5 });
+                                    }
+                                },
+                                'click #workL': function (e, value, row, index) {
+                                    app.workL(row.StockInId, row.StockInNo);
+
+                                },
+                                'click #previewL': function (e, value, row, index) {
+                                    app.previewL(row.StockInId);
+
+                                },
+                                'click #printL': function (e, value, row, index) {
+                                    app.printL(row.StockInId);
                                 }
                             },
-                            'click #auditinL': function (e, value, row, index) {
-                                if (value === 1) {
-                                    app.auditinL(row.StockInId);
-                                } else {
-                                    layer.msg("初始转态才允许审核！", { icon: 5 });
-                                }
-                            },
-                            'click #workL': function (e, value, row, index) {
-                                app.workL(row.StockInId, row.StockInNo);
-
-                            },
-                            'click #previewL': function (e, value, row, index) {
-                                app.previewL(row.StockInId);
-
-                            },
-                            'click #printL': function (e, value, row, index) {
-                                app.printL(row.StockInId);
-                            }
                         },
-                    }, {
-                        field: 'StockInNo',
-                        title: '入库单号',
-                        align: 'center',
-                        sortable: true
-                    }, {
-                        field: 'OrderNo',
-                        title: '订单号',
-                        align: 'center',
-                        sortable: true
-                    }, {
-                        field: 'StockInType',
-                        title: '入库类型',
-                        align: 'center',
-                        sortable: true
-                    }
-                        , {
-                        field: 'SupplierNo',
-                        title: '供应商编号',
-                        align: 'center',
-                        sortable: true
-                    }, {
-                        field: 'SupplierName',
-                        title: '供应商名称',
-                        align: 'center',
-                        sortable: true
-                    },
-                    {
-                        field: 'StockInStatus',
-                        title: '状态',
-                        align: 'center',
-                        sortable: true,
-                        formatter: StockInStatusFormatter
-                    }, {
-                        field: 'Remark',
-                        align: 'center',
-                        title: '备注'
-                    }, {
-                        field: 'CreateBy',
-                        title: '创建人',
-                        align: 'center',
-                        sortable: true
-                    }, {
-                        field: 'CreateDate',
-                        align: 'center',
-                        title: '创建时间',
-                        sortable: true
-                    }, {
-                        field: 'ModifiedBy',
-                        align: 'center',
-                        title: '修改人',
-                        sortable: true
-                    }, {
-                        field: 'ModifiedDate',
-                        title: '修改时间',
-                        align: 'center',
-                        sortable: true
-                    }];
+                        { field: 'StockInNo', title: '入库单号', align: 'center', sortable: true },
+                        { field: 'OrderNo', title: '订单号', align: 'center', sortable: true },
+                        { field: 'StockInType', title: '入库类型', align: 'center', sortable: true },
+                        { field: 'OrderNo', title: '生产令号', align: 'center', sortable: true }, 
+                        { field: 'StockInStatus', title: '状态', align: 'center', sortable: true, formatter: StockInStatusFormatter },
+                        { field: 'Remark', align: 'center', title: '备注' },
+                        { field: 'CreateBy', title: '创建人', align: 'center', sortable: true },
+                        { field: 'CreateDate', align: 'center', title: '创建时间', sortable: true },
+                        { field: 'ModifiedBy', align: 'center', title: '修改人', sortable: true },
+                        { field: 'ModifiedDate', title: '修改时间', align: 'center', sortable: true }
+                    ];
                     var qParams = {
                         StockInStatus: _self.StockInStatus,
                         StockInType: _self.StockInType
                     };
-                    var objSub = [{
-                        checkbox: true,             //是否显示复选框
-                        visible: true
-                    },
-                    {
-                        field: 'StockInDetailId',
-                        title: 'Id',
-                        visible: false
-                    }, {
-                        field: 'StatusValue',
-                        title: '操作',
-                        align: 'center',
-                        sortable: true,
-                        formatter: function (value, row, index) {
-                            if (value < 2) {
-                                return ['<button id="deleteDetailL" type="button" class="btn btn-link" style="margin-top:-8px;">删除</button>'
-                                    , '<button id="editDetailL" type="button" class="btn btn-link" style="margin-top:-8px;">修改</button>'
-                                ].join('');
-                            } else {
-                                return '';
-                            }
-                        },
-                        events: {
-                            'click #deleteDetailL': function (e, value, row, index) {
-                                if (value === 1) {
-                                    app.deleteDetailL(row.StockInDetailId);
+                    var objSub = [
+                        { checkbox: true, visible: true },
+                        { field: 'StockInDetailId', title: 'Id', visible: false },
+                        {
+                            field: 'StatusValue', title: '操作', align: 'center', sortable: true,
+                            formatter: function (value, row, index) {
+                                if (value < 2) {
+                                    return ['<button id="deleteDetailL" type="button" class="btn btn-link" style="margin-top:-8px;">删除</button>'
+                                        , '<button id="editDetailL" type="button" class="btn btn-link" style="margin-top:-8px;">修改</button>'
+                                    ].join('');
                                 } else {
-                                    layer.msg("初始转态才允许添加！", { icon: 5 });
+                                    return '';
                                 }
                             },
-                            'click #editDetailL': function (e, value, row, index) {
-                                if (value != 2) {
-                                    app.editDetailL(row.StockInDetailId);
-                                } else {
-                                    layer.msg("初始转态才允许修改！", { icon: 5 });
-                                }
+                            events: {
+                                'click #deleteDetailL': function (e, value, row, index) {
+                                    if (value === 1) {
+                                        app.deleteDetailL(row.StockInDetailId);
+                                    } else {
+                                        layer.msg("初始转态才允许添加！", { icon: 5 });
+                                    }
+                                },
+                                'click #editDetailL': function (e, value, row, index) {
+                                    if (value != 2) {
+                                        app.editDetailL(row.StockInDetailId);
+                                    } else {
+                                        layer.msg("初始转态才允许修改！", { icon: 5 });
+                                    }
+                                },
                             },
                         },
-                    }, {
-                        field: 'MaterialNo',
-                        title: '物料编号',
-                        align: 'center',
-                        sortable: true
-                    }, {
-                        field: 'MaterialName',
-                        title: '物料名称',
-                        align: 'center',
-                        sortable: true
-                    }, {
-                        field: 'PlanInQty',
-                        title: '计划数量',
-                        align: 'center',
-                        sortable: true
-                    }
-                    , {
-                        field: 'ActInQty',
-                        title: '实际数量',
-                        align: 'center',
-                        sortable: true
-                    }, {
-                        field: 'StorageRackNo',
-                        title: '货架编号',
-                        align: 'center',
-                        sortable: true
-                    }, {
-                        field: 'StorageRackName',
-                        title: '货架名称',
-                        align: 'center',
-                        sortable: true
-                    },
-                    {
-                        field: 'Status',
-                        title: '状态',
-                        align: 'center',
-                        sortable: true,
-                        formatter: StockInStatusFormatter
-                    },
-                    {
-                        field: 'Remark',
-                        align: 'center',
-                        title: '备注'
-                    }, {
-                        field: 'CreateBy',
-                        title: '创建人',
-                        align: 'center',
-                        sortable: true
-                    }, {
-                        field: 'CreateDate',
-                        align: 'center',
-                        title: '创建时间',
-                        sortable: true
-                    }, {
-                        field: 'ModifiedBy',
-                        align: 'center',
-                        title: '修改人',
-                        sortable: true
-                    }, {
-                        field: 'ModifiedDate',
-                        title: '修改时间',
-                        align: 'center',
-                        sortable: true
-                    }];
+                        { field: 'MaterialNo', title: '物料编号', align: 'center', sortable: true },
+                        { field: 'MaterialName', title: '物料名称', align: 'center', sortable: true },
+                        { field: 'PlanInQty', title: '计划数量', align: 'center', sortable: true },
+                        { field: 'ActInQty', title: '实际数量', align: 'center', sortable: true },
+                        //{ field: 'StorageRackNo', title: '货架编号', align: 'center', sortable: true },
+                        //{ field: 'StorageRackName', title: '货架名称', align: 'center', sortable: true },
+                        { field: 'Status', title: '状态', align: 'center', sortable: true, formatter: StockInStatusFormatter },
+                        { field: 'Remark', align: 'center', title: '备注' },
+                        { field: 'CreateBy', title: '创建人', align: 'center', sortable: true },
+                        { field: 'CreateDate', align: 'center', title: '创建时间', sortable: true },
+                        { field: 'ModifiedBy', align: 'center', title: '修改人', sortable: true },
+                        { field: 'ModifiedDate', title: '修改时间', align: 'center', sortable: true }
+                    ];
 
                     yui.table2("bootstraptable", "/StockIn/List", "/StockIn/ListDetail?storeId=@ViewData["currentStoreId"]", obj, objSub, "POST", "StockInId", "StockInId", true, qParams);
                     //yui.table("bootstraptable", "/StockIn/List", obj, "POST", "StockInId", true, qParams);

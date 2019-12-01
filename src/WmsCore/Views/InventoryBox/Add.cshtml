@@ -26,7 +26,7 @@
                     <select class="form-control" v-model="ReservoirAreaId" size="1">
                         <option value="">未部署</option>
                         <template v-for="item in rlist">
-                            <option :value="item.value">{{item.name}}</option>
+                            <option :value="item.ReservoirAreaId">{{item.ReservoirAreaName}}</option>
                         </template>
                     </select>
                 </div>
@@ -37,7 +37,7 @@
                     <select class="form-control" v-model="StoragerackId" size="1">
                         <option value="">未部署</option>
                         <template v-for="item in slist">
-                            <option :value="item.value">{{item.name}}</option>
+                            <option :value="item.StorageRackId">{{item.StorageRackName}}</option>
                         </template>
                     </select>
                 </div>
@@ -128,10 +128,10 @@
             mounted: function () {
                 var _self = this;
                 _self.$nextTick(function () {
-                    if (_self.WarehouseId.length > 1) {
+                    if (_self.WarehouseId.length >0) {
                         _self.loadL(_self.WarehouseId, 1);
                     }
-                    if (_self.ReservoirAreaId.length > 1) {
+                    if (_self.ReservoirAreaId.length >0) {
                         //console.info(_self.ReservoirAreaId);
                         _self.loadL(_self.ReservoirAreaId, 2);
                     }
@@ -141,11 +141,11 @@
                 loadL: function (id,type) {
                     var _self = this;
                     if (type === 1) {
-                        yui.$axiosget('/StorageRack/GetReservoirarea2?id=' + id).then(function (response) {
+                        yui.$axiosget('/StorageRack/GetReservoirarea2?storeId=@ViewData["currentStoreId"]&id=' + id).then(function (response) {
                             _self.rlist = response.data;
                         });
                     } else {
-                        yui.$axiosget('/StorageRack/GetStoragerack?id=' + id).then(function (response) {
+                        yui.$axiosget('/StorageRack/GetStoragerack?storeId=@ViewData["currentStoreId"]&id=' + id).then(function (response) {
                             _self.slist = response.data;
                         });
                     }
@@ -169,6 +169,7 @@
                     });
                     var data = {
                         id: _self.InventoryBoxId,
+                        storeId: _self.WarehouseId,
                         InventoryBoxNo: _self.InventoryBoxNo,
                         InventoryBoxName: _self.InventoryBoxName,
                         Size: _self.Size,

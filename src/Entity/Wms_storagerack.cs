@@ -53,6 +53,13 @@ namespace YL.Core.Entity
         /// </summary>
         [SugarColumn(IsNullable = true)]
         public long? ReservoirAreaId { get; set; }
+        /// <summary>
+        /// Desc:所属库区
+        /// Default:
+        /// Nullable:False
+        /// </summary>
+        [SugarColumn(Length = 60, IsNullable = true)]
+        public string ReservoirAreaName { get; set; }
 
         /// <summary>
         /// 行

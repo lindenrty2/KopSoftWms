@@ -152,66 +152,29 @@
                 },
                 loadL: function () {
                     _self = this;
-                    var obj = [{
-                        checkbox: true,             //是否显示复选框
-                        visible: true
-                    },
-                    {
-                        field: 'InventoryId',
-                        title: 'Id',
-                        visible: false
-                    },
-                    {
-                        field: 'StorageRackNo',
-                        title: '货架编号',
-                        align: 'center',
-                        sortable: true
-                    },
-                    {
-                        field: 'StorageRackName',
-                        title: '货架名称',
-                        align: 'center',
-                        sortable: true
-                    },
-                    {
-                        field: 'InventoryBoxNo',
-                        title: '料箱编号',
-                        align: 'center',
-                        sortable: true
-                    },
-                    {
-                        field: 'InventoryBoxName',
-                        title: '料箱名',
-                        align: 'center',
-                        sortable: true
-                    },
-                    {
-                        field: 'MaterialNo',
-                        title: '物料编号',
-                        align: 'center',
-                        sortable: true
-                    }, {
-                        field: 'MaterialName',
-                        title: '物料名称',
-                        align: 'center',
-                        sortable: true
-                    }, {
-                        field: 'Qty',
-                        title: '库存',
-                        align: 'center',
-                        sortable: true,
-                        formatter: function (value, row, index) {
-                            if (value > row.SafeQty) {
-                                return '<span class="label label-success radius">' + value + '</span>';
-                            } else {
-                                return '<span class="label label-danger radius">' + value + '</span>';
+                    var obj = [
+                        { checkbox: true, visible: true },
+                        { field: 'InventoryId', title: 'Id', visible: false },
+                        //{ field: 'StorageRackNo', title: '货架编号', align: 'center', sortable: true },
+                        { field: 'InventoryBoxNo', title: '料箱编号', align: 'center', sortable: true },
+                        { field: 'Position', title: '料格位置', align: 'center', sortable: true },
+                        { field: 'Floor', title: '层', align: 'center', sortable: true },
+                        { field: 'Row', title: '行', align: 'center', sortable: true },
+                        { field: 'Column', title: '列', align: 'center', sortable: true },
+                        { field: 'MaterialNo', title: '物料编号', align: 'center', sortable: true },
+                        { field: 'MaterialName', title: '物料名称', align: 'center', sortable: true },
+                        {
+                            field: 'Qty', title: '库存', align: 'center', sortable: true,
+                            formatter: function (value, row, index) {
+                                if (value > row.SafeQty) {
+                                    return '<span class="label label-success radius">' + value + '</span>';
+                                } else {
+                                    return '<span class="label label-danger radius">' + value + '</span>';
+                                }
                             }
-                        }
-                    }, {
-                            field: 'IsLocked',
-                            title: '状态',
-                            align: 'center',
-                            sortable: true,
+                        },
+                        {
+                            field: 'IsLocked', title: '状态', align: 'center', sortable: true,
                             formatter: function (value, row, index) {
                                 if (value == true) {
                                     return '<span class="label label-danger radius">锁定</span>';
@@ -220,37 +183,12 @@
                                 }
                             }
                         },
-                    {
-                        field: 'Remark',
-                        align: 'center',
-                        title: '备注'
-                    }, {
-                        field: 'CName',
-                        title: '创建人',
-                        align: 'center',
-                        sortable: true
-                    }, {
-                        field: 'CreateDate',
-                        align: 'center',
-                        title: '创建时间',
-                        sortable: true,
-                        formatter: function (value, row, index) {
-                            return _self.jsonDateFormat(value);
-                        }
-                    }, {
-                        field: 'UName',
-                        align: 'center',
-                        title: '修改人',
-                        sortable: true
-                    }, {
-                        field: 'ModifiedDate',
-                        title: '修改时间',
-                        align: 'center',
-                        sortable: true,
-                        formatter: function (value, row, index) {
-                            return _self.jsonDateFormat(value);
-                        }
-                    }];
+                        { field: 'Remark', align: 'center', title: '备注' },
+                        { field: 'CreateBy', title: '创建人', align: 'center', sortable: true },
+                        { field: 'CreateDate', align: 'center', title: '创建时间', sortable: true },
+                        { field: 'ModifiedBy', align: 'center', title: '修改人', sortable: true },
+                        { field: 'ModifiedDate', title: '修改时间', align: 'center', sortable: true }
+                    ];
                     var qParams = {
                         StorageRackId: _self.StorageRackId,
                         MaterialId: _self.MaterialId

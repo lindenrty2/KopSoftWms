@@ -56,6 +56,18 @@ namespace YL.Core.Dto
         /// </summary>
         public int Position { get; set; }
         /// <summary>
+        /// 排
+        /// </summary>
+        public int Floor { get; set; }
+        /// <summary>
+        /// 行
+        /// </summary>
+        public int Row { get; set; }
+        /// <summary>
+        /// 列
+        /// </summary>
+        public int Column { get; set; }
+        /// <summary>
         /// 创建用户
         /// </summary>
         public string CreateBy { get; set; }
@@ -79,6 +91,7 @@ namespace YL.Core.Dto
     /// </summary>
     public class OutsideInventoryRecordDto : OutsideInventoryDto
     {
+        public string StockNo { get; set; }
         public int AfterQty { get; set; }
     }
 }

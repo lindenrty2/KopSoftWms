@@ -22,5 +22,6 @@
   {"RoleMenuId": 21,"RoleId": 1,"MenuId": 21,"CreateBy": 2,"CreateDate": "2019-01-01 00:00:00","ModifiedBy": 2,"ModifiedDate": "2019-01-01 00:00:00" },
   {"RoleMenuId": 22,"RoleId": 1,"MenuId": 22,"CreateBy": 2,"CreateDate": "2019-01-01 00:00:00","ModifiedBy": 2,"ModifiedDate": "2019-01-01 00:00:00" },
   {"RoleMenuId": 23,"RoleId": 1,"MenuId": 23,"CreateBy": 2,"CreateDate": "2019-01-01 00:00:00","ModifiedBy": 2,"ModifiedDate": "2019-01-01 00:00:00" },
-  {"RoleMenuId": 24,"RoleId": 1,"MenuId": 24,"CreateBy": 2,"CreateDate": "2019-01-01 00:00:00","ModifiedBy": 2,"ModifiedDate": "2019-01-01 00:00:00" }
+  {"RoleMenuId": 24,"RoleId": 1,"MenuId": 24,"CreateBy": 2,"CreateDate": "2019-01-01 00:00:00","ModifiedBy": 2,"ModifiedDate": "2019-01-01 00:00:00" },
+  {"RoleMenuId": 25,"RoleId": 1,"MenuId": 25,"CreateBy": 2,"CreateDate": "2019-01-01 00:00:00","ModifiedBy": 2,"ModifiedDate": "2019-01-01 00:00:00" }
 ]

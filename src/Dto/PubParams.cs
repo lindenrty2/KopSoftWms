@@ -80,5 +80,13 @@ namespace YL.Core.Dto
         {
 
         }
+
+        /// <summary>
+        /// WCS任务
+        /// </summary>
+        public class WcsTaskBootstrapParams : BootstrapParams
+        {
+            public bool FailOnly { get; set; }
+        }
     }
 }

@@ -64,7 +64,7 @@ namespace WMSCore.Outside
                 Wms_mestask mesTask = new Wms_mestask()
                 {
                     MesTaskId = PubId.SnowflakeId,
-                    MesTaskType = MesTaskTypes.StockIn.ToByte(),
+                    MesTaskType = MESTaskTypes.StockIn,
                     WarehousingId = data.WarehousingId, //入库单编号
                     WarehousingType = data.WarehousingType, //入库类型
                     WarehousingTime = data.WarehousingTime.SerialNumberToDateTime(),   //入库时间
@@ -73,8 +73,8 @@ namespace WMSCore.Outside
                     WorkAreaName = data.WorkAreaName, //作业区
                     SuppliesKinds = data.SuppliesKinds, //物料种类
                     SuppliesInfoJson = jsonSuppliesInfo, //物料信息
-                    WorkStatus = MESTaskWorkStatus.WaitPlan.ToByte(),      //等待计划
-                    NotifyStatus = MESTaskNotifyStatus.Requested.ToByte(), //已接收
+                    WorkStatus = MESTaskWorkStatus.WaitPlan,      //等待计划
+                    NotifyStatus = MESTaskNotifyStatus.Requested, //已接收
                     CreateDate = DateTime.Now
                 };
                 _mastaskServices.Insert(mesTask);
@@ -164,7 +164,7 @@ namespace WMSCore.Outside
             {
                 try
                 {
-                    IWMSApiAccessor proxy = WMSApiManager.Get(keyValue.Key.ToString(),_sqlClient);
+                    IWMSBaseApiAccessor proxy = WMSApiManager.GetBaseApiAccessor(keyValue.Key.ToString(),_sqlClient);
                     OutsideStockInRequestDto request = new OutsideStockInRequestDto()
                     {
                         MesTaskId = mesTask.MesTaskId,
@@ -207,7 +207,7 @@ namespace WMSCore.Outside
                 Wms_mestask mesTask = new Wms_mestask()
                 {
                     MesTaskId = PubId.SnowflakeId,
-                    MesTaskType = MesTaskTypes.StockOut.ToByte(),
+                    MesTaskType = MESTaskTypes.StockOut,
                     WarehousingId = data.WarehouseEntryId, //入库单编号
                     WarehousingType = data.WarehouseEntryType, //入库类型
                     WarehousingTime = data.WarehouseEntryTime.ToDateTime(),   //入库时间
@@ -217,8 +217,8 @@ namespace WMSCore.Outside
                     WorkStationId = data.WorkStationId, //工位号
                     SuppliesKinds = data.SuppliesKinds, //物料种类
                     SuppliesInfoJson = jsonSuppliesInfo, //物料信息
-                    WorkStatus = MESTaskWorkStatus.WaitPlan.ToByte(),      //等待计划
-                    NotifyStatus = MESTaskNotifyStatus.Requested.ToByte(), //已接收
+                    WorkStatus = MESTaskWorkStatus.WaitPlan,      //等待计划
+                    NotifyStatus = MESTaskNotifyStatus.Requested, //已接收
                     CreateDate = DateTime.Now
                 };
                 if(_sqlClient.Insertable(mesTask).ExecuteCommand() == 0)
@@ -306,7 +306,7 @@ namespace WMSCore.Outside
             {
                 try
                 {
-                    IWMSApiAccessor proxy = WMSApiManager.Get(keyValue.Key.ToString(),_sqlClient);
+                    IWMSBaseApiAccessor proxy = WMSApiManager.GetBaseApiAccessor(keyValue.Key.ToString(),_sqlClient);
                     OutsideStockOutRequestDto request = new OutsideStockOutRequestDto()
                     {
                         MesTaskId = mesTask.MesTaskId,
@@ -449,7 +449,7 @@ namespace WMSCore.Outside
                 WarehousingId = arg.WarehousingId,
                 WarehousingType = arg.WarehousingType,
                 WarehousingStatusInfoList = statusInfoList.ToArray(),
-                IsNormalWarehousing = mesTask.WorkStatus == MESTaskWorkStatus.WorkComplated.ToByte(),
+                IsNormalWarehousing = mesTask.WorkStatus == MESTaskWorkStatus.WorkComplated,
             };
              
         }

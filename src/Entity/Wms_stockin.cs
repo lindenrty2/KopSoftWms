@@ -15,7 +15,12 @@ namespace YL.Core.Entity
             IsDel = Convert.ToByte("1");
             CreateDate = DateTime.Now;
         }
-
+        [SugarColumn(IsIgnore =true)]
+        public string StockInIdStr {
+            get {
+                return StockInId.ToString();
+            }
+        }
         /// <summary>
         /// Desc:主键
         /// Default:

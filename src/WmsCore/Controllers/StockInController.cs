@@ -81,7 +81,7 @@ namespace KopSoftWms.Controllers
             //var sd = _stockinServices.PageList(bootstrap);
             //return Content(sd);
 
-            IWMSApiAccessor wmsAccessor = WMSApiManager.Get(bootstrap.storeId.ToString(), _client);
+            IWMSBaseApiAccessor wmsAccessor = WMSApiManager.GetBaseApiAccessor(bootstrap.storeId.ToString(), _client);
             RouteData<OutsideStockInQueryResult[]> result = await wmsAccessor.QueryStockInList(null, null, bootstrap.pageIndex, bootstrap.limit, bootstrap.search, bootstrap.order.Split(","), bootstrap.datemin, bootstrap.datemax);
             if (!result.IsSccuess)
             {
@@ -102,7 +102,7 @@ namespace KopSoftWms.Controllers
             //var sd = _stockindetailServices.PageList(pid);
             //return Content(sd);
 
-            IWMSApiAccessor wmsAccessor = WMSApiManager.Get(storeId.ToString(), _client);
+            IWMSBaseApiAccessor wmsAccessor = WMSApiManager.GetBaseApiAccessor(storeId.ToString(), _client);
             RouteData<OutsideStockInQueryResult> result = await wmsAccessor.QueryStockIn(SqlFunc.ToInt64(pid));
             if (!result.IsSccuess)
             {
@@ -431,5 +431,6 @@ namespace KopSoftWms.Controllers
             var str = _stockinServices.PrintList(id);
             return Content(str);
         }
+
     }
 }

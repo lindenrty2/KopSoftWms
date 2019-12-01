@@ -36,6 +36,23 @@ function IsMaterialNo(no) {
     return false;
 }
 
+function StockStatusFormatter(value, row, index) { 
+    switch (value) {
+        case -1:
+            return '<span class="label label-danger radius">已取消</span>';
+        case 1: //任务创建中
+            return '<span class="label label-default radius">任务创建中</span>';
+        case 2://待操作
+            return '<span class="label label-default radius">待操作</span>';
+        case 3://进行中
+            return '<span class="label label-primary radius">进行中</span>';
+        case 4: //已完成
+            return '<span class="label label-success radius">已完成</span>';
+        default:
+            return '<span class="label label-success radius">-</span>';
+    }
+}
+
 function StockInStatusFormatter(value, row, index) {
     switch (value) {
         case -1:
@@ -103,6 +120,143 @@ function InventoryBoxStatusFormatter(value, row, index) {
         return "异常";
     }
 }
+
+//--------------------------------------------------------------------------
+//MES
+//--------------------------------------------------------------------------
+
+function MESTaskTypeFormatter(value, row, index) {
+    switch (value) {
+        case 0:
+        case 'Unknow':
+            return '<span class="label label-default radius">不明</span>';
+        case 1:
+        case 'StockIn':
+            return '<span class="label label-info radius">入库任务</span>';
+        case 2:
+        case 'StockOut':
+            return '<span class="label label-danger radius">出库任务</span>';
+        default:
+            return '<span class="label label-default radius">-</span>';
+    }
+}
+
+function MESWorkStatusFormatter(value, row, index) {
+    switch (value) {
+        case -1:
+        case 'Failed':
+            return '<span class="label label-danger radius">处理失败</span>';
+        case 0:
+        case 'Unknow':
+            return '<span class="label label-default radius">不明</span>';
+        case 1:
+        case 'WaitPlan':
+            return '<span class="label label-info radius">待计划</span>';
+        case 2:
+        case 'Planed':
+            return '<span class="label label-info radius">已计划任务</span>';
+        case 3:
+        case 'Working':
+            return '<span class="label label-primary radius">已开始处理</span>';
+        case 4:
+        case 'WorkComplated':
+            return '<span class="label label-primary radius">处理已完成</span>';
+        default:
+            return '<span class="label label-success radius">-</span>';
+    }
+}
+
+function MESNotifyStatusFormatter(value, row, index) {
+    switch (value) {
+        case -1:
+        case 'Failed':
+            return '<span class="label label-danger radius">通知失败</span>';
+        case 0:
+        case 'Unknow':
+            return '<span class="label label-default radius">不明</span>';
+        case 1:
+        case 'Requested':
+            return '<span class="label label-info radius">已接收任务</span>';
+        case 2:
+        case 'WaitResponse':
+            return '<span class="label label-info radius">等待回馈MES</span>';
+        case 3:
+        case 'Responsed':
+            return '<span class="label label-primary radius">已反馈MES</span>'; 
+        default:
+            return '<span class="label label-success radius">-</span>';
+    }
+}
+//--------------------------------------------------------------------------
+//WCS
+//--------------------------------------------------------------------------
+
+function WCSTaskTypeFormatter(value, row, index) {
+    switch (value) {
+        case 0:
+        case 'Unknow':
+            return '<span class="label label-default radius">不明</span>'; 
+        case 1:
+        case 'StockOut':
+            return '<span class="label label-danger radius">出库指令</span>'; 
+        case 2:
+        case 'StockBack':
+            return '<span class="label label-info radius">归库指令</span>';
+        default:
+            return '<span class="label label-default radius">-</span>';
+    }
+}
+
+function WCSWorkStatusFormatter(value, row, index) {
+    switch (value) {
+        case -1:
+        case 'Failed':
+            return '<span class="label label-danger radius">处理失败</span>';
+        case 0:
+        case 'Unknow':
+            return '<span class="label label-default radius">不明</span>';
+        case 1:
+        case 'WaitPlan':
+            return '<span class="label label-default radius">待计划</span>';
+        case 2:
+        case 'Planed':
+            return '<span class="label label-info radius">已计划任务</span>';
+        case 3:
+        case 'Working':
+            return '<span class="label label-primary radius">已开始处理</span>';
+        case 4:
+        case 'WorkComplated':
+            return '<span class="label label-primary radius">处理已完成</span>';
+        default:
+            return '<span class="label label-success radius">-</span>';
+    } 
+}
+
+function WCSNotifyStatusFormatter(value, row, index) {
+    switch (value) {
+        case -1:
+        case 'Failed':
+            return '<span class="label label-danger radius">通知失败</span>';
+        case 0:
+        case 'Unknow':
+            return '<span class="label label-default radius">不明</span>';
+        case 1:
+        case 'WaitRequest':
+            return '<span class="label label-default radius">待通知</span>';
+        case 2:
+        case 'WaitResponse':
+            return '<span class="label label-info radius">等待回馈</span>';
+        case 3:
+        case 'Responsed':
+            return '<span class="label label-primary radius">已接收回馈</span>';
+        case 4:
+        case 'ManualResponsed':
+            return '<span class="label label-primary radius">手工回馈</span>';
+        default:
+            return '<span class="label label-success radius">-</span>';
+    } 
+}
+
 
 function DateTimeFormatter (value, row, index) {
     return _self.jsonDateFormat(value);

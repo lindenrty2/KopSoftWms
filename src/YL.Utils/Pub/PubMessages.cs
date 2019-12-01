@@ -10,9 +10,15 @@ namespace YL.Utils.Pub
         public static MessageItem E0002_UPDATE_COUNT_FAIL = new MessageItem(-2, "数据更新失败,可能有第三方更新了数据");
         public static MessageItem E0003_FILEUPLOAD_FAIL = new MessageItem(-3, "文件上传失败");
         public static MessageItem E0004_DATABASE_UPDATE_FAIL = new MessageItem(-4, "数据库更新失败");
+        public static MessageItem E0005_DATABASE_INSERT_FAIL = new MessageItem(-5, "数据库插入失败");
+        public static MessageItem E0006_DATA_VAILD_FAIL = new MessageItem(-6, "数据整合性校验失败");
+        public static MessageItem E0007_WAREHOUSE_NOTFOUND = new MessageItem(-7, "仓库不存在");
 
         public static MessageItem I1001_BOXBACK_SCCUESS = new MessageItem(1001, "料箱出库成功");
         public static MessageItem I1002_BOXOUT_SCCUESS = new MessageItem(1002, "料箱归库成功");
+        public static MessageItem I1003_INVENTORYBOX_ADD_SCCUESS = new MessageItem(1003, "料箱添加成功");
+        public static MessageItem I1004_INVENTORYBOX_UPDATE_SCCUESS = new MessageItem(1004, "料箱更新成功");
+        public static MessageItem I1005_INVENTORYBOX_DELETE_SCCUESS = new MessageItem(1005, "料箱删除成功");
 
         public static MessageItem E1001_SUPPLIESTYPE_NOTFOUND = new MessageItem(-1001,"找不到物料类型定义");
         public static MessageItem E1002_SUPPLIESTYPE_WAREHOUSEID_NOTSET = new MessageItem(-1002, "物料类型没有指定仓库");
@@ -34,8 +40,11 @@ namespace YL.Utils.Pub
         public static MessageItem E1018_INVENTORYBOX_ALLOW_BACKED = new MessageItem(-1018, "料箱已归库");
         public static MessageItem E1019_INVENTORY_LOCKED = new MessageItem(-1019, "物料被锁定,无法出入库");
         public static MessageItem E1020_INVENTORYBOX_MATERIAL_LOCKED = new MessageItem(-1020, "料箱中的物料被其他任务锁定,无法使用");
-        public static MessageItem E1021_INVENTORYRECORD_FAIL = new MessageItem(-1021, "物料库存记录更新失败"); 
-
+        public static MessageItem E1021_INVENTORYRECORD_FAIL = new MessageItem(-1021, "物料库存记录更新失败");
+        public static MessageItem E1022_INVENTORYBOX_NO_DUPLICATE = new MessageItem(-1022, "料箱编号重复");
+        public static MessageItem E1023_INVENTORYBOX_ADD_FAIL = new MessageItem(-1023, "料箱添加失败");
+        public static MessageItem E1024_INVENTORYBOX_UPDATE_FAIL = new MessageItem(-1024, "料箱更新失败");
+        public static MessageItem E1025_INVENTORYBOX_DELETE_FAIL = new MessageItem(-1025, "料箱删除失败");
 
         public static MessageItem I2000_STOCKOUT_SCAN_SCCUESS = new MessageItem(2000, "创建出库单成功");
         public static MessageItem I2001_STOCKIN_SCAN_SCCUESS = new MessageItem(2001, "入库扫码关联成功");
@@ -73,13 +82,17 @@ namespace YL.Utils.Pub
         public static MessageItem E2120_STOCKOUT_NOMORE_BOX = new MessageItem(-2120, "出库单没有更多的料箱需要出库");
         public static MessageItem E2121_STOCKOUT_ALLOW_LOCKED = new MessageItem(-2121, "该出库单已锁定，无法再次锁定");
 
-        public static MessageItem I2300_WCS_OUTCOMMAND_SCCUESS = new MessageItem(2300, "WCS料箱出库命令成功");
-        public static MessageItem E2300_WCS_OUTCOMMAND_FAIL = new MessageItem(-2300, "WCS料箱出库命令失败");
+        public static MessageItem I2300_WCS_OUTCOMMAND_SCCUESS = new MessageItem(2300, "WCS料箱出库命令成功"); 
+        public static MessageItem I2301_WCS_TASKSTATUS_UPDATE_SCCUESS = new MessageItem(2301, "WCS指令状态更新成功");
 
+        public static MessageItem E2300_WCS_OUTCOMMAND_FAIL = new MessageItem(-2300, "WCS料箱出库命令失败"); 
         public static MessageItem E2301_WCS_STOCKOUT_NOTCOMPLATE_EXIST = new MessageItem(-2301, "发现有未完成的出库任务");
         public static MessageItem E2302_WCS_TASKID_INVAILD = new MessageItem(-2302, "WCS任务Id无效");
         public static MessageItem E2303_WCS_STOCKOUTTASK_NOTFOUND = new MessageItem(-2303, "WCS回调出库确认时发现任务不存在");
-        public static MessageItem E2304_WCS_STOCKOUTTASK_NOTOUT = new MessageItem(-2304, "WCS回调出库确认时发现任务不处于出库状态"); 
+        public static MessageItem E2304_WCS_STOCKOUTTASK_NOTOUT = new MessageItem(-2304, "WCS回调出库确认时发现任务不处于出库状态");
+        public static MessageItem E2305_WCS_TASKID_NOTFOUND = new MessageItem(-2305, "WCS任务不存在");
+        public static MessageItem E2306_WCS_TASK_ALLOW_COMPLATED = new MessageItem(-2306, "WCS任务已完成,不能再次操作");
+        public static MessageItem E2307_WCS_TASKSTATUS_UPDATE_FAIL = new MessageItem(-2307, "WCS指令状态更新失败");
 
         public static MessageItem I2300_WCS_BACKCOMMAND_SCCUESS = new MessageItem(2301, "WCS料箱归库命令成功");
         public static MessageItem E2310_WCS_BACKCOMMAND_FAIL = new MessageItem(-2301, "WCS料箱归库命令失败");
