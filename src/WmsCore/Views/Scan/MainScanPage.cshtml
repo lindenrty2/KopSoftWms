@@ -91,7 +91,7 @@
                         <template slot-scope="scope">
                             <table v-if="InventoryBox.size==1" class="inventory_position_table tablesize_1">
                                 <tr>
-                                    <td :class="scope.row.Position==1?'selected':''" ><span onclick=''>1</span></td>
+                                    <td :class="scope.row.Position==1?'selected':''" ><span @@click='_self.positionclick(scope,1);'>1</span></td>
                                 </tr>
                             </table>
                             <table v-if="InventoryBox.size==2" class="inventory_position_table tablesize_2">
@@ -453,6 +453,9 @@
                         });
                 },
                 refresh: function (id) {
+                },
+                positionclick: function (scope,pos) {
+
                 }
             }
         });
