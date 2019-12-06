@@ -145,12 +145,12 @@
                 },
                 onInputNo: function (e) {
                     var _self = this;
-                    var inputNo = e.srcElement.value; 
+                    var inputNo = e.srcElement.value;
                     if (inputNo.length == 0) { return; }
                     else if (inputNo[0] == 'I') {
                         var url = "/InventoryBox/Search?storeId=@ViewData["currentStoreId"]&text=" + inputNo;
                         yui.$axiosget(url).then(function (res) {
-                            if (res.data.rows.length == 0) { 
+                            if (res.data.rows.length == 0) {
                                 layer.msg("无效料箱编号", { icon: 2 });
                             }
                             else {
@@ -174,7 +174,7 @@
 
                         var url = "/StockIn/SearchMaterial?storeId=@ViewData["currentStoreId"]&stockInId=@Model.StockInId&materialNo=" + inputNo;
                         yui.$axiosget(url).then(function (res) {
-                            if (res.data.data == null) { 
+                            if (res.data.data == null) {
                                 layer.msg(res.data.message, { icon: 2 });
                             }
                             else {
@@ -191,7 +191,7 @@
                         }).catch(function (res) {
                             layer.msg("物料查询发生错误" + res, { icon: 2 });
                         });
-             
+
                     }
                     app.InputNo = "";
                 },
@@ -209,7 +209,8 @@
                     var index = layer.load(1, {
                         shade: [0.1, '#fff'] //0.1透明度的白色背景
                     });
-                    var data = { 
+                    var data = {
+                        storeId: '@ViewData["currentStoreId"]',
                         stockInId: '@Model.StockInId',
                         inventoryBoxId: _self.InventoryBoxId,
                         materials: _self.tableData,
@@ -234,7 +235,7 @@
                             layer.close(index);
                         });
                 },
-                refresh: function (id) { 
+                refresh: function (id) {
                 }
             }
         });

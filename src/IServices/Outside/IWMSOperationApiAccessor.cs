@@ -86,5 +86,42 @@ namespace IServices.Outside
         /// <param name="result"></param>
         /// <returns></returns>
         Task<ConfirmBackStockResult> ConfirmBackStock(WCSTaskResult result);
+        /// <summary>
+        /// 入库单完成
+        /// </summary> 
+        /// <param name="stockInId"></param>
+        /// <returns></returns>
+        Task<RouteData> DoStockInComplate(long stockInId);
+        /// <summary>
+        /// 入库扫描完成
+        /// </summary>
+        /// <param name="stockInId"></param>
+        /// <param name="inventoryBoxId"></param>
+        /// <param name="materials"></param>
+        /// <param name="remark"></param>
+        /// <returns></returns>
+        Task<RouteData> DoStockInScanComplate(long stockInId, long inventoryBoxId, Wms_StockMaterialDetailDto[] materials, string remark);
+        /// <summary>
+        /// 根据出库单锁定物料
+        /// </summary>
+        /// <param name="stockOutId"></param>
+        /// <returns></returns>
+        Task<RouteData> DoStockOutLock(long stockOutId);
+        /// <summary>
+        /// 出库扫描完成
+        /// </summary>
+        /// <param name="stockOutId"></param>
+        /// <param name="inventoryBoxId"></param>
+        /// <param name="materials"></param>
+        /// <param name="remark"></param>
+        /// <returns></returns>
+        Task<RouteData> DoStockOutScanComplate(long stockOutId, long inventoryBoxId, Wms_StockMaterialDetailDto[] materials, string remark);
+        /// <summary>
+        /// 出库单完成
+        /// </summary>
+        /// <param name="stockOutId"></param>
+        /// <returns></returns>
+        Task<RouteData> DoStockOutComplate(long stockOutId);
+
     }
 }

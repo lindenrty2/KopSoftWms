@@ -166,10 +166,7 @@ namespace YL
                 InitTableData<Sys_rolemenu>(db, "Sys_rolemenu.json");
                 InitTableData<Sys_serialnum>(db, "Sys_serialnum.json");
                 InitTableData<Sys_user>(db, "Sys_user.json");
-                InitTableData<Wms_warehouse>(db, "Wms_warehouse.json");
-                InitTableData<Wms_reservoirarea>(db, "Wms_reservoirarea.json");
-                InitTableData<Wms_storagerack>(db, "Wms_storagerack.json");
-                InitTableData<Wms_inventorybox>(db, "Wms_inventorybox.json");
+                TestData.Create(db); 
 
                 logger.Log(NLog.LogLevel.Info, "数据库整备结束");
                 return true;
@@ -189,6 +186,8 @@ namespace YL
             T[] datas = JsonConvert.DeserializeObject<T[]>(value);
             sqlClient.Insertable(datas).ExecuteCommand();
         }
+
+ 
 
         /// <summary>
         /// 泛型注册

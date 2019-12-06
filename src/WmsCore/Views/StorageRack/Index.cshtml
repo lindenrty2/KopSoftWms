@@ -41,6 +41,7 @@
     </section>
 </div>
 @section scripts{
+    <script src="~/js/common.wms.js"></script>
     <script type="text/javascript">
         var app = new Vue({
             el: '#app',
@@ -80,80 +81,21 @@
             methods: {
                 loadL: function () {
                     _self = this;
-                    var obj = [{
-                        checkbox: true,             //是否显示复选框
-                        visible: true
-                    },
-                    {
-                        field: 'StorageRackId',
-                        title: 'Id',
-                        visible: false
-                    }, {
-                        field: 'StorageRackNo',
-                        title: '货架编号',
-                        align: 'center',
-                        sortable: true
-                    }, {
-                        field: 'StorageRackName',
-                        title: '货架名称',
-                        align: 'center',
-                        sortable: true
-                    }, {
-                        field: 'WarehouseName',
-                        title: '所属仓库',
-                        align: 'center',
-                        sortable: true
-                    }, {
-                        field: 'ReservoirAreaName',
-                        title: '所属库区',
-                        align: 'center',
-                        sortable: true
-                    }, {
-                        field: 'Row',
-                        title: '行',
-                        align: 'center',
-                        sortable: true
-                    }, {
-                        field: 'Floor',
-                        title: '排',
-                        align: 'center',
-                        sortable: true
-                    }, {
-                        field: 'Column',
-                        title: '列',
-                        align: 'center',
-                        sortable: true
-                    }, {
-                        field: 'Remark',
-                        align: 'center',
-                        title: '备注'
-                    }, {
-                        field: 'CName',
-                        title: '创建人',
-                        align: 'center',
-                        sortable: true
-                    }, {
-                        field: 'CreateDate',
-                        align: 'center',
-                        title: '创建时间',
-                        sortable: true,
-                        formatter: function (value, row, index) {
-                            return _self.jsonDateFormat(value);
-                        }
-                    }, {
-                        field: 'UName',
-                        align: 'center',
-                        title: '修改人',
-                        sortable: true
-                    }, {
-                        field: 'ModifiedDate',
-                        title: '修改时间',
-                        align: 'center',
-                        sortable: true,
-                        formatter: function (value, row, index) {
-                            return _self.jsonDateFormat(value);
-                        }
-                    }];
+                    var obj = [
+                        { checkbox: true, visible: true },
+                        { field: 'StorageRackId', title: 'Id', visible: false },
+                        { field: 'StorageRackNo', title: '货架编号', align: 'center', sortable: true },
+                        { field: 'StorageRackName', title: '货架名称', align: 'center', sortable: true },
+                        { field: 'ReservoirAreaName', title: '所属库区', align: 'center', sortable: true },
+                        { field: 'Row', title: '行', align: 'center', sortable: true },
+                        { field: 'Floor', title: '排', align: 'center', sortable: true },
+                        { field: 'Column', title: '列', align: 'center', sortable: true },
+                        { field: 'Remark', align: 'center', title: '备注' },
+                        { field: 'CreateUser', title: '创建人', align: 'center', sortable: true },
+                        { field: 'CreateDate', align: 'center', title: '创建时间', sortable: true, formatter: DateTimeFormatter },
+                        { field: 'ModifiedUser', align: 'center', title: '修改人', sortable: true },
+                        { field: 'ModifiedDate', title: '修改时间', align: 'center', sortable: true, formatter: DateTimeFormatter }
+                    ];
                     yui.table("bootstraptable", "/StorageRack/List?storeId=@ViewData["currentStoreId"]", obj, "POST", "StorageRackId");
                 },
                 showL: function () {

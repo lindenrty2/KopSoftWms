@@ -16,6 +16,9 @@ namespace YL.Core.Entity
             CreateDate = DateTime.Now;
         }
 
+        [SugarColumn(IsIgnore = true)]
+        public string MaterialIdStr { get { return MaterialId.ToString(); } }
+
         /// <summary>
         /// Desc:
         /// Default:

@@ -203,10 +203,13 @@
                             field: 'StatusValue', title: '操作', align: 'center', sortable: true,
                             formatter: function (value, row, index) {
                                 if (value < 2) {
-                                    return ['<button id="deleteDetailL" type="button" class="btn btn-link" style="margin-top:-8px;">删除</button>'
-                                        , '<button id="editDetailL" type="button" class="btn btn-link" style="margin-top:-8px;">修改</button>'
+                                    return [
+                                        '<button id="deleteDetailL" type="button" class="btn btn-link" style="margin-top:-8px;">删除</button>',
+                                        '<button id="editDetailL" type="button" class="btn btn-link" style="margin-top:-8px;">修改</button>'
                                     ].join('');
-                                } else {
+                                } else if (value < 4) {
+                                    return ['<button id="editDetailL" type="button" class="btn btn-link" style="margin-top:-8px;">修改</button>'].join('');
+                                }else {
                                     return '';
                                 }
                             },
@@ -219,10 +222,10 @@
                                     }
                                 },
                                 'click #editDetailL': function (e, value, row, index) {
-                                    if (value != 2) {
+                                    if (value != 4) {
                                         app.editDetailL(row.StockInDetailId);
                                     } else {
-                                        layer.msg("初始转态才允许修改！", { icon: 5 });
+                                        layer.msg("完成后不可修改！", { icon: 5 });
                                     }
                                 },
                             },
@@ -357,7 +360,7 @@
                     if (val.length > 0) {
                         var index = layer.confirm("您确定要修改明细吗？", { btn: ["确定", "取消"] }, function () {
                             layer.close(index);
-                            yui.layershow("修改明细", "/StockIn/Detail?id=" + val, 600, 500);
+                            yui.layershow("修改明细", "/StockIn/Detail?id=" + val + "&storeId=@ViewData["currentStoreId"]", 600, 500);
                         }, function () {
 
                         });

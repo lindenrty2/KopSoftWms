@@ -9,7 +9,7 @@ namespace YL.Core.Dto
         /// <summary>
         /// 对接用唯一物料定义Id
         /// </summary>
-        public long MaterialId { get; set; }
+        public string MaterialId { get; set; }
         /// <summary>
         /// 产品唯一编号
         /// </summary>

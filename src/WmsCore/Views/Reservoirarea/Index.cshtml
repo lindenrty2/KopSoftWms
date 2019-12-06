@@ -19,7 +19,7 @@
                             <span class="input-group-addon">日期范围</span>
                             <input type="text" v-model="datemin" ref="datemin" id="datemin" class="form-control" style="width:120px;">
                             <input type="text" v-model="datemax" ref="datemax" id="datemax" class="form-control" style="width:120px;margin-left:10px;">
-                            <input type="text" v-model="storeId" ref="storeId" id="storeId" style="display:none" > 
+                            <input type="text" v-model="storeId" ref="storeId" id="storeId" style="display:none">
                             <button name="search" v-on:click="searchL" type="submit" class="btn btn-success" style="margin-left:10px;"><i class="fa fa-search"></i> 搜库区</button>
                         </div>
                         <div id="toolbar" class="btn-group">
@@ -41,6 +41,7 @@
     </section>
 </div>
 @section scripts{
+    <script src="~/js/common.wms.js"></script>
     <script type="text/javascript">
         var app = new Vue({
             el: '#app',
@@ -59,7 +60,7 @@
 
                     _self.datemin = "1900-01-01";
                     _self.datemax = "2099-01-01";
-                    
+
                     $('#datemin').datetimepicker({
                         format: 'yyyy-mm-dd',
                         minView: 2,
@@ -81,61 +82,17 @@
             methods: {
                 loadL: function () {
                     _self = this;
-                    var obj = [{
-                        checkbox: true,             //是否显示复选框
-                        visible: true
-                    },
-                    {
-                        field: 'ReservoirAreaId',
-                        title: 'Id',
-                        visible: false
-                    }, {
-                        field: 'ReservoirAreaNo',
-                        title: '库区编号',
-                        align: 'center',
-                        sortable: true
-                    }, {
-                        field: 'ReservoirAreaName',
-                        title: '库区名称',
-                        align: 'center',
-                        sortable: true
-                    }, {
-                        field: 'WarehouseName',
-                        title: '所属仓库',
-                        align: 'center',
-                        sortable: true
-                    }
-                        , {
-                        field: 'Remark',
-                        align: 'center',
-                        title: '备注'
-                    }, {
-                        field: 'CName',
-                        title: '创建人',
-                        align: 'center',
-                        sortable: true
-                    }, {
-                        field: 'CreateDate',
-                        align: 'center',
-                        title: '创建时间',
-                        sortable: true,
-                        formatter: function (value, row, index) {
-                            return _self.jsonDateFormat(value);
-                        }
-                    }, {
-                        field: 'UName',
-                        align: 'center',
-                        title: '修改人',
-                        sortable: true
-                    }, {
-                        field: 'ModifiedDate',
-                        title: '修改时间',
-                        align: 'center',
-                        sortable: true,
-                        formatter: function (value, row, index) {
-                            return _self.jsonDateFormat(value);
-                        }
-                    }];
+                    var obj = [
+                        { checkbox: true, visible: true },
+                        { field: 'ReservoirAreaId', title: 'Id', visible: false },
+                        { field: 'ReservoirAreaNo', title: '库区编号', align: 'center', sortable: true },
+                        { field: 'ReservoirAreaName', title: '库区名称', align: 'center', sortable: true },
+                        { field: 'Remark', align: 'center', title: '备注' },
+                        { field: 'CreateUser', title: '创建人', align: 'center', sortable: true },
+                        { field: 'CreateDate', align: 'center', title: '创建时间', sortable: true, formatter: DateTimeFormatter },
+                        { field: 'ModifiedUser', align: 'center', title: '修改人', sortable: true },
+                        { field: 'ModifiedDate', title: '修改时间', align: 'center', sortable: true, formatter: DateTimeFormatter }
+                    ];
                     yui.table("bootstraptable", "/Reservoirarea/List", obj, "POST", "ReservoirareaId");
                 },
                 showL: function () {

@@ -21,6 +21,24 @@
                 </div>
             </div>
             <div class="form-group">
+                <label class="col-sm-2 control-label">计划数量</label>
+                <div class="col-sm-10">
+                    <input class="form-control" v-model="ActInQty" v-focus type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">状态</label> 
+                <div class="col-sm-10">
+                    <select class="form-control" v-model="Status" size="1">
+                        <option value="-1">任务取消</option>
+                        <option value="1">任务创建中</option>
+                        <option value="2">任务确认</option>
+                        <option value="3">任务进行中</option>
+                        <option value="4">任务完成</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
                 <label class="col-sm-2 control-label">备注</label>
                 <div class="col-sm-10">
                     <textarea v-model="Remark" class="form-control" rows="3" placeholder="备注...100个字符以内"></textarea>
@@ -60,12 +78,14 @@
             el: "#app",
             data: {
                 submit: "添加",
+                WarehouseId:"@Model.WarehouseId",
                 MaterialId:"@Model.MaterialId",
                 StockInId:"@Model.StockInId",
                 StockInDetailId: "@Model.StockInDetailId",
                 Remark: "@Model.Remark", 
                 PlanInQty:"@Model.PlanInQty",
                 ActInQty: "@Model.ActInQty",
+                Status: "@((int)(Model.Status))",
                 MaterialList: [],
                 StorageRackList: [],
                 urlM: '',
@@ -144,17 +164,22 @@
                         layer.msg("计划数量为正整数", { icon: 2 });
                         return false;
                     }
-
+                    if (!yui.signlessInteger(_self.ActInQty)) {
+                        layer.msg("实际数量为正整数", { icon: 2 });
+                        return false;
+                    }
                     var index = layer.load(1, {
                         shade: [0.1, '#fff'] //0.1透明度的白色背景
                     });
                     var data = {
                         id: _self.StockInDetailId,
+                        WarehouseId : '@ViewData["currentStoreId"]',
                         StockInId: _self.StockInId,
                         MaterialId: _self.MaterialId,
                         StoragerackId: _self.StoragerackId,
                         PlanInQty: _self.PlanInQty,
-                        ActInQty: 0,
+                        ActInQty: _self.ActInQty,
+                        Status: _self.Status,
                         Remark: _self.Remark
                     };
                     yui.$axiospostform('/StockIn/AddOrUpdateD', data)

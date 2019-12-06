@@ -60,6 +60,8 @@ namespace YL.Utils.Pub
         public static MessageItem E2015_STOCKIN_HASNOT_MATERIAL = new MessageItem(-2015, "入库单中找不到该物料");
         public static MessageItem E2016_STOCKINDETAIL_INVENTORYBOXTASK_NOTMATCH = new MessageItem(-2016, "料箱中存在无法关联入库单的项目");
         public static MessageItem E2017_STOCKIN_FAIL = new MessageItem(-2017, "入库单完成失败");
+        public static MessageItem E2018_STOCKIN_POSITION_DUPLICATE = new MessageItem(-2018, "入库料箱格位重复");
+        public static MessageItem E2019_STOCKIN_POSITION_USED = new MessageItem(-2019, "入库料箱料格已有物料");
 
         public static MessageItem I2100_STOCKOUT_SCAN_SCCUESS = new MessageItem(2100, "创建出库单成功");
         public static MessageItem I2101_STOCKOUT_SCAN_SCCUESS = new MessageItem(2101, "出库扫码关联成功");

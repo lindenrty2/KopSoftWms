@@ -23,13 +23,13 @@ namespace KopSoftWms.Controllers
     public class StockInController : BaseController
     {
         private readonly IWms_stockinServices _stockinServices;
-        private readonly IWms_supplierServices _supplierServices;
-        private readonly ISys_dictServices _dictServices;
+        //private readonly IWms_supplierServices _supplierServices;
+        //private readonly ISys_dictServices _dictServices;
         private readonly ISys_serialnumServices _serialnumServices;
         private readonly IWms_stockindetailServices _stockindetailServices;
         private readonly IWms_stockindetailboxServices _stockindetailboxServices;
-        private readonly IWms_inventoryBoxServices _inventoryBoxServices;
-        private readonly IWms_inventoryBoxTaskServices _inventoryBoxTaskServices;
+        //private readonly IWms_inventoryBoxServices _inventoryBoxServices;
+        //private readonly IWms_inventoryBoxTaskServices _inventoryBoxTaskServices;
         private readonly IWms_inventoryServices _inventoryServices;
         private readonly SqlSugarClient _client;
 
@@ -49,11 +49,11 @@ namespace KopSoftWms.Controllers
             _stockindetailServices = stockindetailServices;
             _stockindetailboxServices = stockindetailboxServices;
             _serialnumServices = serialnumServices;
-            _dictServices = dictServices;
-            _supplierServices = supplierServices;
+            //_dictServices = dictServices;
+            //_supplierServices = supplierServices;
             _stockinServices = stockinServices;
-            _inventoryBoxTaskServices = stockinTaskServices;
-            _inventoryBoxServices = inventoryBoxServices;
+            //_inventoryBoxTaskServices = stockinTaskServices;
+            //_inventoryBoxServices = inventoryBoxServices;
             _inventoryServices = inventoryServices;
             _client = client;
         }
@@ -62,7 +62,7 @@ namespace KopSoftWms.Controllers
         [CheckMenu]
         public IActionResult Index()
         {
-            var list = _dictServices.Queryable().Where(c => c.IsDel == 1 && c.DictType == PubDictType.stockin.ToString()).ToList();
+            var list = _client.Queryable<Sys_dict>().Where(c => c.IsDel == 1 && c.DictType == PubDictType.stockin.ToString()).ToList();
             var stockInStatus = EnumExt.ToKVListLinq<StockInStatus>();
             ViewBag.StockInType = list;
             ViewBag.StockInStatus = stockInStatus;
@@ -99,9 +99,6 @@ namespace KopSoftWms.Controllers
         [OperationLog(LogType.select)]
         public async Task<string> ListDetail(int storeId,string pid)
         {
-            //var sd = _stockindetailServices.PageList(pid);
-            //return Content(sd);
-
             IWMSBaseApiAccessor wmsAccessor = WMSApiManager.GetBaseApiAccessor(storeId.ToString(), _client);
             RouteData<OutsideStockInQueryResult> result = await wmsAccessor.QueryStockIn(SqlFunc.ToInt64(pid));
             if (!result.IsSccuess)
@@ -164,15 +161,14 @@ namespace KopSoftWms.Controllers
         {
             var model = new Wms_stockindetail();
             ViewData["currentStoreId"] = storeId;
-            if (id.IsEmptyZero())
+            if (id.IsEmptyZero() && !pid.IsEmptyZero())
             {
                 model.StockInId = pid.ToInt64();
                 return View(model);
             }
             else
             {
-                
-                model = _stockindetailServices.QueryableToEntity(c => c.StockInDetailId == SqlFunc.ToInt64(id) && c.IsDel == 1);
+                model = _stockindetailServices.QueryableToEntity(c => c.WarehouseId == storeId && c.StockInDetailId == SqlFunc.ToInt64(id) && c.IsDel == 1);
                 return View(model);
             }
         }
@@ -194,10 +190,10 @@ namespace KopSoftWms.Controllers
 
 
         [HttpGet]
-        public IActionResult ScanPage(long storeId,long stockInId)
+        public async Task<IActionResult> ScanPage(long storeId,long stockInId)
         {
             ViewData["currentStoreId"] = storeId;
-            var model = _stockinServices.QueryableToEntity(c => c.StockInId == SqlFunc.ToInt64(stockInId) && c.IsDel == 1);
+            var model = await _client.Queryable<Wms_stockin>().FirstAsync(c => c.StockInId == SqlFunc.ToInt64(stockInId) && c.IsDel == 1);
             return View(model);
         }
 
@@ -208,67 +204,78 @@ namespace KopSoftWms.Controllers
         /// <param name="inventoryBoxId"></param>
         /// <param name="materials"></param>
         /// <param name="remark"></param>
-        /// <returns></returns>
+        /// <returns></returns> 
         [HttpPost]
-        public async Task<RouteData> DoScanComplate(long stockInId,long inventoryBoxId, Wms_StockMaterialDetailDto[] materials,string remark)
+        public async Task<RouteData> DoScanComplate(long storeId, long stockInId, long inventoryBoxId, Wms_StockMaterialDetailDto[] materials,string remark)
         {
-            try
+            //try
+            //{
+            //    _client.BeginTran();
+            //    RouteData result = await _stockinServices.DoScanComplate(stockInId, inventoryBoxId, materials, remark, this.UserDto);
+            //    if (!result.IsSccuess)
+            //    {
+            //        _client.RollbackTran();
+            //        return result;
+            //    }
+            //    _client.CommitTran();
+            //    return result; 
+            //}
+            //catch (Exception)
+            //{
+            //    _client.RollbackTran();
+            //    return YL.Core.Dto.RouteData.From(PubMessages.E2005_STOCKIN_BOXOUT_FAIL);
+            //}
+            IWMSOperationApiAccessor wmsAccessor = WMSApiManager.GetOperationApiAccessor(storeId.ToString(), _client, this.UserDto);
+            if (wmsAccessor == null)
             {
-                _client.BeginTran();
-                RouteData result = await _stockinServices.DoScanComplate(stockInId, inventoryBoxId, materials, remark, this.UserDto);
-                if (!result.IsSccuess)
-                {
-                    _client.RollbackTran();
-                    return result;
-                }
-                _client.CommitTran();
-                return result; 
+                return YL.Core.Dto.RouteData.From(PubMessages.E0007_WAREHOUSE_NOTFOUND);
             }
-            catch (Exception)
-            {
-                _client.RollbackTran();
-                return YL.Core.Dto.RouteData.From(PubMessages.E2005_STOCKIN_BOXOUT_FAIL);
-            }
-
+            return await wmsAccessor.DoStockInScanComplate(stockInId, inventoryBoxId, materials, remark);
         }
         
         [HttpPost]
-        public RouteData DoComplate(long storeId,long stockInId)
+        public async Task<RouteData> DoComplate(long storeId,long stockInId)
         {
-            try
+            IWMSOperationApiAccessor wmsAccessor = WMSApiManager.GetOperationApiAccessor(storeId.ToString(), _client, this.UserDto);
+            if(wmsAccessor == null)
             {
-                _client.BeginTran();
-
-                Wms_stockin stockin = _stockinServices.QueryableToEntity(x => x.StockInId == stockInId);
-                if (stockin == null) { return YL.Core.Dto.RouteData.From(PubMessages.E2013_STOCKIN_NOTFOUND); }
-                if (stockin.StockInStatus == StockInStatus.task_finish.ToByte()) { return YL.Core.Dto.RouteData.From(PubMessages.E2014_STOCKIN_ALLOW_FINISHED); }
-
-                stockin.StockInStatus = StockInStatus.task_finish.ToByte();
-                if (!_stockinServices.Update(stockin))
-                {
-                    return YL.Core.Dto.RouteData.From(PubMessages.E2017_STOCKIN_FAIL, "入库单详细状态更新失败");
-                }
-                List<Wms_stockindetail> details = _stockindetailServices.QueryableToList(x => x.StockInId == stockin.StockInId);
-                foreach(Wms_stockindetail detail in details)
-                {
-                    if (detail.Status == StockInStatus.task_finish.ToByte()) continue;
-                    detail.Status = StockInStatus.task_finish.ToByte();
-                    detail.ModifiedBy = this.UserDto.UserId;
-                    detail.ModifiedDate = DateTime.Now;
-                    if (!_stockindetailServices.Update(detail))
-                    {
-                        return YL.Core.Dto.RouteData.From(PubMessages.E2017_STOCKIN_FAIL, "入库单详细状态更新失败");
-                    }
-                }
-                _client.CommitTran();
-                return YL.Core.Dto.RouteData.From(PubMessages.I2002_STOCKIN_SCCUESS);
+                return YL.Core.Dto.RouteData.From(PubMessages.E0007_WAREHOUSE_NOTFOUND);
             }
-            catch(Exception ex)
-            { 
-                _client.RollbackTran();
-                return YL.Core.Dto.RouteData.From(PubMessages.E2017_STOCKIN_FAIL,ex.Message);
-            }
-             
+            return await wmsAccessor.DoStockInComplate(stockInId);
+            //try
+            //{
+            //    _client.BeginTran();
+
+            //    Wms_stockin stockin = _stockinServices.QueryableToEntity(x => x.StockInId == stockInId);
+            //    if (stockin == null) { return YL.Core.Dto.RouteData.From(PubMessages.E2013_STOCKIN_NOTFOUND); }
+            //    if (stockin.StockInStatus == StockInStatus.task_finish.ToByte()) { return YL.Core.Dto.RouteData.From(PubMessages.E2014_STOCKIN_ALLOW_FINISHED); }
+
+            //    stockin.StockInStatus = StockInStatus.task_finish.ToByte();
+            //    if (!_stockinServices.Update(stockin))
+            //    {
+            //        return YL.Core.Dto.RouteData.From(PubMessages.E2017_STOCKIN_FAIL, "入库单详细状态更新失败");
+            //    }
+            //    List<Wms_stockindetail> details = _stockindetailServices.QueryableToList(x => x.StockInId == stockin.StockInId);
+            //    foreach(Wms_stockindetail detail in details)
+            //    {
+            //        if (detail.Status == StockInStatus.task_finish.ToByte()) continue;
+            //        detail.Status = StockInStatus.task_finish.ToByte();
+            //        detail.ModifiedBy = this.UserDto.UserId;
+            //        detail.ModifiedDate = DateTime.Now;
+            //        if (!_stockindetailServices.Update(detail))
+            //        {
+            //            return YL.Core.Dto.RouteData.From(PubMessages.E2017_STOCKIN_FAIL, "入库单详细状态更新失败");
+            //        }
+            //    }
+            //    _client.CommitTran();
+            //    return YL.Core.Dto.RouteData.From(PubMessages.I2002_STOCKIN_SCCUESS);
+            //}
+            //catch(Exception ex)
+            //{ 
+            //    _client.RollbackTran();
+            //    return YL.Core.Dto.RouteData.From(PubMessages.E2017_STOCKIN_FAIL,ex.Message);
+            //}
+
         }
 
         [HttpGet]

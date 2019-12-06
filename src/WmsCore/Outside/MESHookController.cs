@@ -149,7 +149,7 @@ namespace WMSCore.Outside
                 }
                 warehouseMaterialList.Add(new Wms_MaterialInventoryDto()
                 {
-                    MaterialId = -1,
+                    MaterialId = "-1",
                     MaterialOnlyId = materialDto.SuppliesOnlyId,
                     MaterialNo = materialDto.SuppliesId,
                     MaterialName = materialDto.SuppliesName,
@@ -291,7 +291,7 @@ namespace WMSCore.Outside
                 }
                 warehouseMaterialList.Add(new Wms_MaterialInventoryDto()
                 {
-                    MaterialId = -1,
+                    MaterialId = "-1",
                     MaterialOnlyId = materialDto.SuppliesOnlyId,
                     MaterialNo = materialDto.SuppliesId,
                     MaterialName = materialDto.SuppliesName,

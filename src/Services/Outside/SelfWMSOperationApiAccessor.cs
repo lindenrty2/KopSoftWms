@@ -19,8 +19,7 @@ namespace Services.Outside
 
         private ISqlSugarClient _sqlClient;
         private Wms_warehouse _warehouse;
-        public Wms_warehouse Warehouse { get { return _warehouse; } }
-
+        public Wms_warehouse Warehouse { get { return _warehouse; } } 
         private SysUserDto _userDto;
         private SysUserDto UserDto { get { return _userDto; } }
 
@@ -288,6 +287,7 @@ namespace Services.Outside
                  .Where((sidb, sid, si, m) => sidb.InventoryBoxTaskId == inventoryBoxTaskId)
                  .Select((sidb, sid, si, m) => new
                  {
+                     Position = sidb.Position,
                      sid.StockInDetailId,
                      MaterialId = m.MaterialId,
                      m.MaterialNo,
@@ -762,9 +762,7 @@ namespace Services.Outside
                 })
                 .Where((sid, sidb) => sidb.InventoryBoxTaskId == inventoryBoxTaskId)
                 .ToListAsync();
-        } 
-
-
+        }
 
         public async Task<RouteData<Wms_wcstask[]>> GetWCSTaskList(bool failOnly,int pageIndex, int pageSize, string search, string[] order, string datemin, string datemax)
         {
@@ -1208,5 +1206,390 @@ namespace Services.Outside
             }
 
         }
+
+
+        /// <summary>
+        /// 入库扫描完成处理
+        /// </summary>
+        /// <param name="stockInId"></param>
+        /// <param name="inventoryBoxId"></param>
+        /// <param name="materials"></param>
+        /// <param name="remark"></param>
+        /// <returns></returns>  
+        public async Task<RouteData> DoStockInScanComplate(long stockInId, long inventoryBoxId, Wms_StockMaterialDetailDto[] materials, string remark)
+        {
+            try
+            {
+                _sqlClient.Ado.BeginTran();
+                RouteData result = await DoStockInScanComplateCore(stockInId, inventoryBoxId, materials, remark);
+                if (!result.IsSccuess)
+                {
+                    _sqlClient.Ado.RollbackTran();
+                    return result;
+                }
+                _sqlClient.Ado.CommitTran();
+                return result;
+            }
+            catch (Exception)
+            {
+                _sqlClient.Ado.RollbackTran();
+                return YL.Core.Dto.RouteData.From(PubMessages.E2005_STOCKIN_BOXOUT_FAIL);
+            }
+
+        }
+         
+        private async Task<RouteData> DoStockInScanComplateCore(long stockInId, long inventoryBoxId, Wms_StockMaterialDetailDto[] materials, string remark )
+        {
+            if(materials.Select(x => x.Position).GroupBy(x => x).Any(x => x.Count() > 1))
+            {
+                return YL.Core.Dto.RouteData.From(PubMessages.E2018_STOCKIN_POSITION_DUPLICATE);
+            }
+            Wms_stockin stockin = await _sqlClient.Queryable<Wms_stockin>().FirstAsync(x => x.StockInId == stockInId);
+            if (stockin == null) { return YL.Core.Dto.RouteData.From(PubMessages.E2013_STOCKIN_NOTFOUND); }
+            if (stockin.StockInStatus == StockInStatus.task_finish.ToByte()) { return YL.Core.Dto.RouteData.From(PubMessages.E2014_STOCKIN_ALLOW_FINISHED); }
+
+            Wms_inventorybox inventoryBox = await _sqlClient.Queryable<Wms_inventorybox>().FirstAsync(x => x.InventoryBoxId == inventoryBoxId);
+            if (inventoryBox == null) { return YL.Core.Dto.RouteData.From(PubMessages.E1011_INVENTORYBOX_NOTFOUND); }
+            if (inventoryBox.Status != InventoryBoxStatus.Outed) { return YL.Core.Dto.RouteData.From(PubMessages.E1014_INVENTORYBOX_NOTOUTED); }
+
+            Wms_inventoryboxTask inventoryBoxTask = await _sqlClient.Queryable<Wms_inventoryboxTask>().FirstAsync(x => x.InventoryBoxId == inventoryBoxId && x.Status == InventoryBoxTaskStatus.task_outed.ToByte());
+            if (inventoryBoxTask == null) { return YL.Core.Dto.RouteData.From(PubMessages.E1014_INVENTORYBOX_NOTOUTED); } //数据异常 
+
+            Wms_inventory[] inventories = _sqlClient.Queryable<Wms_inventory>().Where(x => x.InventoryBoxId == inventoryBoxId).ToArray();
+            int count = inventories.Count(); //料格使用数量
+            foreach (Wms_StockMaterialDetailDto material in materials)
+            {
+                if(inventories.Any(x => x.Position == material.Position))
+                {
+                    return YL.Core.Dto.RouteData.From(PubMessages.E2019_STOCKIN_POSITION_USED,$"料格:{material.Position}"); 
+                }
+                Wms_stockindetail detail = await _sqlClient.Queryable<Wms_stockindetail>().FirstAsync(x => x.StockInId == stockInId && x.MaterialId.ToString() == material.MaterialId);
+                if (detail == null) { return YL.Core.Dto.RouteData.From(PubMessages.E2001_STOCKINDETAIL_NOTFOUND, $"MaterialId='{material.MaterialId}'"); }
+                if (detail.Status == StockInStatus.task_finish.ToByte()) { return YL.Core.Dto.RouteData.From(PubMessages.E2002_STOCKINDETAIL_ALLOW_FINISHED); }
+
+                Wms_stockindetail_box detailbox = await _sqlClient.Queryable<Wms_stockindetail_box>().FirstAsync(
+                    x => x.InventoryBoxTaskId == inventoryBoxTask.InventoryBoxTaskId && x.StockinDetailId == detail.StockInDetailId);
+                if (detailbox != null && detailbox.Position == material.Position)
+                {
+                    detailbox.Qty += material.Qty;
+
+                    if (await _sqlClient.Updateable(detailbox).ExecuteCommandAsync() == 0)
+                    {
+                        return YL.Core.Dto.RouteData.From(PubMessages.E0002_UPDATE_COUNT_FAIL);
+                    }
+                }
+                else
+                {
+                    count++;
+                    if (count > inventoryBox.Size)
+                    {
+                        return YL.Core.Dto.RouteData<InventoryDetailDto[]>.From(PubMessages.E1010_INVENTORYBOX_BLOCK_OVERLOAD);
+                    } 
+                    detailbox = new Wms_stockindetail_box()
+                    {
+                        DetailBoxId = PubId.SnowflakeId,
+                        InventoryBoxTaskId = inventoryBoxTask.InventoryBoxTaskId,
+                        InventoryBoxId = inventoryBox.InventoryBoxId,
+                        Position = material.Position,
+                        StockinDetailId = detail.StockInDetailId,
+                        Qty = material.Qty,
+                        Remark = remark,
+                        CreateDate = DateTime.Now,
+                        CreateBy = this.UserDto.UserId
+                    };
+
+                    if (await _sqlClient.Insertable(detailbox).ExecuteCommandAsync() == 0)
+                    {
+                        return YL.Core.Dto.RouteData<InventoryDetailDto[]>.From(PubMessages.E2005_STOCKIN_BOXOUT_FAIL);
+                    }
+                }
+                if (detail.Status == StockInStatus.task_confirm.ToByte())
+                {
+                    detail.Status = StockInStatus.task_working.ToByte();
+                    if (await _sqlClient.Updateable(detail).ExecuteCommandAsync() == 0)
+                    {
+                        return YL.Core.Dto.RouteData<InventoryDetailDto[]>.From(PubMessages.E2005_STOCKIN_BOXOUT_FAIL);
+                    }
+                }
+            }
+
+            if (stockin.StockInStatus == StockInStatus.task_confirm.ToByte())
+            {
+                stockin.StockInStatus = StockInStatus.task_working.ToByte();
+                await _sqlClient.Updateable(stockin).ExecuteCommandAsync();
+            }
+
+            return YL.Core.Dto.RouteData.From(PubMessages.I2001_STOCKIN_SCAN_SCCUESS);
+        }
+         
+        /// <summary>
+        /// 入库单完成
+        /// </summary>
+        /// <param name="storeId"></param>
+        /// <param name="stockInId"></param>
+        /// <returns></returns>
+        public async Task<RouteData> DoStockInComplate(long stockInId)
+        {
+            try
+            {
+                _sqlClient.Ado.BeginTran();
+
+                Wms_stockin stockin = await _sqlClient.Queryable<Wms_stockin>().FirstAsync(x => x.StockInId == stockInId);
+                if (stockin == null) { return YL.Core.Dto.RouteData.From(PubMessages.E2013_STOCKIN_NOTFOUND); }
+                if (stockin.StockInStatus == StockInStatus.task_finish.ToByte()) {
+                    return YL.Core.Dto.RouteData.From(PubMessages.E2014_STOCKIN_ALLOW_FINISHED);
+                }
+
+                stockin.StockInStatus = StockInStatus.task_finish.ToByte();
+                if (_sqlClient.Updateable(stockin).ExecuteCommand() == 0)
+                {
+                    return YL.Core.Dto.RouteData.From(PubMessages.E2017_STOCKIN_FAIL, "入库单详细状态更新失败");
+                }
+                List<Wms_stockindetail> details = await _sqlClient.Queryable<Wms_stockindetail>().Where(
+                    x => x.StockInId == stockin.StockInId).ToListAsync();
+                foreach (Wms_stockindetail detail in details)
+                {
+                    if (detail.Status == StockInStatus.task_finish.ToByte()) continue;
+                    detail.Status = StockInStatus.task_finish.ToByte();
+                    detail.ModifiedBy = this.UserDto.UserId;
+                    detail.ModifiedDate = DateTime.Now;
+                    if (_sqlClient.Updateable(detail).ExecuteCommand() == 0)
+                    {
+                        return YL.Core.Dto.RouteData.From(PubMessages.E2017_STOCKIN_FAIL, "入库单详细状态更新失败");
+                    }
+                }
+                _sqlClient.Ado.CommitTran();
+                return YL.Core.Dto.RouteData.From(PubMessages.I2002_STOCKIN_SCCUESS);
+            }
+            catch (Exception ex)
+            {
+                _sqlClient.Ado.RollbackTran();
+                return YL.Core.Dto.RouteData.From(PubMessages.E2017_STOCKIN_FAIL, ex.Message);
+            }
+
+        }
+
+        public async Task<RouteData> DoStockOutLock(long stockOutId)
+        {
+            try
+            {
+                _sqlClient.Ado.BeginTran();
+
+                Wms_stockout stockout = _sqlClient.Queryable<Wms_stockout>().First(x => x.StockOutId == stockOutId);
+                if (stockout == null) { return YL.Core.Dto.RouteData.From(PubMessages.E2113_STOCKOUT_NOTFOUND); }
+                if (stockout.StockOutStatus == StockOutStatus.task_finish.ToByte()) { return YL.Core.Dto.RouteData.From(PubMessages.E2114_STOCKOUT_ALLOW_FINISHED); }
+                if (stockout.IsLocked) { return YL.Core.Dto.RouteData.From(PubMessages.E2121_STOCKOUT_ALLOW_LOCKED); }
+
+                stockout.IsLocked = true;
+                if (_sqlClient.Updateable(stockout).ExecuteCommand() == 0)
+                {
+                    return YL.Core.Dto.RouteData.From(PubMessages.E2118_STOCKOUT_LOCK_FAIL, "出库单锁定状态更新失败");
+                }
+
+                List<Wms_stockoutdetail> details = await _sqlClient.Queryable<Wms_stockoutdetail>().Where(x => x.StockOutId == stockout.StockOutId).ToListAsync();
+                foreach (Wms_stockoutdetail detail in details)
+                {
+                    if (detail.Status == StockOutStatus.task_finish.ToByte()) continue;
+
+                    //优先锁定自身生产令号的物料
+                    Wms_inventory[] inventories = _sqlClient.Queryable<Wms_inventory>()
+                        .Where(x => x.MaterialId == detail.MaterialId && !x.IsLocked && (x.OrderNo == stockout.OrderNo || string.IsNullOrEmpty(x.OrderNo)))
+                        .OrderBy(x => x.OrderNo, OrderByType.Desc).ToArray();
+                    int lockedQty = 0;
+                    int needQty = detail.PlanOutQty - detail.ActOutQty;
+                    foreach (Wms_inventory inventory in inventories)
+                    {
+                        inventory.IsLocked = true;
+                        if (_sqlClient.Updateable(inventory).ExecuteCommand() == 0)
+                        {
+                            _sqlClient.Ado.RollbackTran();
+                            return YL.Core.Dto.RouteData.From(PubMessages.E2118_STOCKOUT_LOCK_FAIL, "料格锁定状态更新失败");
+                        }
+                        lockedQty += inventory.Qty;
+                        if (lockedQty >= needQty)
+                        {
+                            //已锁定足够物料
+                            break;
+                        }
+                    }
+                    if (lockedQty < needQty)
+                    {
+                        _sqlClient.Ado.RollbackTran();
+                        Wms_material material = await _sqlClient.Queryable<Wms_material>().FirstAsync(x => x.MaterialId == detail.MaterialId);
+                        return YL.Core.Dto.RouteData.From(PubMessages.E2119_STOCKOUT_MATERIAL_ENOUGH, $"{material.MaterialNo}({material.MaterialName}) 需求/可锁定数：{lockedQty}/{needQty}");
+                    }
+                }
+
+                _sqlClient.Ado.CommitTran();
+                return YL.Core.Dto.RouteData.From(PubMessages.I2103_STOCKOUT_LOCK_SCCUESS);
+            }
+            catch (Exception ex)
+            {
+                _sqlClient.Ado.RollbackTran();
+                return YL.Core.Dto.RouteData.From(PubMessages.E2118_STOCKOUT_LOCK_FAIL, ex.Message);
+            }
+        }
+         
+        /// <summary>
+        /// 出库扫描完成
+        /// </summary>
+        /// <param name="stockOutId"></param>
+        /// <param name="inventoryBoxId"></param>
+        /// <param name="materials"></param>
+        /// <param name="remark"></param>
+        /// <returns></returns>
+        public async Task<RouteData> DoStockOutScanComplate(long stockOutId, long inventoryBoxId, Wms_StockMaterialDetailDto[] materials, string remark)
+        {
+            try
+            {
+                _sqlClient.Ado.BeginTran();
+                RouteData result = await DoStockOutScanComplateCore(stockOutId, inventoryBoxId, materials, remark);
+                if (!result.IsSccuess)
+                {
+                    _sqlClient.Ado.RollbackTran();
+                    return result;
+                }
+                _sqlClient.Ado.CommitTran();
+                return result;
+            }
+            catch (Exception)
+            {
+                _sqlClient.Ado.RollbackTran();
+                return YL.Core.Dto.RouteData.From(PubMessages.E2105_STOCKOUT_BOXOUT_FAIL);
+            }
+        }
+
+        private async Task<RouteData> DoStockOutScanComplateCore(long stockOutId, long inventoryBoxId, Wms_StockMaterialDetailDto[] materials, string remark)
+        {
+            try
+            {
+                Wms_stockout stockout = await _sqlClient.Queryable<Wms_stockout>().FirstAsync(x => x.StockOutId == stockOutId);
+                if (stockout == null) { return YL.Core.Dto.RouteData.From(PubMessages.E2113_STOCKOUT_NOTFOUND); }
+                if (stockout.StockOutStatus == StockOutStatus.task_finish.ToByte()) { return YL.Core.Dto.RouteData.From(PubMessages.E2114_STOCKOUT_ALLOW_FINISHED); }
+
+                Wms_inventorybox inventoryBox = await _sqlClient.Queryable<Wms_inventorybox>().FirstAsync(x => x.InventoryBoxId == inventoryBoxId);
+                if (inventoryBox == null) { return YL.Core.Dto.RouteData.From(PubMessages.E1011_INVENTORYBOX_NOTFOUND); }
+                if (inventoryBox.Status != InventoryBoxStatus.Outed) { return YL.Core.Dto.RouteData.From(PubMessages.E1014_INVENTORYBOX_NOTOUTED); }
+
+                Wms_inventoryboxTask inventoryBoxTask = await _sqlClient.Queryable<Wms_inventoryboxTask>().FirstAsync(x => x.InventoryBoxId == inventoryBoxId && x.Status == InventoryBoxTaskStatus.task_outed.ToByte());
+                if (inventoryBoxTask == null) { return YL.Core.Dto.RouteData.From(PubMessages.E1014_INVENTORYBOX_NOTOUTED); } //数据异常 
+
+
+                Wms_inventory[] inventories = _sqlClient.Queryable<Wms_inventory>().Where(x => x.InventoryBoxId == inventoryBoxId).ToArray();
+
+                foreach (Wms_StockMaterialDetailDto material in materials)
+                {
+                    Wms_stockoutdetail detail = await _sqlClient.Queryable<Wms_stockoutdetail>().FirstAsync(x => x.StockOutId == stockOutId && x.MaterialId.ToString() == material.MaterialId);
+                    if (detail == null) { return YL.Core.Dto.RouteData.From(PubMessages.E2101_STOCKOUTDETAIL_NOTFOUND, $"MaterialId='{material.MaterialId}'"); }
+                    if (detail.Status == StockOutStatus.task_finish.ToByte()) { return YL.Core.Dto.RouteData.From(PubMessages.E2102_STOCKOUTDETAIL_ALLOW_FINISHED); }
+
+                    Wms_stockoutdetail_box box = await _sqlClient.Queryable<Wms_stockoutdetail_box>().FirstAsync(x => x.InventoryBoxTaskId == inventoryBoxTask.InventoryBoxTaskId && x.StockOutDetailId == detail.StockOutDetailId);
+                    if (box != null)
+                    {
+                        box.Qty += material.Qty;
+
+                        if (_sqlClient.Updateable(box).ExecuteCommand() == 0)
+                        {
+                            return YL.Core.Dto.RouteData.From(PubMessages.E0002_UPDATE_COUNT_FAIL);
+                        }
+                    }
+                    else
+                    {
+                        Wms_inventory[] targetInventories = inventories.Where(x => x.MaterialId == detail.MaterialId).ToArray();
+                        if (targetInventories.Length == 0)
+                        {
+                            return YL.Core.Dto.RouteData.From(PubMessages.E1015_INVENTORYBOX_MATERIAL_NOTMATCH);
+                        }
+                        Wms_inventory targetInventory = targetInventories.FirstOrDefault(x => !x.IsLocked || x.OrderNo == stockout.OrderNo);
+                        if (targetInventory == null)
+                        {
+                            return YL.Core.Dto.RouteData.From(PubMessages.E1020_INVENTORYBOX_MATERIAL_LOCKED, $"物料编号:{material.MaterialNo}");
+                        }
+                        box = new Wms_stockoutdetail_box()
+                        {
+                            DetailBoxId = PubId.SnowflakeId,
+                            InventoryBoxTaskId = inventoryBoxTask.InventoryBoxTaskId,
+                            InventoryBoxId = inventoryBox.InventoryBoxId,
+                            StockOutDetailId = detail.StockOutDetailId,
+                            Qty = material.Qty,
+                            Remark = remark,
+                            CreateDate = DateTime.Now,
+                            CreateBy = this.UserDto.UserId
+                        };
+                        _sqlClient.Insertable(box).ExecuteCommand();
+                    }
+                    if (detail.Status == StockOutStatus.task_confirm.ToByte())
+                    {
+                        detail.Status = StockOutStatus.task_working.ToByte();
+                        if (_sqlClient.Updateable(detail).ExecuteCommand() == 0)
+                        {
+                            return YL.Core.Dto.RouteData.From(PubMessages.E2105_STOCKOUT_BOXOUT_FAIL);
+                        }
+                    }
+                }
+
+                if (stockout.StockOutStatus == StockOutStatus.task_confirm.ToByte())
+                {
+                    stockout.StockOutStatus = StockOutStatus.task_working.ToByte();
+                    if (_sqlClient.Updateable(stockout).ExecuteCommand() == 0)
+                    {
+                        return YL.Core.Dto.RouteData.From(PubMessages.E2105_STOCKOUT_BOXOUT_FAIL);
+                    }
+                }
+
+                _sqlClient.Ado.CommitTran();
+                return YL.Core.Dto.RouteData.From(PubMessages.I2101_STOCKOUT_SCAN_SCCUESS);
+            }
+            catch (Exception)
+            {
+                _sqlClient.Ado.RollbackTran();
+                return YL.Core.Dto.RouteData.From(PubMessages.E2105_STOCKOUT_BOXOUT_FAIL);
+            }
+        }
+
+        /// <summary>
+        /// 设置出库单完成
+        /// </summary>
+        /// <param name="storeId"></param>
+        /// <param name="stockOutId"></param>
+        /// <returns></returns>
+        public async Task<RouteData> DoStockOutComplate(long stockOutId)
+        {
+            try
+            {
+                _sqlClient.Ado.BeginTran();
+
+                Wms_stockout stockout = await _sqlClient.Queryable<Wms_stockout>().FirstAsync(x => x.StockOutId == stockOutId);
+                if (stockout == null) { return YL.Core.Dto.RouteData.From(PubMessages.E2113_STOCKOUT_NOTFOUND); }
+                if (stockout.StockOutStatus == StockOutStatus.task_finish.ToByte()) { return YL.Core.Dto.RouteData.From(PubMessages.E2114_STOCKOUT_ALLOW_FINISHED); }
+
+                stockout.StockOutStatus = StockOutStatus.task_finish.ToByte();
+                if (_sqlClient.Updateable(stockout).ExecuteCommand() == 0)
+                {
+                    return YL.Core.Dto.RouteData.From(PubMessages.E2117_STOCKOUT_FAIL, "出库单详细状态更新失败");
+                }
+                List<Wms_stockoutdetail> details = await _sqlClient.Queryable<Wms_stockoutdetail>().Where(x => x.StockOutId == stockout.StockOutId).ToListAsync();
+                foreach (Wms_stockoutdetail detail in details)
+                {
+                    if (detail.Status == StockOutStatus.task_finish.ToByte()) continue;
+                    detail.Status = StockOutStatus.task_finish.ToByte();
+                    detail.ModifiedBy = this.UserDto.UserId;
+                    detail.ModifiedDate = DateTime.Now;
+                    if (_sqlClient.Updateable(detail).ExecuteCommand() == 0)
+                    {
+                        return YL.Core.Dto.RouteData.From(PubMessages.E2117_STOCKOUT_FAIL, "出库单详细状态更新失败");
+                    }
+                }
+                _sqlClient.Ado.CommitTran();
+                return YL.Core.Dto.RouteData.From(PubMessages.I2102_STOCKOUT_SCCUESS);
+            }
+            catch (Exception ex)
+            {
+                _sqlClient.Ado.RollbackTran();
+                return YL.Core.Dto.RouteData.From(PubMessages.E2117_STOCKOUT_FAIL, ex.Message);
+            }
+        }
+
+
     }
 }

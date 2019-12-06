@@ -39,66 +39,66 @@ namespace Services
             _inventory = inventory;
         }
 
-        public string PageList(PubParams.StockOutBootstrapParams bootstrap)
-        {
-            int totalNumber = 0;
-            if (bootstrap.offset != 0)
-            {
-                bootstrap.offset = bootstrap.offset / bootstrap.limit + 1;
-            }
-            var query = _client.Queryable<Wms_stockout, Wms_Customer, Sys_dict, Sys_user, Sys_user>
-                ((s, p, d, c, u) => new object[] {
-                   JoinType.Left,s.CustomerId==p.CustomerId,
-                   JoinType.Left,s.StockOutType==d.DictId,
-                   JoinType.Left,s.CreateBy==c.UserId,
-                   JoinType.Left,s.ModifiedBy==u.UserId,
-                 })
-                 .Where((s, p, d, c, u) => s.WarehouseId == bootstrap.storeId && s.IsDel == 1 && d.IsDel == 1 && c.IsDel == 1)
-                 .Select((s, p, d, c, u) => new
-                 {
-                     StockOutId = s.StockOutId.ToString(),
-                     StockOutType = d.DictName,
-                     StockOutTypeId = s.StockOutType.ToString(),
-                     s.StockOutStatus,
-                     s.StockOutNo,
-                     s.OrderNo,
-                     s.CustomerId,
-                     p.CustomerNo,
-                     p.CustomerName,
-                     s.IsDel,
-                     s.Remark,
-                     CName = c.UserNickname,
-                     s.CreateDate,
-                     UName = u.UserNickname,
-                     s.ModifiedDate
-                 }).MergeTable();
-            if (!bootstrap.search.IsEmpty())
-            {
-                query.Where((s) => s.StockOutNo.Contains(bootstrap.search) || s.OrderNo.Contains(bootstrap.search));
-            }
-            if (!bootstrap.datemin.IsEmpty() && !bootstrap.datemax.IsEmpty())
-            {
-                query.Where(s => s.CreateDate > bootstrap.datemin.ToDateTimeB() && s.CreateDate <= bootstrap.datemax.ToDateTimeE());
-            }
-            if (!bootstrap.StockOutType.IsEmpty())
-            {
-                query.Where((s) => s.StockOutTypeId.Contains(bootstrap.StockOutType));
-            }
-            if (!bootstrap.StockOutStatus.IsEmpty())
-            {
-                query.Where((s) => s.StockOutStatus == bootstrap.StockOutStatus.ToByte());
-            }
-            if (bootstrap.order.Equals("desc", StringComparison.OrdinalIgnoreCase))
-            {
-                query.OrderBy($"MergeTable.{bootstrap.sort} desc");
-            }
-            else
-            {
-                query.OrderBy($"MergeTable.{bootstrap.sort} asc");
-            }
-            var list = query.ToPageList(bootstrap.offset, bootstrap.limit, ref totalNumber);
-            return Bootstrap.GridData(list, totalNumber).JilToJson();
-        }
+        //public string PageList(PubParams.StockOutBootstrapParams bootstrap)
+        //{
+        //    int totalNumber = 0;
+        //    if (bootstrap.offset != 0)
+        //    {
+        //        bootstrap.offset = bootstrap.offset / bootstrap.limit + 1;
+        //    }
+        //    var query = _client.Queryable<Wms_stockout, Wms_Customer, Sys_dict, Sys_user, Sys_user>
+        //        ((s, p, d, c, u) => new object[] {
+        //           JoinType.Left,s.CustomerId==p.CustomerId,
+        //           JoinType.Left,s.StockOutType==d.DictId,
+        //           JoinType.Left,s.CreateBy==c.UserId,
+        //           JoinType.Left,s.ModifiedBy==u.UserId,
+        //         })
+        //         .Where((s, p, d, c, u) => s.WarehouseId == bootstrap.storeId && s.IsDel == 1 && d.IsDel == 1 && c.IsDel == 1)
+        //         .Select((s, p, d, c, u) => new
+        //         {
+        //             StockOutId = s.StockOutId.ToString(),
+        //             StockOutType = d.DictName,
+        //             StockOutTypeId = s.StockOutType.ToString(),
+        //             s.StockOutStatus,
+        //             s.StockOutNo,
+        //             s.OrderNo,
+        //             s.CustomerId,
+        //             p.CustomerNo,
+        //             p.CustomerName,
+        //             s.IsDel,
+        //             s.Remark,
+        //             CName = c.UserNickname,
+        //             s.CreateDate,
+        //             UName = u.UserNickname,
+        //             s.ModifiedDate
+        //         }).MergeTable();
+        //    if (!bootstrap.search.IsEmpty())
+        //    {
+        //        query.Where((s) => s.StockOutNo.Contains(bootstrap.search) || s.OrderNo.Contains(bootstrap.search));
+        //    }
+        //    if (!bootstrap.datemin.IsEmpty() && !bootstrap.datemax.IsEmpty())
+        //    {
+        //        query.Where(s => s.CreateDate > bootstrap.datemin.ToDateTimeB() && s.CreateDate <= bootstrap.datemax.ToDateTimeE());
+        //    }
+        //    if (!bootstrap.StockOutType.IsEmpty())
+        //    {
+        //        query.Where((s) => s.StockOutTypeId.Contains(bootstrap.StockOutType));
+        //    }
+        //    if (!bootstrap.StockOutStatus.IsEmpty())
+        //    {
+        //        query.Where((s) => s.StockOutStatus == bootstrap.StockOutStatus.ToByte());
+        //    }
+        //    if (bootstrap.order.Equals("desc", StringComparison.OrdinalIgnoreCase))
+        //    {
+        //        query.OrderBy($"MergeTable.{bootstrap.sort} desc");
+        //    }
+        //    else
+        //    {
+        //        query.OrderBy($"MergeTable.{bootstrap.sort} asc");
+        //    }
+        //    var list = query.ToPageList(bootstrap.offset, bootstrap.limit, ref totalNumber);
+        //    return Bootstrap.GridData(list, totalNumber).JilToJson();
+        //}
 
         public string PrintList(string stockInId)
         {
@@ -201,94 +201,94 @@ namespace Services
             return flag;
         }
 
-        public async Task<RouteData> DoScanComplate(long stockOutId, long inventoryBoxId, Wms_StockMaterialDetailDto[] materials, string remark, SysUserDto userDto)
-        {
-            try
-            {
-                _client.BeginTran();
+        //public async Task<RouteData> DoScanComplate(long stockOutId, long inventoryBoxId, Wms_StockMaterialDetailDto[] materials, string remark, SysUserDto userDto)
+        //{
+        //    try
+        //    {
+        //        _client.BeginTran();
 
-                Wms_stockout stockout = await _client.Queryable<Wms_stockout>().FirstAsync(x => x.StockOutId == stockOutId);
-                if (stockout == null) { return YL.Core.Dto.RouteData.From(PubMessages.E2113_STOCKOUT_NOTFOUND); }
-                if (stockout.StockOutStatus == StockOutStatus.task_finish.ToByte()) { return YL.Core.Dto.RouteData.From(PubMessages.E2114_STOCKOUT_ALLOW_FINISHED); }
+        //        Wms_stockout stockout = await _client.Queryable<Wms_stockout>().FirstAsync(x => x.StockOutId == stockOutId);
+        //        if (stockout == null) { return YL.Core.Dto.RouteData.From(PubMessages.E2113_STOCKOUT_NOTFOUND); }
+        //        if (stockout.StockOutStatus == StockOutStatus.task_finish.ToByte()) { return YL.Core.Dto.RouteData.From(PubMessages.E2114_STOCKOUT_ALLOW_FINISHED); }
 
-                Wms_inventorybox inventoryBox = await _client.Queryable<Wms_inventorybox>().FirstAsync(x => x.InventoryBoxId == inventoryBoxId);
-                if (inventoryBox == null) { return YL.Core.Dto.RouteData.From(PubMessages.E1011_INVENTORYBOX_NOTFOUND); }
-                if (inventoryBox.Status != InventoryBoxStatus.Outed) { return YL.Core.Dto.RouteData.From(PubMessages.E1014_INVENTORYBOX_NOTOUTED); }
+        //        Wms_inventorybox inventoryBox = await _client.Queryable<Wms_inventorybox>().FirstAsync(x => x.InventoryBoxId == inventoryBoxId);
+        //        if (inventoryBox == null) { return YL.Core.Dto.RouteData.From(PubMessages.E1011_INVENTORYBOX_NOTFOUND); }
+        //        if (inventoryBox.Status != InventoryBoxStatus.Outed) { return YL.Core.Dto.RouteData.From(PubMessages.E1014_INVENTORYBOX_NOTOUTED); }
 
-                Wms_inventoryboxTask inventoryBoxTask = await _client.Queryable<Wms_inventoryboxTask>().FirstAsync(x => x.InventoryBoxId == inventoryBoxId && x.Status == InventoryBoxTaskStatus.task_outed.ToByte());
-                if (inventoryBoxTask == null) { return YL.Core.Dto.RouteData.From(PubMessages.E1014_INVENTORYBOX_NOTOUTED); } //数据异常 
+        //        Wms_inventoryboxTask inventoryBoxTask = await _client.Queryable<Wms_inventoryboxTask>().FirstAsync(x => x.InventoryBoxId == inventoryBoxId && x.Status == InventoryBoxTaskStatus.task_outed.ToByte());
+        //        if (inventoryBoxTask == null) { return YL.Core.Dto.RouteData.From(PubMessages.E1014_INVENTORYBOX_NOTOUTED); } //数据异常 
 
 
-                Wms_inventory[] inventories = _client.Queryable<Wms_inventory>().Where(x => x.InventoryBoxId == inventoryBoxId).ToArray();
+        //        Wms_inventory[] inventories = _client.Queryable<Wms_inventory>().Where(x => x.InventoryBoxId == inventoryBoxId).ToArray();
 
-                foreach (Wms_StockMaterialDetailDto material in materials)
-                {
-                    Wms_stockoutdetail detail = await _client.Queryable<Wms_stockoutdetail>().FirstAsync(x => x.StockOutId == stockOutId && x.MaterialId.ToString() == material.MaterialId);
-                    if (detail == null) { return YL.Core.Dto.RouteData.From(PubMessages.E2101_STOCKOUTDETAIL_NOTFOUND, $"MaterialId='{material.MaterialId}'"); }
-                    if (detail.Status == StockOutStatus.task_finish.ToByte()) { return YL.Core.Dto.RouteData.From(PubMessages.E2102_STOCKOUTDETAIL_ALLOW_FINISHED); }
+        //        foreach (Wms_StockMaterialDetailDto material in materials)
+        //        {
+        //            Wms_stockoutdetail detail = await _client.Queryable<Wms_stockoutdetail>().FirstAsync(x => x.StockOutId == stockOutId && x.MaterialId.ToString() == material.MaterialId);
+        //            if (detail == null) { return YL.Core.Dto.RouteData.From(PubMessages.E2101_STOCKOUTDETAIL_NOTFOUND, $"MaterialId='{material.MaterialId}'"); }
+        //            if (detail.Status == StockOutStatus.task_finish.ToByte()) { return YL.Core.Dto.RouteData.From(PubMessages.E2102_STOCKOUTDETAIL_ALLOW_FINISHED); }
 
-                    Wms_stockoutdetail_box box = await _client.Queryable<Wms_stockoutdetail_box>().FirstAsync(x => x.InventoryBoxTaskId == inventoryBoxTask.InventoryBoxTaskId && x.StockOutDetailId == detail.StockOutDetailId);
-                    if (box != null)
-                    {
-                        box.Qty += material.Qty;
+        //            Wms_stockoutdetail_box box = await _client.Queryable<Wms_stockoutdetail_box>().FirstAsync(x => x.InventoryBoxTaskId == inventoryBoxTask.InventoryBoxTaskId && x.StockOutDetailId == detail.StockOutDetailId);
+        //            if (box != null)
+        //            {
+        //                box.Qty += material.Qty;
 
-                        if (_client.Updateable(box).ExecuteCommand() == 0)
-                        {
-                            return YL.Core.Dto.RouteData.From(PubMessages.E0002_UPDATE_COUNT_FAIL);
-                        }
-                    }
-                    else
-                    {
-                        Wms_inventory[] targetInventories = inventories.Where(x => x.MaterialId == detail.MaterialId).ToArray();
-                        if (targetInventories.Length == 0)
-                        {
-                            return YL.Core.Dto.RouteData.From(PubMessages.E1015_INVENTORYBOX_MATERIAL_NOTMATCH);
-                        }
-                        Wms_inventory targetInventory = targetInventories.FirstOrDefault(x => !x.IsLocked || x.OrderNo == stockout.OrderNo);
-                        if (targetInventory == null)
-                        {
-                            return YL.Core.Dto.RouteData.From(PubMessages.E1020_INVENTORYBOX_MATERIAL_LOCKED, $"物料编号:{material.MaterialNo}");
-                        }
-                        box = new Wms_stockoutdetail_box()
-                        {
-                            DetailBoxId = PubId.SnowflakeId,
-                            InventoryBoxTaskId = inventoryBoxTask.InventoryBoxTaskId,
-                            InventoryBoxId = inventoryBox.InventoryBoxId,
-                            StockOutDetailId = detail.StockOutDetailId,
-                            Qty = material.Qty,
-                            Remark = remark,
-                            CreateDate = DateTime.Now,
-                            CreateBy = userDto.UserId
-                        };
-                        _client.Insertable(box).ExecuteCommand(); 
-                    }
-                    if (detail.Status == StockOutStatus.task_confirm.ToByte())
-                    {
-                        detail.Status = StockOutStatus.task_working.ToByte();
-                        if(_client.Updateable(detail).ExecuteCommand() == 0)
-                        { 
-                            return YL.Core.Dto.RouteData.From(PubMessages.E2105_STOCKOUT_BOXOUT_FAIL);
-                        }
-                    }
-                }
+        //                if (_client.Updateable(box).ExecuteCommand() == 0)
+        //                {
+        //                    return YL.Core.Dto.RouteData.From(PubMessages.E0002_UPDATE_COUNT_FAIL);
+        //                }
+        //            }
+        //            else
+        //            {
+        //                Wms_inventory[] targetInventories = inventories.Where(x => x.MaterialId == detail.MaterialId).ToArray();
+        //                if (targetInventories.Length == 0)
+        //                {
+        //                    return YL.Core.Dto.RouteData.From(PubMessages.E1015_INVENTORYBOX_MATERIAL_NOTMATCH);
+        //                }
+        //                Wms_inventory targetInventory = targetInventories.FirstOrDefault(x => !x.IsLocked || x.OrderNo == stockout.OrderNo);
+        //                if (targetInventory == null)
+        //                {
+        //                    return YL.Core.Dto.RouteData.From(PubMessages.E1020_INVENTORYBOX_MATERIAL_LOCKED, $"物料编号:{material.MaterialNo}");
+        //                }
+        //                box = new Wms_stockoutdetail_box()
+        //                {
+        //                    DetailBoxId = PubId.SnowflakeId,
+        //                    InventoryBoxTaskId = inventoryBoxTask.InventoryBoxTaskId,
+        //                    InventoryBoxId = inventoryBox.InventoryBoxId,
+        //                    StockOutDetailId = detail.StockOutDetailId,
+        //                    Qty = material.Qty,
+        //                    Remark = remark,
+        //                    CreateDate = DateTime.Now,
+        //                    CreateBy = userDto.UserId
+        //                };
+        //                _client.Insertable(box).ExecuteCommand(); 
+        //            }
+        //            if (detail.Status == StockOutStatus.task_confirm.ToByte())
+        //            {
+        //                detail.Status = StockOutStatus.task_working.ToByte();
+        //                if(_client.Updateable(detail).ExecuteCommand() == 0)
+        //                { 
+        //                    return YL.Core.Dto.RouteData.From(PubMessages.E2105_STOCKOUT_BOXOUT_FAIL);
+        //                }
+        //            }
+        //        }
 
-                if (stockout.StockOutStatus == StockOutStatus.task_confirm.ToByte())
-                {
-                    stockout.StockOutStatus = StockOutStatus.task_working.ToByte();
-                    if(_client.Updateable(stockout).ExecuteCommand() == 0)
-                    {
-                        return YL.Core.Dto.RouteData.From(PubMessages.E2105_STOCKOUT_BOXOUT_FAIL);
-                    }
-                }
+        //        if (stockout.StockOutStatus == StockOutStatus.task_confirm.ToByte())
+        //        {
+        //            stockout.StockOutStatus = StockOutStatus.task_working.ToByte();
+        //            if(_client.Updateable(stockout).ExecuteCommand() == 0)
+        //            {
+        //                return YL.Core.Dto.RouteData.From(PubMessages.E2105_STOCKOUT_BOXOUT_FAIL);
+        //            }
+        //        }
 
-                _client.CommitTran();
-                return YL.Core.Dto.RouteData.From(PubMessages.I2101_STOCKOUT_SCAN_SCCUESS);
-            }
-            catch (Exception)
-            {
-                _client.RollbackTran();
-                return YL.Core.Dto.RouteData.From(PubMessages.E2105_STOCKOUT_BOXOUT_FAIL);
-            }
-        }
+        //        _client.CommitTran();
+        //        return YL.Core.Dto.RouteData.From(PubMessages.I2101_STOCKOUT_SCAN_SCCUESS);
+        //    }
+        //    catch (Exception)
+        //    {
+        //        _client.RollbackTran();
+        //        return YL.Core.Dto.RouteData.From(PubMessages.E2105_STOCKOUT_BOXOUT_FAIL);
+        //    }
+        //}
     }
 }

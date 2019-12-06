@@ -82,7 +82,7 @@ namespace Services.Outside
                 .Select(
                 (x) => new Wms_MaterialDto
                 {
-                    MaterialId = x.MaterialId,
+                    MaterialId = x.MaterialId.ToString(),
                     MaterialOnlyId = x.MaterialOnlyId,
                     MaterialNo = x.MaterialNo,
                     MaterialName = x.MaterialName,
@@ -112,7 +112,7 @@ namespace Services.Outside
             List<Wms_MaterialDto> result = await query.Select(
               (x) => new Wms_MaterialDto
               {
-                  MaterialId = x.MaterialId,
+                  MaterialId = x.MaterialId.ToString(),
                   MaterialOnlyId = x.MaterialOnlyId,
                   MaterialNo = x.MaterialNo,
                   MaterialName = x.MaterialName,
@@ -150,8 +150,9 @@ namespace Services.Outside
             {
                 query = query.Where(x => x.ModifiedDate <= maxDate);
             }
-            List<Wms_reservoirarea> result = await query.ToPageListAsync(pageIndex, pageSize);
-            return RouteData<Wms_reservoirarea[]>.From(result.ToArray());
+            RefAsync<int> totalCount = new RefAsync<int>();
+            List<Wms_reservoirarea> result = await query.ToPageListAsync(pageIndex, pageSize, totalCount);
+            return RouteData<Wms_reservoirarea[]>.From(result.ToArray(), totalCount.Value);
         }
 
         //-------------------------------货架----------------------------------
@@ -187,8 +188,9 @@ namespace Services.Outside
             {
                 query = query.Where(x => x.ModifiedDate <= maxDate);
             }
-            List<Wms_storagerack> result = await query.ToPageListAsync(pageIndex, pageSize);
-            return RouteData<Wms_storagerack[]>.From(result.ToArray());
+            RefAsync<int> totalCount = new RefAsync<int>();
+            List<Wms_storagerack> result = await query.ToPageListAsync(pageIndex, pageSize, totalCount);
+            return RouteData<Wms_storagerack[]>.From(result.ToArray(), totalCount.Value);
         }
 
 
@@ -215,6 +217,7 @@ namespace Services.Outside
                 query = query.Where((i, ib) => i.ModifiedDate <= maxDate);
             }
 
+            RefAsync<int> totalCount = new RefAsync<int>();
             List<OutsideInventoryDto> result = await query.Select(
               (i,ib) => new OutsideInventoryDto
               {
@@ -237,8 +240,8 @@ namespace Services.Outside
                     CreateDate = i.CreateDate.Value.ToString(PubConst.Format_DateTime),
                     ModifiedBy = i.ModifiedUser,
                     ModifiedDate = i.ModifiedDate.Value.ToString(PubConst.Format_DateTime),
-              }).ToPageListAsync(pageIndex, pageSize);
-            return RouteData<OutsideInventoryDto[]>.From(result.ToArray());
+              }).ToPageListAsync(pageIndex, pageSize, totalCount);
+            return RouteData<OutsideInventoryDto[]>.From(result.ToArray(), totalCount.Value);
         }
 
 
@@ -265,6 +268,7 @@ namespace Services.Outside
                 query = query.Where((ir, ib) => ir.CreateDate <= maxDate);
             }
 
+            RefAsync<int> totalCount = new RefAsync<int>();
             List<OutsideInventoryRecordDto> result = await query.Select(
               (ir, ib) => new OutsideInventoryRecordDto
               {
@@ -284,9 +288,9 @@ namespace Services.Outside
                   CreateDate = ir.CreateDate.Value.ToString(PubConst.Format_DateTime),
                   ModifiedBy = ir.ModifiedUser,
                   ModifiedDate = ir.ModifiedDate.Value.ToString(PubConst.Format_DateTime),
-              }).ToPageListAsync(pageIndex, pageSize);
+              }).ToPageListAsync(pageIndex, pageSize, totalCount);
 
-            return RouteData<OutsideInventoryRecordDto[]>.From(result.ToArray());
+            return RouteData<OutsideInventoryRecordDto[]>.From(result.ToArray(), totalCount.Value);
         }
 
         //-------------------------------入库----------------------------------
@@ -450,7 +454,8 @@ namespace Services.Outside
             {
                 OutsideStockInQueryResultDetail detail = new OutsideStockInQueryResultDetail()
                 {
-                    MaterialId = stockInDetail.MaterialId.Value,
+                    StockInDetailId = stockInDetail.StockInDetailId.ToString(),
+                    MaterialId = stockInDetail.MaterialId.Value.ToString(),
                     MaterialNo = stockInDetail.MaterialNo,
                     MaterialName = stockInDetail.MaterialName,
                     MaterialOnlyId = stockInDetail.MaterialOnlyId,
@@ -499,7 +504,8 @@ namespace Services.Outside
             {
                 OutsideStockOutQueryResultDetail detail = new OutsideStockOutQueryResultDetail()
                 {
-                    MaterialId = stockOutDetail.MaterialId.Value,
+                    StockOutDetailId = stockOutDetail.StockOutDetailId.ToString(),
+                    MaterialId = stockOutDetail.MaterialId.Value.ToString(),
                     MaterialNo = stockOutDetail.MaterialNo,
                     MaterialName = stockOutDetail.MaterialName,
                     MaterialOnlyId = stockOutDetail.MaterialOnlyId,

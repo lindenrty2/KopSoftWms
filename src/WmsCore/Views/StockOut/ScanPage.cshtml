@@ -210,6 +210,7 @@
                         shade: [0.1, '#fff'] //0.1透明度的白色背景
                     });
                     var data = { 
+                        storeId: '@ViewData["currentStoreId"]',
                         stockOutId: '@Model.StockOutId',
                         inventoryBoxId: _self.InventoryBoxId,
                         materials: _self.tableData,

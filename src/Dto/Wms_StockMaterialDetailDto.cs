@@ -11,6 +11,8 @@ namespace YL.Core.Dto
 
         public string StockDetailId { get; set; }
 
+        public int Position { get; set; }
+
         public string MaterialId { get; set; }
 
         public string MaterialNo { get; set; }
