@@ -53,9 +53,9 @@ namespace YL.Core.Dto
         /// <summary>
         /// 入库状态信息
         /// </summary>
-        public WarehousingStatusInfo[] WarehousingStatusInfoList { get; set; }
+        public string WarehousingStatusInfoList { get; set; } //WarehousingStatusInfo[]
 
-    }
+}
 
     public class WarehousingStatusInfo
     {

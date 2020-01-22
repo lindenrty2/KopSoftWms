@@ -60,7 +60,8 @@ namespace WMSCore.Outside
             try
             {
                 _sqlClient.BeginTran();
-                string jsonSuppliesInfo = JsonConvert.SerializeObject(data.SuppliesInfoList);
+                string jsonSuppliesInfoStr = data.SuppliesInfoList;
+                OutsideMaterialDto[] suppliesInfos = JsonConvert.DeserializeObject<OutsideMaterialDto[]>(jsonSuppliesInfoStr);
                 Wms_mestask mesTask = new Wms_mestask()
                 {
                     MesTaskId = PubId.SnowflakeId,
@@ -72,14 +73,14 @@ namespace WMSCore.Outside
                     BatchPlanId = data.BatchPlanId, //批次号
                     WorkAreaName = data.WorkAreaName, //作业区
                     SuppliesKinds = data.SuppliesKinds, //物料种类
-                    SuppliesInfoJson = jsonSuppliesInfo, //物料信息
+                    SuppliesInfoJson = jsonSuppliesInfoStr, //物料信息
                     WorkStatus = MESTaskWorkStatus.WaitPlan,      //等待计划
                     NotifyStatus = MESTaskNotifyStatus.Requested, //已接收
                     CreateDate = DateTime.Now
                 };
                 _mastaskServices.Insert(mesTask);
 
-                RouteData routeData = CreateWMSStockin(mesTask, data.SuppliesInfoList);
+                RouteData routeData = CreateWMSStockin(mesTask, suppliesInfos);
                 if (!routeData.IsSccuess)
                 {
                     _sqlClient.RollbackTran();
@@ -203,7 +204,8 @@ namespace WMSCore.Outside
             try
             {
                 _sqlClient.BeginTran();
-                string jsonSuppliesInfo = JsonConvert.SerializeObject(data.SuppliesInfoList);
+                string jsonSuppliesInfoStr = data.SuppliesInfoList;
+                OutsideMaterialDto[] suppliesInfos = JsonConvert.DeserializeObject<OutsideMaterialDto[]>(jsonSuppliesInfoStr);
                 Wms_mestask mesTask = new Wms_mestask()
                 {
                     MesTaskId = PubId.SnowflakeId,
@@ -216,7 +218,7 @@ namespace WMSCore.Outside
                     WorkAreaName = data.WorkAreaName, //作业区
                     WorkStationId = data.WorkStationId, //工位号
                     SuppliesKinds = data.SuppliesKinds, //物料种类
-                    SuppliesInfoJson = jsonSuppliesInfo, //物料信息
+                    SuppliesInfoJson = jsonSuppliesInfoStr, //物料信息
                     WorkStatus = MESTaskWorkStatus.WaitPlan,      //等待计划
                     NotifyStatus = MESTaskNotifyStatus.Requested, //已接收
                     CreateDate = DateTime.Now
@@ -226,7 +228,7 @@ namespace WMSCore.Outside
                     throw new Exception("mesTask更新异常");
                 }
 
-                RouteData routeData = CreateWMSStockout(mesTask, data.SuppliesInfoList);
+                RouteData routeData = CreateWMSStockout(mesTask, suppliesInfos);
                 if (!routeData.IsSccuess)
                 {
                     _sqlClient.RollbackTran();
@@ -448,7 +450,7 @@ namespace WMSCore.Outside
                 ErrorInfo = null,
                 WarehousingId = arg.WarehousingId,
                 WarehousingType = arg.WarehousingType,
-                WarehousingStatusInfoList = statusInfoList.ToArray(),
+                WarehousingStatusInfoList = JsonConvert.SerializeObject(statusInfoList.ToArray()),
                 IsNormalWarehousing = mesTask.WorkStatus == MESTaskWorkStatus.WorkComplated,
             };
              

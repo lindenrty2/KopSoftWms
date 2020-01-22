@@ -41,8 +41,8 @@ namespace YL.Core.Dto
         /// <summary>
         /// 物料信息列表
         /// </summary>
-        public OutsideMaterialDto[] SuppliesInfoList { get; set; }
-         
+        public string SuppliesInfoList { get; set; } //OutsideMaterialDto[]
+
     }
 
 
@@ -98,7 +98,7 @@ namespace YL.Core.Dto
         /// <summary>
         /// 物料信息
         /// </summary>
-        public OutsideMaterialResult[] SuppliesInfoList { get; set; }
+        public string SuppliesInfoList { get; set; } //OutsideMaterialResult[]
 
     }
 
