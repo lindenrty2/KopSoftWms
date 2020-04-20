@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SqlSugar;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using WebApiClient;
 using YL.Core.Dto;
@@ -52,21 +53,59 @@ namespace WMSCore.Outside
         /// <param name="result"></param>
         /// <returns></returns>
         [HttpPost("/StockIn/{stockInId}/Status")]
-        public Task<RouteData> StockInReport(int stockInId,[FromBody]OutsideStockInReportDto result)
+        public async Task<RouteData> StockInReport(int stockInId,[FromBody]OutsideStockInReportDto result)
         {
             try
             {
+                Wms_stockin stockIn = await _client.Queryable<Wms_stockin>()
+                     .FirstAsync(x => x.StockInId == result.StockInId);
+                if (stockIn == null)
+                {
+                    return YL.Core.Dto.RouteData.From(PubMessages.E2013_STOCKIN_NOTFOUND);
+                }
+                if(stockIn.StockInStatus == StockInStatus.task_finish.ToInt32())
+                {
+                    return YL.Core.Dto.RouteData.From(PubMessages.E2014_STOCKIN_ALLOW_FINISHED);
+                }
+
+                Wms_stockindetail[] details = _client.Queryable<Wms_stockindetail>()
+                    .Where(x => x.StockInId == result.StockInId).ToArray();
+
                 _client.BeginTran();
+                foreach (OutsideStockInReportDetail detail in result.Details)
+                {
+                    Wms_stockindetail localDetail = details.FirstOrDefault( x => x.MaterialId == detail.MaterialId);
+                    localDetail.PlanInQty = detail.PlanInQty;
+                    localDetail.ActInQty = detail.ActInQty;
+                    localDetail.Status = detail.Status.ToInt32();
+                    localDetail.ModifiedBy = PubConst.InterfaceUserId;
+                    localDetail.ModifiedUser = PubConst.InterfaceUserName;
+                    localDetail.Remark = detail.Remark;
+                }
+
+                if(_client.Updateable(details).ExecuteCommand() == 0)
+                {
+                    _client.RollbackTran();
+                    return YL.Core.Dto.RouteData.From(PubMessages.E0002_UPDATE_COUNT_FAIL);
+                }
+
+                stockIn.StockInStatus = result.StockInStatus.ToInt32();
+                stockIn.ModifiedBy = PubConst.InterfaceUserId;
+                stockIn.ModifiedUser = PubConst.InterfaceUserName;
+
+                if (_client.Updateable(stockIn).ExecuteCommand() == 0)
+                {
+                    _client.RollbackTran();
+                    return YL.Core.Dto.RouteData.From(PubMessages.E0002_UPDATE_COUNT_FAIL);
+                }
+
                 _client.CommitTran();
-                return Task.FromResult(new RouteData());
+                return new RouteData();
             }
             catch(Exception ex)
             {
                 _client.RollbackTran();
-                return Task.FromResult(new RouteData() {
-                    Code = -1,
-                    Message = ex.Message
-                });
+                return new RouteData() { Code = -1, Message = ex.Message };
             }
         }
 
@@ -76,22 +115,59 @@ namespace WMSCore.Outside
         /// <param name="result"></param>
         /// <returns></returns>
         [HttpPost("/StockOut/{stockOutId}/Status")]
-        public Task<RouteData> StockOutReport(int stockOutId, [FromBody]OutsideStockOutReportDto result)
+        public async Task<RouteData> StockOutReport(int stockOutId, [FromBody]OutsideStockOutReportDto result)
         {
             try
             {
+                Wms_stockout stockOut = await _client.Queryable<Wms_stockout>()
+                     .FirstAsync(x => x.StockOutId == result.StockOutId);
+                if (stockOut == null)
+                {
+                    return YL.Core.Dto.RouteData.From(PubMessages.E2113_STOCKOUT_NOTFOUND);
+                }
+                if (stockOut.StockOutStatus == StockOutStatus.task_finish.ToInt32())
+                {
+                    return YL.Core.Dto.RouteData.From(PubMessages.E2114_STOCKOUT_ALLOW_FINISHED);
+                }
+
+                Wms_stockoutdetail[] details = _client.Queryable<Wms_stockoutdetail>()
+                    .Where(x => x.StockOutId == result.StockOutId).ToArray();
+
                 _client.BeginTran();
+                foreach (OutsideStockOutReportDetail detail in result.Details)
+                {
+                    Wms_stockoutdetail localDetail = details.FirstOrDefault(x => x.MaterialId == detail.MaterialId);
+                    localDetail.PlanOutQty = detail.PlanOutQty;
+                    localDetail.ActOutQty = detail.ActOutQty;
+                    localDetail.Status = detail.Status.ToInt32();
+                    localDetail.ModifiedBy = PubConst.InterfaceUserId;
+                    localDetail.ModifiedUser = PubConst.InterfaceUserName;
+                    localDetail.Remark = detail.Remark;
+                }
+
+                if (_client.Updateable(details).ExecuteCommand() == 0)
+                {
+                    _client.RollbackTran();
+                    return YL.Core.Dto.RouteData.From(PubMessages.E0002_UPDATE_COUNT_FAIL);
+                }
+
+                stockOut.StockOutStatus = result.StockOutStatus.ToInt32();
+                stockOut.ModifiedBy = PubConst.InterfaceUserId;
+                stockOut.ModifiedUser = PubConst.InterfaceUserName;
+
+                if (_client.Updateable(stockOut).ExecuteCommand() == 0)
+                {
+                    _client.RollbackTran();
+                    return YL.Core.Dto.RouteData.From(PubMessages.E0002_UPDATE_COUNT_FAIL);
+                }
+
                 _client.CommitTran();
-                return Task.FromResult(new RouteData());
+                return new RouteData();
             }
             catch (Exception ex)
             {
                 _client.RollbackTran();
-                return Task.FromResult(new RouteData()
-                {
-                    Code = -1,
-                    Message = ex.Message
-                });
+                return new RouteData() { Code = -1, Message = ex.Message };
             }
         }
     } 
