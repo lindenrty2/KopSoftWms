@@ -22,7 +22,7 @@ namespace YL.Core.Entity
         /// <summary>
         /// WCS任务类型
         /// </summary>
-        [SugarColumn(Length = 2, IsNullable = false)]
+        [SugarColumn(IsNullable = false)]//Length = 2, 
         public WCSTaskTypes TaskType { get; set; } 
 
         /// <summary>
@@ -57,7 +57,7 @@ namespace YL.Core.Entity
         /// <summary>
         /// 操作状态
         /// </summary>
-        [SugarColumn(Length = 2, IsNullable = false)]
+        [SugarColumn( IsNullable = false)]//Length = 2,
         public WCSTaskWorkStatus WorkStatus { get; set; } 
 
         /// <summary>

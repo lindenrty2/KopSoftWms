@@ -38,7 +38,7 @@ namespace YL.Core.Dto
         /// <summary>
         /// 消息接收成功与否 
         /// </summary>
-        public string Success { get; set; }
+        public bool Success { get; set; }
 
         /// <summary>
         /// 错误代码

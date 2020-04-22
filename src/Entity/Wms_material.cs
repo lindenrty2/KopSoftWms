@@ -28,7 +28,7 @@ namespace YL.Core.Entity
         public long MaterialId { get; set; }
 
         /// <summary>
-        /// Desc:产品编号
+        /// Desc:产品唯一编号
         /// Default:
         /// Nullable:False
         /// </summary>

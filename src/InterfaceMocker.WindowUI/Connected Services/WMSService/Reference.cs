@@ -22,7 +22,7 @@ namespace WMSService
         
         private string ProductionPlanIdField;
         
-        private WMSService.OutsideMaterialDto[] SuppliesInfoListField;
+        private string SuppliesInfoListField;
         
         private int SuppliesKindsField;
         
@@ -61,7 +61,7 @@ namespace WMSService
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public WMSService.OutsideMaterialDto[] SuppliesInfoList
+        public string SuppliesInfoList
         {
             get
             {
@@ -135,103 +135,6 @@ namespace WMSService
             set
             {
                 this.WorkAreaNameField = value;
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="OutsideMaterialDto", Namespace="http://schemas.datacontract.org/2004/07/YL.Core.Dto")]
-    public partial class OutsideMaterialDto : object
-    {
-        
-        private string SuppliesIdField;
-        
-        private string SuppliesNameField;
-        
-        private int SuppliesNumberField;
-        
-        private string SuppliesOnlyIdField;
-        
-        private string SuppliesTypeField;
-        
-        private string UnitField;
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string SuppliesId
-        {
-            get
-            {
-                return this.SuppliesIdField;
-            }
-            set
-            {
-                this.SuppliesIdField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string SuppliesName
-        {
-            get
-            {
-                return this.SuppliesNameField;
-            }
-            set
-            {
-                this.SuppliesNameField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public int SuppliesNumber
-        {
-            get
-            {
-                return this.SuppliesNumberField;
-            }
-            set
-            {
-                this.SuppliesNumberField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string SuppliesOnlyId
-        {
-            get
-            {
-                return this.SuppliesOnlyIdField;
-            }
-            set
-            {
-                this.SuppliesOnlyIdField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string SuppliesType
-        {
-            get
-            {
-                return this.SuppliesTypeField;
-            }
-            set
-            {
-                this.SuppliesTypeField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string Unit
-        {
-            get
-            {
-                return this.UnitField;
-            }
-            set
-            {
-                this.UnitField = value;
             }
         }
     }
@@ -328,7 +231,7 @@ namespace WMSService
         
         private string ProductionPlanIdField;
         
-        private WMSService.OutsideMaterialDto[] SuppliesInfoListField;
+        private string SuppliesInfoListField;
         
         private int SuppliesKindsField;
         
@@ -369,7 +272,7 @@ namespace WMSService
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public WMSService.OutsideMaterialDto[] SuppliesInfoList
+        public string SuppliesInfoList
         {
             get
             {
@@ -600,13 +503,11 @@ namespace WMSService
     public partial class OutsideMaterialStockEnquiryResult : object
     {
         
-        private string BalanceStockField;
-        
         private string ErrorIDField;
         
-        private string PaperStockField;
+        private WMSService.OutsideMaterialStockEnquiryItem[] MaterialStockInfoField;
         
-        private string SuccessField;
+        private bool SuccessField;
         
         private string SuppliesIdField;
         
@@ -615,25 +516,6 @@ namespace WMSService
         private string SuppliesTypeField;
         
         private string SuppliesUnitField;
-        
-        private string WarehouseIdField;
-        
-        private string WarehouseNameField;
-        
-        private string WarehousePositionField;
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string BalanceStock
-        {
-            get
-            {
-                return this.BalanceStockField;
-            }
-            set
-            {
-                this.BalanceStockField = value;
-            }
-        }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
         public string ErrorID
@@ -649,20 +531,20 @@ namespace WMSService
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public string PaperStock
+        public WMSService.OutsideMaterialStockEnquiryItem[] MaterialStockInfo
         {
             get
             {
-                return this.PaperStockField;
+                return this.MaterialStockInfoField;
             }
             set
             {
-                this.PaperStockField = value;
+                this.MaterialStockInfoField = value;
             }
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public string Success
+        public bool Success
         {
             get
             {
@@ -723,6 +605,94 @@ namespace WMSService
             set
             {
                 this.SuppliesUnitField = value;
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="OutsideMaterialStockEnquiryItem", Namespace="http://schemas.datacontract.org/2004/07/YL.Core.Dto")]
+    public partial class OutsideMaterialStockEnquiryItem : object
+    {
+        
+        private string BalanceStockField;
+        
+        private string InventoryBoxNoField;
+        
+        private string PaperStockField;
+        
+        private string PositionField;
+        
+        private string StorageRackPositionField;
+        
+        private string WarehouseIdField;
+        
+        private string WarehouseNameField;
+        
+        private string WarehousePositionField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string BalanceStock
+        {
+            get
+            {
+                return this.BalanceStockField;
+            }
+            set
+            {
+                this.BalanceStockField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string InventoryBoxNo
+        {
+            get
+            {
+                return this.InventoryBoxNoField;
+            }
+            set
+            {
+                this.InventoryBoxNoField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string PaperStock
+        {
+            get
+            {
+                return this.PaperStockField;
+            }
+            set
+            {
+                this.PaperStockField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string Position
+        {
+            get
+            {
+                return this.PositionField;
+            }
+            set
+            {
+                this.PositionField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string StorageRackPosition
+        {
+            get
+            {
+                return this.StorageRackPositionField;
+            }
+            set
+            {
+                this.StorageRackPositionField = value;
             }
         }
         
@@ -1083,21 +1053,11 @@ namespace WMSService
         
         private bool IsNormalWarehousingField;
         
-        private int RefreshStockField;
-        
-        private bool SuccessField;
-        
-        private string WarehouseIdField;
-        
-        private string WarehouseNameField;
-        
-        private string WarehousePositionField;
-        
-        private string WarehousingFinishTimeField;
+        private string SuccessField;
         
         private string WarehousingIdField;
         
-        private string WarehousingStepField;
+        private string WarehousingStatusInfoListField;
         
         private string WarehousingTypeField;
         
@@ -1141,20 +1101,7 @@ namespace WMSService
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public int RefreshStock
-        {
-            get
-            {
-                return this.RefreshStockField;
-            }
-            set
-            {
-                this.RefreshStockField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public bool Success
+        public string Success
         {
             get
             {
@@ -1163,58 +1110,6 @@ namespace WMSService
             set
             {
                 this.SuccessField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string WarehouseId
-        {
-            get
-            {
-                return this.WarehouseIdField;
-            }
-            set
-            {
-                this.WarehouseIdField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string WarehouseName
-        {
-            get
-            {
-                return this.WarehouseNameField;
-            }
-            set
-            {
-                this.WarehouseNameField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string WarehousePosition
-        {
-            get
-            {
-                return this.WarehousePositionField;
-            }
-            set
-            {
-                this.WarehousePositionField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string WarehousingFinishTime
-        {
-            get
-            {
-                return this.WarehousingFinishTimeField;
-            }
-            set
-            {
-                this.WarehousingFinishTimeField = value;
             }
         }
         
@@ -1232,15 +1127,15 @@ namespace WMSService
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public string WarehousingStep
+        public string WarehousingStatusInfoList
         {
             get
             {
-                return this.WarehousingStepField;
+                return this.WarehousingStatusInfoListField;
             }
             set
             {
-                this.WarehousingStepField = value;
+                this.WarehousingStatusInfoListField = value;
             }
         }
         
@@ -1303,21 +1198,15 @@ namespace WMSService
         
         private string ErrorIdField;
         
-        private string ErrorInfoErrorIdField;
+        private string ErrorInfoField;
         
-        private string IsNormalWarehouseEntryField;
+        private bool IsNormalWarehouseEntryField;
         
-        private int RefreshStockField;
-        
-        private bool SuccessField;
-        
-        private string WarehouseEntryFinishTimeField;
+        private string SuccessField;
         
         private string WarehouseEntryIdField;
         
-        private string WarehouseEntryStepField;
-        
-        private string WorkAreaNameField;
+        private string WarehouseEntryStatusInfoListField;
         
         [System.Runtime.Serialization.DataMemberAttribute()]
         public string ErrorId
@@ -1333,20 +1222,20 @@ namespace WMSService
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public string ErrorInfoErrorId
+        public string ErrorInfo
         {
             get
             {
-                return this.ErrorInfoErrorIdField;
+                return this.ErrorInfoField;
             }
             set
             {
-                this.ErrorInfoErrorIdField = value;
+                this.ErrorInfoField = value;
             }
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public string IsNormalWarehouseEntry
+        public bool IsNormalWarehouseEntry
         {
             get
             {
@@ -1359,20 +1248,7 @@ namespace WMSService
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public int RefreshStock
-        {
-            get
-            {
-                return this.RefreshStockField;
-            }
-            set
-            {
-                this.RefreshStockField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public bool Success
+        public string Success
         {
             get
             {
@@ -1381,19 +1257,6 @@ namespace WMSService
             set
             {
                 this.SuccessField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string WarehouseEntryFinishTime
-        {
-            get
-            {
-                return this.WarehouseEntryFinishTimeField;
-            }
-            set
-            {
-                this.WarehouseEntryFinishTimeField = value;
             }
         }
         
@@ -1411,28 +1274,15 @@ namespace WMSService
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public string WarehouseEntryStep
+        public string WarehouseEntryStatusInfoList
         {
             get
             {
-                return this.WarehouseEntryStepField;
+                return this.WarehouseEntryStatusInfoListField;
             }
             set
             {
-                this.WarehouseEntryStepField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string WorkAreaName
-        {
-            get
-            {
-                return this.WorkAreaNameField;
-            }
-            set
-            {
-                this.WorkAreaNameField = value;
+                this.WarehouseEntryStatusInfoListField = value;
             }
         }
     }

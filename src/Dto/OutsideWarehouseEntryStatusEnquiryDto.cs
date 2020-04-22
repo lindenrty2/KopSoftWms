@@ -39,12 +39,12 @@ namespace YL.Core.Dto
         /// <summary>
         /// 错误内容
         /// </summary>
-        public string ErrorInfoErrorId { get; set; }
+        public string ErrorInfo { get; set; }
 
         /// <summary>
         /// 是否出库完成
         /// </summary>
-        public string IsNormalWarehouseEntry { get; set; }
+        public bool IsNormalWarehouseEntry { get; set; }
         /// <summary>
         /// 出库单编号
         /// </summary>
