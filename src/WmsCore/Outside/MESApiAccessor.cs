@@ -27,18 +27,18 @@ namespace WMSCore.Outside
         private MESApiAccessor()
         {
             HttpApiConfig config = new HttpApiConfig();
-            config.HttpHost = new Uri(Host);
+            config.HttpHost = new Uri(Host); 
             _apiProxy = HttpApi.Create<IMESApiProxy>(config);
         }
 
-        public async Task<OutsideStockInResponseResult> ConfirmBalanceMES(OutsideStockInResponse inStockInfo)
+        public async Task<OutsideStockInResponseResult> WarehousingFinish(OutsideStockInResponse inStockInfo)
         {
-            return await _apiProxy.ConfirmBalanceMES(inStockInfo);
+            return await _apiProxy.WarehousingFinish(inStockInfo);
         }
 
-        public async Task<OutsideStockOutResponseResult> ConfirmOutStockMES(OutsideStockOutResponse outStockInfo)
+        public async Task<OutsideStockOutResponseResult> WarehouseEntryFinish(OutsideStockOutResponse outStockInfo)
         {
-            return await _apiProxy.ConfirmOutStockMES(outStockInfo);
+            return await _apiProxy.WarehouseEntryFinish(outStockInfo);
         }
 
         /// <summary>

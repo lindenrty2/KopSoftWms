@@ -12,10 +12,10 @@ namespace IServices.Outside
     {
 
         [HttpPost("ConfirmBalanceMES")]
-        ITask<OutsideStockInResponseResult> ConfirmBalanceMES(OutsideStockInResponse inStockInfo);
+        ITask<OutsideStockInResponseResult> WarehousingFinish(OutsideStockInResponse inStockInfo);
 
         [HttpPost("ConfirmOutStockMES")]
-        ITask<OutsideStockOutResponseResult> ConfirmOutStockMES(OutsideStockOutResponse outStockInfo);
+        ITask<OutsideStockOutResponseResult> WarehouseEntryFinish(OutsideStockOutResponse outStockInfo);
 
         [HttpPost("LogisticsFinish")]
         ITask<OutsideLogisticsFinishResponseResult> LogisticsFinish(OutsideLogisticsFinishResponse arg);

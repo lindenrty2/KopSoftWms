@@ -98,7 +98,41 @@ namespace WMSCore.Outside
                     _client.RollbackTran();
                     return YL.Core.Dto.RouteData.From(PubMessages.E0002_UPDATE_COUNT_FAIL);
                 }
+                Wms_mestask mesTask = await _client.Queryable<Wms_mestask>()
+                    .FirstAsync(x => x.MesTaskId == stockIn.MesTaskId);
+                if(mesTask == null)
+                {
+                    return YL.Core.Dto.RouteData.From(PubMessages.E3000_MES_STOCKINTASK_NOTFOUND); 
+                }
 
+                Wms_stockin[] stockins = _client.Queryable<Wms_stockin>()
+                 .Where(x => x.MesTaskId == mesTask.MesTaskId).ToArray();
+
+                if(!stockins.Any(x => x.StockInStatus != StockInStatus.task_finish.ToInt32() && x.StockInStatus != StockInStatus.task_canceled.ToInt32()))
+                {
+                    mesTask.WorkStatus = MESTaskWorkStatus.WorkComplated;
+                    mesTask.NotifyStatus = MESTaskNotifyStatus.WaitResponse;
+                }
+
+                bool notifyComplate = false;
+                try
+                {
+                    OutsideStockInResponse response = new OutsideStockInResponse()
+                    {
+                    };
+                    await MESApiAccessor.Instance.WarehousingFinish(response);
+                    notifyComplate = true;
+                }
+                catch(Exception)
+                {
+
+                }
+                if (notifyComplate)
+                {
+
+                    mesTask.NotifyStatus = MESTaskNotifyStatus.Responsed;
+                    _client.Updateable(mesTask).ExecuteCommand();
+                }
                 _client.CommitTran();
                 return new RouteData();
             }
