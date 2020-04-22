@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
+using System.Threading.Tasks;
 using YL.Core.Dto;
 using YL.Core.Entity;
 using YL.Utils.Extensions;
@@ -346,7 +347,52 @@ namespace WMSCore.Outside
         [HttpGet("MaterialStockEnquiry")]
         public OutsideMaterialStockEnquiryResult MaterialStockEnquiry(OutsideMaterialStockEnquiryArg arg)
         {
-            return null;
+            var inventories = _sqlClient.Queryable<Wms_inventory, Wms_inventorybox,Wms_warehouse>(
+                (i, ib, w) => new object[] {
+                   JoinType.Left,i.InventoryBoxId == ib.InventoryBoxId,
+                   JoinType.Left,ib.WarehouseId == w.WarehouseId
+                })
+                .Where(x => x.MaterialNo == arg.SuppliesId || x.MaterialOnlyId == arg.SuppliesId)
+                .Select((i, ib, w) => new {
+                    i.InventoryId,
+                    ib.InventoryBoxNo,
+                    w.WarehouseName,
+                    ib.StorageRackName,
+                    ib.WarehouseId,
+                    i.Position,
+                    i.MaterialNo,
+                    i.MaterialOnlyId,
+                    i.MaterialName,
+                    i.Qty,
+                    i.ModifiedUser,
+                    i.ModifiedDate
+                }).ToArray();
+                ;
+
+            List<OutsideMaterialStockEnquiryItem> items = new List<OutsideMaterialStockEnquiryItem>();
+            foreach (var inventory in inventories)
+            {
+                OutsideMaterialStockEnquiryItem item = new OutsideMaterialStockEnquiryItem()
+                {
+                    InventoryBoxNo = inventory.InventoryBoxNo,
+                    BalanceStock = inventory.Qty.ToString(),
+                    PaperStock = inventory.Qty.ToString(),
+                    StorageRackPosition = inventory.StorageRackName,
+                    WarehouseId = Convert.ToString(inventory.WarehouseId),
+                    WarehouseName = inventory.WarehouseName,
+                    Position = Convert.ToString(inventory.Position),
+                    WarehousePosition = "??"
+                };
+                items.Add(item);
+            }
+            OutsideMaterialStockEnquiryResult result = new OutsideMaterialStockEnquiryResult();
+            result.SuppliesId = arg.SuppliesId;
+            result.SuppliesName = arg.SuppliesName;
+            result.SuppliesType = arg.SuppliesType;
+            result.SuppliesUnit = arg.SuppliesUnit;
+            result.MaterialStockInfo = items.ToArray();
+            result.Success = true;
+            return result;
         }
 
         /// <summary>
@@ -398,6 +444,7 @@ namespace WMSCore.Outside
                      s.StockInType
                  })
                 .ToList();
+
             List<WarehousingStatusInfo> statusInfoList = new List<WarehousingStatusInfo>();
             foreach(var stockin in stockinList)
             {
@@ -417,6 +464,7 @@ namespace WMSCore.Outside
                     sid.StockInDetailId,
                     sidb.InventoryBoxId, 
                     ib.InventoryBoxNo,
+                    sidb.Position,
                     sidb.Qty,
                     sid.Status,
                     sid.CreateBy,
@@ -433,7 +481,7 @@ namespace WMSCore.Outside
                         WarehousePosition = null,
                         WarehouseName = stockin.WarehouseName,
                         InventoryBoxNo = detail.InventoryBoxNo,
-                        Position = "0",//TODO
+                        Position = Convert.ToString(detail.Position),//TODO
                         StorageRackPosition = "",
                         SuppliesId = string.IsNullOrWhiteSpace(detail.MaterialOnlyId) ? detail.MaterialId.ToString() : detail.MaterialOnlyId.ToString(),
                         RefreshStock = 0, //TODO
@@ -462,7 +510,89 @@ namespace WMSCore.Outside
         [HttpGet("WarehouseEntryStatusEnquiry")]
         public OutsideWarehouseEntryStatusEnquiryResult WarehouseEntryStatusEnquiry(OutsideWarehouseEntryStatusEnquiryArg arg)
         {
-            return null;
+
+            Wms_mestask mesTask = _sqlClient.Queryable<Wms_mestask>().First(x => x.WarehousingId == arg.WarehouseEntryId && x.WarehousingType == arg.WarehouseEntryType);
+            if (mesTask == null)
+            {
+                return new OutsideWarehouseEntryStatusEnquiryResult()
+                {
+                    Success = "false",
+                    ErrorId = PubMessages.E3000_MES_STOCKINTASK_NOTFOUND.Code.ToString(),
+                    ErrorInfo = PubMessages.E3000_MES_STOCKINTASK_NOTFOUND.Message
+                };
+            }
+
+            var stockoutList = _sqlClient.Queryable<Wms_stockout, Wms_warehouse>(
+                (s, w) => new object[] {
+                   JoinType.Left,s.WarehouseId==w.WarehouseId
+                 })
+                 .Where((s, w) => s.MesTaskId == mesTask.MesTaskId)
+                 .Select((s, w) => new {
+                     s.WarehouseId,
+                     w.WarehouseName,
+                     s.StockOutId,
+                     s.StockOutNo,
+                     s.StockOutStatus,
+                     s.StockOutType
+                 })
+                .ToList();
+            List<WarehousingStatusInfo> statusInfoList = new List<WarehousingStatusInfo>();
+            foreach (var stockin in stockoutList)
+            {
+                var stockoutDetailList = _sqlClient.Queryable<Wms_stockoutdetail, Wms_stockoutdetail_box, Wms_inventorybox, Wms_material>(
+                   (sid, sidb, ib, m) => new object[] {
+                       JoinType.Left,sid.StockOutDetailId == sidb.StockOutDetailId,
+                       JoinType.Left,sidb.InventoryBoxId == ib.InventoryBoxId,
+                       JoinType.Left,sid.MaterialId == m.MaterialId,
+                   }
+                )
+                .Where((sid, sidb, ib, m) => sid.StockOutId == stockin.StockOutId)
+                .Select((sid, sidb, ib, m) => new {
+                    sid.WarehouseId,
+                    sid.MaterialId,
+                    m.MaterialNo,
+                    m.MaterialOnlyId,
+                    sid.StockOutDetailId,
+                    sidb.InventoryBoxId,
+                    ib.InventoryBoxNo,
+                    sidb.Position,
+                    sidb.Qty,
+                    sid.Status,
+                    sid.CreateBy,
+                    sid.CreateDate,
+                    sid.ModifiedBy,
+                    sid.ModifiedDate
+                }).MergeTable().ToList();
+                foreach (var detail in stockoutDetailList)
+                {
+                    statusInfoList.Add(new WarehousingStatusInfo()
+                    {
+                        IsNormalWarehousing = detail.Status == StockInStatus.task_finish.ToByte(),
+                        WarehouseId = detail.WarehouseId.ToString(),
+                        WarehousePosition = null,
+                        WarehouseName = stockin.WarehouseName,
+                        InventoryBoxNo = detail.InventoryBoxNo,
+                        Position = Convert.ToString(detail.Position),
+                        StorageRackPosition = "",
+                        SuppliesId = string.IsNullOrWhiteSpace(detail.MaterialOnlyId) ? detail.MaterialId.ToString() : detail.MaterialOnlyId.ToString(),
+                        RefreshStock = 0, 
+                        WarehousingStep = ((StockInStatus)detail.Status).ToString(),
+                        WarehousingFinishTime = detail.ModifiedDate?.ToString("yyyyMMddHHmmss")
+                    });
+                }
+            }
+
+            return new OutsideWarehouseEntryStatusEnquiryResult()
+            {
+                Success = "true",
+                ErrorId = null,
+                ErrorInfo = null,
+                WarehouseEntryId = arg.WarehouseEntryId,
+                //WarehouseEntryType = arg.WarehouseEntryType,
+                WarehouseEntryStatusInfoList = JsonConvert.SerializeObject(statusInfoList.ToArray()),
+                IsNormalWarehouseEntry = mesTask.WorkStatus == MESTaskWorkStatus.WorkComplated,
+            };
+
         }
 
     }

@@ -71,7 +71,7 @@ namespace WMSCore.Outside
             }
             else
             {
-                //TODO 操作API外部接口
+                //TODO 操作API外部接口,第三方库暂不使用
                 accessor = null; // new WMSApiAccessor(warehouse);
                 _operationApiInstanceMap.Add(key, accessor);
             }
@@ -103,7 +103,7 @@ namespace WMSCore.Outside
             }
             else
             {
-                //TODO 操作API外部接口
+                //TODO 操作API外部接口,第三方库暂不使用
                 accessor = null; // new WMSApiAccessor(warehouse);
                 _managementApiInstanceMap.Add(key, accessor);
             }
