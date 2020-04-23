@@ -1,7 +1,9 @@
 ﻿using IServices;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using SqlSugar;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebApiClient;
@@ -110,6 +112,7 @@ namespace WMSCore.Outside
 
                 if(!stockins.Any(x => x.StockInStatus != StockInStatus.task_finish.ToInt32() && x.StockInStatus != StockInStatus.task_canceled.ToInt32()))
                 {
+                    mesTask.ModifiedDate = DateTime.Now;
                     mesTask.WorkStatus = MESTaskWorkStatus.WorkComplated;
                     mesTask.NotifyStatus = MESTaskNotifyStatus.WaitResponse;
                 }
@@ -117,9 +120,16 @@ namespace WMSCore.Outside
                 bool notifyComplate = false;
                 try
                 {
+                    List<OutsideMaterialResult> materialList = new List<OutsideMaterialResult>();
+              
+
                     OutsideStockInResponse response = new OutsideStockInResponse()
                     {
+                        WarehousingId = mesTask.WarehousingId,
+                        WarehousingFinishTime = mesTask.ModifiedDate.Value.ToString("yyyy-MM-dd HH:mm:ss"),
+                        SuppliesInfoList = JsonConvert.SerializeObject(materialList)
                     };
+
                     await MESApiAccessor.Instance.WarehousingFinish(response);
                     notifyComplate = true;
                 }
@@ -128,8 +138,7 @@ namespace WMSCore.Outside
 
                 }
                 if (notifyComplate)
-                {
-
+                { 
                     mesTask.NotifyStatus = MESTaskNotifyStatus.Responsed;
                     _client.Updateable(mesTask).ExecuteCommand();
                 }

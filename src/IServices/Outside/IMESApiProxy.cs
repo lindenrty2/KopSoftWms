@@ -11,10 +11,10 @@ namespace IServices.Outside
     public interface IMESApiProxy : IHttpApi
     {
 
-        [HttpPost("ConfirmBalanceMES")]
+        [HttpPost("WarehousingFinish")]
         ITask<OutsideStockInResponseResult> WarehousingFinish(OutsideStockInResponse inStockInfo);
 
-        [HttpPost("ConfirmOutStockMES")]
+        [HttpPost("WarehouseEntryFinish")]
         ITask<OutsideStockOutResponseResult> WarehouseEntryFinish(OutsideStockOutResponse outStockInfo);
 
         [HttpPost("LogisticsFinish")]
