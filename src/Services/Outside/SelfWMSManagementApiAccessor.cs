@@ -108,5 +108,53 @@ namespace Services.Outside
             return RouteData<Wms_inventorybox>.From(PubMessages.I1005_INVENTORYBOX_DELETE_SCCUESS);
         }
 
+        public async Task<RouteData<Sys_dict[]>> GetMaterialTypes()
+        {
+            List<Sys_dict> result = await _sqlClient.Queryable<Sys_dict>().Where(x => x.DictType == SqlFunc.ToString(Convert.ToInt32(PubDictType.material))).ToListAsync();
+            return RouteData<Sys_dict[]>.From(result.ToArray(), result.Count);
+        }
+
+        public async Task<RouteData<Wms_StockCountInventoryBoxDto[]>> GetStockCountInventoryBoxList(long? materialTypeId, string materialName)
+        {
+            ISugarQueryable< Wms_inventory, Wms_material, Wms_inventorybox, Wms_storagerack> query = _sqlClient.Queryable<Wms_inventory, Wms_material,Wms_inventorybox, Wms_storagerack>(
+                (i,m, ib, s) => new object[] {
+                   JoinType.Left,i.InventoryBoxId==ib.StorageRackId,
+                   JoinType.Left,i.MaterialId==m.MaterialId,
+                   JoinType.Left,ib.StorageRackId==s.StorageRackId
+                 })
+                .Where((i, ib) => i.IsDel == DeleteFlag.Normal);
+            if (materialTypeId.HasValue)
+            {
+                query = query.Where((i, m, ib, s) => m.MaterialType  == materialTypeId.Value);
+            }
+            if (!string.IsNullOrEmpty(materialName))
+            {
+                query = query.Where((i, m, ib, s) =>  i.MaterialName.Contains(materialName) );
+            }
+            List<Wms_StockCountInventoryBoxDto> result = await query.Select(
+                (i, m, ib, s) => new Wms_StockCountInventoryBoxDto
+                {
+                    StorageRackNo = s.StorageRackNo,
+                    InventoryBoxId = ib.InventoryBoxId.ToString(),
+                    InventoryBoxNo = s.StorageRackNo,
+
+                    Row = ib.Row ?? 0,
+                    Column = ib.Column ?? 0,
+                    Floor = ib.Floor ?? 0,
+                    Position = i.Position,
+
+                    MaterialNo = m.MaterialNo,
+                    MaterialName = m.MaterialName,
+                    MaterialType = m.MaterialTypeName,
+                    Qty = i.Qty,
+
+                    ModifiedBy = i.ModifiedBy,
+                    ModifiedUser = i.ModifiedUser,
+                    ModifiedDate = i.ModifiedDate,
+
+                }).ToListAsync();
+
+            return RouteData<Wms_StockCountInventoryBoxDto[]>.From(result.ToArray(), result.Count);
+        }
     }
 }
