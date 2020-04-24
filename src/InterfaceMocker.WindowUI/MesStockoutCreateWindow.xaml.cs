@@ -85,6 +85,7 @@ namespace InterfaceMocker.WindowUI
 
         private void Confirm_Click(object sender, RoutedEventArgs e)
         {
+            _data.SuppliesInfoList = JsonConvert.SerializeObject(SuppliesInfoList);
             this.DialogResult = true;
         }
 
