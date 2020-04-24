@@ -398,5 +398,21 @@
     "CreateDate": "2019-05-17 10:39:13",
     "ModifiedBy": null,
     "ModifiedDate": null
+  },
+  {
+    "MenuId": 26,
+    "MenuName": "盘库管理",
+    "MenuUrl": "/StockCount",
+    "MenuIcon": null,
+    "MenuParent": 11,
+    "Sort": 31,
+    "Status": 1,
+    "MenuType": "wms_menu",
+    "IsDel": 1,
+    "Remark": null,
+    "CreateBy": null,
+    "CreateDate": "2019-05-17 10:39:13",
+    "ModifiedBy": null,
+    "ModifiedDate": null
   }
 ]

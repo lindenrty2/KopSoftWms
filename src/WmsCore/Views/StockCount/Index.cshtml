@@ -5,12 +5,12 @@
     <section class="content-header">
         <h1>
             仓库管理
-            <small>盘库</small>
+            <small>盘库管理</small>
         </h1>
         <ol class="breadcrumb">
             <li><a href="#"><i class="fa fa-dashboard"></i> 首页</a></li>
             <li><a href="#">仓库管理</a></li>
-            <li class="active">盘库</li>
+            <li class="active">盘库管理</li>
         </ol>
     </section>
     <section class="content">
@@ -27,26 +27,23 @@
                     </div>
                     <div class="box-body">
                         <div class="input-group">
-                            <span class="input-group-addon">日期范围</span>
-                            <input type="text" ref="datemin" id="datemin" class="form-control" style="width:120px;">
-                            <input type="text" ref="datemax" id="datemax" class="form-control" style="width:120px;margin-left:10px;">
                             <input type="text" v-model="storeId" ref="storeId" id="storeId" style="display:none">
-                            <select class="form-control" v-model="StorageRackId" style="width:120px;margin-left:10px;">
-                                <option value="">全部货架</option>
+                            <select class="form-control" v-model="ReservoirareaId" style="width:120px;margin-left:10px;">
+                                <option value="">全部库区</option>
                                 @{
-                                    if (ViewBag.StorageRack != null || ViewBag.StorageRack.Count > 0)
+                                    if (ViewBag.Reservoirareas != null || ViewBag.Reservoirareas.Count > 0)
                                     {
-                                        foreach (var item in ViewBag.StorageRack)
+                                        foreach (var item in ViewBag.Reservoirareas)
                                         {
-                                            <option value="@item.StorageRackId">@(item.StorageRackNo + "|" + item.StorageRackName)</option>
+                                            <option value="@item.ReservoirAreaId">@( item.ReservoirAreaName)</option>
                                         }
                                     }
                                 }
                             </select>
-                        </div>
-                        <div class="input-group" style="margin-top:5px;margin-left:-10px">
-                            <button name="search" v-on:click="searchL" type="submit" class="btn btn-success" style="margin-left:10px;"><i class="fa fa-search"></i> 搜料箱</button>
-                        </div>
+                            <input type="text" ref="productionplanid" id="productionplanid" class="form-control" style="width:300px;margin-left:10px;" placeholder="生产令号">
+                            <input type="text" ref="materialname" id="materialname" class="form-control" style="width:300px;margin-left:10px;" placeholder="料箱编号/物料名称/物料编号">
+                            <button name="search" v-on:click="searchL" type="submit" class="btn btn-success" style="margin-left:10px;"><i class="fa fa-search"></i> 搜索</button>
+                        </div> 
                     </div>
                 </div>
             </div>
@@ -56,14 +53,11 @@
                 <div class="box">
                     <div class="box-body">
                         <div id="toolbar" class="btn-group">
-                            <button id="btn_add" v-on:click="showL" type="button" class="btn btn-default">
+                            <button id="btn_countall" v-on:click="countallL" type="button" class="btn btn-default">
                                 <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>全部盘库
                             </button>
-                            <button id="btn_edit" v-on:click="editL" type="button" class="btn btn-default">
-                                <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>指定盘库
-                            </button>
-                            <button id="btn_delete" v-on:click="deleteL" type="button" class="btn btn-default">
-                                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>删除
+                            <button id="btn_count" v-on:click="countL" type="button" class="btn btn-default">
+                                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>指定盘库
                             </button>
                         </div>
                         <table id="bootstraptable" class="table table-bordered text-nowrap table-hover"></table>
@@ -98,41 +92,20 @@
         var app = new Vue({
             el: '#app',
             data: {
-                datemin: '',
-                datemax: '',
-                StorageRackId: '',
-                InventoryBoxId: '',
-                InventoryBoxList: [],
-                url: '',
+                ReservoirareaId: '', 
+                MaterialTypeId: '',
                 storeId:'0'
             },
             mounted: function () {
                 var _self = this;
                 _self.$nextTick(function () {
                     //显示active
-                    _self.$refs.InventoryBox.parentNode.parentNode.classList.add("active");
-                    _self.$refs.InventoryBox.classList.add("active");
-                    _self.$refs.storeId = '@ViewData["currentStoreId"]';
-                    _self.$refs.datemin.value = '1900-01-01';
-                    _self.$refs.datemax.value = '2099-01-01';
+                    _self.$refs.StockCount.parentNode.parentNode.classList.add("active");
+                    _self.$refs.StockCount.classList.add("active");
+                    _self.$refs.storeId = '@ViewData["currentStoreId"]'; 
                     //_self.datemin = _self.getCurrentMonthFirst();
                     //_self.datemax = _self.getCurrentMonthLast();
-                    $('#datemin').datetimepicker({
-                        format: 'yyyy-mm-dd',
-                        minView: 2,
-                        autoclose: true,
-                        language: "zh-CN"
-                    });
-                    $('#datemax').datetimepicker({
-                        format: 'yyyy-mm-dd',
-                        minView: 2,
-                        autoclose: true,
-                        language: "zh-CN"
-                    });
-                    $("#InventoryBoxId").selectpicker({
-                        noneSelectedText: '请选择',
-                    });
-                    _self.searchInventoryBox("", 1);
+                      
                     setTimeout(function () {
                         _self.loadL();
                         yui.getDomById("test").click();
@@ -167,41 +140,17 @@
                     _self = this;
                     var obj = [
                         { checkbox: true, visible: true },
-                        { field: 'InventoryBoxId', title: 'Id', visible: false },
-                        {
-                            field: '', title: '操作', align: 'center', sortable: true,
-                            formatter: function (value, row, index) {
-                                var html = [];
-                                html.push('<button id="ViewDetailL" type="button" class="btn btn-link" style="margin-top:-8px;margin-left:-10px;">详细</button>');
-                                if (row.Status == 1 || row.Status == 'InPosition') {
-                                    html.push('<button id="OutL" type="button" class="btn btn-link" style="margin-top:-8px;margin-left:-10px;">出库</button>');
-                                }
-                                else if (row.Status == 3 || row.Status == 'Outed') {
-                                    html.push('<button id="BackL" type="button" class="btn btn-link" style="margin-top:-8px;margin-left:-10px;">归库</button>');
-                                }
-                                return html.join('');
-                            },
-                            events: {
-                                'click #ViewDetailL': function (e, value, row, index) {
-                                    app.ShowDetailL(row.InventoryBoxId);
-                                },
-                                'click #OutL': function (e, value, row, index) {
-                                    app.OutL(row.InventoryBoxId);
-                                },
-                                'click #BackL': function (e, value, row, index) {
-                                    app.BackL(row.InventoryBoxId);
-                                }
-                            },
-                        },
-                        { field: 'InventoryBoxNo', title: '料箱编号', align: 'center', sortable: true },
-                        { field: 'InventoryBoxName', title: '料箱名称', align: 'center', sortable: true },
+                        { field: 'Reservoirarea', title: '库区', align: 'center', sortable: true },
                         { field: 'Row', title: '行', align: 'center', sortable: true },
                         { field: 'Floor', title: '排', align: 'center', sortable: true },
                         { field: 'Column', title: '列', align: 'center', sortable: true },
-                        { field: 'Size', title: '料箱格数', align: 'center', sortable: true },
-                        { field: 'ReservoirAreaName', title: '库区名称', align: 'center', sortable: true },
-                        { field: 'StorageRackName', title: '货架名称', align: 'center', sortable: true },
-                        { field: 'Status', title: '状态', align: 'center', sortable: true, formatter: InventoryBoxStatusFormatter },
+                        { field: 'InventoryBoxNo', title: '货架编号', align: 'center', sortable: true },
+                        { field: 'InventoryBoxNo', title: '料箱编号', align: 'center', sortable: true }, 
+                        { field: 'Size', title: '格号', align: 'center', sortable: true },
+                        { field: 'MaterialNo', title: '物料编号', align: 'center', sortable: true },
+                        { field: 'MaterialName', title: '物料名', align: 'center', sortable: true },
+                        { field: 'MaterialType', title: '物料类型', align: 'center', sortable: true },
+                        { field: 'Qty', title: '数量', align: 'center', sortable: true },  
                         { field: 'Remark', align: 'center', title: '备注' },
                         { field: 'CreateUser', title: '创建人', align: 'center', sortable: true },
                         { field: 'CreateDate', align: 'center', title: '创建时间', sortable: true, formatter: DateTimeFormatter },
@@ -217,51 +166,12 @@
                 },
                 searchL: function () {
                     $("#bootstraptable").bootstrapTable('refresh');
+                }, 
+                countL: function (val) { 
                 },
-                editL: function () {
-                    var arr = $("#bootstraptable").bootstrapTable('getSelections');
-                    if (arr.length > 0) {
-                        var index = layer.confirm("您确定要修改吗？", { btn: ["确定", "取消"] }, function () {
-                            layer.close(index);
-                            var id = arr[0].InventoryBoxId;
-                            yui.layershow("修改料箱", "/InventoryBox/Add?storeId=@ViewData["currentStoreId"]&id=" + id, 550, 600);
-                        }, function () {
-
-                        });
-                    } else {
-                        layer.alert("请选中行", { icoon: 3, skin: "layer-ext-moon" });
-                    }
-                },
-                deleteL: function () {
+                countallL: function (val) {
                     var _self = this;
-                    var arr = $("#bootstraptable").bootstrapTable('getSelections');
-                    if (arr.length > 0) {
-                        var index = layer.confirm("您确定要删除吗？", { btn: ["确定", "取消"] }, function () {
-                            var id = arr[0].InventoryBoxId;
-                            yui.$axiosget('/InventoryBox/Delete?id=' + id)
-                                .then(function (response) {
-                                    if (response.data.Item1) {
-                                        layer.msg(response.data.Item2 || errorMsg, { icon: 1 });
-                                        _self.searchL();
-                                    } else {
-                                        layer.msg(response.data.Item2 || errorMsg, { icon: 5 });
-                                    }
-                                })
-                                .catch(function (error) {
-                                    layer.msg(error.message, { icon: 5 });
-                                });
-                            layer.close(index);
-                        });
-                    } else {
-                        layer.alert("请选中行", { icoon: 3, skin: "layer-ext-moon" });
-                    }
-                },
-                ShowDetailL: function (val) {
-                    yui.layershow("料箱详细", "/InventoryBox/Detail?storeId=@ViewData["currentStoreId"]&id=" + val, 1000, 800);
-                },
-                OutL: function (val) {
-                    var _self = this;
-                    var index = layer.confirm("您确定要出库吗？", { btn: ["确定", "取消"] }, function () {
+                    var index = layer.confirm("您确定要盘库吗？", { btn: ["确定", "取消"] }, function () {
                         var data = {
                             inventoryBoxId: val,
                         };
