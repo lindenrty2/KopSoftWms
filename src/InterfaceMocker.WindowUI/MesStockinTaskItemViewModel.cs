@@ -22,6 +22,8 @@ namespace InterfaceMocker.WindowUI
             this.Title = "入库任务:" + data.WarehousingId; 
             this.Datas.Add(new TaskItemData("发送", JsonConvert.SerializeObject(data)));
             var binding = new BasicHttpBinding();
+            binding.SendTimeout = new TimeSpan(1, 0, 0);
+            binding.ReceiveTimeout = new TimeSpan(1, 0, 0);
             var factory = new ChannelFactory<WMSService.IMESHookController>(binding, "http://localhost:23456/Outside/MesHook.asmx");
             _mesHook = factory.CreateChannel();
             ReSend(null);
@@ -44,7 +46,7 @@ namespace InterfaceMocker.WindowUI
         [EventSubscriber]
         public void HandleEvent(KeyValuePair<OutsideStockInResponse, OutsideStockInResponseResult> args)
         {
-            if (args.Key.WarehouseId != this._data.WarehousingId) return;
+            if (args.Key.WarehousingId != this._data.WarehousingId) return;
             this.UserControl.Dispatcher.Invoke(() => { 
                 this.Datas.Add(new TaskItemData("收到回馈", JsonConvert.SerializeObject(args.Key)));
                 this.Datas.Add(new TaskItemData("回馈结果", JsonConvert.SerializeObject(args.Value)));

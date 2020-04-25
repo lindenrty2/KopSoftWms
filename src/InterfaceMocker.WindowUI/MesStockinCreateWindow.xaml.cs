@@ -57,7 +57,7 @@ namespace InterfaceMocker.WindowUI
 
         private void AddMaterial_Click(object sender, RoutedEventArgs e)
         {
-            string suppliy = SuppliesItems[_data.SuppliesInfoList.Length % 10];
+            string suppliy = SuppliesItems[SuppliesInfoList.Count % 10];
             IEnumerable<YL.Core.Dto.OutsideMaterialDto> newItem = new YL.Core.Dto.OutsideMaterialDto[] { new YL.Core.Dto.OutsideMaterialDto()
                 {
                     SuppliesOnlyId =  null,
@@ -68,15 +68,13 @@ namespace InterfaceMocker.WindowUI
                     Unit = "个"
                 } };
             this.SuppliesInfoList.AddRange(newItem);
-            _data.SuppliesInfoList = JsonConvert.SerializeObject(SuppliesInfoList);
-            _data.SuppliesKinds = _data.SuppliesInfoList.Count();
             ctlSuppliesInfoList.ItemsSource = null;
             ctlSuppliesInfoList.ItemsSource = SuppliesInfoList;
         }
 
         private void AddSingleMaterial_Click(object sender, RoutedEventArgs e)
         {
-            string onlySuppliy = OnlySuppliesItems[_data.SuppliesInfoList.Length % 10];
+            string onlySuppliy = OnlySuppliesItems[SuppliesInfoList.Count % 10];
             IEnumerable<YL.Core.Dto.OutsideMaterialDto> newItem = new YL.Core.Dto.OutsideMaterialDto[] { new YL.Core.Dto.OutsideMaterialDto()
                 {
                     SuppliesOnlyId =  onlySuppliy,
@@ -87,14 +85,13 @@ namespace InterfaceMocker.WindowUI
                     Unit = "个"
                 } };
             this.SuppliesInfoList.AddRange(newItem);
-            _data.SuppliesInfoList = JsonConvert.SerializeObject(SuppliesInfoList);
-            _data.SuppliesKinds = _data.SuppliesInfoList.Count();
             ctlSuppliesInfoList.ItemsSource = null;
             ctlSuppliesInfoList.ItemsSource = SuppliesInfoList;
         }
 
         private void Confirm_Click(object sender, RoutedEventArgs e)
         {
+            _data.SuppliesKinds = SuppliesInfoList.Count();
             _data.SuppliesInfoList = JsonConvert.SerializeObject(SuppliesInfoList);
             this.DialogResult = true;
         }
