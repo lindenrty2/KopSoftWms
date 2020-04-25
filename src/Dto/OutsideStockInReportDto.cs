@@ -82,7 +82,11 @@ namespace YL.Core.Dto
         /// <summary>
         /// 提示信息
         /// </summary>
-        public string Message { get; set; }
+        public string ErrorId { get; set; }
+        /// <summary>
+        /// 提示信息
+        /// </summary>
+        public string ErrorInfo { get; set; }
 
     }
 

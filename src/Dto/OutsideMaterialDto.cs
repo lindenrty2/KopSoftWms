@@ -59,5 +59,15 @@ namespace YL.Core.Dto
         public string RefreshStock { get; set; }
 
 
+        /// <summary>
+        /// 错误编号
+        /// </summary>
+        public string ErrorId { get; set; }
+        /// <summary>
+        /// 错误内容
+        /// </summary>
+        public string ErrorInfo { get; set; }
+
+
     }
 }

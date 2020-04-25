@@ -71,7 +71,7 @@ namespace YL.Core.Entity
         /// </summary>
         [SugarColumn(IsNullable = false)] //Length=2,
         public MESTaskNotifyStatus NotifyStatus { get; set; }
-
+        
         /// <summary>
         /// 是否删除
         /// </summary>
@@ -99,6 +99,7 @@ namespace YL.Core.Entity
         /// </summary>
         [SugarColumn(Length = 50, IsNullable = true)]
         public string WorkStationId { get; set; }
+         
 
         public Wms_mestask()
         {

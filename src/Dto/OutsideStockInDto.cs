@@ -75,41 +75,46 @@ namespace YL.Core.Dto
         /// <summary>
         /// 入库单编号
         /// </summary>
-        public string WarehousingId { get; set; } 
+        public string WarehousingId { get; set; }
+        /// <summary>
+        /// 入库仓库个数
+        /// </summary>
+        public int WarehousingEntryNumber { get; set; }
+        /// <summary>
+        /// 各入库仓库信息
+        /// </summary>
+        public string WarehousingEntryFinishList { get; set; } //OutsideStockInResponseWarehouse[]
+
+
+    }
+
+    public class OutsideStockInResponseWarehouse
+    {
         /// <summary>
         /// 入库完成时间
         /// </summary>
-        public string WarehousingFinishTime { get; set; } 
+        public string WarehousingFinishTime { get; set; }
         /// <summary>
         /// 仓库编号
         /// </summary>
-        public string WarehouseId { get; set; } 
+        public string WarehouseId { get; set; }
         /// <summary>
         /// 仓库名称
         /// </summary>
-        public string WarehouseName { get; set; } 
+        public string WarehouseName { get; set; }
+
         /// <summary>
         /// 具体库区
         /// </summary>
-        public string WarehousePosition { get; set; } 
+        public string WarehousePosition { get; set; }
         /// <summary>
-        /// 错误编号
+        /// 物料数量
         /// </summary>
-        public string ErrorId { get; set; } 
-        /// <summary>
-        /// 错误内容
-        /// </summary>
-        public string ErrorInfo { get; set; } 
-        /// <summary>
-        /// 物料种类
-        /// </summary>
-        public int SuppliesKinds { get; set; } 
+        public int SuppliesKinds { get; set; }
         /// <summary>
         /// 物料信息
         /// </summary>
-        public string SuppliesInfoList { get; set; } //OutsideMaterialResult[]
-
-
+        public List<OutsideMaterialResult> SuppliesInfoList { get; set; } = new List<OutsideMaterialResult>();
     }
 
 

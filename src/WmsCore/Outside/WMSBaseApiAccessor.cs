@@ -1,4 +1,6 @@
 ﻿using IServices.Outside;
+using Services.Outside;
+using SqlSugar;
 using System;
 using System.Threading.Tasks;
 using WebApiClient;
@@ -11,15 +13,20 @@ namespace WMSCore.Outside
     public class WMSBaseApiAccessor : IWMSBaseApiAccessor, IWMSApiProxy
     {
 
+        public bool IsOutside => true;
+
         public Wms_warehouse Warehouse { get; } 
 
         private IWMSApiProxy _apiProxy = null;
-        public WMSBaseApiAccessor(Wms_warehouse warehouse)
+        private SelfWMSBaseApiAccessor _selfAccessor = null;
+
+        public WMSBaseApiAccessor(Wms_warehouse warehouse,ISqlSugarClient client, SysUserDto userDto)
         {
             this.Warehouse = warehouse;
             HttpApiConfig config = new HttpApiConfig();
             config.HttpHost = new Uri(warehouse.IFAddress);
             _apiProxy = HttpApi.Create<IWMSApiProxy>(config);
+            _selfAccessor = new SelfWMSBaseApiAccessor(warehouse, client, userDto);
         }
 
         public Task<RouteData<Wms_MaterialDto>> GetMateral(long materialId)
@@ -67,9 +74,25 @@ namespace WMSCore.Outside
             return _apiProxy.GetInventoryBoxDetail(inventoryBoxId);
         }
 
-        public Task<RouteData<OutsideStockOutRequestResult[]>> StockOut( OutsideStockOutRequestDto request)
+        public async Task<RouteData<OutsideStockOutRequestResult[]>> StockOut( OutsideStockOutRequestDto request)
         {
-            return _apiProxy.StockOut(request);
+
+            RouteData<OutsideStockOutRequestResult[]> result = await _apiProxy.StockOut(request);
+    
+            if (!result.IsSccuess)
+            {
+                return result;
+            }
+            if(result.Data.Length != 1)
+            {
+                return RouteData<OutsideStockOutRequestResult[]>.From(PubMessages.E2122_WMS_STOCKOUT_RESPONSE_INVAILD);
+
+            }
+            request.StockOutId = result.Data[0].StockOutId;
+            request.StockOutNo = result.Data[0].StockOutNo;
+
+            await _selfAccessor.StockOut(request);
+            return result;
         }
 
         public Task<RouteData<OutsideStockOutQueryResult>> QueryStockOut(long stockOutId)
@@ -77,9 +100,24 @@ namespace WMSCore.Outside
             return _apiProxy.QueryStockOut(stockOutId);
         }
 
-        public Task<RouteData<OutsideStockInRequestResult[]>> StockIn( OutsideStockInRequestDto request)
+        public async Task<RouteData<OutsideStockInRequestResult[]>> StockIn( OutsideStockInRequestDto request)
         {
-            return _apiProxy.StockIn(request);
+            RouteData<OutsideStockInRequestResult[]> result = await _apiProxy.StockIn(request);
+
+            if (!result.IsSccuess)
+            {
+                return result;
+            }
+            if (result.Data.Length != 1)
+            {
+                return RouteData<OutsideStockInRequestResult[]>.From(PubMessages.E2122_WMS_STOCKOUT_RESPONSE_INVAILD);
+
+            }
+            request.StockInId = result.Data[0].StockInId;
+            request.StockInNo = result.Data[0].StockInNo;
+
+            await _selfAccessor.StockIn(request);
+            return result;
         }
 
         public Task<RouteData<OutsideStockInQueryResult>> QueryStockIn(long stockInId)

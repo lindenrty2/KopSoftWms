@@ -16,7 +16,7 @@ namespace IServices.Outside
         Task<RouteData<Wms_inventorybox>> UpdateInventoryBox(long id,Wms_inventorybox box);
         Task<RouteData> DeleteInventoryBox(long inventoryBoxId);
 
-        Task<RouteData<Sys_dict[]>> GetMaterialTypes();
+        Task<RouteData<Sys_dict[]>> GetMaterialTypes(string search);
         Task<RouteData<Wms_StockCountInventoryBoxDto[]>> GetStockCountInventoryBoxList(long? materialTypeId, string materialName);
     }
 }

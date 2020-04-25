@@ -40,7 +40,7 @@ namespace WMSCore.Outside
             }
             else
             {
-                accessor = new WMSBaseApiAccessor(warehouse);
+                accessor = new WMSBaseApiAccessor(warehouse, sqlSugar, user);
                 _baseApiInstanceMap.Add(key, accessor);
             }
             return accessor;
