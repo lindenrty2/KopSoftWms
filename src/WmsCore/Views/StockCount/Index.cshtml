@@ -20,7 +20,7 @@
                     <div class="box-header with-border">
                         <h3 class="box-title">搜索条件</h3>
                         <div class="box-tools pull-right">
-                            <button type="button" id="test" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip">
+                            <button type="button" id="test" class="btn btn-box-tool" data-widget="" data-toggle="tooltip">
                                 <i class="fa fa-minus"></i>
                             </button>
                         </div>
@@ -40,6 +40,7 @@
                                     }
                                 }
                             </select>
+                            <select id="ctlMaterialType" class="selectpicker" v-model="MaterialTypeId" data-live-search="true"></select>
                             <input type="text" ref="productionplanid" id="productionplanid" class="form-control" style="width:300px;margin-left:10px;" placeholder="生产令号">
                             <input type="text" ref="materialname" id="materialname" class="form-control" style="width:300px;margin-left:10px;" placeholder="料箱编号/物料名称/物料编号">
                             <button name="search" v-on:click="searchL" type="submit" class="btn btn-success" style="margin-left:10px;"><i class="fa fa-search"></i> 搜索</button>
@@ -72,18 +73,19 @@
     <script src="~/js/defaults-zh_CN.min.js"></script>
     <script src="~/js/common.wms.js"></script>
     <script type="text/javascript">
+         
 
         $(function () {
-            $('#InventoryBoxId').on('show.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+            $('#ctlMaterialType').on('show.bs.select', function (e, clickedIndex, isSelected, previousValue) {
                 var divdom = $("div[class='bs-searchbox']")[0].childNodes[0];
                 $(divdom).on("input propertychange", function () {
                     var dom = $("li[class='no-results']");
                     var text = divdom.value;
                     if (dom.length > 0) {
-                        app.searchInventoryBox(text, 2);
+                        app.searchMaterialType(text, 2);
                     }
-                    if (app.InventoryBoxList.length <= 0) {
-                        app.searchInventoryBox(text, 2);
+                    if (app.MaterialTypeList.length <= 0) {
+                        app.searchMaterialType(text, 2);
                     }
                 });
             });
@@ -94,6 +96,7 @@
             data: {
                 ReservoirareaId: '', 
                 MaterialTypeId: '',
+                MaterialTypeList: '',
                 storeId:'0'
             },
             mounted: function () {
@@ -103,23 +106,50 @@
                     _self.$refs.StockCount.parentNode.parentNode.classList.add("active");
                     _self.$refs.StockCount.classList.add("active");
                     _self.$refs.storeId = '@ViewData["currentStoreId"]'; 
-                    //_self.datemin = _self.getCurrentMonthFirst();
-                    //_self.datemax = _self.getCurrentMonthLast();
-                      
+
+                    $("#ctlMaterialType").selectpicker({
+                        noneSelectedText: '请选择型号',
+                    });
+                    yui.$axiosget('/BasicInfo/GetMaterialTypes?storeId=@ViewData["currentStoreId"]')
+                        .then(function (response) {
+                            if (!response.data.isSccuess) { 
+                                layer.msg(response.data.message || errorMsg, { icon: 5 });
+                                return;
+                            }
+                            _self.MaterialTypeList = response.data.data;
+                            _self.searchMaterialType('',1); 
+                        })
+                        .catch(function (error) { 
+                        });
+
+
                     setTimeout(function () {
-                        _self.loadL();
                         yui.getDomById("test").click();
-                        $("div[class='pull-right search']")[0].children[0].setAttribute("placeholder", "物料编号或名称");
+                        //$("div[class='pull-right search']")[0].children[0].setAttribute("placeholder", "物料编号或名称");
                     }, 500);
+                   
                 });
             },
             methods: {
+                searchMaterialType: function (val,type) {
+                    var _self = this;
+                    var html = "<option value=''>请选择型号</option>";
+                    for (var item in _self.MaterialTypeList) {
+                        html += "<option value='" + _self.MaterialTypeList[item].dictId + "' >" + _self.MaterialTypeList[item].dictName + "</option>"
+                    }
+                    var ctlMaterialType = $("#ctlMaterialType");
+                    if (type !== 1) {
+                        ctlMaterialType.empty();
+                    }
+                    ctlMaterialType.append(html)
+                    ctlMaterialType.selectpicker('refresh');
+                },
                 searchInventoryBox: function (val, type) {
                     var _self = this;
                     if (type === 1) {
-                        _self.url = "/InventoryBox/Search?storeId=@ViewData["currentStoreId"]";
+                        _self.url = "/StockCount/Search?storeId=@ViewData["currentStoreId"]";
                     } else {
-                        _self.url = "/InventoryBox/Search?storeId=@ViewData["currentStoreId"]&text=" + val;
+                        _self.url = "/StockCount/Search?storeId=@ViewData["currentStoreId"]&text=" + val;
                     }
                     yui.$axiosget(_self.url).then(function (res) {
                         _self.InventoryBoxList = res.data.rows;
@@ -131,8 +161,7 @@
                             $("#InventoryBoxId").empty();
                         }
                         $("#InventoryBoxId").append(html)
-                        $('#InventoryBoxId').selectpicker('refresh');
-                        //$('#InventoryBoxId').selectpicker('val', _self.InventoryBoxId);
+                        $('#InventoryBoxId').selectpicker('refresh'); 
                     }).catch(function (res) {
                     });
                 },

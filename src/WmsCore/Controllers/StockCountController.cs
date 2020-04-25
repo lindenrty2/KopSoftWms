@@ -41,10 +41,7 @@ namespace KopSoftWms.Controllers
 
             IWMSBaseApiAccessor baseAccessor = WMSApiManager.GetBaseApiAccessor(currentStoreId.ToString(), _client);
             ViewBag.ReservoirAreas = (await baseAccessor.GetReservoirAreaList(0, 100, "", null, "", "")).Data;
-
-            IWMSManagementApiAccessor wmsAccessor = WMSApiManager.GetManagementApiAccessor(currentStoreId.ToString(),_client,this.UserDto);
-            //ViewBag.StorageRack = (await wmsAccessor.GetStorageRackList( null, 1, 100, null, null, null, null)).Data; 
-            ViewBag.MaterialTypes = (await wmsAccessor.GetMaterialTypes()).Data;
+             
             return View();
         }
 
@@ -59,9 +56,7 @@ namespace KopSoftWms.Controllers
             {
                 return new PageGridData().JilToJson();
             }
-            return result.ToGridJson();
-            //var sd = _inventoryBoxServices.PageList(bootstrap);
-            //return Content(sd);
+            return result.ToGridJson(); 
         }
          
 
