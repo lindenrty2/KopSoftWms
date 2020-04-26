@@ -12,7 +12,7 @@ namespace YL.Core.Dto
         /// <summary>
         /// MES任务Id
         /// </summary>
-        public long MesTaskId { get; set; }
+        public long MesTaskId { get; set; } 
         public string WarehousingId { get; set; }
         /// <summary>
         /// 入库类型
@@ -42,6 +42,10 @@ namespace YL.Core.Dto
         /// 物料列表
         /// </summary>
         public Wms_MaterialInventoryDto[] MaterialList { get; set; }
+
+        public long? StockOutId { get; set; }
+        public string StockOutNo { get; set; }
+        public long WarehouseId { get; set; }
     }
 
 

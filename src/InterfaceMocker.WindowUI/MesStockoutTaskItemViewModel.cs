@@ -22,6 +22,8 @@ namespace InterfaceMocker.WindowUI
             this.Title = "出库任务:" + data.WarehouseEntryId; 
             this.Datas.Add(new TaskItemData("发送", JsonConvert.SerializeObject(data)));
             var binding = new BasicHttpBinding();
+            binding.SendTimeout = new TimeSpan(1, 0, 0);
+            binding.ReceiveTimeout = new TimeSpan(1, 0, 0); 
             var factory = new ChannelFactory<WMSService.IMESHookController>(binding, "http://localhost:23456/Outside/MesHook.asmx");
             _mesHook = factory.CreateChannel();
             ReSend(null);

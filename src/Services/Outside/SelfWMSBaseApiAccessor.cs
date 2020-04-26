@@ -14,6 +14,8 @@ namespace Services.Outside
 {
     public class SelfWMSBaseApiAccessor : IWMSBaseApiAccessor
     {
+
+        public bool IsOutside => false;
         private ISqlSugarClient _sqlClient;
         private Wms_warehouse _warehouse;
         public Wms_warehouse Warehouse { get { return _warehouse; } }
@@ -321,6 +323,28 @@ namespace Services.Outside
 
             List<Wms_stockin> stockInList = new List<Wms_stockin>();
             List<Wms_stockindetail> stockinDetailList = new List<Wms_stockindetail>();
+            Wms_stockin stockin = new Wms_stockin()
+            {
+                MesTaskId = request.MesTaskId,
+                StockInId = request.StockInId ?? CreateStockTaskID(request.WarehouseId),
+                StockInNo = request.StockInNo ?? request.WarehousingId,
+                StockInType = stockinDict.DictId,
+                StockInTypeName = stockinDict.DictName,
+                OrderNo = request.OrderNo,
+                SupplierId = -1,
+                WarehouseId = request.WarehouseId,
+                StockInStatus = StockInStatus.task_confirm.ToByte(),
+                IsDel = DeleteFlag.Normal.ToByte(),
+                CreateBy = PubConst.InterfaceUserId,
+                CreateUser = PubConst.InterfaceUserName,
+                CreateDate = DateTime.Now,
+                ModifiedBy = PubConst.InterfaceUserId,
+                ModifiedUser = PubConst.InterfaceUserName,
+                ModifiedDate = DateTime.Now,
+
+            };
+            stockInList.Add(stockin);
+
             foreach (Wms_MaterialInventoryDto materialDto in request.MaterialList)
             {
                 RouteData<Wms_material> materialResult = await GetMaterial(materialDto, true);
@@ -328,38 +352,13 @@ namespace Services.Outside
                 {
                     return RouteData<Wms_stockin[]>.From(materialResult);
                 }
-                Wms_material material = materialResult.Data;
-                Wms_stockin stockin = stockInList.FirstOrDefault(x => x.WarehouseId == _warehouse.WarehouseId);
-                if (stockin == null)
-                {
-                    stockin = new Wms_stockin()
-                    {
-                        MesTaskId = request.MesTaskId,
-                        StockInId = PubId.SnowflakeId,
-                        StockInNo = request.WarehousingId,
-                        StockInType = stockinDict.DictId,
-                        StockInTypeName = stockinDict.DictName,
-                        OrderNo = request.OrderNo,
-                        SupplierId = -1,
-                        WarehouseId = _warehouse.WarehouseId,
-                        StockInStatus = StockInStatus.task_confirm.ToByte(),
-                        IsDel = DeleteFlag.Normal.ToByte(),
-                        CreateBy = PubConst.InterfaceUserId,
-                        CreateUser = PubConst.InterfaceUserName,
-                        CreateDate = DateTime.Now,
-                        ModifiedBy = PubConst.InterfaceUserId,
-                        ModifiedUser = PubConst.InterfaceUserName,
-                        ModifiedDate = DateTime.Now,
-
-                    };
-                    stockInList.Add(stockin);
-                }
+                Wms_material material = materialResult.Data; 
 
                 Wms_stockindetail detail = new Wms_stockindetail()
                 {
                     StockInDetailId = PubId.SnowflakeId,
                     StockInId = stockin.StockInId,
-                    WarehouseId = _warehouse.WarehouseId,
+                    WarehouseId = request.WarehouseId,
                     MaterialId = material.MaterialId,
                     MaterialNo = material.MaterialNo,
                     MaterialOnlyId = material.MaterialOnlyId,
@@ -615,18 +614,18 @@ namespace Services.Outside
                     return RouteData<Wms_stockout[]>.From(materialResult);
                 }
                 Wms_material material = materialResult.Data;
-                Wms_stockout stockout = stockOutList.FirstOrDefault(x => x.WarehouseId == _warehouse.WarehouseId);
+                Wms_stockout stockout = stockOutList.FirstOrDefault(x => x.WarehouseId == request.WarehouseId);
                 if (stockout == null)
                 {
                     stockout = new Wms_stockout()
                     {
                         MesTaskId = request.MesTaskId,
-                        StockOutId = PubId.SnowflakeId,
-                        StockOutNo = request.WarehousingId,
+                        StockOutId = request.StockOutId ?? CreateStockTaskID(request.WarehouseId),
+                        StockOutNo = request.StockOutNo ?? request.WarehousingId,
                         StockOutType = stockoutDict.DictId,
                         StockOutTypeName = stockoutDict.DictName,
                         OrderNo = request.OrderNo,
-                        WarehouseId = _warehouse.WarehouseId,
+                        WarehouseId = request.WarehouseId,
                         StockOutStatus = StockOutStatus.task_confirm.ToByte(),
                         IsDel = DeleteFlag.Normal.ToByte(),
                         CreateBy = PubConst.InterfaceUserId,
@@ -643,7 +642,7 @@ namespace Services.Outside
                 {
                     StockOutDetailId = PubId.SnowflakeId,
                     StockOutId = stockout.StockOutId,
-                    WarehouseId = _warehouse.WarehouseId,
+                    WarehouseId = request.WarehouseId,
                     MaterialId = material.MaterialId,
                     MaterialNo = material.MaterialNo,
                     MaterialOnlyId = material.MaterialOnlyId,
@@ -737,6 +736,11 @@ namespace Services.Outside
             }
             return RouteData<Wms_material>.From(material);
 
+        }
+
+        private long CreateStockTaskID(long warehouseId)
+        {
+            return long.Parse($"{warehouseId}{DateTime.Now.ToString("yyyyMMddHHmmss")}");
         }
 
         public void Dispose()

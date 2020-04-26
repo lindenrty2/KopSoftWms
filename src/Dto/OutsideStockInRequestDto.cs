@@ -39,13 +39,15 @@ namespace YL.Core.Dto
         /// </summary>
         public Wms_MaterialInventoryDto[] MaterialList { get; set; }
 
-
+        public long? StockInId { get; set; }
+        public string StockInNo { get; set; }
+        public long WarehouseId { get; set; }
     }
 
     public class OutsideStockInRequestResult
     {
         public long StockInId { get; set; }
-        public string StockInNo { get; set; }
+        public string StockInNo { get; set; } 
 
     }
 }

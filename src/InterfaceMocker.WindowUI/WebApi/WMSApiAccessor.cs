@@ -29,7 +29,7 @@ namespace InterfaceMocker.WindowUI.WebApi
         private WMSApiAccessor()
         {
             HttpApiConfig config = new HttpApiConfig();
-            config.HttpHost = new Uri("http://localhost:23456/hook/wcs/");
+            config.HttpHost = new Uri("http://localhost:23456/hook/wcs/"); 
             _apiProxy = HttpApi.Create<IWMSApiProxy>(config);
         }
 

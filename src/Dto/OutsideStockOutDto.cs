@@ -76,31 +76,46 @@ namespace YL.Core.Dto
         /// </summary>
         public string WarehouseEntryId { get; set; }
         /// <summary>
-        /// 出库完成时间
+        /// 仓库数量
+        /// </summary>
+        public int WarehouseEntryFinishCount { get; set; } 
+        /// <summary>
+        /// 各仓库信息
+        /// </summary>
+        public string WarehouseEntryFinishList { get; set; } //OutsideStockInResponseWarehouse[]
+
+    }
+
+
+    public class OutsideStockOutResponseWarehouse
+    {
+        /// <summary>
+        /// 入库完成时间
         /// </summary>
         public string WarehouseEntryFinishTime { get; set; }
+        /// <summary>
+        /// 仓库编号
+        /// </summary>
+        public string WarehouseId { get; set; }
+        /// <summary>
+        /// 仓库名称
+        /// </summary>
+        public string WarehouseName { get; set; } 
         /// <summary>
         /// 作业区
         /// </summary>
         public string WorkAreaName { get; set; }
         /// <summary>
-        /// 错误编号
-        /// </summary>
-        public string ErrorId { get; set; }
-        /// <summary>
-        /// 错误内容
-        /// </summary>
-        public string ErrorInfo { get; set; }
-        /// <summary>
-        /// 物料种类
+        /// 物料数量
         /// </summary>
         public int SuppliesKinds { get; set; }
         /// <summary>
         /// 物料信息
         /// </summary>
-        public string SuppliesInfoList { get; set; } //OutsideMaterialResult[]
-
+        public List<OutsideMaterialResult> SuppliesInfoList { get; set; } = new List<OutsideMaterialResult>();
     }
+
+
 
 
     public class OutsideStockOutResponseResult

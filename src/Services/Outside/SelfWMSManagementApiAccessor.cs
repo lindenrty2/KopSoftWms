@@ -108,9 +108,14 @@ namespace Services.Outside
             return RouteData<Wms_inventorybox>.From(PubMessages.I1005_INVENTORYBOX_DELETE_SCCUESS);
         }
 
-        public async Task<RouteData<Sys_dict[]>> GetMaterialTypes()
+        public async Task<RouteData<Sys_dict[]>> GetMaterialTypes(string search)
         {
-            List<Sys_dict> result = await _sqlClient.Queryable<Sys_dict>().Where(x => x.DictType == SqlFunc.ToString(Convert.ToInt32(PubDictType.material))).ToListAsync();
+            ISugarQueryable<Sys_dict> query = _sqlClient.Queryable<Sys_dict>().Where(x => x.DictType == SqlFunc.ToString(Convert.ToInt32(PubDictType.material)));
+            if(string.IsNullOrWhiteSpace(search))
+            {
+                query = query.Where(x => x.DictName.Contains(search));
+            }
+            List<Sys_dict> result = await query.ToListAsync();
             return RouteData<Sys_dict[]>.From(result.ToArray(), result.Count);
         }
 

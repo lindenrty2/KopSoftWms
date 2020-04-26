@@ -18,6 +18,7 @@ namespace InterfaceMocker.WindowUI.WebApi
         /// </summary>
         /// <param name="result"></param>
         /// <returns></returns>
+        [Timeout(100000000)]
         [HttpPost("confirmOutStock")]
         ITask<ConfirmOutStockResult> ConfirmOutStock([JsonContent]WCSTaskResult result);
 
@@ -26,6 +27,7 @@ namespace InterfaceMocker.WindowUI.WebApi
         /// </summary>
         /// <param name="result"></param>
         /// <returns></returns>
+        [Timeout(100000000)]
         [HttpPost("ConfirmBalance")]
         ITask<ConfirmBackStockResult> ConfirmBackStock([JsonContent]WCSTaskResult result);
 

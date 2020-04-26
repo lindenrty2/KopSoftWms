@@ -62,6 +62,7 @@ namespace YL.Utils.Pub
         public static MessageItem E2017_STOCKIN_FAIL = new MessageItem(-2017, "入库单完成失败");
         public static MessageItem E2018_STOCKIN_POSITION_DUPLICATE = new MessageItem(-2018, "入库料箱格位重复");
         public static MessageItem E2019_STOCKIN_POSITION_USED = new MessageItem(-2019, "入库料箱料格已有物料");
+        public static MessageItem E2020_WMS_STOCKIN_RESPONSE_INVAILD = new MessageItem(-2020, "下发入库任务返回值不合法");
 
         public static MessageItem I2100_STOCKOUT_SCAN_SCCUESS = new MessageItem(2100, "创建出库单成功");
         public static MessageItem I2101_STOCKOUT_SCAN_SCCUESS = new MessageItem(2101, "出库扫码关联成功");
@@ -83,6 +84,7 @@ namespace YL.Utils.Pub
         public static MessageItem E2119_STOCKOUT_MATERIAL_ENOUGH = new MessageItem(-2119, "出库单所需物料没有足够库存");
         public static MessageItem E2120_STOCKOUT_NOMORE_BOX = new MessageItem(-2120, "出库单没有更多的料箱需要出库");
         public static MessageItem E2121_STOCKOUT_ALLOW_LOCKED = new MessageItem(-2121, "该出库单已锁定，无法再次锁定");
+        public static MessageItem E2122_WMS_STOCKOUT_RESPONSE_INVAILD = new MessageItem(-2122, "下发出库任务返回值不合法");
 
         public static MessageItem I2300_WCS_OUTCOMMAND_SCCUESS = new MessageItem(2300, "WCS料箱出库命令成功"); 
         public static MessageItem I2301_WCS_TASKSTATUS_UPDATE_SCCUESS = new MessageItem(2301, "WCS指令状态更新成功");
@@ -102,7 +104,9 @@ namespace YL.Utils.Pub
         public static MessageItem E2312_WCS_STOCKBACKTASK_NOTBACK = new MessageItem(-2312, "WCS回调归库确认时发现任务不处于出库状态");
 
         public static MessageItem E3000_MES_STOCKINTASK_NOTFOUND = new MessageItem(-3000, "找不到对应的MES入库任务");
+        public static MessageItem E3001_MES_STOCKIN_NOFITY_FAIL = new MessageItem(-3001, "入库任务完成通知MES时发生错误"); 
         public static MessageItem E3100_MES_STOCKOUTTASK_NOTFOUND = new MessageItem(-3100, "找不到对应的MES出库任务");
+        public static MessageItem E3101_MES_STOCKOUT_NOFITY_FAIL = new MessageItem(-3101, "出库任务完成通知MES时发生错误");
 
 
         public static MessageItem I4100_MATERIAL_IMPORT_SCCUESS = new MessageItem(4100, "物料导入成功");

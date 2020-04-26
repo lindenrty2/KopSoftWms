@@ -74,7 +74,7 @@ namespace WMSCore.Outside
                     BatchPlanId = data.BatchPlanId, //批次号
                     WorkAreaName = data.WorkAreaName, //作业区
                     SuppliesKinds = data.SuppliesKinds, //物料种类
-                    SuppliesInfoJson = jsonSuppliesInfoStr, //物料信息
+                    SuppliesInfoJson = "", // jsonSuppliesInfoStr, //物料信息
                     WorkStatus = MESTaskWorkStatus.WaitPlan,      //等待计划
                     NotifyStatus = MESTaskNotifyStatus.Requested, //已接收
                     CreateDate = DateTime.Now
@@ -161,24 +161,25 @@ namespace WMSCore.Outside
                 });
             }
 
-            List<RouteData> result = new List<RouteData>();
+            List<RouteData<OutsideStockInRequestResult[]>> result = new List<RouteData<OutsideStockInRequestResult[]>>();  
             foreach (KeyValuePair<long, List<Wms_MaterialInventoryDto>> keyValue in map)
-            {
+            { 
                 try
                 {
-                    IWMSBaseApiAccessor proxy = WMSApiManager.GetBaseApiAccessor(keyValue.Key.ToString(),_sqlClient);
+                    IWMSBaseApiAccessor proxy = WMSApiManager.GetBaseApiAccessor(keyValue.Key.ToString(), _sqlClient);
                     OutsideStockInRequestDto request = new OutsideStockInRequestDto()
                     {
                         MesTaskId = mesTask.MesTaskId,
                         WarehousingId = mesTask.WarehousingId,
                         WarehousingTime = mesTask.WarehousingTime.ToString(PubConst.Format_DateTime),
                         WarehousingType = mesTask.WarehousingType,
+                        WarehouseId = keyValue.Key,
                         OrderNo = mesTask.ProductionPlanId,
                         WorkAreaName = mesTask.WorkAreaName,
                         BatchPlanId = mesTask.BatchPlanId,
                         MaterialList = keyValue.Value.ToArray(),
                     };
-                    RouteData data = proxy.StockIn(request).GetAwaiter().GetResult();
+                    RouteData<OutsideStockInRequestResult[]> data = proxy.StockIn(request).GetAwaiter().GetResult();
                     if (!data.IsSccuess)
                     {
                         result.Add(data);
@@ -187,8 +188,9 @@ namespace WMSCore.Outside
                 catch (Exception ex)
                 {
                     //TODO Log
-                }
+                } 
             }
+             
             return new RouteData();
 
         }
@@ -213,13 +215,13 @@ namespace WMSCore.Outside
                     MesTaskType = MESTaskTypes.StockOut,
                     WarehousingId = data.WarehouseEntryId, //入库单编号
                     WarehousingType = data.WarehouseEntryType, //入库类型
-                    WarehousingTime = data.WarehouseEntryTime.ToDateTime(),   //入库时间
+                    WarehousingTime = data.WarehouseEntryTime.SerialNumberToDateTime(),   //入库时间
                     ProductionPlanId = data.ProductionPlanId, //生产令号
                     BatchPlanId = data.BatchPlanId, //批次号
                     WorkAreaName = data.WorkAreaName, //作业区
                     WorkStationId = data.WorkStationId, //工位号
                     SuppliesKinds = data.SuppliesKinds, //物料种类
-                    SuppliesInfoJson = jsonSuppliesInfoStr, //物料信息
+                    SuppliesInfoJson = "", //jsonSuppliesInfoStr, //物料信息
                     WorkStatus = MESTaskWorkStatus.WaitPlan,      //等待计划
                     NotifyStatus = MESTaskNotifyStatus.Requested, //已接收
                     CreateDate = DateTime.Now
@@ -316,6 +318,7 @@ namespace WMSCore.Outside
                         WarehousingId = mesTask.WarehousingId,
                         WarehousingTime = mesTask.WarehousingTime.ToString(PubConst.Format_DateTime),
                         WarehousingType = mesTask.WarehousingType,
+                        WarehouseId = keyValue.Key,
                         OrderNo = mesTask.ProductionPlanId,
                         WorkAreaName = mesTask.WorkAreaName,
                         WorkStationId = mesTask.WorkStationId,

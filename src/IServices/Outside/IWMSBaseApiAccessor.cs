@@ -13,8 +13,9 @@ namespace IServices.Outside
     /// </summary>
     public interface IWMSBaseApiAccessor 
     {
-        Wms_warehouse Warehouse { get; }
+        bool IsOutside { get; }
 
+        Wms_warehouse Warehouse { get; } 
 
         //-----------------------------------------------------------------
         /// <summary>
