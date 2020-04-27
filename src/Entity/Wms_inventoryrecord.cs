@@ -90,7 +90,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
-        [SugarColumn(IsNullable = true, IndexGroupNameList = new String[] { "StockIn" })]
+        [SugarColumn(IsNullable = true)]
         public long? StockInDetailId { get; set; }
 
         /// <summary>
@@ -98,7 +98,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
-        [SugarColumn(IsNullable = true,IndexGroupNameList = new String[] { "StockOut" })]
+        [SugarColumn(IsNullable = true)]
         public long? StockOutDetailId { get; set; }
 
         /// <summary>
