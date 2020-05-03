@@ -96,7 +96,7 @@ namespace Services.Outside
 
         public async Task<RouteData<Wms_MaterialDto[]>> GetMateralList(int pageIndex, int pageSize, string search, string[] order, string datemin, string datemax)
         {
-            ISugarQueryable<Wms_material> query = _sqlClient.Queryable<Wms_material>(); 
+            ISugarQueryable<Wms_material> query = _sqlClient.Queryable<Wms_material>().Where(x => x.IsDel == DeleteFlag.Normal ); 
             DateTime minDate;
             if (!string.IsNullOrWhiteSpace(search))
             {
@@ -476,7 +476,7 @@ namespace Services.Outside
                 StockInId = stockIn.StockInId.ToString(),
                 StockInNo = stockIn.StockInNo,
                 MesTaskId = stockIn.MesTaskId.Value.ToString(),
-                StockInTypeName = stockIn.
+                StockInTypeName = stockIn.StockInTypeName,
                 OrderNo = stockIn.OrderNo,
                 StockInStatus = (StockInStatus)stockIn.StockInStatus,
                 Remark = stockIn.Remark,

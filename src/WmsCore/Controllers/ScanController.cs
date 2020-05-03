@@ -31,10 +31,11 @@ namespace WMSCore.Controllers
         }
 
         [HttpGet]
-        public IActionResult MainScanPage(long storeId,string stockNo = null)
+        public IActionResult MainScanPage(long storeId,string stockNo = null, ScanMode mode = ScanMode.StockIn)
         {
             ViewBag.StoreId = storeId; 
             ViewBag.StockNo = stockNo;
+            ViewBag.ScanMode = mode;
             return View();
         }
 

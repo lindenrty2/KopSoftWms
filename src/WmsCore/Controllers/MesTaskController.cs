@@ -78,40 +78,38 @@ namespace WMSCore.Controllers
         [HttpGet]
         public async Task<string> DetailList(string id, MESTaskTypes mesTaskType)
         {
-            long searchId = id.ToInt64();
+            long searchMesId = id.ToInt64();
             if (id.IsEmptyZero())
             {
                 return "";
             }
-            IWMSBaseApiAccessor[] proxies = WMSApiManager.GetAll(_client);
+            //IWMSBaseApiAccessor[] proxies = WMSApiManager.GetAll(_client);
 
             if (mesTaskType == MESTaskTypes.StockIn)
             {
+                List<Wms_stockin> stockins = await _client.Queryable<Wms_stockin>().Where(x => x.MesTaskId == searchMesId).ToListAsync();
                 List<OutsideStockInQueryResult> totalResult = new List<OutsideStockInQueryResult>();
-                foreach (IWMSBaseApiAccessor proxy in proxies)
+                foreach (Wms_stockin stockin in stockins)
                 {
+                    IWMSBaseApiAccessor proxy = WMSApiManager.GetBaseApiAccessor(stockin.WarehouseId.ToString(), _client, this.UserDto);
                     Wms_warehouse warehouse = proxy.Warehouse;
-                    RouteData<OutsideStockInQueryResult[]> result = await proxy.QueryStockInList(null, null, 1, 100, null, new string[0], null, null);
-                    foreach (OutsideStockInQueryResult item in result.Data)
-                    {
-                        item.WarehouseName = warehouse.WarehouseName;
-                        totalResult.Add(item);
-                    }
+                    RouteData<OutsideStockInQueryResult> result = await proxy.QueryStockIn(stockin.StockInId);
+                    result.Data.WarehouseName = warehouse.WarehouseName;
+                    totalResult.Add(result.Data);
                 }
                 return Bootstrap.GridData(totalResult, totalResult.Count).JilToJson();
             }
             else if (mesTaskType == MESTaskTypes.StockOut)
             {
+                List<Wms_stockout> stockOuts = await _client.Queryable<Wms_stockout>().Where(x => x.MesTaskId == searchMesId).ToListAsync();
                 List<OutsideStockOutQueryResult> totalResult = new List<OutsideStockOutQueryResult>();
-                foreach (IWMSApiProxy proxy in proxies)
+                foreach (Wms_stockout stockout in stockOuts)
                 {
-                    Wms_warehouse warehouse = ((IWMSBaseApiAccessor)proxy).Warehouse;
-                    RouteData<OutsideStockOutQueryResult[]> result = await proxy.QueryStockOutList(null, null, 1, 100, null, new string[0], null, null);
-                    foreach (OutsideStockOutQueryResult item in result.Data)
-                    {
-                        item.WarehouseName = warehouse.WarehouseName;
-                        totalResult.Add(item);
-                    }
+                    IWMSBaseApiAccessor proxy = WMSApiManager.GetBaseApiAccessor(stockout.WarehouseId.ToString(), _client, this.UserDto);
+                    Wms_warehouse warehouse = proxy.Warehouse;
+                    RouteData<OutsideStockOutQueryResult> result = await proxy.QueryStockOut(stockout.StockOutId);
+                    result.Data.WarehouseName = warehouse.WarehouseName;
+                    totalResult.Add(result.Data);
                 }
                 return Bootstrap.GridData(totalResult, totalResult.Count).JilToJson();
             }

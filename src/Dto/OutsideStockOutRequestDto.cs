@@ -13,13 +13,16 @@ namespace YL.Core.Dto
         /// MES任务Id
         /// </summary>
         public long MesTaskId { get; set; } 
+        /// <summary>
+        /// 出库Id
+        /// </summary>
         public string WarehousingId { get; set; }
         /// <summary>
-        /// 入库类型
+        /// 出库类型
         /// </summary>
         public string WarehousingType { get; set; }
         /// <summary>
-        /// 入库时间
+        /// 出库时间
         /// </summary>
         public string WarehousingTime { get; set; }
         /// <summary>
@@ -41,10 +44,18 @@ namespace YL.Core.Dto
         /// <summary>
         /// 物料列表
         /// </summary>
-        public Wms_MaterialInventoryDto[] MaterialList { get; set; }
-
+        public Wms_MaterialInventoryDto[] MaterialList { get; set; } 
+        /// <summary>
+        /// 对接用出库Id
+        /// </summary>
         public long? StockOutId { get; set; }
+        /// <summary>
+        /// 对接用出库编号
+        /// </summary>
         public string StockOutNo { get; set; }
+        /// <summary>
+        /// 仓库Id
+        /// </summary>
         public long WarehouseId { get; set; }
     }
 

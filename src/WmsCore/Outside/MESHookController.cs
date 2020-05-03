@@ -398,6 +398,7 @@ namespace WMSCore.Outside
         //public OutsideMaterialStockEnquiryResult MaterialStockEnquiry(OutsideMaterialStockEnquiryArg arg)
         public string MaterialStockEnquiry(String suppliesid, String suppliesname, String suppliestype, String suppliesunit)
         {
+            //TODO 需要其他库的查询
             try
             {
                 OutsideMaterialStockEnquiryArg.Create(
@@ -440,17 +441,17 @@ namespace WMSCore.Outside
                         WarehouseId = Convert.ToString(inventory.WarehouseId),
                         WarehouseName = inventory.WarehouseName,
                         Position = Convert.ToString(inventory.Position),
-                        WarehousePosition = "??"
+                        WarehousePosition = "??" //TODO
                     };
                     items.Add(item);
                 }
                 OutsideMaterialStockEnquiryResult result = new OutsideMaterialStockEnquiryResult();
+                result.Success = true;
                 result.SuppliesId = suppliesid;
                 result.SuppliesName = suppliesname;
                 result.SuppliesType = suppliestype;
                 result.SuppliesUnit = suppliesunit;
                 result.MaterialStockInfo = items.ToArray();
-                result.Success = true;
                 return JsonConvert.SerializeObject(result);
             }
             catch(Exception ex)

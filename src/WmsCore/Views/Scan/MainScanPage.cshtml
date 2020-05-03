@@ -39,7 +39,7 @@
                 <label class="control-label">操作区</label>
             </div>
             <div class="group-body" style="font-size:24px">
-                <el-switch v-model="IsStockIn" class="control-label " @@change='changeMode' active-text="" inactive-text=""></el-switch> 
+                <el-switch v-model="IsStockIn" class="control-label " active-text="" inactive-text=""></el-switch> 
                 <label>{{ModeName}}</label>
                 <input type="text" v-model="InputNo" style="width:80%" @@keyup.enter="onInputNo">
             </div>
@@ -164,6 +164,7 @@
                 StockId: '',
                 StockNo: '@ViewBag.StockNo',
                 StockDetails: null,
+                ScanMode:'@ViewBag.ScanMode',
                 OrderNo: '',
                 Remark: '',
                 InventoryBoxId: "0",
@@ -174,6 +175,11 @@
                 InventoryDetails: null,
                 tableData: [], 
             },
+            watch: {
+                IsStockIn(val, oldVal) { 
+                    this.ModeName = this.IsStockIn ? "入库" : "出库";
+                }
+            },
             computed: {
                 count: function () {
                     return this.strLength(this.Remark, false);
@@ -182,15 +188,18 @@
             mounted: function () {
                 var _self = this;
                 _self.$nextTick(function () {
+                    if (_self.ScanMode == 'StockIn') {
+                        this.IsStockIn = true;
+                    }
+                    else if (_self.ScanMode == 'StockOut') {
+                        this.IsStockIn = false;
+                    }
                     if (_self.StockNo != '') {
                         _self.onInputNoCore(_self.StockNo);
                     }
                 });
             },
-            methods: {
-                changeMode: function () {
-                    this.ModeName = this.IsStockIn ? "入库" : "出库";
-                },
+            methods: { 
                 handleDelete: function (index) { //删除行数
                     this.tableData.splice(index, 1);
                     _self.NewMaterialCount = this.tableData.length;
@@ -232,8 +241,7 @@
                             layer.msg("入库单查询失败", { icon: 2 });
                         }
                         else {
-                            _self.IsStockIn = true;
-                            _self.changeMode();
+                            _self.IsStockIn = true; 
                             _self.StockId = res.data.data.stockInIdStr;
                             _self.StockNo = res.data.data.stockInNo;
                             _self.OrderNo = res.data.data.orderNo;
@@ -258,8 +266,7 @@
                             layer.msg("出库单查询失败", { icon: 2 });
                         }
                         else {
-                            _self.IsStockIn = false;
-                            _self.changeMode();
+                            _self.IsStockIn = false; 
                             _self.StockId = res.data.data.stockOutIdStr;
                             _self.StockNo = res.data.data.stockOutNo;
                             _self.OrderNo = res.data.data.orderNo;
