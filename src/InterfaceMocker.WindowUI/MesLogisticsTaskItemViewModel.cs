@@ -6,22 +6,25 @@ using System.IO;
 using System.Linq;
 using System.ServiceModel;
 using System.Text;
+using WMSService;
+using YL.Core.Dto;
 
 namespace InterfaceMocker.WindowUI
 {
     public class MesLogisticsTaskItemViewModel : TaskItemViewModel
     {
-        private WMSService.OutsideLogisticsControlArg _data;
-        private WMSService.OutsideLogisticsControlResult _result;
-        private WMSService.IMESHookController _mesHook = null;
+        private OutsideLogisticsControlArg _data;
+        private OutsideLogisticsControlResult _result;
+        private WMSSoap _mesHook = null;
 
 
-        public MesLogisticsTaskItemViewModel(WMSService.OutsideLogisticsControlArg data)
+        public MesLogisticsTaskItemViewModel(OutsideLogisticsControlArg data)
         {
             _data = data;
             this.Title = "物流控制任务:" + data.LogisticsId;
-            var binding = new BasicHttpBinding();
-            var factory = new ChannelFactory<WMSService.IMESHookController>(binding, "http://localhost:23456/Outside/MesHook.asmx");
+            var binding = new BasicHttpBinding(); 
+            var factory = new ChannelFactory<WMSSoap>(binding, "http://localhost:23456/Outside/MesHook.asmx");
+            //var factory = new ChannelFactory<WMSSoap>(binding, "http://localhost:5713/WMS.asmx");
             _mesHook = factory.CreateChannel();
             ReSend(null);
         }
@@ -38,19 +41,36 @@ namespace InterfaceMocker.WindowUI
         public async void ReSend(object parameter)
         {
             this.Datas.Add(new TaskItemData("发送控制", JsonConvert.SerializeObject(_data)));
-            _result = await _mesHook.LogisticsControlAsync(_data);
+            LogisticsControlResponse response = await _mesHook.LogisticsControlAsync(new LogisticsControlRequest() {
+                Body = new LogisticsControlRequestBody()
+                {
+                    startpoint = _data.StartPoint,
+                    destination = _data.Destination
+                }
+            });
+            _result = JsonConvert.DeserializeObject<OutsideLogisticsControlResult>(response.Body.LogisticsControlResult);
             this.Datas.Add(new TaskItemData("发送结果", JsonConvert.SerializeObject(_result)));
         }
 
         public async void Search(object parameter)
         {
-            WMSService.OutsideLogisticsEnquiryArg arg = new WMSService.OutsideLogisticsEnquiryArg()
+            //OutsideLogisticsEnquiryArg arg = new OutsideLogisticsEnquiryArg()
+            //{
+            //    LogisticsId = _data.LogisticsId,
+            //    EquipmentId = _result == null ? null : _result.EquipmentId,
+            //    EquipmentName = _result == null ? null : _result.EquipmentName
+            //};
+            LogisticsEnquiryRequest arg = new LogisticsEnquiryRequest()
             {
-                LogisticsId = _data.LogisticsId,
-                EquipmentId = _result == null ? null : _result.EquipmentId,
-                EquipmentName = _result == null ? null : _result.EquipmentName
+                Body = new LogisticsEnquiryRequestBody()
+                {
+                    equipmentid = _result == null ? null : _result.EquipmentId,
+                    equipmentname = _result == null ? null : _result.EquipmentName
+                }
             };
+
             this.Datas.Add(new TaskItemData("发送查询", JsonConvert.SerializeObject(arg)));
+
             var result = await _mesHook.LogisticsEnquiryAsync(arg);
             this.Datas.Add(new TaskItemData("查询结果", JsonConvert.SerializeObject(result)));
         }

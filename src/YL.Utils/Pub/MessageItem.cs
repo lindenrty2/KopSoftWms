@@ -11,5 +11,20 @@ namespace YL.Utils.Pub
             this.Code = code;
             this.Message = message;
         }
+
+        public override string ToString()
+        {
+            string result = "";
+            if(Code < 0)
+            {
+                result += "E-";
+            }
+            else
+            {
+                result += "I-";
+            }
+            result += Code + "," + Message;
+            return result;
+        }
     }
 }

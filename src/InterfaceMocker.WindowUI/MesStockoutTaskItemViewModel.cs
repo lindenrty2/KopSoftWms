@@ -5,26 +5,28 @@ using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
 using System.Text;
-using System.Threading.Tasks; 
+using System.Threading.Tasks;
+using WMSService;
 using YL.Core.Dto;
 
 namespace InterfaceMocker.WindowUI
 {
     public class MesStockoutTaskItemViewModel : TaskItemViewModel
     {
-        private WMSService.OutsideStockOutDto _data;
-        private WMSService.IMESHookController _mesHook = null;
+        private OutsideStockOutDto _data;
+        private WMSSoap _mesHook = null;
 
 
-        public MesStockoutTaskItemViewModel(WMSService.OutsideStockOutDto data)
+        public MesStockoutTaskItemViewModel(OutsideStockOutDto data)
         {
             _data = data; 
             this.Title = "出库任务:" + data.WarehouseEntryId; 
             this.Datas.Add(new TaskItemData("发送", JsonConvert.SerializeObject(data)));
             var binding = new BasicHttpBinding();
             binding.SendTimeout = new TimeSpan(1, 0, 0);
-            binding.ReceiveTimeout = new TimeSpan(1, 0, 0); 
-            var factory = new ChannelFactory<WMSService.IMESHookController>(binding, "http://localhost:23456/Outside/MesHook.asmx");
+            binding.ReceiveTimeout = new TimeSpan(1, 0, 0);
+            //var factory = new ChannelFactory<WMSSoap>(binding, "http://localhost:5713/WMS.asmx");
+            var factory = new ChannelFactory<WMSSoap>(binding, "http://localhost:23456/Outside/MesHook.asmx");
             _mesHook = factory.CreateChannel();
             ReSend(null);
         }
@@ -38,7 +40,22 @@ namespace InterfaceMocker.WindowUI
 
         public async void ReSend(object parameter)
         {
-            var result = await _mesHook.WarehouseEntryAsync(_data);
+            WarehouseEntryRequest request = new WarehouseEntryRequest()
+            {
+                Body = new WarehouseEntryRequestBody()
+                {
+                    BatchPlanId = _data.BatchPlanId,
+                    ProductionPlanId = _data.ProductionPlanId,
+                    SuppliesInfoList = _data.SuppliesInfoList,
+                    SuppliesKinds = _data.SuppliesKinds.ToString(),
+                    WarehouseEntryid = _data.WarehouseEntryId,
+                    WarehouseEntryTime = _data.WarehouseEntryTime,
+                    WarehouseEntryType = _data.WarehouseEntryType,
+                    WorkAreaName = _data.WorkAreaName,
+                    WorkStationId = _data.WorkStationId
+                }
+            };
+            var result = await _mesHook.WarehouseEntryAsync(request);
             this.Datas.Add(new TaskItemData("发送结果", JsonConvert.SerializeObject(result)));
         }
 

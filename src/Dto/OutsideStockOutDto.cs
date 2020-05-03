@@ -43,6 +43,32 @@ namespace YL.Core.Dto
         /// </summary>
         public string SuppliesInfoList { get; set; } //OutsideMaterialDto[]
 
+        public static OutsideStockOutDto Create(
+            String warehouseEntryid,
+            String warehouseEntryType,
+            String warehouseEntryTime,
+            String productionPlanId,
+            String batchPlanId,
+            String workStationId,
+            String workAreaName,
+            int suppliesKinds,
+            String suppliesInfoList)
+        {
+            OutsideStockOutDto data = new OutsideStockOutDto()
+            {
+                WarehouseEntryId = warehouseEntryid,
+                WarehouseEntryType = warehouseEntryType,
+                WarehouseEntryTime = warehouseEntryTime,
+                ProductionPlanId = productionPlanId,
+                BatchPlanId = batchPlanId,
+                WorkAreaName = workAreaName,
+                WorkStationId = workStationId,
+                SuppliesKinds = suppliesKinds,
+                SuppliesInfoList = suppliesInfoList
+
+            };
+            return data;
+        }
     }
 
 

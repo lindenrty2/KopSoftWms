@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using WMSService;
+using YL.Core.Dto;
 
 namespace InterfaceMocker.WindowUI
 {

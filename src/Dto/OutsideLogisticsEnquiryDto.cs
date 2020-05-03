@@ -17,7 +17,16 @@ namespace YL.Core.Dto
         /// <summary>
         /// 设备名称
         /// </summary>
-        public string EquipmentName { get; set; } 
+        public string EquipmentName { get; set; }
+
+        public static OutsideLogisticsEnquiryArg Create(string equipmentid, string equipmentname)
+        {
+            return new OutsideLogisticsEnquiryArg()
+            {
+                EquipmentId = equipmentid,
+                EquipmentName = equipmentname
+            };
+        }
     }
 
     public class OutsideLogisticsEnquiryResult

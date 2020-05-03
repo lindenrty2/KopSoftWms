@@ -61,7 +61,7 @@ namespace InterfaceMocker.WindowUI
         private void MesLogisticsControl_Click(object sender, RoutedEventArgs e)
         {
             this.Dispatcher.BeginInvoke((Action)(() => {
-                WMSService.OutsideLogisticsControlArg data = new WMSService.OutsideLogisticsControlArg()
+                OutsideLogisticsControlArg data = new OutsideLogisticsControlArg()
                 {
                     LogisticsId = "L" + DateTime.Now.Ticks.ToString(),
                     StartPoint = "Start1",

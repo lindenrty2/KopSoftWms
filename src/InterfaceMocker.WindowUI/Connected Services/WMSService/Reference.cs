@@ -9,1322 +9,766 @@
 
 namespace WMSService
 {
-    using System.Runtime.Serialization;
     
+    
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
+    [System.ServiceModel.ServiceContractAttribute(ConfigurationName="WMSService.WMSSoap")]
+    public interface WMSSoap
+    {
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/HelloWorld", ReplyAction="*")]
+        System.Threading.Tasks.Task<WMSService.HelloWorldResponse> HelloWorldAsync(WMSService.HelloWorldRequest request);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/WarehousingStatusEnquiry", ReplyAction="*")]
+        System.Threading.Tasks.Task<WMSService.WarehousingStatusEnquiryResponse> WarehousingStatusEnquiryAsync(WMSService.WarehousingStatusEnquiryRequest request);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/WarehouseEntryStatusEnquiry", ReplyAction="*")]
+        System.Threading.Tasks.Task<WMSService.WarehouseEntryStatusEnquiryResponse> WarehouseEntryStatusEnquiryAsync(WMSService.WarehouseEntryStatusEnquiryRequest request);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/Warehousing", ReplyAction="*")]
+        System.Threading.Tasks.Task<WMSService.WarehousingResponse> WarehousingAsync(WMSService.WarehousingRequest request);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/WarehouseEntry", ReplyAction="*")]
+        System.Threading.Tasks.Task<WMSService.WarehouseEntryResponse> WarehouseEntryAsync(WMSService.WarehouseEntryRequest request);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/MaterialStockEnquiry", ReplyAction="*")]
+        System.Threading.Tasks.Task<WMSService.MaterialStockEnquiryResponse> MaterialStockEnquiryAsync(WMSService.MaterialStockEnquiryRequest request);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/LogisticsControl", ReplyAction="*")]
+        System.Threading.Tasks.Task<WMSService.LogisticsControlResponse> LogisticsControlAsync(WMSService.LogisticsControlRequest request);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/LogisticsEnquiry", ReplyAction="*")]
+        System.Threading.Tasks.Task<WMSService.LogisticsEnquiryResponse> LogisticsEnquiryAsync(WMSService.LogisticsEnquiryRequest request);
+    }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="OutsideStockInDto", Namespace="http://schemas.datacontract.org/2004/07/YL.Core.Dto")]
-    public partial class OutsideStockInDto : object
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
+    public partial class HelloWorldRequest
     {
         
-        private string BatchPlanIdField;
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="HelloWorld", Namespace="http://tempuri.org/", Order=0)]
+        public WMSService.HelloWorldRequestBody Body;
         
-        private string ProductionPlanIdField;
-        
-        private string SuppliesInfoListField;
-        
-        private int SuppliesKindsField;
-        
-        private string WarehousingIdField;
-        
-        private string WarehousingTimeField;
-        
-        private string WarehousingTypeField;
-        
-        private string WorkAreaNameField;
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string BatchPlanId
+        public HelloWorldRequest()
         {
-            get
-            {
-                return this.BatchPlanIdField;
-            }
-            set
-            {
-                this.BatchPlanIdField = value;
-            }
         }
         
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string ProductionPlanId
+        public HelloWorldRequest(WMSService.HelloWorldRequestBody Body)
         {
-            get
-            {
-                return this.ProductionPlanIdField;
-            }
-            set
-            {
-                this.ProductionPlanIdField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string SuppliesInfoList
-        {
-            get
-            {
-                return this.SuppliesInfoListField;
-            }
-            set
-            {
-                this.SuppliesInfoListField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public int SuppliesKinds
-        {
-            get
-            {
-                return this.SuppliesKindsField;
-            }
-            set
-            {
-                this.SuppliesKindsField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string WarehousingId
-        {
-            get
-            {
-                return this.WarehousingIdField;
-            }
-            set
-            {
-                this.WarehousingIdField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string WarehousingTime
-        {
-            get
-            {
-                return this.WarehousingTimeField;
-            }
-            set
-            {
-                this.WarehousingTimeField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string WarehousingType
-        {
-            get
-            {
-                return this.WarehousingTypeField;
-            }
-            set
-            {
-                this.WarehousingTypeField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string WorkAreaName
-        {
-            get
-            {
-                return this.WorkAreaNameField;
-            }
-            set
-            {
-                this.WorkAreaNameField = value;
-            }
+            this.Body = Body;
         }
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="OutsideStockInResult", Namespace="http://schemas.datacontract.org/2004/07/YL.Core.Dto")]
-    public partial class OutsideStockInResult : object
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.Runtime.Serialization.DataContractAttribute()]
+    public partial class HelloWorldRequestBody
     {
         
-        private string ErrorIdField;
-        
-        private string ErrorInfoField;
-        
-        private bool SuccessField;
-        
-        private string WarehousingIdField;
-        
-        private string WarehousingTimeField;
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string ErrorId
+        public HelloWorldRequestBody()
         {
-            get
-            {
-                return this.ErrorIdField;
-            }
-            set
-            {
-                this.ErrorIdField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string ErrorInfo
-        {
-            get
-            {
-                return this.ErrorInfoField;
-            }
-            set
-            {
-                this.ErrorInfoField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public bool Success
-        {
-            get
-            {
-                return this.SuccessField;
-            }
-            set
-            {
-                this.SuccessField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string WarehousingId
-        {
-            get
-            {
-                return this.WarehousingIdField;
-            }
-            set
-            {
-                this.WarehousingIdField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string WarehousingTime
-        {
-            get
-            {
-                return this.WarehousingTimeField;
-            }
-            set
-            {
-                this.WarehousingTimeField = value;
-            }
         }
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="OutsideStockOutDto", Namespace="http://schemas.datacontract.org/2004/07/YL.Core.Dto")]
-    public partial class OutsideStockOutDto : object
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
+    public partial class HelloWorldResponse
     {
         
-        private string BatchPlanIdField;
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="HelloWorldResponse", Namespace="http://tempuri.org/", Order=0)]
+        public WMSService.HelloWorldResponseBody Body;
         
-        private string ProductionPlanIdField;
-        
-        private string SuppliesInfoListField;
-        
-        private int SuppliesKindsField;
-        
-        private string WarehouseEntryIdField;
-        
-        private string WarehouseEntryTimeField;
-        
-        private string WarehouseEntryTypeField;
-        
-        private string WorkAreaNameField;
-        
-        private string WorkStationIdField;
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string BatchPlanId
+        public HelloWorldResponse()
         {
-            get
-            {
-                return this.BatchPlanIdField;
-            }
-            set
-            {
-                this.BatchPlanIdField = value;
-            }
         }
         
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string ProductionPlanId
+        public HelloWorldResponse(WMSService.HelloWorldResponseBody Body)
         {
-            get
-            {
-                return this.ProductionPlanIdField;
-            }
-            set
-            {
-                this.ProductionPlanIdField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string SuppliesInfoList
-        {
-            get
-            {
-                return this.SuppliesInfoListField;
-            }
-            set
-            {
-                this.SuppliesInfoListField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public int SuppliesKinds
-        {
-            get
-            {
-                return this.SuppliesKindsField;
-            }
-            set
-            {
-                this.SuppliesKindsField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string WarehouseEntryId
-        {
-            get
-            {
-                return this.WarehouseEntryIdField;
-            }
-            set
-            {
-                this.WarehouseEntryIdField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string WarehouseEntryTime
-        {
-            get
-            {
-                return this.WarehouseEntryTimeField;
-            }
-            set
-            {
-                this.WarehouseEntryTimeField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string WarehouseEntryType
-        {
-            get
-            {
-                return this.WarehouseEntryTypeField;
-            }
-            set
-            {
-                this.WarehouseEntryTypeField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string WorkAreaName
-        {
-            get
-            {
-                return this.WorkAreaNameField;
-            }
-            set
-            {
-                this.WorkAreaNameField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string WorkStationId
-        {
-            get
-            {
-                return this.WorkStationIdField;
-            }
-            set
-            {
-                this.WorkStationIdField = value;
-            }
+            this.Body = Body;
         }
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="OutsideStockOutResult", Namespace="http://schemas.datacontract.org/2004/07/YL.Core.Dto")]
-    public partial class OutsideStockOutResult : object
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="http://tempuri.org/")]
+    public partial class HelloWorldResponseBody
     {
         
-        private string ErrorIdField;
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
+        public string HelloWorldResult;
         
-        private string ErrorInfoField;
-        
-        private bool SuccessField;
-        
-        private string WarehouseEntryIdField;
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string ErrorId
+        public HelloWorldResponseBody()
         {
-            get
-            {
-                return this.ErrorIdField;
-            }
-            set
-            {
-                this.ErrorIdField = value;
-            }
         }
         
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string ErrorInfo
+        public HelloWorldResponseBody(string HelloWorldResult)
         {
-            get
-            {
-                return this.ErrorInfoField;
-            }
-            set
-            {
-                this.ErrorInfoField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public bool Success
-        {
-            get
-            {
-                return this.SuccessField;
-            }
-            set
-            {
-                this.SuccessField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string WarehouseEntryId
-        {
-            get
-            {
-                return this.WarehouseEntryIdField;
-            }
-            set
-            {
-                this.WarehouseEntryIdField = value;
-            }
+            this.HelloWorldResult = HelloWorldResult;
         }
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="OutsideMaterialStockEnquiryArg", Namespace="http://schemas.datacontract.org/2004/07/YL.Core.Dto")]
-    public partial class OutsideMaterialStockEnquiryArg : object
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
+    public partial class WarehousingStatusEnquiryRequest
     {
         
-        private string SuppliesIdField;
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="WarehousingStatusEnquiry", Namespace="http://tempuri.org/", Order=0)]
+        public WMSService.WarehousingStatusEnquiryRequestBody Body;
         
-        private string SuppliesNameField;
-        
-        private string SuppliesTypeField;
-        
-        private string SuppliesUnitField;
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string SuppliesId
+        public WarehousingStatusEnquiryRequest()
         {
-            get
-            {
-                return this.SuppliesIdField;
-            }
-            set
-            {
-                this.SuppliesIdField = value;
-            }
         }
         
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string SuppliesName
+        public WarehousingStatusEnquiryRequest(WMSService.WarehousingStatusEnquiryRequestBody Body)
         {
-            get
-            {
-                return this.SuppliesNameField;
-            }
-            set
-            {
-                this.SuppliesNameField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string SuppliesType
-        {
-            get
-            {
-                return this.SuppliesTypeField;
-            }
-            set
-            {
-                this.SuppliesTypeField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string SuppliesUnit
-        {
-            get
-            {
-                return this.SuppliesUnitField;
-            }
-            set
-            {
-                this.SuppliesUnitField = value;
-            }
+            this.Body = Body;
         }
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="OutsideMaterialStockEnquiryResult", Namespace="http://schemas.datacontract.org/2004/07/YL.Core.Dto")]
-    public partial class OutsideMaterialStockEnquiryResult : object
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="http://tempuri.org/")]
+    public partial class WarehousingStatusEnquiryRequestBody
     {
         
-        private string ErrorIDField;
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
+        public string WarehousingId;
         
-        private WMSService.OutsideMaterialStockEnquiryItem[] MaterialStockInfoField;
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=1)]
+        public string WarehousingType;
         
-        private bool SuccessField;
-        
-        private string SuppliesIdField;
-        
-        private string SuppliesNameField;
-        
-        private string SuppliesTypeField;
-        
-        private string SuppliesUnitField;
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string ErrorID
+        public WarehousingStatusEnquiryRequestBody()
         {
-            get
-            {
-                return this.ErrorIDField;
-            }
-            set
-            {
-                this.ErrorIDField = value;
-            }
         }
         
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public WMSService.OutsideMaterialStockEnquiryItem[] MaterialStockInfo
+        public WarehousingStatusEnquiryRequestBody(string WarehousingId, string WarehousingType)
         {
-            get
-            {
-                return this.MaterialStockInfoField;
-            }
-            set
-            {
-                this.MaterialStockInfoField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public bool Success
-        {
-            get
-            {
-                return this.SuccessField;
-            }
-            set
-            {
-                this.SuccessField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string SuppliesId
-        {
-            get
-            {
-                return this.SuppliesIdField;
-            }
-            set
-            {
-                this.SuppliesIdField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string SuppliesName
-        {
-            get
-            {
-                return this.SuppliesNameField;
-            }
-            set
-            {
-                this.SuppliesNameField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string SuppliesType
-        {
-            get
-            {
-                return this.SuppliesTypeField;
-            }
-            set
-            {
-                this.SuppliesTypeField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string SuppliesUnit
-        {
-            get
-            {
-                return this.SuppliesUnitField;
-            }
-            set
-            {
-                this.SuppliesUnitField = value;
-            }
+            this.WarehousingId = WarehousingId;
+            this.WarehousingType = WarehousingType;
         }
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="OutsideMaterialStockEnquiryItem", Namespace="http://schemas.datacontract.org/2004/07/YL.Core.Dto")]
-    public partial class OutsideMaterialStockEnquiryItem : object
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
+    public partial class WarehousingStatusEnquiryResponse
     {
         
-        private string BalanceStockField;
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="WarehousingStatusEnquiryResponse", Namespace="http://tempuri.org/", Order=0)]
+        public WMSService.WarehousingStatusEnquiryResponseBody Body;
         
-        private string InventoryBoxNoField;
-        
-        private string PaperStockField;
-        
-        private string PositionField;
-        
-        private string StorageRackPositionField;
-        
-        private string WarehouseIdField;
-        
-        private string WarehouseNameField;
-        
-        private string WarehousePositionField;
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string BalanceStock
+        public WarehousingStatusEnquiryResponse()
         {
-            get
-            {
-                return this.BalanceStockField;
-            }
-            set
-            {
-                this.BalanceStockField = value;
-            }
         }
         
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string InventoryBoxNo
+        public WarehousingStatusEnquiryResponse(WMSService.WarehousingStatusEnquiryResponseBody Body)
         {
-            get
-            {
-                return this.InventoryBoxNoField;
-            }
-            set
-            {
-                this.InventoryBoxNoField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string PaperStock
-        {
-            get
-            {
-                return this.PaperStockField;
-            }
-            set
-            {
-                this.PaperStockField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string Position
-        {
-            get
-            {
-                return this.PositionField;
-            }
-            set
-            {
-                this.PositionField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string StorageRackPosition
-        {
-            get
-            {
-                return this.StorageRackPositionField;
-            }
-            set
-            {
-                this.StorageRackPositionField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string WarehouseId
-        {
-            get
-            {
-                return this.WarehouseIdField;
-            }
-            set
-            {
-                this.WarehouseIdField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string WarehouseName
-        {
-            get
-            {
-                return this.WarehouseNameField;
-            }
-            set
-            {
-                this.WarehouseNameField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string WarehousePosition
-        {
-            get
-            {
-                return this.WarehousePositionField;
-            }
-            set
-            {
-                this.WarehousePositionField = value;
-            }
+            this.Body = Body;
         }
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="OutsideLogisticsControlArg", Namespace="http://schemas.datacontract.org/2004/07/YL.Core.Dto")]
-    public partial class OutsideLogisticsControlArg : object
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="http://tempuri.org/")]
+    public partial class WarehousingStatusEnquiryResponseBody
     {
         
-        private string DestinationField;
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
+        public string WarehousingStatusEnquiryResult;
         
-        private string LogisticsIdField;
-        
-        private string StartPointField;
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string Destination
+        public WarehousingStatusEnquiryResponseBody()
         {
-            get
-            {
-                return this.DestinationField;
-            }
-            set
-            {
-                this.DestinationField = value;
-            }
         }
         
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string LogisticsId
+        public WarehousingStatusEnquiryResponseBody(string WarehousingStatusEnquiryResult)
         {
-            get
-            {
-                return this.LogisticsIdField;
-            }
-            set
-            {
-                this.LogisticsIdField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string StartPoint
-        {
-            get
-            {
-                return this.StartPointField;
-            }
-            set
-            {
-                this.StartPointField = value;
-            }
+            this.WarehousingStatusEnquiryResult = WarehousingStatusEnquiryResult;
         }
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="OutsideLogisticsControlResult", Namespace="http://schemas.datacontract.org/2004/07/YL.Core.Dto")]
-    public partial class OutsideLogisticsControlResult : object
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
+    public partial class WarehouseEntryStatusEnquiryRequest
     {
         
-        private string EquipmentIdField;
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="WarehouseEntryStatusEnquiry", Namespace="http://tempuri.org/", Order=0)]
+        public WMSService.WarehouseEntryStatusEnquiryRequestBody Body;
         
-        private string EquipmentNameField;
-        
-        private string ErrorIdField;
-        
-        private string ErrorInfoField;
-        
-        private bool IsNormalExecutionField;
-        
-        private bool SuccessField;
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string EquipmentId
+        public WarehouseEntryStatusEnquiryRequest()
         {
-            get
-            {
-                return this.EquipmentIdField;
-            }
-            set
-            {
-                this.EquipmentIdField = value;
-            }
         }
         
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string EquipmentName
+        public WarehouseEntryStatusEnquiryRequest(WMSService.WarehouseEntryStatusEnquiryRequestBody Body)
         {
-            get
-            {
-                return this.EquipmentNameField;
-            }
-            set
-            {
-                this.EquipmentNameField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string ErrorId
-        {
-            get
-            {
-                return this.ErrorIdField;
-            }
-            set
-            {
-                this.ErrorIdField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string ErrorInfo
-        {
-            get
-            {
-                return this.ErrorInfoField;
-            }
-            set
-            {
-                this.ErrorInfoField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public bool IsNormalExecution
-        {
-            get
-            {
-                return this.IsNormalExecutionField;
-            }
-            set
-            {
-                this.IsNormalExecutionField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public bool Success
-        {
-            get
-            {
-                return this.SuccessField;
-            }
-            set
-            {
-                this.SuccessField = value;
-            }
+            this.Body = Body;
         }
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="OutsideLogisticsEnquiryArg", Namespace="http://schemas.datacontract.org/2004/07/YL.Core.Dto")]
-    public partial class OutsideLogisticsEnquiryArg : object
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="http://tempuri.org/")]
+    public partial class WarehouseEntryStatusEnquiryRequestBody
     {
         
-        private string EquipmentIdField;
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
+        public string WarehouseEntryId;
         
-        private string EquipmentNameField;
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=1)]
+        public string WarehouseEntryType;
         
-        private string LogisticsIdField;
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string EquipmentId
+        public WarehouseEntryStatusEnquiryRequestBody()
         {
-            get
-            {
-                return this.EquipmentIdField;
-            }
-            set
-            {
-                this.EquipmentIdField = value;
-            }
         }
         
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string EquipmentName
+        public WarehouseEntryStatusEnquiryRequestBody(string WarehouseEntryId, string WarehouseEntryType)
         {
-            get
-            {
-                return this.EquipmentNameField;
-            }
-            set
-            {
-                this.EquipmentNameField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string LogisticsId
-        {
-            get
-            {
-                return this.LogisticsIdField;
-            }
-            set
-            {
-                this.LogisticsIdField = value;
-            }
+            this.WarehouseEntryId = WarehouseEntryId;
+            this.WarehouseEntryType = WarehouseEntryType;
         }
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="OutsideLogisticsEnquiryResult", Namespace="http://schemas.datacontract.org/2004/07/YL.Core.Dto")]
-    public partial class OutsideLogisticsEnquiryResult : object
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
+    public partial class WarehouseEntryStatusEnquiryResponse
     {
         
-        private string EquipmentIdField;
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="WarehouseEntryStatusEnquiryResponse", Namespace="http://tempuri.org/", Order=0)]
+        public WMSService.WarehouseEntryStatusEnquiryResponseBody Body;
         
-        private string EquipmentNameField;
-        
-        private string PositionField;
-        
-        private string StatusField;
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string EquipmentId
+        public WarehouseEntryStatusEnquiryResponse()
         {
-            get
-            {
-                return this.EquipmentIdField;
-            }
-            set
-            {
-                this.EquipmentIdField = value;
-            }
         }
         
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string EquipmentName
+        public WarehouseEntryStatusEnquiryResponse(WMSService.WarehouseEntryStatusEnquiryResponseBody Body)
         {
-            get
-            {
-                return this.EquipmentNameField;
-            }
-            set
-            {
-                this.EquipmentNameField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string Position
-        {
-            get
-            {
-                return this.PositionField;
-            }
-            set
-            {
-                this.PositionField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string Status
-        {
-            get
-            {
-                return this.StatusField;
-            }
-            set
-            {
-                this.StatusField = value;
-            }
+            this.Body = Body;
         }
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="OutsideWarehousingStatusEnquiryArg", Namespace="http://schemas.datacontract.org/2004/07/YL.Core.Dto")]
-    public partial class OutsideWarehousingStatusEnquiryArg : object
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="http://tempuri.org/")]
+    public partial class WarehouseEntryStatusEnquiryResponseBody
     {
         
-        private string WarehousingIdField;
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
+        public string WarehouseEntryStatusEnquiryResult;
         
-        private string WarehousingTypeField;
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string WarehousingId
+        public WarehouseEntryStatusEnquiryResponseBody()
         {
-            get
-            {
-                return this.WarehousingIdField;
-            }
-            set
-            {
-                this.WarehousingIdField = value;
-            }
         }
         
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string WarehousingType
+        public WarehouseEntryStatusEnquiryResponseBody(string WarehouseEntryStatusEnquiryResult)
         {
-            get
-            {
-                return this.WarehousingTypeField;
-            }
-            set
-            {
-                this.WarehousingTypeField = value;
-            }
+            this.WarehouseEntryStatusEnquiryResult = WarehouseEntryStatusEnquiryResult;
         }
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="OutsideWarehousingStatusEnquiryResult", Namespace="http://schemas.datacontract.org/2004/07/YL.Core.Dto")]
-    public partial class OutsideWarehousingStatusEnquiryResult : object
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
+    public partial class WarehousingRequest
     {
         
-        private string ErrorIdField;
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="Warehousing", Namespace="http://tempuri.org/", Order=0)]
+        public WMSService.WarehousingRequestBody Body;
         
-        private string ErrorInfoField;
-        
-        private bool IsNormalWarehousingField;
-        
-        private string SuccessField;
-        
-        private string WarehousingIdField;
-        
-        private string WarehousingStatusInfoListField;
-        
-        private string WarehousingTypeField;
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string ErrorId
+        public WarehousingRequest()
         {
-            get
-            {
-                return this.ErrorIdField;
-            }
-            set
-            {
-                this.ErrorIdField = value;
-            }
         }
         
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string ErrorInfo
+        public WarehousingRequest(WMSService.WarehousingRequestBody Body)
         {
-            get
-            {
-                return this.ErrorInfoField;
-            }
-            set
-            {
-                this.ErrorInfoField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public bool IsNormalWarehousing
-        {
-            get
-            {
-                return this.IsNormalWarehousingField;
-            }
-            set
-            {
-                this.IsNormalWarehousingField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string Success
-        {
-            get
-            {
-                return this.SuccessField;
-            }
-            set
-            {
-                this.SuccessField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string WarehousingId
-        {
-            get
-            {
-                return this.WarehousingIdField;
-            }
-            set
-            {
-                this.WarehousingIdField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string WarehousingStatusInfoList
-        {
-            get
-            {
-                return this.WarehousingStatusInfoListField;
-            }
-            set
-            {
-                this.WarehousingStatusInfoListField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string WarehousingType
-        {
-            get
-            {
-                return this.WarehousingTypeField;
-            }
-            set
-            {
-                this.WarehousingTypeField = value;
-            }
+            this.Body = Body;
         }
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="OutsideWarehouseEntryStatusEnquiryArg", Namespace="http://schemas.datacontract.org/2004/07/YL.Core.Dto")]
-    public partial class OutsideWarehouseEntryStatusEnquiryArg : object
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="http://tempuri.org/")]
+    public partial class WarehousingRequestBody
     {
         
-        private string WarehouseEntryIdField;
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
+        public string warehousingid;
         
-        private string WarehouseEntryTypeField;
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=1)]
+        public string warehousingtype;
         
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string WarehouseEntryId
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=2)]
+        public string warehousingtime;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=3)]
+        public string productionplanid;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=4)]
+        public string batchplanid;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=5)]
+        public string workareaname;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=6)]
+        public string supplieskinds;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=7)]
+        public string suppliesinfolist;
+        
+        public WarehousingRequestBody()
         {
-            get
-            {
-                return this.WarehouseEntryIdField;
-            }
-            set
-            {
-                this.WarehouseEntryIdField = value;
-            }
         }
         
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string WarehouseEntryType
+        public WarehousingRequestBody(string warehousingid, string warehousingtype, string warehousingtime, string productionplanid, string batchplanid, string workareaname, string supplieskinds, string suppliesinfolist)
         {
-            get
-            {
-                return this.WarehouseEntryTypeField;
-            }
-            set
-            {
-                this.WarehouseEntryTypeField = value;
-            }
+            this.warehousingid = warehousingid;
+            this.warehousingtype = warehousingtype;
+            this.warehousingtime = warehousingtime;
+            this.productionplanid = productionplanid;
+            this.batchplanid = batchplanid;
+            this.workareaname = workareaname;
+            this.supplieskinds = supplieskinds;
+            this.suppliesinfolist = suppliesinfolist;
         }
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="OutsideWarehouseEntryStatusEnquiryResult", Namespace="http://schemas.datacontract.org/2004/07/YL.Core.Dto")]
-    public partial class OutsideWarehouseEntryStatusEnquiryResult : object
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
+    public partial class WarehousingResponse
     {
         
-        private string ErrorIdField;
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="WarehousingResponse", Namespace="http://tempuri.org/", Order=0)]
+        public WMSService.WarehousingResponseBody Body;
         
-        private string ErrorInfoField;
-        
-        private bool IsNormalWarehouseEntryField;
-        
-        private string SuccessField;
-        
-        private string WarehouseEntryIdField;
-        
-        private string WarehouseEntryStatusInfoListField;
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string ErrorId
+        public WarehousingResponse()
         {
-            get
-            {
-                return this.ErrorIdField;
-            }
-            set
-            {
-                this.ErrorIdField = value;
-            }
         }
         
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string ErrorInfo
+        public WarehousingResponse(WMSService.WarehousingResponseBody Body)
         {
-            get
-            {
-                return this.ErrorInfoField;
-            }
-            set
-            {
-                this.ErrorInfoField = value;
-            }
+            this.Body = Body;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="http://tempuri.org/")]
+    public partial class WarehousingResponseBody
+    {
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
+        public string WarehousingResult;
+        
+        public WarehousingResponseBody()
+        {
         }
         
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public bool IsNormalWarehouseEntry
+        public WarehousingResponseBody(string WarehousingResult)
         {
-            get
-            {
-                return this.IsNormalWarehouseEntryField;
-            }
-            set
-            {
-                this.IsNormalWarehouseEntryField = value;
-            }
+            this.WarehousingResult = WarehousingResult;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
+    public partial class WarehouseEntryRequest
+    {
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="WarehouseEntry", Namespace="http://tempuri.org/", Order=0)]
+        public WMSService.WarehouseEntryRequestBody Body;
+        
+        public WarehouseEntryRequest()
+        {
         }
         
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string Success
+        public WarehouseEntryRequest(WMSService.WarehouseEntryRequestBody Body)
         {
-            get
-            {
-                return this.SuccessField;
-            }
-            set
-            {
-                this.SuccessField = value;
-            }
+            this.Body = Body;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="http://tempuri.org/")]
+    public partial class WarehouseEntryRequestBody
+    {
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
+        public string WarehouseEntryid;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=1)]
+        public string WarehouseEntryType;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=2)]
+        public string WarehouseEntryTime;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=3)]
+        public string ProductionPlanId;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=4)]
+        public string BatchPlanId;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=5)]
+        public string WorkStationId;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=6)]
+        public string WorkAreaName;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=7)]
+        public string SuppliesKinds;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=8)]
+        public string SuppliesInfoList;
+        
+        public WarehouseEntryRequestBody()
+        {
         }
         
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string WarehouseEntryId
+        public WarehouseEntryRequestBody(string WarehouseEntryid, string WarehouseEntryType, string WarehouseEntryTime, string ProductionPlanId, string BatchPlanId, string WorkStationId, string WorkAreaName, string SuppliesKinds, string SuppliesInfoList)
         {
-            get
-            {
-                return this.WarehouseEntryIdField;
-            }
-            set
-            {
-                this.WarehouseEntryIdField = value;
-            }
+            this.WarehouseEntryid = WarehouseEntryid;
+            this.WarehouseEntryType = WarehouseEntryType;
+            this.WarehouseEntryTime = WarehouseEntryTime;
+            this.ProductionPlanId = ProductionPlanId;
+            this.BatchPlanId = BatchPlanId;
+            this.WorkStationId = WorkStationId;
+            this.WorkAreaName = WorkAreaName;
+            this.SuppliesKinds = SuppliesKinds;
+            this.SuppliesInfoList = SuppliesInfoList;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
+    public partial class WarehouseEntryResponse
+    {
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="WarehouseEntryResponse", Namespace="http://tempuri.org/", Order=0)]
+        public WMSService.WarehouseEntryResponseBody Body;
+        
+        public WarehouseEntryResponse()
+        {
         }
         
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string WarehouseEntryStatusInfoList
+        public WarehouseEntryResponse(WMSService.WarehouseEntryResponseBody Body)
         {
-            get
-            {
-                return this.WarehouseEntryStatusInfoListField;
-            }
-            set
-            {
-                this.WarehouseEntryStatusInfoListField = value;
-            }
+            this.Body = Body;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="http://tempuri.org/")]
+    public partial class WarehouseEntryResponseBody
+    {
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
+        public string WarehouseEntryResult;
+        
+        public WarehouseEntryResponseBody()
+        {
+        }
+        
+        public WarehouseEntryResponseBody(string WarehouseEntryResult)
+        {
+            this.WarehouseEntryResult = WarehouseEntryResult;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
+    public partial class MaterialStockEnquiryRequest
+    {
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="MaterialStockEnquiry", Namespace="http://tempuri.org/", Order=0)]
+        public WMSService.MaterialStockEnquiryRequestBody Body;
+        
+        public MaterialStockEnquiryRequest()
+        {
+        }
+        
+        public MaterialStockEnquiryRequest(WMSService.MaterialStockEnquiryRequestBody Body)
+        {
+            this.Body = Body;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="http://tempuri.org/")]
+    public partial class MaterialStockEnquiryRequestBody
+    {
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
+        public string suppliesid;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=1)]
+        public string suppliesname;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=2)]
+        public string suppliestype;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=3)]
+        public string suppliesunit;
+        
+        public MaterialStockEnquiryRequestBody()
+        {
+        }
+        
+        public MaterialStockEnquiryRequestBody(string suppliesid, string suppliesname, string suppliestype, string suppliesunit)
+        {
+            this.suppliesid = suppliesid;
+            this.suppliesname = suppliesname;
+            this.suppliestype = suppliestype;
+            this.suppliesunit = suppliesunit;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
+    public partial class MaterialStockEnquiryResponse
+    {
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="MaterialStockEnquiryResponse", Namespace="http://tempuri.org/", Order=0)]
+        public WMSService.MaterialStockEnquiryResponseBody Body;
+        
+        public MaterialStockEnquiryResponse()
+        {
+        }
+        
+        public MaterialStockEnquiryResponse(WMSService.MaterialStockEnquiryResponseBody Body)
+        {
+            this.Body = Body;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="http://tempuri.org/")]
+    public partial class MaterialStockEnquiryResponseBody
+    {
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
+        public string MaterialStockEnquiryResult;
+        
+        public MaterialStockEnquiryResponseBody()
+        {
+        }
+        
+        public MaterialStockEnquiryResponseBody(string MaterialStockEnquiryResult)
+        {
+            this.MaterialStockEnquiryResult = MaterialStockEnquiryResult;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
+    public partial class LogisticsControlRequest
+    {
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="LogisticsControl", Namespace="http://tempuri.org/", Order=0)]
+        public WMSService.LogisticsControlRequestBody Body;
+        
+        public LogisticsControlRequest()
+        {
+        }
+        
+        public LogisticsControlRequest(WMSService.LogisticsControlRequestBody Body)
+        {
+            this.Body = Body;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="http://tempuri.org/")]
+    public partial class LogisticsControlRequestBody
+    {
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
+        public string startpoint;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=1)]
+        public string destination;
+        
+        public LogisticsControlRequestBody()
+        {
+        }
+        
+        public LogisticsControlRequestBody(string startpoint, string destination)
+        {
+            this.startpoint = startpoint;
+            this.destination = destination;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
+    public partial class LogisticsControlResponse
+    {
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="LogisticsControlResponse", Namespace="http://tempuri.org/", Order=0)]
+        public WMSService.LogisticsControlResponseBody Body;
+        
+        public LogisticsControlResponse()
+        {
+        }
+        
+        public LogisticsControlResponse(WMSService.LogisticsControlResponseBody Body)
+        {
+            this.Body = Body;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="http://tempuri.org/")]
+    public partial class LogisticsControlResponseBody
+    {
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
+        public string LogisticsControlResult;
+        
+        public LogisticsControlResponseBody()
+        {
+        }
+        
+        public LogisticsControlResponseBody(string LogisticsControlResult)
+        {
+            this.LogisticsControlResult = LogisticsControlResult;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
+    public partial class LogisticsEnquiryRequest
+    {
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="LogisticsEnquiry", Namespace="http://tempuri.org/", Order=0)]
+        public WMSService.LogisticsEnquiryRequestBody Body;
+        
+        public LogisticsEnquiryRequest()
+        {
+        }
+        
+        public LogisticsEnquiryRequest(WMSService.LogisticsEnquiryRequestBody Body)
+        {
+            this.Body = Body;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="http://tempuri.org/")]
+    public partial class LogisticsEnquiryRequestBody
+    {
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
+        public string equipmentid;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=1)]
+        public string equipmentname;
+        
+        public LogisticsEnquiryRequestBody()
+        {
+        }
+        
+        public LogisticsEnquiryRequestBody(string equipmentid, string equipmentname)
+        {
+            this.equipmentid = equipmentid;
+            this.equipmentname = equipmentname;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
+    public partial class LogisticsEnquiryResponse
+    {
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="LogisticsEnquiryResponse", Namespace="http://tempuri.org/", Order=0)]
+        public WMSService.LogisticsEnquiryResponseBody Body;
+        
+        public LogisticsEnquiryResponse()
+        {
+        }
+        
+        public LogisticsEnquiryResponse(WMSService.LogisticsEnquiryResponseBody Body)
+        {
+            this.Body = Body;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="http://tempuri.org/")]
+    public partial class LogisticsEnquiryResponseBody
+    {
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
+        public string LogisticsEnquiryResult;
+        
+        public LogisticsEnquiryResponseBody()
+        {
+        }
+        
+        public LogisticsEnquiryResponseBody(string LogisticsEnquiryResult)
+        {
+            this.LogisticsEnquiryResult = LogisticsEnquiryResult;
         }
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
-    [System.ServiceModel.ServiceContractAttribute(ConfigurationName="WMSService.IMESHookController")]
-    public interface IMESHookController
-    {
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IMESHookController/Ping", ReplyAction="http://tempuri.org/IMESHookController/PingResponse")]
-        System.Threading.Tasks.Task<string> PingAsync();
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IMESHookController/Warehousing", ReplyAction="http://tempuri.org/IMESHookController/WarehousingResponse")]
-        System.Threading.Tasks.Task<WMSService.OutsideStockInResult> WarehousingAsync(WMSService.OutsideStockInDto data);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IMESHookController/WarehouseEntry", ReplyAction="http://tempuri.org/IMESHookController/WarehouseEntryResponse")]
-        System.Threading.Tasks.Task<WMSService.OutsideStockOutResult> WarehouseEntryAsync(WMSService.OutsideStockOutDto data);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IMESHookController/MaterialStockEnquiry", ReplyAction="http://tempuri.org/IMESHookController/MaterialStockEnquiryResponse")]
-        System.Threading.Tasks.Task<WMSService.OutsideMaterialStockEnquiryResult> MaterialStockEnquiryAsync(WMSService.OutsideMaterialStockEnquiryArg arg);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IMESHookController/LogisticsControl", ReplyAction="http://tempuri.org/IMESHookController/LogisticsControlResponse")]
-        System.Threading.Tasks.Task<WMSService.OutsideLogisticsControlResult> LogisticsControlAsync(WMSService.OutsideLogisticsControlArg arg);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IMESHookController/LogisticsEnquiry", ReplyAction="http://tempuri.org/IMESHookController/LogisticsEnquiryResponse")]
-        System.Threading.Tasks.Task<WMSService.OutsideLogisticsEnquiryResult> LogisticsEnquiryAsync(WMSService.OutsideLogisticsEnquiryArg arg);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IMESHookController/WarehousingStatusEnquiry", ReplyAction="http://tempuri.org/IMESHookController/WarehousingStatusEnquiryResponse")]
-        System.Threading.Tasks.Task<WMSService.OutsideWarehousingStatusEnquiryResult> WarehousingStatusEnquiryAsync(WMSService.OutsideWarehousingStatusEnquiryArg arg);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IMESHookController/WarehouseEntryStatusEnquiry", ReplyAction="http://tempuri.org/IMESHookController/WarehouseEntryStatusEnquiryResponse")]
-        System.Threading.Tasks.Task<WMSService.OutsideWarehouseEntryStatusEnquiryResult> WarehouseEntryStatusEnquiryAsync(WMSService.OutsideWarehouseEntryStatusEnquiryArg arg);
-    }
-    
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
-    public interface IMESHookControllerChannel : WMSService.IMESHookController, System.ServiceModel.IClientChannel
+    public interface WMSSoapChannel : WMSService.WMSSoap, System.ServiceModel.IClientChannel
     {
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
-    public partial class MESHookControllerClient : System.ServiceModel.ClientBase<WMSService.IMESHookController>, WMSService.IMESHookController
+    public partial class WMSSoapClient : System.ServiceModel.ClientBase<WMSService.WMSSoap>, WMSService.WMSSoap
     {
         
     /// <summary>
@@ -1334,77 +778,163 @@ namespace WMSService
     /// <param name="clientCredentials">客户端凭据</param>
     static partial void ConfigureEndpoint(System.ServiceModel.Description.ServiceEndpoint serviceEndpoint, System.ServiceModel.Description.ClientCredentials clientCredentials);
         
-        public MESHookControllerClient() : 
-                base(MESHookControllerClient.GetDefaultBinding(), MESHookControllerClient.GetDefaultEndpointAddress())
-        {
-            this.Endpoint.Name = EndpointConfiguration.BasicHttpBinding_IMESHookController.ToString();
-            ConfigureEndpoint(this.Endpoint, this.ClientCredentials);
-        }
-        
-        public MESHookControllerClient(EndpointConfiguration endpointConfiguration) : 
-                base(MESHookControllerClient.GetBindingForEndpoint(endpointConfiguration), MESHookControllerClient.GetEndpointAddress(endpointConfiguration))
+        public WMSSoapClient(EndpointConfiguration endpointConfiguration) : 
+                base(WMSSoapClient.GetBindingForEndpoint(endpointConfiguration), WMSSoapClient.GetEndpointAddress(endpointConfiguration))
         {
             this.Endpoint.Name = endpointConfiguration.ToString();
             ConfigureEndpoint(this.Endpoint, this.ClientCredentials);
         }
         
-        public MESHookControllerClient(EndpointConfiguration endpointConfiguration, string remoteAddress) : 
-                base(MESHookControllerClient.GetBindingForEndpoint(endpointConfiguration), new System.ServiceModel.EndpointAddress(remoteAddress))
+        public WMSSoapClient(EndpointConfiguration endpointConfiguration, string remoteAddress) : 
+                base(WMSSoapClient.GetBindingForEndpoint(endpointConfiguration), new System.ServiceModel.EndpointAddress(remoteAddress))
         {
             this.Endpoint.Name = endpointConfiguration.ToString();
             ConfigureEndpoint(this.Endpoint, this.ClientCredentials);
         }
         
-        public MESHookControllerClient(EndpointConfiguration endpointConfiguration, System.ServiceModel.EndpointAddress remoteAddress) : 
-                base(MESHookControllerClient.GetBindingForEndpoint(endpointConfiguration), remoteAddress)
+        public WMSSoapClient(EndpointConfiguration endpointConfiguration, System.ServiceModel.EndpointAddress remoteAddress) : 
+                base(WMSSoapClient.GetBindingForEndpoint(endpointConfiguration), remoteAddress)
         {
             this.Endpoint.Name = endpointConfiguration.ToString();
             ConfigureEndpoint(this.Endpoint, this.ClientCredentials);
         }
         
-        public MESHookControllerClient(System.ServiceModel.Channels.Binding binding, System.ServiceModel.EndpointAddress remoteAddress) : 
+        public WMSSoapClient(System.ServiceModel.Channels.Binding binding, System.ServiceModel.EndpointAddress remoteAddress) : 
                 base(binding, remoteAddress)
         {
         }
         
-        public System.Threading.Tasks.Task<string> PingAsync()
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        System.Threading.Tasks.Task<WMSService.HelloWorldResponse> WMSService.WMSSoap.HelloWorldAsync(WMSService.HelloWorldRequest request)
         {
-            return base.Channel.PingAsync();
+            return base.Channel.HelloWorldAsync(request);
         }
         
-        public System.Threading.Tasks.Task<WMSService.OutsideStockInResult> WarehousingAsync(WMSService.OutsideStockInDto data)
+        public System.Threading.Tasks.Task<WMSService.HelloWorldResponse> HelloWorldAsync()
         {
-            return base.Channel.WarehousingAsync(data);
+            WMSService.HelloWorldRequest inValue = new WMSService.HelloWorldRequest();
+            inValue.Body = new WMSService.HelloWorldRequestBody();
+            return ((WMSService.WMSSoap)(this)).HelloWorldAsync(inValue);
         }
         
-        public System.Threading.Tasks.Task<WMSService.OutsideStockOutResult> WarehouseEntryAsync(WMSService.OutsideStockOutDto data)
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        System.Threading.Tasks.Task<WMSService.WarehousingStatusEnquiryResponse> WMSService.WMSSoap.WarehousingStatusEnquiryAsync(WMSService.WarehousingStatusEnquiryRequest request)
         {
-            return base.Channel.WarehouseEntryAsync(data);
+            return base.Channel.WarehousingStatusEnquiryAsync(request);
         }
         
-        public System.Threading.Tasks.Task<WMSService.OutsideMaterialStockEnquiryResult> MaterialStockEnquiryAsync(WMSService.OutsideMaterialStockEnquiryArg arg)
+        public System.Threading.Tasks.Task<WMSService.WarehousingStatusEnquiryResponse> WarehousingStatusEnquiryAsync(string WarehousingId, string WarehousingType)
         {
-            return base.Channel.MaterialStockEnquiryAsync(arg);
+            WMSService.WarehousingStatusEnquiryRequest inValue = new WMSService.WarehousingStatusEnquiryRequest();
+            inValue.Body = new WMSService.WarehousingStatusEnquiryRequestBody();
+            inValue.Body.WarehousingId = WarehousingId;
+            inValue.Body.WarehousingType = WarehousingType;
+            return ((WMSService.WMSSoap)(this)).WarehousingStatusEnquiryAsync(inValue);
         }
         
-        public System.Threading.Tasks.Task<WMSService.OutsideLogisticsControlResult> LogisticsControlAsync(WMSService.OutsideLogisticsControlArg arg)
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        System.Threading.Tasks.Task<WMSService.WarehouseEntryStatusEnquiryResponse> WMSService.WMSSoap.WarehouseEntryStatusEnquiryAsync(WMSService.WarehouseEntryStatusEnquiryRequest request)
         {
-            return base.Channel.LogisticsControlAsync(arg);
+            return base.Channel.WarehouseEntryStatusEnquiryAsync(request);
         }
         
-        public System.Threading.Tasks.Task<WMSService.OutsideLogisticsEnquiryResult> LogisticsEnquiryAsync(WMSService.OutsideLogisticsEnquiryArg arg)
+        public System.Threading.Tasks.Task<WMSService.WarehouseEntryStatusEnquiryResponse> WarehouseEntryStatusEnquiryAsync(string WarehouseEntryId, string WarehouseEntryType)
         {
-            return base.Channel.LogisticsEnquiryAsync(arg);
+            WMSService.WarehouseEntryStatusEnquiryRequest inValue = new WMSService.WarehouseEntryStatusEnquiryRequest();
+            inValue.Body = new WMSService.WarehouseEntryStatusEnquiryRequestBody();
+            inValue.Body.WarehouseEntryId = WarehouseEntryId;
+            inValue.Body.WarehouseEntryType = WarehouseEntryType;
+            return ((WMSService.WMSSoap)(this)).WarehouseEntryStatusEnquiryAsync(inValue);
         }
         
-        public System.Threading.Tasks.Task<WMSService.OutsideWarehousingStatusEnquiryResult> WarehousingStatusEnquiryAsync(WMSService.OutsideWarehousingStatusEnquiryArg arg)
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        System.Threading.Tasks.Task<WMSService.WarehousingResponse> WMSService.WMSSoap.WarehousingAsync(WMSService.WarehousingRequest request)
         {
-            return base.Channel.WarehousingStatusEnquiryAsync(arg);
+            return base.Channel.WarehousingAsync(request);
         }
         
-        public System.Threading.Tasks.Task<WMSService.OutsideWarehouseEntryStatusEnquiryResult> WarehouseEntryStatusEnquiryAsync(WMSService.OutsideWarehouseEntryStatusEnquiryArg arg)
+        public System.Threading.Tasks.Task<WMSService.WarehousingResponse> WarehousingAsync(string warehousingid, string warehousingtype, string warehousingtime, string productionplanid, string batchplanid, string workareaname, string supplieskinds, string suppliesinfolist)
         {
-            return base.Channel.WarehouseEntryStatusEnquiryAsync(arg);
+            WMSService.WarehousingRequest inValue = new WMSService.WarehousingRequest();
+            inValue.Body = new WMSService.WarehousingRequestBody();
+            inValue.Body.warehousingid = warehousingid;
+            inValue.Body.warehousingtype = warehousingtype;
+            inValue.Body.warehousingtime = warehousingtime;
+            inValue.Body.productionplanid = productionplanid;
+            inValue.Body.batchplanid = batchplanid;
+            inValue.Body.workareaname = workareaname;
+            inValue.Body.supplieskinds = supplieskinds;
+            inValue.Body.suppliesinfolist = suppliesinfolist;
+            return ((WMSService.WMSSoap)(this)).WarehousingAsync(inValue);
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        System.Threading.Tasks.Task<WMSService.WarehouseEntryResponse> WMSService.WMSSoap.WarehouseEntryAsync(WMSService.WarehouseEntryRequest request)
+        {
+            return base.Channel.WarehouseEntryAsync(request);
+        }
+        
+        public System.Threading.Tasks.Task<WMSService.WarehouseEntryResponse> WarehouseEntryAsync(string WarehouseEntryid, string WarehouseEntryType, string WarehouseEntryTime, string ProductionPlanId, string BatchPlanId, string WorkStationId, string WorkAreaName, string SuppliesKinds, string SuppliesInfoList)
+        {
+            WMSService.WarehouseEntryRequest inValue = new WMSService.WarehouseEntryRequest();
+            inValue.Body = new WMSService.WarehouseEntryRequestBody();
+            inValue.Body.WarehouseEntryid = WarehouseEntryid;
+            inValue.Body.WarehouseEntryType = WarehouseEntryType;
+            inValue.Body.WarehouseEntryTime = WarehouseEntryTime;
+            inValue.Body.ProductionPlanId = ProductionPlanId;
+            inValue.Body.BatchPlanId = BatchPlanId;
+            inValue.Body.WorkStationId = WorkStationId;
+            inValue.Body.WorkAreaName = WorkAreaName;
+            inValue.Body.SuppliesKinds = SuppliesKinds;
+            inValue.Body.SuppliesInfoList = SuppliesInfoList;
+            return ((WMSService.WMSSoap)(this)).WarehouseEntryAsync(inValue);
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        System.Threading.Tasks.Task<WMSService.MaterialStockEnquiryResponse> WMSService.WMSSoap.MaterialStockEnquiryAsync(WMSService.MaterialStockEnquiryRequest request)
+        {
+            return base.Channel.MaterialStockEnquiryAsync(request);
+        }
+        
+        public System.Threading.Tasks.Task<WMSService.MaterialStockEnquiryResponse> MaterialStockEnquiryAsync(string suppliesid, string suppliesname, string suppliestype, string suppliesunit)
+        {
+            WMSService.MaterialStockEnquiryRequest inValue = new WMSService.MaterialStockEnquiryRequest();
+            inValue.Body = new WMSService.MaterialStockEnquiryRequestBody();
+            inValue.Body.suppliesid = suppliesid;
+            inValue.Body.suppliesname = suppliesname;
+            inValue.Body.suppliestype = suppliestype;
+            inValue.Body.suppliesunit = suppliesunit;
+            return ((WMSService.WMSSoap)(this)).MaterialStockEnquiryAsync(inValue);
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        System.Threading.Tasks.Task<WMSService.LogisticsControlResponse> WMSService.WMSSoap.LogisticsControlAsync(WMSService.LogisticsControlRequest request)
+        {
+            return base.Channel.LogisticsControlAsync(request);
+        }
+        
+        public System.Threading.Tasks.Task<WMSService.LogisticsControlResponse> LogisticsControlAsync(string startpoint, string destination)
+        {
+            WMSService.LogisticsControlRequest inValue = new WMSService.LogisticsControlRequest();
+            inValue.Body = new WMSService.LogisticsControlRequestBody();
+            inValue.Body.startpoint = startpoint;
+            inValue.Body.destination = destination;
+            return ((WMSService.WMSSoap)(this)).LogisticsControlAsync(inValue);
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        System.Threading.Tasks.Task<WMSService.LogisticsEnquiryResponse> WMSService.WMSSoap.LogisticsEnquiryAsync(WMSService.LogisticsEnquiryRequest request)
+        {
+            return base.Channel.LogisticsEnquiryAsync(request);
+        }
+        
+        public System.Threading.Tasks.Task<WMSService.LogisticsEnquiryResponse> LogisticsEnquiryAsync(string equipmentid, string equipmentname)
+        {
+            WMSService.LogisticsEnquiryRequest inValue = new WMSService.LogisticsEnquiryRequest();
+            inValue.Body = new WMSService.LogisticsEnquiryRequestBody();
+            inValue.Body.equipmentid = equipmentid;
+            inValue.Body.equipmentname = equipmentname;
+            return ((WMSService.WMSSoap)(this)).LogisticsEnquiryAsync(inValue);
         }
         
         public virtual System.Threading.Tasks.Task OpenAsync()
@@ -1419,7 +949,7 @@ namespace WMSService
         
         private static System.ServiceModel.Channels.Binding GetBindingForEndpoint(EndpointConfiguration endpointConfiguration)
         {
-            if ((endpointConfiguration == EndpointConfiguration.BasicHttpBinding_IMESHookController))
+            if ((endpointConfiguration == EndpointConfiguration.WMSSoap))
             {
                 System.ServiceModel.BasicHttpBinding result = new System.ServiceModel.BasicHttpBinding();
                 result.MaxBufferSize = int.MaxValue;
@@ -1428,32 +958,41 @@ namespace WMSService
                 result.AllowCookies = true;
                 return result;
             }
+            if ((endpointConfiguration == EndpointConfiguration.WMSSoap12))
+            {
+                System.ServiceModel.Channels.CustomBinding result = new System.ServiceModel.Channels.CustomBinding();
+                System.ServiceModel.Channels.TextMessageEncodingBindingElement textBindingElement = new System.ServiceModel.Channels.TextMessageEncodingBindingElement();
+                textBindingElement.MessageVersion = System.ServiceModel.Channels.MessageVersion.CreateVersion(System.ServiceModel.EnvelopeVersion.Soap12, System.ServiceModel.Channels.AddressingVersion.None);
+                result.Elements.Add(textBindingElement);
+                System.ServiceModel.Channels.HttpTransportBindingElement httpBindingElement = new System.ServiceModel.Channels.HttpTransportBindingElement();
+                httpBindingElement.AllowCookies = true;
+                httpBindingElement.MaxBufferSize = int.MaxValue;
+                httpBindingElement.MaxReceivedMessageSize = int.MaxValue;
+                result.Elements.Add(httpBindingElement);
+                return result;
+            }
             throw new System.InvalidOperationException(string.Format("找不到名称为“{0}”的终结点。", endpointConfiguration));
         }
         
         private static System.ServiceModel.EndpointAddress GetEndpointAddress(EndpointConfiguration endpointConfiguration)
         {
-            if ((endpointConfiguration == EndpointConfiguration.BasicHttpBinding_IMESHookController))
+            if ((endpointConfiguration == EndpointConfiguration.WMSSoap))
             {
-                return new System.ServiceModel.EndpointAddress("http://localhost:23456/Outside/MesHook.asmx");
+                return new System.ServiceModel.EndpointAddress("http://localhost:5713/WMS.asmx");
+            }
+            if ((endpointConfiguration == EndpointConfiguration.WMSSoap12))
+            {
+                return new System.ServiceModel.EndpointAddress("http://localhost:5713/WMS.asmx");
             }
             throw new System.InvalidOperationException(string.Format("找不到名称为“{0}”的终结点。", endpointConfiguration));
-        }
-        
-        private static System.ServiceModel.Channels.Binding GetDefaultBinding()
-        {
-            return MESHookControllerClient.GetBindingForEndpoint(EndpointConfiguration.BasicHttpBinding_IMESHookController);
-        }
-        
-        private static System.ServiceModel.EndpointAddress GetDefaultEndpointAddress()
-        {
-            return MESHookControllerClient.GetEndpointAddress(EndpointConfiguration.BasicHttpBinding_IMESHookController);
         }
         
         public enum EndpointConfiguration
         {
             
-            BasicHttpBinding_IMESHookController,
+            WMSSoap,
+            
+            WMSSoap12,
         }
     }
 }

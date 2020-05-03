@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using YL.Utils;
+using YL.Utils.Pub;
 
 namespace YL.Core.Dto
 {
@@ -41,7 +43,32 @@ namespace YL.Core.Dto
         /// 物料信息列表
         /// </summary>
         public string SuppliesInfoList { get; set; } //OutsideMaterialDto[]
+         
+        public static OutsideStockInDto Create(
+            string warehousingid, 
+            string warehousingtype, 
+            string warehousingtime,
+            string productionplanid,
+            string batchplanid, 
+            string workareaname, 
+            int supplieskinds,
+            string suppliesinfolist)
+        { 
+            OutsideStockInDto data = new OutsideStockInDto()
+            {
+                WarehousingId = warehousingid,
+                WarehousingType = warehousingtype,
+                WarehousingTime = warehousingtime,
+                ProductionPlanId = productionplanid, 
+                BatchPlanId = batchplanid,
+                WorkAreaName = workareaname,
+                SuppliesKinds = supplieskinds,
+                SuppliesInfoList = suppliesinfolist
 
+            };
+            return data;
+        }
+         
     }
 
     public class OutsideStockInResult

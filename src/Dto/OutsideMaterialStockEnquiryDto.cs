@@ -27,7 +27,12 @@ namespace YL.Core.Dto
         /// <summary>
         /// 单位
         /// </summary>
-        public string SuppliesUnit { get; set; } 
+        public string SuppliesUnit { get; set; }
+
+        public static void Create(string suppliesid, string suppliesname, string suppliestype, string suppliesunit)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     /// <summary>

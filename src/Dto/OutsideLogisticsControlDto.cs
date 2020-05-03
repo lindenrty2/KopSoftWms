@@ -18,7 +18,16 @@ namespace YL.Core.Dto
         /// 终点位置
         /// </summary>
         public string Destination { get; set; }
-         
+
+        public static OutsideLogisticsControlArg Create(string startpoint, string destination)
+        {
+            return new OutsideLogisticsControlArg()
+            {
+                StartPoint = startpoint,
+                Destination = destination 
+            };
+            
+        }
     }
 
     public class OutsideLogisticsControlResult
