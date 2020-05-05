@@ -288,6 +288,12 @@ namespace KopSoftWms.Controllers
             return result;
         }
 
+        /// <summary>
+        /// 出库指定料箱
+        /// </summary>
+        /// <param name="storeId"></param>
+        /// <param name="inventoryBoxId"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<RouteData> DoInventoryBoxOut(long storeId, long inventoryBoxId)
         {

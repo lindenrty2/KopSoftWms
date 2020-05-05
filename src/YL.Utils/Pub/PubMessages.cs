@@ -15,7 +15,7 @@ namespace YL.Utils.Pub
         public static MessageItem E0007_WAREHOUSE_NOTFOUND = new MessageItem(-7, "仓库不存在");
         public static MessageItem E0008_PARAMETER_EMPTY = new MessageItem(-8, "参数为空");
         public static MessageItem E0009_PARAMETER_NULL = new MessageItem(-9, "参数为Null");
-        public static MessageItem E0010_PARAMETER_TYPE_INVAILD = new MessageItem(-10, "参数类型不一致");
+        public static MessageItem E0010_PARAMETER_TYPE_INVAILD = new MessageItem(-10, "参数类型不一致"); 
 
         public static MessageItem I1001_BOXBACK_SCCUESS = new MessageItem(1001, "料箱出库成功");
         public static MessageItem I1002_BOXOUT_SCCUESS = new MessageItem(1002, "料箱归库成功");
@@ -116,6 +116,7 @@ namespace YL.Utils.Pub
         public static MessageItem E4100_MATERIAL_IMPORT_FAIL = new MessageItem(-4100, "物料导入失败");
         public static MessageItem E4101_MATERIAL_IMPORT_NOTSUPPORT = new MessageItem(-4101, "物料不支持该类型的文件导入");
         public static MessageItem E4102_MATERIAL_IMPORT_EXIST_NOTMATCH = new MessageItem(-4102, "物料已存在且内容不符");
+        public static MessageItem E4103_INVENTORYBOX_GET_FAIL = new MessageItem(-4103, "获取料箱列表失败");
     }
 
 

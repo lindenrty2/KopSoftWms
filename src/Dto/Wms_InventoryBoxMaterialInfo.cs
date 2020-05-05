@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using YL.Utils.Pub;
 
 namespace YL.Core.Dto
 {
-    /// <summary>
-    /// 库存
-    /// </summary>
-    public class OutsideInventoryDto
+    public class Wms_InventoryBoxMaterialInfo
     {
         /// <summary>
         /// 对接用物料唯一Id
@@ -28,9 +26,7 @@ namespace YL.Core.Dto
         /// <summary>
         /// 库存数量
         /// </summary>
-        public int Qty { get; set; }
-        ///锁定状态    
-        public bool IsLocked { get; set; }
+        public int Qty { get; set; } 
         /// <summary>
         /// 货架Id
         /// </summary>
@@ -52,6 +48,10 @@ namespace YL.Core.Dto
         /// </summary>
         public string InventoryBoxNo { get; set; }
         /// <summary>
+        /// 料箱状态
+        /// </summary>
+        public InventoryBoxStatus InventoryBoxStatus { get; set; }
+        /// <summary>
         /// 料格位置(1~9)
         /// </summary>
         public int Position { get; set; }
@@ -66,15 +66,7 @@ namespace YL.Core.Dto
         /// <summary>
         /// 列
         /// </summary>
-        public int Column { get; set; }
-        /// <summary>
-        /// 创建用户
-        /// </summary>
-        public string CreateBy { get; set; }
-        /// <summary>
-        /// 创建时间
-        /// </summary>
-        public string CreateDate { get; set; }
+        public int Column { get; set; } 
         /// <summary>
         /// 最后更新用户
         /// </summary>
@@ -83,25 +75,6 @@ namespace YL.Core.Dto
         /// 更新时间
         /// </summary>
         public string ModifiedDate { get; set; }
-    
-    }
 
-    /// <summary>
-    /// 库存记录
-    /// </summary>
-    public class OutsideInventoryRecordDto : OutsideInventoryDto
-    {
-        public string StockNo { get; set; }
-        public int AfterQty { get; set; }
-    }
-
-
-    /// <summary>
-    /// 库存记录
-    /// </summary>
-    public class InventoryBoxDto : OutsideInventoryDto
-    {
-        public string StockNo { get; set; }
-        public int AfterQty { get; set; }
     }
 }

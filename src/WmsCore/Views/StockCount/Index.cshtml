@@ -124,6 +124,7 @@
 
 
                     setTimeout(function () {
+                        _self.loadL();
                         yui.getDomById("test").click();
                         //$("div[class='pull-right search']")[0].children[0].setAttribute("placeholder", "物料编号或名称");
                     }, 500);
@@ -143,27 +144,6 @@
                     }
                     ctlMaterialType.append(html)
                     ctlMaterialType.selectpicker('refresh');
-                },
-                searchInventoryBox: function (val, type) {
-                    var _self = this;
-                    if (type === 1) {
-                        _self.url = "/StockCount/Search?storeId=@ViewData["currentStoreId"]";
-                    } else {
-                        _self.url = "/StockCount/Search?storeId=@ViewData["currentStoreId"]&text=" + val;
-                    }
-                    yui.$axiosget(_self.url).then(function (res) {
-                        _self.InventoryBoxList = res.data.rows;
-                        var html = "<option value=''>请选择</option>";
-                        for (var item in _self.InventoryBoxList) {
-                            html += "<option value='" + _self.InventoryBoxList[item].InventoryBoxId + "' " + "data-subtext='" + _self.InventoryBoxList[item].InventoryBoxNo + "'>" + _self.InventoryBoxList[item].InventoryBoxName + "</option>"
-                        }
-                        if (type !== 1) {
-                            $("#InventoryBoxId").empty();
-                        }
-                        $("#InventoryBoxId").append(html)
-                        $('#InventoryBoxId').selectpicker('refresh'); 
-                    }).catch(function (res) {
-                    });
                 },
                 loadL: function () {
                     _self = this;
@@ -188,7 +168,7 @@
                     ];
                     var qParams = {
                     };
-                    yui.table("bootstraptable", "/InventoryBox/List", obj, "POST", "InventoryBoxId", true, qParams);
+                    yui.table("bootstraptable", "/StockCount/List", obj, "POST", "InventoryBoxId", true, qParams);
                 },
                 showL: function () {
                     yui.layershow("添加料箱", "/InventoryBox/Add?storeId=@ViewData["currentStoreId"]", 550, 600);

@@ -123,5 +123,13 @@ namespace IServices.Outside
         /// <returns></returns>
         Task<RouteData> DoStockOutComplate(long stockOutId);
 
+
+        /// <summary>
+        /// 获取有指定的物料的料箱列表
+        /// </summary>
+        /// <param name="materialId"></param>
+        /// <returns></returns>
+        Task<RouteData<Wms_InventoryBoxMaterialInfo[]>> GetInventoryBoxList(string materialNo);
+
     }
 }

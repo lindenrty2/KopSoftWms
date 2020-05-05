@@ -1,0 +1,142 @@
+﻿@{
+    Layout = "_LayoutH";
+}
+@section styles{
+    <link rel="stylesheet" href="~/css/bootstrap-select.min.css" />
+}
+<div id="app" v-cloak>
+
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-body">
+                    <div id="toolbar" class="btn-group">
+                        <button id="box1OutL" type="button" class="btn btn-outL margin-left:20px" onclick="app.boxOutL(1);">完整箱出库</button>
+                        <button id="box9OutL" type="button" class="btn btn-outL margin-left:20px" onclick="app.boxOutL(2);">2宫格箱出库</button>
+                        <button id="box9OutL" type="button" class="btn btn-outL margin-left:20px" onclick="app.boxOutL(3);">3宫格箱出库</button>
+                        <button id="box9OutL" type="button" class="btn btn-outL margin-left:20px" onclick="app.boxOutL(6);">6宫格箱出库</button>
+                        <button id="box9OutL" type="button" class="btn btn-outL margin-left:20px" onclick="window.close();">使用已出库料箱</button>
+                    </div>
+                    <table id="bootstraptable" class="table table-bordered text-nowrap table-hover"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script src="~/js/common.wms.js"></script>
+    <script src="~/js/bootstrap-select.min.js"></script>
+    <script src="~/js/defaults-zh_CN.min.js"></script>
+    <script>
+        $(function () {
+
+
+        });
+        var app = new Vue({
+            el: "#app",
+            data: {
+                StoreId:"@ViewBag.StoreId",
+                MaterialId:"@ViewBag.MaterialId",
+                data: @Html.Raw(ViewBag.Data)
+            },
+            computed: {
+            },
+            mounted: function(){
+                var _self = this;
+                _self.$nextTick(function () {
+                    $("#bootstraptable").bootstrapTable({
+                        data: _self.data,
+                        toolbar: '#toolbar', //工具按钮用哪个容器
+                        striped: true, //是否显示行间隔色
+                        sortable: true, //是否启用排序
+                        pagination: false, //是否显示分页（*）
+                        smartDisplay: true,
+                        showColumns: true, //是否显示所有的列（选择显示的列）
+                        showHeader: true, //是否显示列头。
+                        showFooter: false, //是否显示列脚。
+                        showRefresh: false, //是否显示刷新按钮
+                        columns: [
+                            {
+                                field:"InventoryBoxStatus", title: '操作', formatter: function (value, row, index) {
+                                    var html = [];
+                                    if (value == '1') {
+                                        html.push(
+                                            '<a onclick="app.boxOut(\'' + row.InventoryBoxId + '\',\'' + row.InventoryBoxNo + '\');" >出 库</a>'
+                                        );
+                                    }
+                                    return html;
+                                }
+                            },
+                            { field: 'InventoryBoxStatus', title: '料箱编号', formatter: InventoryBoxStatusFormatter },
+                            { field: 'InventoryBoxNo', title: '料箱编号' },
+                            { field: 'StorageRackName', title: '货架编号' },
+                            { field: 'MaterialNo', title: '物料编号' },
+                            { field: 'MaterialOnlyNo', title: '物料唯一编号' },
+                            { field: 'MaterialName', title: '物料名' },
+                            { field: 'Qty', title: '数量' },
+                            { field: 'ModifiedBy', title: '最后操作者' },
+                            { field: 'ModifiedDate', title: '最后操作日期' },
+                        ]
+                    });
+
+                });
+            },
+            methods: {
+                boxOutL: function (size) {
+                    var index = layer.confirm("您确定要出库" + (size == 1 ? "完整" : size + "宫格") + "料箱吗？", { btn: ["确定", "取消"] },
+                        function () {
+                        layer.close(index);
+
+                        var url = "/InventoryBox/DoAutoSelectBox";
+                        var data = {
+                            storeId: '@ViewBag.StoreId',
+                            requestSize: size
+                        };
+                        yui.$axiospostform(url, data)
+                            .then(function (response) {
+                                if (response.data.isSccuess) {
+                                    layer.msg(response.data.message, { icon: 1, time: 1000 });
+                                    return false;
+                                }
+                                else {
+                                    layer.msg(response.data.message, { icon: 5 });
+                                }
+                                layer.close(index);
+                            })
+                            .catch(function (error) {
+                                layer.close(index);
+                            });
+                    }, function () {
+
+                    });
+                },
+                boxOut: function (inventoryBoxId, inventoryBoxNo) {
+                    var index = layer.confirm("您确定要出库" + inventoryBoxNo + "料箱吗？", { btn: ["确定", "取消"] },
+                        function () {
+                        layer.close(index);
+
+                            var url = "/InventoryBox/DoInventoryBoxOut?storeId=@ViewBag.StoreId&inventoryBoxId=" + inventoryBoxId; 
+                        yui.$axiospostform(url)
+                            .then(function (response) {
+                                if (response.data.isSccuess) {
+                                    layer.msg(response.data.message, { icon: 1, time: 1000 });
+                                    window.close();
+                                    return;
+                                }
+                                else {
+                                    layer.msg(response.data.message, { icon: 5 });
+                                }
+                                layer.close(index);
+                            })
+                            .catch(function (error) {
+                                layer.close(index);
+                            });
+                    }, function () {
+
+                    });
+                }
+            }
+        });
+    </script>
+}

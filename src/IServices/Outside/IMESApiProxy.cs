@@ -12,12 +12,14 @@ namespace IServices.Outside
     {
 
         [HttpPost("WarehousingFinish")]
-        ITask<OutsideStockInResponseResult> WarehousingFinish(OutsideStockInResponse inStockInfo);
+        ITask<string> WarehousingFinish(string warehousingId, int warehousingEntryNumber, string warehousingEntryFinishList); 
 
         [HttpPost("WarehouseEntryFinish")]
-        ITask<OutsideStockOutResponseResult> WarehouseEntryFinish(OutsideStockOutResponse outStockInfo);
-
+        ITask<string> WarehouseEntryFinish(string warehouseEntryId,int warehouseEntryFinishCount,string warehouseEntryFinishList);
+ 
         [HttpPost("LogisticsFinish")]
-        ITask<OutsideLogisticsFinishResponseResult> LogisticsFinish(OutsideLogisticsFinishResponse arg);
+        ITask<string> LogisticsFinish(string LogisticsId, string LogisticsFinishTime, string WorkAreaName, string ErrorId,string ErrorInfo);
+
+          
     }
 }

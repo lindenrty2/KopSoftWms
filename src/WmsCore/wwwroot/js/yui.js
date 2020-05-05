@@ -300,6 +300,27 @@
             });
         },
         //layer
+        layerfullshow: function (title, url) {
+            if (title === null || title === '') {
+                title = false;
+            };
+            if (url === null || url === '') {
+                url = "404.html";
+            }; 
+            var w = ($(window).width() - 20);
+            var h = ($(window).height() - 20);
+            var idx = layer.open({
+                type: 2,
+                area: [w + 'px', h + 'px'],
+                fix: false,
+                maxmin: true,
+                shade: 0.4,
+                title: title,
+                content: url
+            });
+            layer.full(idx);
+            return idx;
+        },
         layershow: function (title, url, w, h) {
             if (title === null || title === '') {
                 title = false;

@@ -101,19 +101,19 @@ function StockOutStatusFormatter(value, row, index) {
 }
 
 function InventoryBoxStatusFormatter(value, row, index) {
-    if (value == 'None') {
+    if (value == 'None' || value == '0') {
         return "未部署";
     }
-    else if (value == 'InPosition') {
+    else if (value == 'InPosition' || value == '1') {
         return "在库";
     }
-    else if (value == 'Outing') {
+    else if (value == 'Outing' || value == '2') {
         return "出库中";
     }
-    else if (value == 'Outed') {
+    else if (value == 'Outed' || value == '3') {
         return "出库完成";
     }
-    else if (value == 'Backing') {
+    else if (value == 'Backing' || value == '4') {
         return "归库中";
     }
     else {

@@ -571,6 +571,7 @@ namespace Services.Outside
                     afterQty = inventory.Qty;
                     inventory.ModifiedDate = DateTime.Now;
                     inventory.ModifiedBy = this.UserDto.UserId;
+                    inventory.ModifiedUser = this.UserDto.UserName;
 
                     updatedInventories.Add(inventory);
                     string stockNo = null;
@@ -1590,6 +1591,48 @@ namespace Services.Outside
             }
         }
 
+        /// <summary>
+        /// 获取包含指定物料的料箱的列表
+        /// </summary>
+        /// <param name="materialId"></param>
+        /// <returns></returns>
+        public async Task<RouteData<Wms_InventoryBoxMaterialInfo[]>> GetInventoryBoxList(string materialNo)
+        {
+            try
+            {
 
+                List<Wms_InventoryBoxMaterialInfo> inventoryBoxs = await _sqlClient.Queryable<Wms_inventorybox,Wms_inventory>(
+                    (ib, i) => new object[] {
+                       JoinType.Left,ib.InventoryBoxId==i.InventoryBoxId , 
+                      }
+                    )
+                    .Where((ib,i) => i.MaterialNo == materialNo || i.MaterialOnlyId == materialNo)
+                    .Select((ib,i) => new Wms_InventoryBoxMaterialInfo
+                    {
+                        InventoryBoxId = ib.InventoryBoxId,
+                        InventoryBoxNo = ib.InventoryBoxNo,
+                        InventoryBoxStatus = ib.Status,
+                        StorageRackName = ib.StorageRackName,
+                        MaterialId = i.MaterialId.Value,
+                        MaterialNo = i.MaterialNo,
+                        MaterialOnlyId = i.MaterialOnlyId,
+                        MaterialName = i.MaterialName,
+                        Qty = i.Qty,
+                        Floor = ib.Floor.Value,
+                        Row = ib.Row.Value,
+                        Column = ib.Column.Value,
+                        Position = i.Position,
+                        ModifiedBy = i.ModifiedUser,
+                        ModifiedDate = i.ModifiedDate.Value.ToString("yyyy/MM/dd HH:mm:ss")
+                    })
+                    .ToListAsync();
+
+                return RouteData<Wms_InventoryBoxMaterialInfo[]>.From(inventoryBoxs.ToArray());
+            }
+            catch (Exception ex)
+            {
+                return RouteData<Wms_InventoryBoxMaterialInfo[]>.From(PubMessages.E4103_INVENTORYBOX_GET_FAIL, ex.Message);
+            }
+        }
     }
 }

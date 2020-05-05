@@ -304,7 +304,9 @@
                 onMaterialNoInputed: function (no) {
                     _self = this;
                     if (_self.InventoryBox == null) {
-                        layer.msg("请先扫码料箱", { icon: 2 });
+                        //layer.msg("请先扫码料箱", { icon: 2 });
+                        
+                        yui.layershow("选择料箱", "/Scan/InventoryBoxList?storeId=@ViewBag.StoreId&materialNo=" + no, 1000, 500);
                         return;
                     }
                     for (var i = 0; i < _self.tableData.length; i++) {

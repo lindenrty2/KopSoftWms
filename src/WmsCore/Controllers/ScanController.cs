@@ -10,23 +10,20 @@ using YL.NetCore.NetCoreApp;
 using YL.Utils.Pub;
 using YL.Utils.Extensions;
 using IServices;
+using WMSCore.Outside;
+using IServices.Outside;
+using Newtonsoft.Json;
 
 namespace WMSCore.Controllers
 {
 
     public class ScanController : BaseController
     {
-        IWms_stockinServices _stockinServices;
-        IWms_stockoutServices _stockoutServices;
         SqlSugarClient _client;
-        public ScanController(
-            IWms_stockinServices stockinServices,
-            IWms_stockoutServices stockoutServices,
+        public ScanController( 
             SqlSugarClient client
             )
-        {
-            _stockinServices = stockinServices;
-            _stockoutServices = stockoutServices;
+        { 
             _client = client;
         }
 
@@ -38,6 +35,20 @@ namespace WMSCore.Controllers
             ViewBag.ScanMode = mode;
             return View();
         }
+
+        [HttpGet]
+        public async Task<IActionResult> InventoryBoxList(long storeId,string materialNo)
+        {
+            IWMSOperationApiAccessor accessor = WMSApiManager.GetOperationApiAccessor(storeId.ToString(), _client, this.UserDto);
+
+            ViewBag.StoreId = storeId;
+            ViewBag.MaterialNo = materialNo; 
+
+            RouteData<Wms_InventoryBoxMaterialInfo[]> result = await accessor.GetInventoryBoxList(materialNo);
+            ViewBag.Data = JsonConvert.SerializeObject(result.Data);
+            return View();
+        }
+         
 
     }
 }
