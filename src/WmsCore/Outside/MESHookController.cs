@@ -229,8 +229,8 @@ namespace WMSCore.Outside
             String WarehouseEntryTime,
             String ProductionPlanId,
             String BatchPlanId,
-            String WorkAreaName,
             String WorkStationId,
+            String WorkAreaName,
             String SuppliesKinds,
             String SuppliesInfoList)
         {
