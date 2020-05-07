@@ -58,20 +58,20 @@ namespace WMSCore.Outside
 
         [HttpPost("Warehousing")]
         //public OutsideStockInResult Warehousing([FromBody]OutsideStockInDto data)
-        public string Warehousing(String Warehousingid, String Warehousingtype, String Warehousingtime, String Productionplanid, String Batchplanid, String Workareaname, String Supplieskinds, String Suppliesinfolist)
+        public string Warehousing(String WarehousingId, String WarehousingType, String WarehousingTime, String ProductionPlanId, String BatchPlanId, String WorkAreaName, String SuppliesKinds, String SuppliesInfoList)
         {
-            
+
             try
             {
                 OutsideStockInDto data = OutsideStockInDto.Create(
-                    Guard.GuardEmpty(() => Warehousingid),
-                    Guard.GuardEmpty(() => Warehousingtype),
-                    Guard.GuardEmpty(() => Warehousingtime), 
-                    Guard.GuardEmpty(() => Productionplanid),
-                    Guard.GuardEmpty(() => Batchplanid), 
-                    Guard.GuardEmpty(() => Workareaname), 
-                    Guard.GuardInteger(() => Supplieskinds), 
-                    Guard.GuardEmpty(() => Suppliesinfolist)
+                    Guard.GuardEmpty(() => WarehousingId),
+                    Guard.GuardEmpty(() => WarehousingType),
+                    Guard.GuardEmpty(() => WarehousingTime),
+                    Guard.GuardEmpty(() => ProductionPlanId),
+                    Guard.GuardEmpty(() => BatchPlanId),
+                    Guard.GuardEmpty(() => WorkAreaName),
+                    Guard.GuardInteger(() => SuppliesKinds),
+                    Guard.GuardEmpty(() => SuppliesInfoList)
                 );
 
                 _sqlClient.BeginTran();
@@ -124,20 +124,20 @@ namespace WMSCore.Outside
                     return JsonConvert.SerializeObject(result);
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                _sqlClient.RollbackTran(); 
+                _sqlClient.RollbackTran();
                 OutsideStockInResult result = new OutsideStockInResult()
                 {
                     Success = true,
                     ErrorId = "-1",
-                    ErrorInfo = ex.ToString(),
-                    WarehousingId = Warehousingid,
-                    WarehousingTime = Warehousingtime
+                    ErrorInfo = ex.ToString()
+                    //  WarehousingId = Warehousingid,
+                    //  WarehousingTime = Warehousingtime
                 };
                 return JsonConvert.SerializeObject(result);
             }
-            
+
         }
 
         private RouteData CreateWMSStockin(Wms_mestask mesTask, OutsideMaterialDto[] suppliesInfoList)
@@ -182,9 +182,9 @@ namespace WMSCore.Outside
                 });
             }
 
-            List<RouteData<OutsideStockInRequestResult[]>> result = new List<RouteData<OutsideStockInRequestResult[]>>();  
+            List<RouteData<OutsideStockInRequestResult[]>> result = new List<RouteData<OutsideStockInRequestResult[]>>();
             foreach (KeyValuePair<long, List<Wms_MaterialInventoryDto>> keyValue in map)
-            { 
+            {
                 try
                 {
                     IWMSBaseApiAccessor proxy = WMSApiManager.GetBaseApiAccessor(keyValue.Key.ToString(), _sqlClient);
@@ -209,9 +209,9 @@ namespace WMSCore.Outside
                 catch (Exception ex)
                 {
                     //TODO Log
-                } 
+                }
             }
-             
+
             return new RouteData();
 
         }
@@ -224,29 +224,42 @@ namespace WMSCore.Outside
         /// <returns></returns>
         [HttpPost("WarehouseEntry")]
         //public OutsideStockOutResult WarehouseEntry([FromBody]OutsideStockOutDto data)
-        public string WarehouseEntry(String warehouseEntryid, 
-            String warehouseEntryType,
-            String warehouseEntryTime, 
-            String productionPlanId, 
-            String batchPlanId,
-            String workStationId, 
-            String workAreaName,
-            String suppliesKinds,
-            String suppliesInfoList)
+        public string WarehouseEntry(String WarehouseEntryId,
+            String WarehouseEntryType,
+            String WarehouseEntryTime,
+            String ProductionPlanId,
+            String BatchPlanId,
+            String WorkAreaName,
+            String WorkStationId,
+            String SuppliesKinds,
+            String SuppliesInfoList)
         {
             try
             {
+                OutsideStockOutResult result1 = new OutsideStockOutResult()
+                {
+                    ErrorId = "",
+                    ErrorInfo = "",
+                    Success = true,
+                    WarehouseEntryId = WarehouseEntryId
+                };
+                return JsonConvert.SerializeObject(result1);
+
+
+
                 OutsideStockOutDto data = OutsideStockOutDto.Create(
-                    Guard.GuardEmpty(() => warehouseEntryid),
-                    Guard.GuardEmpty(() => warehouseEntryType),
-                    Guard.GuardEmpty(() => warehouseEntryTime),
-                    Guard.GuardEmpty(() => productionPlanId),
-                    Guard.GuardEmpty(() => batchPlanId),
-                    Guard.GuardEmpty(() => workStationId),
-                    Guard.GuardEmpty(() => workAreaName),
-                    Guard.GuardInteger(() => suppliesKinds),
-                    Guard.GuardEmpty(() => suppliesInfoList)
-                );
+                       Guard.GuardEmpty(() => WarehouseEntryId),
+                       Guard.GuardEmpty(() => WarehouseEntryType),
+                       Guard.GuardEmpty(() => WarehouseEntryTime),
+                       Guard.GuardEmpty(() => ProductionPlanId),
+                       Guard.GuardEmpty(() => BatchPlanId),
+                       Guard.GuardEmpty(() => WorkAreaName),
+                       Guard.GuardEmpty(() => WorkStationId),
+                       Guard.GuardInteger(() => SuppliesKinds),
+                       Guard.GuardEmpty(() => SuppliesInfoList)
+                   );
+                 
+
                 _sqlClient.BeginTran();
                 string jsonSuppliesInfoStr = data.SuppliesInfoList;
                 OutsideMaterialDto[] suppliesInfos = JsonConvert.DeserializeObject<OutsideMaterialDto[]>(jsonSuppliesInfoStr);
@@ -267,7 +280,7 @@ namespace WMSCore.Outside
                     NotifyStatus = MESTaskNotifyStatus.Requested, //已接收
                     CreateDate = DateTime.Now
                 };
-                if(_sqlClient.Insertable(mesTask).ExecuteCommand() == 0)
+                if (_sqlClient.Insertable(mesTask).ExecuteCommand() == 0)
                 {
                     throw new Exception("mesTask更新异常");
                 }
@@ -308,7 +321,7 @@ namespace WMSCore.Outside
                     Success = true,
                     ErrorId = "-1",
                     ErrorInfo = ex.ToString(),
-                    WarehouseEntryId = warehouseEntryid,
+                    //WarehouseEntryId = warehouseEntryid,
                     //WarehouseEntryTime = data.WarehouseEntryTime
                 };
                 return JsonConvert.SerializeObject(result);
@@ -358,7 +371,7 @@ namespace WMSCore.Outside
             {
                 try
                 {
-                    IWMSBaseApiAccessor proxy = WMSApiManager.GetBaseApiAccessor(keyValue.Key.ToString(),_sqlClient);
+                    IWMSBaseApiAccessor proxy = WMSApiManager.GetBaseApiAccessor(keyValue.Key.ToString(), _sqlClient);
                     OutsideStockOutRequestDto request = new OutsideStockOutRequestDto()
                     {
                         MesTaskId = mesTask.MesTaskId,
@@ -378,7 +391,7 @@ namespace WMSCore.Outside
                         result.Add(data);
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     //TODO Log
                 }
@@ -396,22 +409,23 @@ namespace WMSCore.Outside
         /// <returns></returns>
         [HttpGet("MaterialStockEnquiry")]
         //public OutsideMaterialStockEnquiryResult MaterialStockEnquiry(OutsideMaterialStockEnquiryArg arg)
-        public string MaterialStockEnquiry(String suppliesid, String suppliesname, String suppliestype, String suppliesunit)
+        public string MaterialStockEnquiry(String SuppliesId, String SuppliesName, String SuppliesType, String SuppliesUnit)
         {
             //TODO 需要其他库的查询
             try
             {
-                OutsideMaterialStockEnquiryArg.Create(
-                    Guard.GuardEmpty(() => suppliesid),
-                    Guard.GuardEmpty(() => suppliesname),
-                    Guard.GuardEmpty(() => suppliestype),
-                    Guard.GuardEmpty(() => suppliesunit));
+                //   OutsideMaterialStockEnquiryArg.Create(
+                //       Guard.GuardEmpty(() => SuppliesId),
+                //       Guard.GuardEmpty(() => SuppliesName),
+                //       Guard.GuardEmpty(() => SuppliesType),
+                //       Guard.GuardEmpty(() => SuppliesUnit));
                 var inventories = _sqlClient.Queryable<Wms_inventory, Wms_inventorybox, Wms_warehouse>(
                     (i, ib, w) => new object[] {
                    JoinType.Left,i.InventoryBoxId == ib.InventoryBoxId,
                    JoinType.Left,ib.WarehouseId == w.WarehouseId
                     })
-                    .Where(x => x.MaterialNo == suppliesid || x.MaterialOnlyId == suppliesid)
+                    //.Where(x => x.MaterialNo == SuppliesId || x.MaterialOnlyId == SuppliesId)
+                    .Where((i, ib, w) => i.MaterialNo == SuppliesId || i.MaterialOnlyId == SuppliesId)
                     .Select((i, ib, w) => new
                     {
                         i.InventoryId,
@@ -447,14 +461,14 @@ namespace WMSCore.Outside
                 }
                 OutsideMaterialStockEnquiryResult result = new OutsideMaterialStockEnquiryResult();
                 result.Success = true;
-                result.SuppliesId = suppliesid;
-                result.SuppliesName = suppliesname;
-                result.SuppliesType = suppliestype;
-                result.SuppliesUnit = suppliesunit;
+                result.SuppliesId = SuppliesId;
+                result.SuppliesName = SuppliesName;
+                result.SuppliesType = SuppliesType;
+                result.SuppliesUnit = SuppliesUnit;
                 result.MaterialStockInfo = items.ToArray();
                 return JsonConvert.SerializeObject(result);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 OutsideMaterialStockEnquiryResult result = new OutsideMaterialStockEnquiryResult()
                 {
@@ -470,9 +484,11 @@ namespace WMSCore.Outside
         /// </summary>
         [HttpPost("LogisticsControl")]
         //public OutsideLogisticsControlResult LogisticsControl([FromBody]OutsideLogisticsControlArg arg)
-        public string LogisticsControl(String startpoint, String destination)
+        public string LogisticsControl(String LogisticsId, String StartPoint, String Destination)
         {
-            var result = WCSApiAccessor.Instance.LogisticsControl(OutsideLogisticsControlArg.Create(startpoint, destination)).Result;
+            //var result = WCSApiAccessor.Instance.LogisticsControl(OutsideLogisticsControlArg.Create(LogisticsId,StartPoint, Destination)).Result;
+
+            var result = new OutsideLogisticsControlResult() { EquipmentId = "1", EquipmentName = "EquipmentName-1" };
             return JsonConvert.SerializeObject(result);
         }
 
@@ -481,9 +497,10 @@ namespace WMSCore.Outside
         /// </summary>
         [HttpGet("LogisticsEnquiry")]
         //public OutsideLogisticsEnquiryResult LogisticsEnquiry(OutsideLogisticsEnquiryArg arg)
-        public string LogisticsEnquiry(String equipmentid, String equipmentname)
+        public string LogisticsEnquiry(String LogisticsId, String EquipmentId, String EquipmentName)
         {
-            var result = WCSApiAccessor.Instance.LogisticsEnquiry(OutsideLogisticsEnquiryArg.Create(equipmentid, equipmentname)).Result;
+            // var result = WCSApiAccessor.Instance.LogisticsEnquiry(OutsideLogisticsEnquiryArg.Create(LogisticsId,EquipmentId, EquipmentName)).Result;
+            var result = new OutsideLogisticsEnquiryArg() { LogisticsId = LogisticsId, EquipmentId = "1", EquipmentName = "EquipmentName-1" };
             return JsonConvert.SerializeObject(result);
         }
 
@@ -492,10 +509,10 @@ namespace WMSCore.Outside
         /// </summary>
         [HttpGet("WarehousingStatusEnquiry")]
         //public OutsideWarehousingStatusEnquiryResult WarehousingStatusEnquiry(OutsideWarehousingStatusEnquiryArg arg)
-        public string WarehousingStatusEnquiry(string warehousingId, string warehousingType) 
+        public string WarehousingStatusEnquiry(string WarehousingId, string WarehousingType)
         {
-            Wms_mestask mesTask = _sqlClient.Queryable<Wms_mestask>().First(x => x.WarehousingId == warehousingId && x.WarehousingType == warehousingType);
-            if(mesTask == null)
+            Wms_mestask mesTask = _sqlClient.Queryable<Wms_mestask>().First(x => x.WarehousingId == WarehousingId && x.WarehousingType == WarehousingType);
+            if (mesTask == null)
             {
                 OutsideWarehousingStatusEnquiryResult error = new OutsideWarehousingStatusEnquiryResult()
                 {
@@ -506,12 +523,12 @@ namespace WMSCore.Outside
                 return JsonConvert.SerializeObject(error);
             }
 
-            var stockinList = _sqlClient.Queryable<Wms_stockin,Wms_warehouse>(
+            var stockinList = _sqlClient.Queryable<Wms_stockin, Wms_warehouse>(
                 (s, w) => new object[] {
                    JoinType.Left,s.WarehouseId==w.WarehouseId
                  })
-                 .Where((s, w) => s.MesTaskId == mesTask.MesTaskId )
-                 .Select((s,w) => new {
+                 .Where((s, w) => s.MesTaskId == mesTask.MesTaskId)
+                 .Select((s, w) => new {
                      s.WarehouseId,
                      w.WarehouseName,
                      s.StockInId,
@@ -522,23 +539,23 @@ namespace WMSCore.Outside
                 .ToList();
 
             List<WarehousingStatusInfo> statusInfoList = new List<WarehousingStatusInfo>();
-            foreach(var stockin in stockinList)
+            foreach (var stockin in stockinList)
             {
-                var stockinDetailList = _sqlClient.Queryable<Wms_stockindetail,Wms_stockindetail_box,Wms_inventorybox,Wms_material>(
-                   (sid,sidb,ib,m) =>  new object[] {
+                var stockinDetailList = _sqlClient.Queryable<Wms_stockindetail, Wms_stockindetail_box, Wms_inventorybox, Wms_material>(
+                   (sid, sidb, ib, m) => new object[] {
                        JoinType.Left,sid.StockInDetailId == sidb.StockinDetailId,
                        JoinType.Left,sidb.InventoryBoxId == ib.InventoryBoxId,
                        JoinType.Left,sid.MaterialId == m.MaterialId,
                    }
                 )
                 .Where((sid, sidb, ib, m) => sid.StockInId == stockin.StockInId)
-                .Select( (sid,sidb,ib, m) => new {
-                    sid.WarehouseId, 
+                .Select((sid, sidb, ib, m) => new {
+                    sid.WarehouseId,
                     sid.MaterialId,
                     m.MaterialNo,
                     m.MaterialOnlyId,
                     sid.StockInDetailId,
-                    sidb.InventoryBoxId, 
+                    sidb.InventoryBoxId,
                     ib.InventoryBoxNo,
                     sidb.Position,
                     sidb.Qty,
@@ -548,7 +565,7 @@ namespace WMSCore.Outside
                     sid.ModifiedBy,
                     sid.ModifiedDate
                 }).MergeTable().ToList();
-                foreach(var detail in stockinDetailList)
+                foreach (var detail in stockinDetailList)
                 {
                     statusInfoList.Add(new WarehousingStatusInfo()
                     {
@@ -572,13 +589,13 @@ namespace WMSCore.Outside
                 Success = "true",
                 ErrorId = null,
                 ErrorInfo = null,
-                WarehousingId = warehousingId,
-                WarehousingType = warehousingType,
+                //WarehousingId = WarehousingId,
+                //WarehousingType = warehousingType,
                 WarehousingStatusInfoList = JsonConvert.SerializeObject(statusInfoList.ToArray()),
                 IsNormalWarehousing = mesTask.WorkStatus == MESTaskWorkStatus.WorkComplated,
             };
             return JsonConvert.SerializeObject(result);
-             
+
         }
 
         /// <summary>
@@ -586,10 +603,10 @@ namespace WMSCore.Outside
         /// </summary>
         [HttpGet("WarehouseEntryStatusEnquiry")]
         //public OutsideWarehouseEntryStatusEnquiryResult WarehouseEntryStatusEnquiry(OutsideWarehouseEntryStatusEnquiryArg arg)
-        public string WarehouseEntryStatusEnquiry(string warehouseEntryId, string warehouseEntryType)
+        public string WarehouseEntryStatusEnquiry(string WarehouseEntryId, string WarehouseEntryType)
         {
 
-            Wms_mestask mesTask = _sqlClient.Queryable<Wms_mestask>().First(x => x.WarehousingId == warehouseEntryId && x.WarehousingType == warehouseEntryType);
+            Wms_mestask mesTask = _sqlClient.Queryable<Wms_mestask>().First(x => x.WarehousingId == WarehouseEntryId && x.WarehousingType == WarehouseEntryType);
             if (mesTask == null)
             {
                 OutsideWarehouseEntryStatusEnquiryResult error = new OutsideWarehouseEntryStatusEnquiryResult()
@@ -654,7 +671,7 @@ namespace WMSCore.Outside
                         Position = Convert.ToString(detail.Position),
                         StorageRackPosition = "",
                         SuppliesId = string.IsNullOrWhiteSpace(detail.MaterialOnlyId) ? detail.MaterialId.ToString() : detail.MaterialOnlyId.ToString(),
-                        RefreshStock = 0, 
+                        RefreshStock = 0,
                         WarehousingStep = ((StockInStatus)detail.Status).ToString(),
                         WarehousingFinishTime = detail.ModifiedDate?.ToString("yyyyMMddHHmmss")
                     });
@@ -666,7 +683,7 @@ namespace WMSCore.Outside
                 Success = "true",
                 ErrorId = null,
                 ErrorInfo = null,
-                WarehouseEntryId = warehouseEntryId,
+                //WarehouseEntryId = arg.WarehouseEntryId,
                 //WarehouseEntryType = arg.WarehouseEntryType,
                 WarehouseEntryStatusInfoList = JsonConvert.SerializeObject(statusInfoList.ToArray()),
                 IsNormalWarehouseEntry = mesTask.WorkStatus == MESTaskWorkStatus.WorkComplated,
@@ -694,7 +711,7 @@ namespace WMSCore.Outside
         /// <returns></returns>
         [OperationContract]
         //OutsideStockInResult Warehousing(OutsideStockInDto data);
-        string Warehousing(String warehousingid, String warehousingtype, String warehousingtime, String productionplanid, String batchplanid, String workareaname, String supplieskinds, String suppliesinfolist);
+        string Warehousing(String WarehousingId, String WarehousingType, String WarehousingTime, String ProductionPlanId, String BatchPlanId, String WorkAreaName, String SuppliesKinds, String SuppliesInfoList);
 
         /// <summary>
         /// 出库
@@ -703,7 +720,7 @@ namespace WMSCore.Outside
         /// <returns></returns>
         [OperationContract]
         //OutsideStockOutResult WarehouseEntry(OutsideStockOutDto data);
-        string WarehouseEntry(String warehouseEntryid, String warehouseEntryType, String warehouseEntryTime, String productionPlanId, String batchPlanId, String workStationId, String workAreaName, String suppliesKinds, String suppliesInfoList);
+        string WarehouseEntry(String WarehouseEntryId, String WarehouseEntryType, String WarehouseEntryTime, String ProductionPlanId, String BatchPlanId, String WorkStationId, String WorkAreaName, String SuppliesKinds, String SuppliesInfoList);
 
         /// <summary>
         /// 物料库存查询
@@ -712,21 +729,21 @@ namespace WMSCore.Outside
         /// <returns></returns>
         [OperationContract]
         //OutsideMaterialStockEnquiryResult MaterialStockEnquiry(OutsideMaterialStockEnquiryArg arg);
-        string MaterialStockEnquiry(String suppliesid, String suppliesname, String suppliestype, String suppliesunit);
+        string MaterialStockEnquiry(String SuppliesId, String SuppliesName, String SuppliesType, String SuppliesUnit);
 
         /// <summary>
         /// 物流控制
         /// </summary>
         [OperationContract]
         //OutsideLogisticsControlResult LogisticsControl(OutsideLogisticsControlArg arg);
-        string LogisticsControl(String startpoint, String destination);
+        string LogisticsControl(String LogisticsId, String StartPoint, String Destination);
 
         /// <summary>
         /// 物流（状态）查询
         /// </summary>
         [OperationContract]
         //OutsideLogisticsEnquiryResult LogisticsEnquiry(OutsideLogisticsEnquiryArg arg);
-        string LogisticsEnquiry(String equipmentid, String equipmentname);
+        string LogisticsEnquiry(String LogisticsId, String EquipmentId, String EquipmentName);
 
         /// <summary>
         /// 入库状态查询

@@ -29,9 +29,15 @@ namespace YL.Core.Dto
         /// </summary>
         public string SuppliesUnit { get; set; }
 
-        public static void Create(string suppliesid, string suppliesname, string suppliestype, string suppliesunit)
+        public static OutsideMaterialStockEnquiryArg Create(string suppliesid, string suppliesname, string suppliestype, string suppliesunit)
         {
-            throw new NotImplementedException();
+            return new OutsideMaterialStockEnquiryArg()
+            {
+                SuppliesId = suppliesid,
+                SuppliesName = suppliesname,
+                SuppliesType = suppliestype,
+                SuppliesUnit = suppliesunit
+            };
         }
     }
 

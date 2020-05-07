@@ -25,7 +25,7 @@ namespace WMSCore.Outside
             }
         }
 
-        private MESService.IService _apiProxy = null;
+        private MESService.MyMethodImpl _apiProxy = null;
         private MESApiAccessor()
         {
             //HttpApiConfig config = new HttpApiConfig();
@@ -35,7 +35,7 @@ namespace WMSCore.Outside
             var binding = new BasicHttpBinding();
             binding.SendTimeout = new TimeSpan(1, 0, 0);
             binding.ReceiveTimeout = new TimeSpan(1, 0, 0);
-            var factory = new ChannelFactory<MESService.IService>(binding, new EndpointAddress(Host));
+            var factory = new ChannelFactory<MESService.MyMethodImpl>(binding, new EndpointAddress(Host));
             _apiProxy = factory.CreateChannel();
              
         }
@@ -47,8 +47,10 @@ namespace WMSCore.Outside
         /// <returns></returns>
         public async Task<OutsideStockInResponseResult> WarehousingFinish(OutsideStockInResponse inStockInfo)
         {
-            string reuslt = await _apiProxy.WarehousingFinishAsync(inStockInfo.WarehousingId, inStockInfo.WarehousingEntryNumber, inStockInfo.WarehousingEntryFinishList);
-            return JsonConvert.DeserializeObject<OutsideStockInResponseResult>(reuslt);
+            //string reuslt = await _apiProxy.WarehousingFinishAsync(
+            //    inStockInfo.WarehousingId, inStockInfo.WarehousingEntryNumber, inStockInfo.WarehousingEntryFinishList);
+            //return JsonConvert.DeserializeObject<OutsideStockInResponseResult>(reuslt);
+            return new OutsideStockInResponseResult();
         }
 
         /// <summary>
@@ -58,8 +60,10 @@ namespace WMSCore.Outside
         /// <returns></returns>
         public async Task<OutsideStockOutResponseResult> WarehouseEntryFinish(OutsideStockOutResponse outStockInfo)
         {
-            string result = await _apiProxy.WarehouseEntryFinishAsync(outStockInfo.WarehouseEntryId, outStockInfo.WarehouseEntryFinishCount, outStockInfo.WarehouseEntryFinishList);
-            return JsonConvert.DeserializeObject<OutsideStockOutResponseResult>(result);
+            //string result = await _apiProxy.WarehouseEntryFinishAsync(
+            //    outStockInfo.WarehouseEntryId, outStockInfo.WarehouseEntryFinishCount, outStockInfo.WarehouseEntryFinishList);
+            //return JsonConvert.DeserializeObject<OutsideStockOutResponseResult>(result);
+            return new OutsideStockOutResponseResult();
         }
 
         /// <summary>
@@ -67,8 +71,9 @@ namespace WMSCore.Outside
         /// </summary>
         public async Task<OutsideLogisticsFinishResponseResult> LogisticsFinish(OutsideLogisticsFinishResponse arg)
         {
-            string result = await _apiProxy.LogisticsFinishAsync(arg.LogisticsId, arg.LogisticsFinishTime, arg.WorkAreaName, arg.ErrorId, arg.ErrorInfo);
-            return JsonConvert.DeserializeObject<OutsideLogisticsFinishResponseResult>(result);
+            //string result = await _apiProxy.LogisticsFinishAsync(arg.LogisticsId, arg.LogisticsFinishTime, arg.WorkAreaName, arg.ErrorId, arg.ErrorInfo);
+            //return JsonConvert.DeserializeObject<OutsideLogisticsFinishResponseResult>(result);
+            return new OutsideLogisticsFinishResponseResult();
         }
          
     }
