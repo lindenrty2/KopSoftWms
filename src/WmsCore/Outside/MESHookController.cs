@@ -58,20 +58,20 @@ namespace WMSCore.Outside
 
         [HttpPost("Warehousing")]
         //public OutsideStockInResult Warehousing([FromBody]OutsideStockInDto data)
-        public string Warehousing(String warehousingid, String warehousingtype, String warehousingtime, String productionplanid, String batchplanid, String workareaname, String supplieskinds, String suppliesinfolist)
+        public string Warehousing(String Warehousingid, String Warehousingtype, String Warehousingtime, String Productionplanid, String Batchplanid, String Workareaname, String Supplieskinds, String Suppliesinfolist)
         {
             
             try
             {
                 OutsideStockInDto data = OutsideStockInDto.Create(
-                    Guard.GuardEmpty(() => warehousingid),
-                    Guard.GuardEmpty(() => warehousingtype),
-                    Guard.GuardEmpty(() => warehousingtime), 
-                    Guard.GuardEmpty(() => productionplanid),
-                    Guard.GuardEmpty(() => batchplanid), 
-                    Guard.GuardEmpty(() => workareaname), 
-                    Guard.GuardInteger(() => supplieskinds), 
-                    Guard.GuardEmpty(() => suppliesinfolist)
+                    Guard.GuardEmpty(() => Warehousingid),
+                    Guard.GuardEmpty(() => Warehousingtype),
+                    Guard.GuardEmpty(() => Warehousingtime), 
+                    Guard.GuardEmpty(() => Productionplanid),
+                    Guard.GuardEmpty(() => Batchplanid), 
+                    Guard.GuardEmpty(() => Workareaname), 
+                    Guard.GuardInteger(() => Supplieskinds), 
+                    Guard.GuardEmpty(() => Suppliesinfolist)
                 );
 
                 _sqlClient.BeginTran();
@@ -132,8 +132,8 @@ namespace WMSCore.Outside
                     Success = true,
                     ErrorId = "-1",
                     ErrorInfo = ex.ToString(),
-                    WarehousingId = warehousingid,
-                    WarehousingTime = warehousingtime
+                    WarehousingId = Warehousingid,
+                    WarehousingTime = Warehousingtime
                 };
                 return JsonConvert.SerializeObject(result);
             }
