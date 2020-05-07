@@ -22,7 +22,7 @@ namespace YL.Core.Entity
         /// <summary>
         /// 单号
         /// </summary>
-        [SugarColumn(Length = 30, DefaultValue = "", IsNullable = false)]
+        [SugarColumn(Length = 80, DefaultValue = "", IsNullable = false)]
         public string WarehousingId { get; set; } = "";
         /// <summary>
         /// 入库类型
@@ -37,17 +37,17 @@ namespace YL.Core.Entity
         /// <summary>
         /// 生产令号
         /// </summary>
-        [SugarColumn(Length = 30, DefaultValue = "", IsNullable = false)]
+        [SugarColumn(Length = 80, DefaultValue = "", IsNullable = false)]
         public string ProductionPlanId { get; set; }
         /// <summary>
         /// 批次号
         /// </summary>
-        [SugarColumn(Length = 50, DefaultValue = "", IsNullable = false)]
+        [SugarColumn(Length = 80, DefaultValue = "", IsNullable = false)]
         public string BatchPlanId { get; set; }
         /// <summary>
         /// 作业区
         /// </summary>
-        [SugarColumn(Length = 50, DefaultValue = "", IsNullable = false)]
+        [SugarColumn(Length = 80, DefaultValue = "", IsNullable = false)]
         public string WorkAreaName { get; set; }
         /// <summary>
         /// 物料种类
