@@ -229,8 +229,8 @@ namespace WMSCore.Outside
             String WarehouseEntryTime,
             String ProductionPlanId,
             String BatchPlanId,
-            String WorkStationId,
             String WorkAreaName,
+            String WorkStationId,
             String SuppliesKinds,
             String SuppliesInfoList)
         {
@@ -709,7 +709,7 @@ namespace WMSCore.Outside
         /// <returns></returns>
         [OperationContract]
         //OutsideStockOutResult WarehouseEntry(OutsideStockOutDto data);
-        string WarehouseEntry(String WarehouseEntryId, String WarehouseEntryType, String WarehouseEntryTime, String ProductionPlanId, String BatchPlanId, String WorkStationId, String WorkAreaName, String SuppliesKinds, String SuppliesInfoList);
+        string WarehouseEntry(String WarehouseEntryId, String WarehouseEntryType, String WarehouseEntryTime, String ProductionPlanId, String BatchPlanId, String WorkAreaName, String WorkStationId,  String SuppliesKinds, String SuppliesInfoList);
 
         /// <summary>
         /// 物料库存查询

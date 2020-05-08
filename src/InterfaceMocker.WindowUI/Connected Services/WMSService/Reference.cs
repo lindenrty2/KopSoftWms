@@ -23,7 +23,7 @@ namespace WMSService
         System.Threading.Tasks.Task<string> WarehousingAsync(string WarehousingId, string WarehousingType, string WarehousingTime, string ProductionPlanId, string BatchPlanId, string WorkAreaName, string SuppliesKinds, string SuppliesInfoList);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IMESHookController/WarehouseEntry", ReplyAction="http://tempuri.org/IMESHookController/WarehouseEntryResponse")]
-        System.Threading.Tasks.Task<string> WarehouseEntryAsync(string WarehouseEntryId, string WarehouseEntryType, string WarehouseEntryTime, string ProductionPlanId, string BatchPlanId, string WorkStationId, string WorkAreaName, string SuppliesKinds, string SuppliesInfoList);
+        System.Threading.Tasks.Task<string> WarehouseEntryAsync(string WarehouseEntryId, string WarehouseEntryType, string WarehouseEntryTime, string ProductionPlanId, string BatchPlanId, string WorkAreaName, string WorkStationId, string SuppliesKinds, string SuppliesInfoList);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IMESHookController/MaterialStockEnquiry", ReplyAction="http://tempuri.org/IMESHookController/MaterialStockEnquiryResponse")]
         System.Threading.Tasks.Task<string> MaterialStockEnquiryAsync(string SuppliesId, string SuppliesName, string SuppliesType, string SuppliesUnit);
@@ -101,9 +101,9 @@ namespace WMSService
             return base.Channel.WarehousingAsync(WarehousingId, WarehousingType, WarehousingTime, ProductionPlanId, BatchPlanId, WorkAreaName, SuppliesKinds, SuppliesInfoList);
         }
         
-        public System.Threading.Tasks.Task<string> WarehouseEntryAsync(string WarehouseEntryId, string WarehouseEntryType, string WarehouseEntryTime, string ProductionPlanId, string BatchPlanId, string WorkStationId, string WorkAreaName, string SuppliesKinds, string SuppliesInfoList)
+        public System.Threading.Tasks.Task<string> WarehouseEntryAsync(string WarehouseEntryId, string WarehouseEntryType, string WarehouseEntryTime, string ProductionPlanId, string BatchPlanId, string WorkAreaName, string WorkStationId, string SuppliesKinds, string SuppliesInfoList)
         {
-            return base.Channel.WarehouseEntryAsync(WarehouseEntryId, WarehouseEntryType, WarehouseEntryTime, ProductionPlanId, BatchPlanId, WorkStationId, WorkAreaName, SuppliesKinds, SuppliesInfoList);
+            return base.Channel.WarehouseEntryAsync(WarehouseEntryId, WarehouseEntryType, WarehouseEntryTime, ProductionPlanId, BatchPlanId, WorkAreaName, WorkStationId, SuppliesKinds, SuppliesInfoList);
         }
         
         public System.Threading.Tasks.Task<string> MaterialStockEnquiryAsync(string SuppliesId, string SuppliesName, string SuppliesType, string SuppliesUnit)
