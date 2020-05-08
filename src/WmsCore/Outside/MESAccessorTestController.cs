@@ -59,15 +59,9 @@ namespace WMSCore.Outside
             //string reuslt = await _apiProxy.WarehousingFinishAsync(inStockInfo.WarehousingId, inStockInfo.WarehousingEntryNumber, inStockInfo.WarehousingEntryFinishList);
             var result = await _apiProxy.WarehousingFinishAsync(
                 new MESService.WarehousingFinishRequest() {
-                    arg0 = "0",
-                    arg1 = "1",
-                    arg2 = "2",
-                    arg3 = "3",
-                    arg4 = "4",
-                    arg5 = "5",
-                    arg6 = "6",
-                    arg7 = "7",
-                    arg8 = "8"
+                    arg0 = inStockInfo.WarehousingId,
+                    arg1 = inStockInfo.WarehousingEntryNumber.ToString(),
+                    arg2 = inStockInfo.WarehousingEntryFinishList, 
                 }
             );
             return JsonConvert.SerializeObject(result);
@@ -101,13 +95,9 @@ namespace WMSCore.Outside
             //string result = await _apiProxy.WarehouseEntryFinishAsync(outStockInfo.WarehouseEntryId, outStockInfo.WarehouseEntryFinishCount, outStockInfo.WarehouseEntryFinishList);
             var result = await _apiProxy.WarehousingEntryFinishAsync(new MESService.WarehousingEntryFinishRequest()
             {
-                arg0 = "0",
-                arg1 = "1",
-                arg2 = "2",
-                arg3 = "3",
-                arg4 = "4",
-                arg5 = "5",
-                arg6 = "6"
+                arg0 = outStockInfo.WarehouseEntryId,
+                arg1 = outStockInfo.WarehouseEntryFinishCount.ToString(),
+                arg2 = outStockInfo.WarehouseEntryFinishList
             });
             return JsonConvert.SerializeObject(result);
         }

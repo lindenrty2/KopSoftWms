@@ -16,33 +16,33 @@ namespace MESService
     public interface MyMethodImpl
     {
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://webservice.mbfw.com/MyMethodImpl/testoneRequest", ReplyAction="http://webservice.mbfw.com/MyMethodImpl/testoneResponse")]
-        [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
-        System.Threading.Tasks.Task<MESService.testoneResponse> testoneAsync(MESService.testoneRequest request);
-        
         [System.ServiceModel.OperationContractAttribute(Action="http://webservice.mbfw.com/MyMethodImpl/LogisticsFinishRequest", ReplyAction="http://webservice.mbfw.com/MyMethodImpl/LogisticsFinishResponse")]
         [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
         System.Threading.Tasks.Task<MESService.LogisticsFinishResponse> LogisticsFinishAsync(MESService.LogisticsFinishRequest request);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://webservice.mbfw.com/MyMethodImpl/getInLibriaryServiceRequest", ReplyAction="http://webservice.mbfw.com/MyMethodImpl/getInLibriaryServiceResponse")]
+        [System.ServiceModel.OperationContractAttribute(Action="http://webservice.mbfw.com/MyMethodImpl/testoneRequest", ReplyAction="http://webservice.mbfw.com/MyMethodImpl/testoneResponse")]
         [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
-        System.Threading.Tasks.Task<MESService.getInLibriaryServiceResponse> getInLibriaryServiceAsync(MESService.getInLibriaryServiceRequest request);
+        System.Threading.Tasks.Task<MESService.testoneResponse> testoneAsync(MESService.testoneRequest request);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://webservice.mbfw.com/MyMethodImpl/setInLibriaryServiceRequest", ReplyAction="http://webservice.mbfw.com/MyMethodImpl/setInLibriaryServiceResponse")]
+        [System.ServiceModel.OperationContractAttribute(Action="http://webservice.mbfw.com/MyMethodImpl/WarehousingFinishRequest", ReplyAction="http://webservice.mbfw.com/MyMethodImpl/WarehousingFinishResponse")]
         [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
-        System.Threading.Tasks.Task<MESService.setInLibriaryServiceResponse> setInLibriaryServiceAsync(MESService.setInLibriaryServiceRequest request);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://webservice.mbfw.com/MyMethodImpl/getMaterialTrackingServiceRequest", ReplyAction="http://webservice.mbfw.com/MyMethodImpl/getMaterialTrackingServiceResponse")]
-        [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
-        System.Threading.Tasks.Task<MESService.getMaterialTrackingServiceResponse> getMaterialTrackingServiceAsync(MESService.getMaterialTrackingServiceRequest request);
+        System.Threading.Tasks.Task<MESService.WarehousingFinishResponse1> WarehousingFinishAsync(MESService.WarehousingFinishRequest request);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://webservice.mbfw.com/MyMethodImpl/setMaterialTrackingServiceRequest", ReplyAction="http://webservice.mbfw.com/MyMethodImpl/setMaterialTrackingServiceResponse")]
         [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
         System.Threading.Tasks.Task<MESService.setMaterialTrackingServiceResponse> setMaterialTrackingServiceAsync(MESService.setMaterialTrackingServiceRequest request);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://webservice.mbfw.com/MyMethodImpl/WarehousingFinishRequest", ReplyAction="http://webservice.mbfw.com/MyMethodImpl/WarehousingFinishResponse")]
+        [System.ServiceModel.OperationContractAttribute(Action="http://webservice.mbfw.com/MyMethodImpl/getMaterialTrackingServiceRequest", ReplyAction="http://webservice.mbfw.com/MyMethodImpl/getMaterialTrackingServiceResponse")]
         [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
-        System.Threading.Tasks.Task<MESService.WarehousingFinishResponse1> WarehousingFinishAsync(MESService.WarehousingFinishRequest request);
+        System.Threading.Tasks.Task<MESService.getMaterialTrackingServiceResponse> getMaterialTrackingServiceAsync(MESService.getMaterialTrackingServiceRequest request);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://webservice.mbfw.com/MyMethodImpl/setInLibriaryServiceRequest", ReplyAction="http://webservice.mbfw.com/MyMethodImpl/setInLibriaryServiceResponse")]
+        [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
+        System.Threading.Tasks.Task<MESService.setInLibriaryServiceResponse> setInLibriaryServiceAsync(MESService.setInLibriaryServiceRequest request);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://webservice.mbfw.com/MyMethodImpl/getInLibriaryServiceRequest", ReplyAction="http://webservice.mbfw.com/MyMethodImpl/getInLibriaryServiceResponse")]
+        [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
+        System.Threading.Tasks.Task<MESService.getInLibriaryServiceResponse> getInLibriaryServiceAsync(MESService.getInLibriaryServiceRequest request);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://webservice.mbfw.com/MyMethodImpl/WarehousingEntryFinishRequest", ReplyAction="http://webservice.mbfw.com/MyMethodImpl/WarehousingEntryFinishResponse")]
         [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
@@ -51,6 +51,68 @@ namespace MESService
         [System.ServiceModel.OperationContractAttribute(Action="http://webservice.mbfw.com/MyMethodImpl/WarehousingFinishtestRequest", ReplyAction="http://webservice.mbfw.com/MyMethodImpl/WarehousingFinishtestResponse")]
         [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
         System.Threading.Tasks.Task<MESService.WarehousingFinishtestResponse> WarehousingFinishtestAsync(MESService.WarehousingFinishtestRequest request);
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(WrapperName="LogisticsFinish", WrapperNamespace="http://webservice.mbfw.com/", IsWrapped=true)]
+    public partial class LogisticsFinishRequest
+    {
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://webservice.mbfw.com/", Order=0)]
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string arg0;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://webservice.mbfw.com/", Order=1)]
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string arg1;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://webservice.mbfw.com/", Order=2)]
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string arg2;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://webservice.mbfw.com/", Order=3)]
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string arg3;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://webservice.mbfw.com/", Order=4)]
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string arg4;
+        
+        public LogisticsFinishRequest()
+        {
+        }
+        
+        public LogisticsFinishRequest(string arg0, string arg1, string arg2, string arg3, string arg4)
+        {
+            this.arg0 = arg0;
+            this.arg1 = arg1;
+            this.arg2 = arg2;
+            this.arg3 = arg3;
+            this.arg4 = arg4;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(WrapperName="LogisticsFinishResponse", WrapperNamespace="http://webservice.mbfw.com/", IsWrapped=true)]
+    public partial class LogisticsFinishResponse
+    {
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://webservice.mbfw.com/", Order=0)]
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string @return;
+        
+        public LogisticsFinishResponse()
+        {
+        }
+        
+        public LogisticsFinishResponse(string @return)
+        {
+            this.@return = @return;
+        }
     }
     
     /// <remarks/>
@@ -369,7 +431,7 @@ namespace MESService
     [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://webservice.mbfw.com/")]
-    public partial class materialTrackingService
+    public partial class inLibriaryService
     {
     }
     
@@ -377,7 +439,7 @@ namespace MESService
     [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://webservice.mbfw.com/")]
-    public partial class inLibriaryService
+    public partial class materialTrackingService
     {
     }
     
@@ -498,8 +560,8 @@ namespace MESService
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-    [System.ServiceModel.MessageContractAttribute(WrapperName="LogisticsFinish", WrapperNamespace="http://webservice.mbfw.com/", IsWrapped=true)]
-    public partial class LogisticsFinishRequest
+    [System.ServiceModel.MessageContractAttribute(WrapperName="WarehousingFinish", WrapperNamespace="http://webservice.mbfw.com/", IsWrapped=true)]
+    public partial class WarehousingFinishRequest
     {
         
         [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://webservice.mbfw.com/", Order=0)]
@@ -514,143 +576,34 @@ namespace MESService
         [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string arg2;
         
-        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://webservice.mbfw.com/", Order=3)]
-        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string arg3;
-        
-        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://webservice.mbfw.com/", Order=4)]
-        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string arg4;
-        
-        public LogisticsFinishRequest()
+        public WarehousingFinishRequest()
         {
         }
         
-        public LogisticsFinishRequest(string arg0, string arg1, string arg2, string arg3, string arg4)
+        public WarehousingFinishRequest(string arg0, string arg1, string arg2)
         {
             this.arg0 = arg0;
             this.arg1 = arg1;
             this.arg2 = arg2;
-            this.arg3 = arg3;
-            this.arg4 = arg4;
         }
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-    [System.ServiceModel.MessageContractAttribute(WrapperName="LogisticsFinishResponse", WrapperNamespace="http://webservice.mbfw.com/", IsWrapped=true)]
-    public partial class LogisticsFinishResponse
+    [System.ServiceModel.MessageContractAttribute(WrapperName="WarehousingFinishResponse", WrapperNamespace="http://webservice.mbfw.com/", IsWrapped=true)]
+    public partial class WarehousingFinishResponse1
     {
         
         [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://webservice.mbfw.com/", Order=0)]
         [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string @return;
         
-        public LogisticsFinishResponse()
+        public WarehousingFinishResponse1()
         {
         }
         
-        public LogisticsFinishResponse(string @return)
-        {
-            this.@return = @return;
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
-    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-    [System.ServiceModel.MessageContractAttribute(WrapperName="getInLibriaryService", WrapperNamespace="http://webservice.mbfw.com/", IsWrapped=true)]
-    public partial class getInLibriaryServiceRequest
-    {
-        
-        public getInLibriaryServiceRequest()
-        {
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
-    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-    [System.ServiceModel.MessageContractAttribute(WrapperName="getInLibriaryServiceResponse", WrapperNamespace="http://webservice.mbfw.com/", IsWrapped=true)]
-    public partial class getInLibriaryServiceResponse
-    {
-        
-        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://webservice.mbfw.com/", Order=0)]
-        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public MESService.inLibriaryService @return;
-        
-        public getInLibriaryServiceResponse()
-        {
-        }
-        
-        public getInLibriaryServiceResponse(MESService.inLibriaryService @return)
-        {
-            this.@return = @return;
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
-    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-    [System.ServiceModel.MessageContractAttribute(WrapperName="setInLibriaryService", WrapperNamespace="http://webservice.mbfw.com/", IsWrapped=true)]
-    public partial class setInLibriaryServiceRequest
-    {
-        
-        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://webservice.mbfw.com/", Order=0)]
-        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public MESService.inLibriaryService arg0;
-        
-        public setInLibriaryServiceRequest()
-        {
-        }
-        
-        public setInLibriaryServiceRequest(MESService.inLibriaryService arg0)
-        {
-            this.arg0 = arg0;
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
-    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-    [System.ServiceModel.MessageContractAttribute(WrapperName="setInLibriaryServiceResponse", WrapperNamespace="http://webservice.mbfw.com/", IsWrapped=true)]
-    public partial class setInLibriaryServiceResponse
-    {
-        
-        public setInLibriaryServiceResponse()
-        {
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
-    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-    [System.ServiceModel.MessageContractAttribute(WrapperName="getMaterialTrackingService", WrapperNamespace="http://webservice.mbfw.com/", IsWrapped=true)]
-    public partial class getMaterialTrackingServiceRequest
-    {
-        
-        public getMaterialTrackingServiceRequest()
-        {
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
-    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-    [System.ServiceModel.MessageContractAttribute(WrapperName="getMaterialTrackingServiceResponse", WrapperNamespace="http://webservice.mbfw.com/", IsWrapped=true)]
-    public partial class getMaterialTrackingServiceResponse
-    {
-        
-        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://webservice.mbfw.com/", Order=0)]
-        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public MESService.materialTrackingService @return;
-        
-        public getMaterialTrackingServiceResponse()
-        {
-        }
-        
-        public getMaterialTrackingServiceResponse(MESService.materialTrackingService @return)
+        public WarehousingFinishResponse1(string @return)
         {
             this.@return = @return;
         }
@@ -692,80 +645,97 @@ namespace MESService
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-    [System.ServiceModel.MessageContractAttribute(WrapperName="WarehousingFinish", WrapperNamespace="http://webservice.mbfw.com/", IsWrapped=true)]
-    public partial class WarehousingFinishRequest
+    [System.ServiceModel.MessageContractAttribute(WrapperName="getMaterialTrackingService", WrapperNamespace="http://webservice.mbfw.com/", IsWrapped=true)]
+    public partial class getMaterialTrackingServiceRequest
     {
         
-        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://webservice.mbfw.com/", Order=0)]
-        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string arg0;
-        
-        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://webservice.mbfw.com/", Order=1)]
-        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string arg1;
-        
-        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://webservice.mbfw.com/", Order=2)]
-        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string arg2;
-        
-        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://webservice.mbfw.com/", Order=3)]
-        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string arg3;
-        
-        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://webservice.mbfw.com/", Order=4)]
-        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string arg4;
-        
-        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://webservice.mbfw.com/", Order=5)]
-        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string arg5;
-        
-        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://webservice.mbfw.com/", Order=6)]
-        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string arg6;
-        
-        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://webservice.mbfw.com/", Order=7)]
-        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string arg7;
-        
-        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://webservice.mbfw.com/", Order=8)]
-        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string arg8;
-        
-        public WarehousingFinishRequest()
+        public getMaterialTrackingServiceRequest()
         {
-        }
-        
-        public WarehousingFinishRequest(string arg0, string arg1, string arg2, string arg3, string arg4, string arg5, string arg6, string arg7, string arg8)
-        {
-            this.arg0 = arg0;
-            this.arg1 = arg1;
-            this.arg2 = arg2;
-            this.arg3 = arg3;
-            this.arg4 = arg4;
-            this.arg5 = arg5;
-            this.arg6 = arg6;
-            this.arg7 = arg7;
-            this.arg8 = arg8;
         }
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-    [System.ServiceModel.MessageContractAttribute(WrapperName="WarehousingFinishResponse", WrapperNamespace="http://webservice.mbfw.com/", IsWrapped=true)]
-    public partial class WarehousingFinishResponse1
+    [System.ServiceModel.MessageContractAttribute(WrapperName="getMaterialTrackingServiceResponse", WrapperNamespace="http://webservice.mbfw.com/", IsWrapped=true)]
+    public partial class getMaterialTrackingServiceResponse
     {
         
         [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://webservice.mbfw.com/", Order=0)]
         [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string @return;
+        public MESService.materialTrackingService @return;
         
-        public WarehousingFinishResponse1()
+        public getMaterialTrackingServiceResponse()
         {
         }
         
-        public WarehousingFinishResponse1(string @return)
+        public getMaterialTrackingServiceResponse(MESService.materialTrackingService @return)
+        {
+            this.@return = @return;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(WrapperName="setInLibriaryService", WrapperNamespace="http://webservice.mbfw.com/", IsWrapped=true)]
+    public partial class setInLibriaryServiceRequest
+    {
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://webservice.mbfw.com/", Order=0)]
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public MESService.inLibriaryService arg0;
+        
+        public setInLibriaryServiceRequest()
+        {
+        }
+        
+        public setInLibriaryServiceRequest(MESService.inLibriaryService arg0)
+        {
+            this.arg0 = arg0;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(WrapperName="setInLibriaryServiceResponse", WrapperNamespace="http://webservice.mbfw.com/", IsWrapped=true)]
+    public partial class setInLibriaryServiceResponse
+    {
+        
+        public setInLibriaryServiceResponse()
+        {
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(WrapperName="getInLibriaryService", WrapperNamespace="http://webservice.mbfw.com/", IsWrapped=true)]
+    public partial class getInLibriaryServiceRequest
+    {
+        
+        public getInLibriaryServiceRequest()
+        {
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(WrapperName="getInLibriaryServiceResponse", WrapperNamespace="http://webservice.mbfw.com/", IsWrapped=true)]
+    public partial class getInLibriaryServiceResponse
+    {
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://webservice.mbfw.com/", Order=0)]
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public MESService.inLibriaryService @return;
+        
+        public getInLibriaryServiceResponse()
+        {
+        }
+        
+        public getInLibriaryServiceResponse(MESService.inLibriaryService @return)
         {
             this.@return = @return;
         }
@@ -790,35 +760,15 @@ namespace MESService
         [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string arg2;
         
-        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://webservice.mbfw.com/", Order=3)]
-        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string arg3;
-        
-        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://webservice.mbfw.com/", Order=4)]
-        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string arg4;
-        
-        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://webservice.mbfw.com/", Order=5)]
-        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string arg5;
-        
-        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://webservice.mbfw.com/", Order=6)]
-        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string arg6;
-        
         public WarehousingEntryFinishRequest()
         {
         }
         
-        public WarehousingEntryFinishRequest(string arg0, string arg1, string arg2, string arg3, string arg4, string arg5, string arg6)
+        public WarehousingEntryFinishRequest(string arg0, string arg1, string arg2)
         {
             this.arg0 = arg0;
             this.arg1 = arg1;
             this.arg2 = arg2;
-            this.arg3 = arg3;
-            this.arg4 = arg4;
-            this.arg5 = arg5;
-            this.arg6 = arg6;
         }
     }
     
@@ -936,19 +886,6 @@ namespace MESService
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        System.Threading.Tasks.Task<MESService.testoneResponse> MESService.MyMethodImpl.testoneAsync(MESService.testoneRequest request)
-        {
-            return base.Channel.testoneAsync(request);
-        }
-        
-        public System.Threading.Tasks.Task<MESService.testoneResponse> testoneAsync(MESService.test arg0)
-        {
-            MESService.testoneRequest inValue = new MESService.testoneRequest();
-            inValue.arg0 = arg0;
-            return ((MESService.MyMethodImpl)(this)).testoneAsync(inValue);
-        }
-        
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
         System.Threading.Tasks.Task<MESService.LogisticsFinishResponse> MESService.MyMethodImpl.LogisticsFinishAsync(MESService.LogisticsFinishRequest request)
         {
             return base.Channel.LogisticsFinishAsync(request);
@@ -966,40 +903,31 @@ namespace MESService
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        System.Threading.Tasks.Task<MESService.getInLibriaryServiceResponse> MESService.MyMethodImpl.getInLibriaryServiceAsync(MESService.getInLibriaryServiceRequest request)
+        System.Threading.Tasks.Task<MESService.testoneResponse> MESService.MyMethodImpl.testoneAsync(MESService.testoneRequest request)
         {
-            return base.Channel.getInLibriaryServiceAsync(request);
+            return base.Channel.testoneAsync(request);
         }
         
-        public System.Threading.Tasks.Task<MESService.getInLibriaryServiceResponse> getInLibriaryServiceAsync()
+        public System.Threading.Tasks.Task<MESService.testoneResponse> testoneAsync(MESService.test arg0)
         {
-            MESService.getInLibriaryServiceRequest inValue = new MESService.getInLibriaryServiceRequest();
-            return ((MESService.MyMethodImpl)(this)).getInLibriaryServiceAsync(inValue);
-        }
-        
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        System.Threading.Tasks.Task<MESService.setInLibriaryServiceResponse> MESService.MyMethodImpl.setInLibriaryServiceAsync(MESService.setInLibriaryServiceRequest request)
-        {
-            return base.Channel.setInLibriaryServiceAsync(request);
-        }
-        
-        public System.Threading.Tasks.Task<MESService.setInLibriaryServiceResponse> setInLibriaryServiceAsync(MESService.inLibriaryService arg0)
-        {
-            MESService.setInLibriaryServiceRequest inValue = new MESService.setInLibriaryServiceRequest();
+            MESService.testoneRequest inValue = new MESService.testoneRequest();
             inValue.arg0 = arg0;
-            return ((MESService.MyMethodImpl)(this)).setInLibriaryServiceAsync(inValue);
+            return ((MESService.MyMethodImpl)(this)).testoneAsync(inValue);
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        System.Threading.Tasks.Task<MESService.getMaterialTrackingServiceResponse> MESService.MyMethodImpl.getMaterialTrackingServiceAsync(MESService.getMaterialTrackingServiceRequest request)
+        System.Threading.Tasks.Task<MESService.WarehousingFinishResponse1> MESService.MyMethodImpl.WarehousingFinishAsync(MESService.WarehousingFinishRequest request)
         {
-            return base.Channel.getMaterialTrackingServiceAsync(request);
+            return base.Channel.WarehousingFinishAsync(request);
         }
         
-        public System.Threading.Tasks.Task<MESService.getMaterialTrackingServiceResponse> getMaterialTrackingServiceAsync()
+        public System.Threading.Tasks.Task<MESService.WarehousingFinishResponse1> WarehousingFinishAsync(string arg0, string arg1, string arg2)
         {
-            MESService.getMaterialTrackingServiceRequest inValue = new MESService.getMaterialTrackingServiceRequest();
-            return ((MESService.MyMethodImpl)(this)).getMaterialTrackingServiceAsync(inValue);
+            MESService.WarehousingFinishRequest inValue = new MESService.WarehousingFinishRequest();
+            inValue.arg0 = arg0;
+            inValue.arg1 = arg1;
+            inValue.arg2 = arg2;
+            return ((MESService.MyMethodImpl)(this)).WarehousingFinishAsync(inValue);
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
@@ -1016,24 +944,40 @@ namespace MESService
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        System.Threading.Tasks.Task<MESService.WarehousingFinishResponse1> MESService.MyMethodImpl.WarehousingFinishAsync(MESService.WarehousingFinishRequest request)
+        System.Threading.Tasks.Task<MESService.getMaterialTrackingServiceResponse> MESService.MyMethodImpl.getMaterialTrackingServiceAsync(MESService.getMaterialTrackingServiceRequest request)
         {
-            return base.Channel.WarehousingFinishAsync(request);
+            return base.Channel.getMaterialTrackingServiceAsync(request);
         }
         
-        public System.Threading.Tasks.Task<MESService.WarehousingFinishResponse1> WarehousingFinishAsync(string arg0, string arg1, string arg2, string arg3, string arg4, string arg5, string arg6, string arg7, string arg8)
+        public System.Threading.Tasks.Task<MESService.getMaterialTrackingServiceResponse> getMaterialTrackingServiceAsync()
         {
-            MESService.WarehousingFinishRequest inValue = new MESService.WarehousingFinishRequest();
+            MESService.getMaterialTrackingServiceRequest inValue = new MESService.getMaterialTrackingServiceRequest();
+            return ((MESService.MyMethodImpl)(this)).getMaterialTrackingServiceAsync(inValue);
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        System.Threading.Tasks.Task<MESService.setInLibriaryServiceResponse> MESService.MyMethodImpl.setInLibriaryServiceAsync(MESService.setInLibriaryServiceRequest request)
+        {
+            return base.Channel.setInLibriaryServiceAsync(request);
+        }
+        
+        public System.Threading.Tasks.Task<MESService.setInLibriaryServiceResponse> setInLibriaryServiceAsync(MESService.inLibriaryService arg0)
+        {
+            MESService.setInLibriaryServiceRequest inValue = new MESService.setInLibriaryServiceRequest();
             inValue.arg0 = arg0;
-            inValue.arg1 = arg1;
-            inValue.arg2 = arg2;
-            inValue.arg3 = arg3;
-            inValue.arg4 = arg4;
-            inValue.arg5 = arg5;
-            inValue.arg6 = arg6;
-            inValue.arg7 = arg7;
-            inValue.arg8 = arg8;
-            return ((MESService.MyMethodImpl)(this)).WarehousingFinishAsync(inValue);
+            return ((MESService.MyMethodImpl)(this)).setInLibriaryServiceAsync(inValue);
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        System.Threading.Tasks.Task<MESService.getInLibriaryServiceResponse> MESService.MyMethodImpl.getInLibriaryServiceAsync(MESService.getInLibriaryServiceRequest request)
+        {
+            return base.Channel.getInLibriaryServiceAsync(request);
+        }
+        
+        public System.Threading.Tasks.Task<MESService.getInLibriaryServiceResponse> getInLibriaryServiceAsync()
+        {
+            MESService.getInLibriaryServiceRequest inValue = new MESService.getInLibriaryServiceRequest();
+            return ((MESService.MyMethodImpl)(this)).getInLibriaryServiceAsync(inValue);
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
@@ -1042,16 +986,12 @@ namespace MESService
             return base.Channel.WarehousingEntryFinishAsync(request);
         }
         
-        public System.Threading.Tasks.Task<MESService.WarehousingEntryFinishResponse> WarehousingEntryFinishAsync(string arg0, string arg1, string arg2, string arg3, string arg4, string arg5, string arg6)
+        public System.Threading.Tasks.Task<MESService.WarehousingEntryFinishResponse> WarehousingEntryFinishAsync(string arg0, string arg1, string arg2)
         {
             MESService.WarehousingEntryFinishRequest inValue = new MESService.WarehousingEntryFinishRequest();
             inValue.arg0 = arg0;
             inValue.arg1 = arg1;
             inValue.arg2 = arg2;
-            inValue.arg3 = arg3;
-            inValue.arg4 = arg4;
-            inValue.arg5 = arg5;
-            inValue.arg6 = arg6;
             return ((MESService.MyMethodImpl)(this)).WarehousingEntryFinishAsync(inValue);
         }
         
