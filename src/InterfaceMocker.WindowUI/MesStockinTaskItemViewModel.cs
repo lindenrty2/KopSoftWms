@@ -14,7 +14,7 @@ namespace InterfaceMocker.WindowUI
     public class MesStockinTaskItemViewModel : TaskItemViewModel
     {
         private OutsideStockInDto _data;
-        private WMSSoap _mesHook = null;
+        private WMSService.IMESHookController _mesHook = null;
 
 
         public MesStockinTaskItemViewModel(OutsideStockInDto data)
@@ -26,7 +26,7 @@ namespace InterfaceMocker.WindowUI
             binding.SendTimeout = new TimeSpan(1, 0, 0);
             binding.ReceiveTimeout = new TimeSpan(1, 0, 0);
             //var factory = new ChannelFactory<WMSSoap>(binding, "http://localhost:5713/WMS.asmx"); 
-            var factory = new ChannelFactory<WMSSoap>(binding, "http://localhost:23456/Outside/MesHook.asmx");
+            var factory = new ChannelFactory<WMSService.IMESHookController>(binding, "http://localhost:23456/Outside/MesHook.asmx");
             _mesHook = factory.CreateChannel();
             ReSend(null);
         }
@@ -41,21 +41,21 @@ namespace InterfaceMocker.WindowUI
 
         public async void ReSend(object parameter)
         {
-            WarehousingRequest request = new WarehousingRequest()
-            {
-                Body = new WarehousingRequestBody()
-                {
-                    batchplanid = _data.BatchPlanId,
-                    productionplanid = _data.ProductionPlanId,
-                    suppliesinfolist = _data.SuppliesInfoList,
-                    supplieskinds = _data.SuppliesKinds.ToString(),
-                    warehousingid = _data.WarehousingId,
-                    warehousingtime = _data.WarehousingTime,
-                    warehousingtype = _data.WarehousingType,
-                    workareaname = _data.WorkAreaName
-                }
-            };
-            var result = await _mesHook.WarehousingAsync(request);
+            //WarehousingRequest request = new WarehousingRequest()
+            //{
+            //    Body = new WarehousingRequestBody()
+            //    {
+            //        batchplanid = _data.BatchPlanId,
+            //        productionplanid = _data.ProductionPlanId,
+            //        suppliesinfolist = _data.SuppliesInfoList,
+            //        supplieskinds = _data.SuppliesKinds.ToString(),
+            //        warehousingid = _data.WarehousingId,
+            //        warehousingtime = _data.WarehousingTime,
+            //        warehousingtype = _data.WarehousingType,
+            //        workareaname = _data.WorkAreaName
+            //    }
+            //};
+            var result = await _mesHook.WarehousingAsync(_data.WarehousingId,_data.WarehousingType,_data.WarehousingTime,_data.ProductionPlanId,_data.BatchPlanId,_data.WorkAreaName,_data.SuppliesKinds.ToString(),_data.SuppliesInfoList);
             this.Datas.Add(new TaskItemData("发送结果", JsonConvert.SerializeObject(result)));
         }
 

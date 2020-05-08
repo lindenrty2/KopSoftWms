@@ -2,7 +2,7 @@
   "ProviderId": "Microsoft.VisualStudio.ConnectedService.Wcf",
   "Version": "15.0.20628.921",
   "ExtendedData": {
-    "Uri": "http://localhost:5713/WMS.asmx",
+    "Uri": "http://localhost:23456/Outside/MesHook.asmx",
     "Namespace": "WMSService",
     "SelectedAccessLevelForGeneratedClass": "Public",
     "GenerateMessageContract": false,
