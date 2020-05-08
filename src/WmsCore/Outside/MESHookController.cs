@@ -236,17 +236,6 @@ namespace WMSCore.Outside
         {
             try
             {
-                OutsideStockOutResult result1 = new OutsideStockOutResult()
-                {
-                    ErrorId = "",
-                    ErrorInfo = "",
-                    Success = true,
-                    WarehouseEntryId = WarehouseEntryId
-                };
-                return JsonConvert.SerializeObject(result1);
-
-
-
                 OutsideStockOutDto data = OutsideStockOutDto.Create(
                        Guard.GuardEmpty(() => WarehouseEntryId),
                        Guard.GuardEmpty(() => WarehouseEntryType),

@@ -82,6 +82,7 @@ namespace InterfaceMocker.WindowUI
 
         private void Confirm_Click(object sender, RoutedEventArgs e)
         {
+            _data.WorkStationId = "WS-112931294100984";
             _data.SuppliesInfoList = JsonConvert.SerializeObject(SuppliesInfoList);
             _data.SuppliesKinds = SuppliesInfoList.Count();
             this.DialogResult = true;
