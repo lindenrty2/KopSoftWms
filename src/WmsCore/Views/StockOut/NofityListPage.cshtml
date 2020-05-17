@@ -1,0 +1,95 @@
+﻿@{
+    Layout = "_LayoutH";
+}
+
+<div id="app" v-cloak>
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-body">
+                    <div id="toolbar" class="btn-group">
+                        <button id="btn_stockout" v-on:click="doStockOut" type="button" class="btn btn-default">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>出库指定项
+                        </button>
+                    </div>
+                    <table id="bootstraptable" class="table table-bordered text-nowrap table-hover"></table>
+                </div>
+            </div>
+        </div>
+    </div> 
+</div>
+@section scripts{
+    <script src="~/lib/lodop/LodopFuncs.js"></script>
+    <script src="~/js/common.wms.js"></script>
+    <script type="text/javascript">
+        var app = new Vue({
+            el: '#app',
+            data: {
+                datemin: '',
+                datemax: '',
+                stockOutList: [],
+                stockOutDList: [],
+                storeId: '@ViewData["currentStoreId"]'
+            },
+            mounted: function () {
+                var _self = this;
+                _self.$nextTick(function () {
+                    _self.$refs.storeId = '@ViewData["currentStoreId"]';
+                    _self.$refs.datemin = "1900-01-01";
+                    _self.$refs.datemax = "2099-01-01";
+                    _self.loadL();
+                });
+            },
+            methods: {
+                loadL: function () {
+                    _self = this;
+                    var obj = [
+                        { checkbox: true, visible: true },
+                        { field: 'StockOutId', title: 'Id', visible: false },
+                        { field: 'StockOutNo', title: '出库单号', align: 'center', sortable: true },
+                        { field: 'OrderNo', title: '生产令号', align: 'center', sortable: true },
+                        { field: 'StockOutType', title: '出库类型', align: 'center', sortable: true },
+                        { field: 'StockOutStatus', title: '状态', align: 'center', sortable: true, formatter: StockOutStatusFormatter },
+                        { field: 'Remark', align: 'center', title: '备注' },
+                        { field: 'CreateUser', title: '创建人', align: 'center', sortable: true },
+                        { field: 'CreateDate', align: 'center', title: '创建时间', sortable: true },
+                        { field: 'ModifiedUser', align: 'center', title: '修改人', sortable: true },
+                        { field: 'ModifiedDate', title: '修改时间', align: 'center', sortable: true }
+                    ];
+                    var qParams = {　
+                    };
+                    var objSub = [
+                        { checkbox: true, visible: true },
+                        { field: 'StockOUtDetailId', title: 'Id', visible: false }, 
+                        { field: 'MaterialNo', title: '物料编号', align: 'center', sortable: true },
+                        { field: 'MaterialName', title: '物料名称', align: 'center', sortable: true },
+                        { field: 'PlanOutQty', title: '计划数量', align: 'center', sortable: true },
+                        { field: 'ActOutQty', title: '实际数量', align: 'center', sortable: true },
+                        //{ field: 'StorageRackNo', title: '货架编号', align: 'center', sortable: true },
+                        //{ field: 'StorageRackName', title: '货架名称', align: 'center', sortable: true },
+                        { field: 'Status', title: '状态', align: 'center', sortable: true, formatter: StockOutStatusFormatter },
+                        { field: 'Remark', align: 'center', title: '备注' },
+                        { field: 'CreateUser', title: '创建人', align: 'center', sortable: true },
+                        { field: 'CreateDate', align: 'center', title: '创建时间', sortable: true },
+                        { field: 'ModifiedUser', align: 'center', title: '修改人', sortable: true },
+                        { field: 'ModifiedDate', title: '修改时间', align: 'center', sortable: true }
+                    ];
+                    yui.table2("bootstraptable", "/StockOut/NofityList?storeId=@ViewData["currentStoreId"]", "", obj, objSub, "POST", "StockOutId", "StockOutId", true, qParams);
+                },
+                doStockOut: function () {
+
+                    var idlist = [];
+
+
+                    var index = layer.confirm("共选择" +  + "件出库单,确认出库？", { btn: ["确定", "取消"] }, function () {
+                        layer.close(index);
+
+
+
+                    });
+                },
+
+            }
+        });
+    </script>
+}

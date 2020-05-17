@@ -108,6 +108,14 @@ namespace YL.Core.Entity
         /// </summary>
         [SugarColumn(IsNullable = false)]
         public bool IsLocked { get; set; }
+        
+        /// <summary>
+        /// Desc:是否已通知
+        /// Default:
+        /// Nullable:True
+        /// </summary>
+        [SugarColumn(IsNullable = true)]
+        public bool? IsNotified { get; set; }
 
         /// <summary>
         /// Desc:1 0

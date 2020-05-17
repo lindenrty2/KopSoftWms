@@ -2,6 +2,7 @@
 using Services.Outside;
 using SqlSugar;
 using System;
+using System.Net;
 using System.Threading.Tasks;
 using WebApiClient;
 using YL.Core.Dto;
@@ -13,6 +14,8 @@ namespace WMSCore.Outside
     public class WMSBaseApiAccessor : IWMSBaseApiAccessor, IWMSApiProxy
     {
 
+        public static string WMSProxy { get; set; }
+         
         public bool IsOutside => true;
 
         public Wms_warehouse Warehouse { get; } 
@@ -25,6 +28,13 @@ namespace WMSCore.Outside
             this.Warehouse = warehouse;
             HttpApiConfig config = new HttpApiConfig();
             config.HttpHost = new Uri(warehouse.IFAddress);
+            if (!string.IsNullOrWhiteSpace(WMSProxy))
+            {
+                config.HttpHandler.UseProxy = true;
+                config.HttpHandler.Proxy = new HttpProxy(WMSProxy);
+                WebRequest.DefaultWebProxy = new WebProxy(WMSProxy) { BypassProxyOnLocal = false };
+            } 
+
             _apiProxy = HttpApi.Create<IWMSApiProxy>(config);
             _selfAccessor = new SelfWMSBaseApiAccessor(warehouse, client, userDto);
         }

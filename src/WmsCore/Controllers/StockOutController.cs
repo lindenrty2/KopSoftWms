@@ -441,5 +441,56 @@ namespace KopSoftWms.Controllers
             var str = _stockoutServices.PrintList(id);
             return Content(str);
         }
+
+        [HttpGet]
+        public async Task<RouteData<bool>> HasNofity(long storeId)
+        {
+            IWMSOperationApiAccessor wmsAccessor = WMSApiManager.GetOperationApiAccessor(storeId.ToString(), _client, this.UserDto);
+            if (wmsAccessor == null)
+            {
+                return RouteData<bool>.From(false);
+            }
+            RouteData<bool> result = await wmsAccessor.HasStockOutNofity();
+
+            return result;
+        }
+
+        [HttpGet]
+        public IActionResult NofityListPage(long storeId)
+        {
+            ViewData["currentStoreId"] = storeId; 
+            return View();
+        }
+
+        [HttpGet]
+        public async Task<string> NofityList(long storeId)
+        {
+            IWMSOperationApiAccessor wmsAccessor = WMSApiManager.GetOperationApiAccessor(storeId.ToString(), _client, this.UserDto);
+            if(wmsAccessor == null)
+            {
+                return "";
+            }
+            RouteData<Wms_StockOutDto[]> result = await wmsAccessor.QueryStockOutNofityList();
+            if (!result.IsSccuess)
+
+            {
+                return new PageGridData().JilToJson();
+            }
+            return result.ToGridJson();
+
+        }
+
+        [HttpGet]
+        public async Task<RouteData> SetStockOutNofitied(long storeId)
+        {
+            IWMSOperationApiAccessor wmsAccessor = WMSApiManager.GetOperationApiAccessor(storeId.ToString(), _client, this.UserDto);
+            if (wmsAccessor == null)
+            {
+                return new RouteData();
+            }
+            RouteData result = await wmsAccessor.SetStockOutNofitied();
+
+            return result;
+        }
     }
 }

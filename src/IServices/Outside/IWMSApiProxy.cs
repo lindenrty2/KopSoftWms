@@ -10,7 +10,6 @@ using YL.Utils.Pub;
 
 namespace IServices.Outside
 {
-
     public interface IWMSApiProxy : IHttpApi
     {
 
