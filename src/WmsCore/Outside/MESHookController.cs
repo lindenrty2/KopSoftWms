@@ -213,7 +213,7 @@ namespace WMSCore.Outside
                     }
                     else
                     {
-                        _logger.LogError($"仓库{keyValue.Key}下发入库任务成功");
+                        _logger.LogInformation($"仓库{keyValue.Key}下发入库任务成功");
                     }
                 }
                 catch (Exception ex)
@@ -392,7 +392,7 @@ namespace WMSCore.Outside
                     }
                     else
                     {
-                        _logger.LogError($"仓库{keyValue.Key}下发出库任务成功");
+                        _logger.LogInformation($"仓库{keyValue.Key}下发出库任务成功");
                     }
                 }
                 catch (Exception ex)
