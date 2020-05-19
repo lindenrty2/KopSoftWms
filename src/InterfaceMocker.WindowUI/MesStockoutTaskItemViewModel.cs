@@ -55,7 +55,7 @@ namespace InterfaceMocker.WindowUI
             //        WorkStationId = _data.WorkStationId
             //    }
             //};
-            var result = await _mesHook.WarehouseEntryAsync(_data.WarehouseEntryId,_data.WarehouseEntryType,_data.WarehouseEntryTime,_data.ProductionPlanId,_data.BatchPlanId,_data.WorkStationId,_data.WorkAreaName,_data.SuppliesKinds.ToString(),_data.SuppliesInfoList);
+            var result = await _mesHook.WarehouseEntryAsync(_data.WarehouseEntryId,_data.WarehouseEntryType,_data.WarehouseEntryTime,_data.ProductionPlanId,_data.BatchPlanId, _data.WorkAreaName, _data.WorkStationId,_data.SuppliesKinds.ToString(),_data.SuppliesInfoList);
             this.Datas.Add(new TaskItemData("发送结果", JsonConvert.SerializeObject(result)));
         }
 

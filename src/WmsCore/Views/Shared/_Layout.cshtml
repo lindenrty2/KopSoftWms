@@ -52,6 +52,10 @@
             var idx = yui.layerfullshow("扫码操作", "/Scan/MainScanPage?storeId=@ViewData["CurrentStoreId"]&mode=2");
             layer.full(idx);
         };
+        //检查是否有通知
+        function checkNofity() {
+            yui.layershow("扫码操作", "/StockOut/NofityListPage?storeId=@ViewData["currentStoreId"]", 1000, 800);
+        };
     </script>
 </body>
 </html>

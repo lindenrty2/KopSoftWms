@@ -165,6 +165,19 @@ namespace Services.Outside
 
             return YL.Core.Dto.RouteData.From(PubMessages.I2300_WCS_OUTCOMMAND_SCCUESS, "料箱:" + inventoryBox.InventoryBoxName);
         }
+         
+        public async Task<RouteData> DoStockOutBoxOut(long[] stockOutIds)
+        {
+            foreach(long stockOutId in stockOutIds)
+            {
+                RouteData result = await DoStockOutBoxOut(stockOutId);
+                if (!result.IsSccuess)
+                {
+                    return result;
+                }
+            }
+            return new RouteData();
+        }
 
         public async Task<RouteData> DoStockOutBoxOut(long stockOutId)
         {
@@ -1632,6 +1645,62 @@ namespace Services.Outside
             catch (Exception ex)
             {
                 return RouteData<Wms_InventoryBoxMaterialInfo[]>.From(PubMessages.E4103_INVENTORYBOX_GET_FAIL, ex.Message);
+            }
+        }
+
+        public async Task<RouteData<bool>> HasStockOutNofity()
+        {
+            try
+            {
+
+                bool result = await _sqlClient.Queryable<Wms_stockout>()
+                    .Where(x => (x.IsNotified == null || x.IsNotified == false) && x.IsDel == DeleteFlag.Normal)
+                    .AnyAsync();
+
+                return RouteData<bool>.From(result);
+            }
+            catch (Exception ex)
+            {
+                return RouteData<bool>.From(PubMessages.E0011_DATABASE_UNKNOW_FAIL, ex.Message);
+            }
+        }
+
+        public async Task<RouteData<Wms_StockOutDto[]>> QueryStockOutNofityList()
+        {
+            try
+            {
+                List<Wms_stockout> result = await _sqlClient.Queryable<Wms_stockout>()
+                    .Where(x => (x.IsNotified == null || x.IsNotified == false) && x.IsDel == DeleteFlag.Normal)
+                    .ToListAsync();
+
+                Wms_StockOutDto[] dto = JsonConvert.DeserializeObject<Wms_StockOutDto[]>(JsonConvert.SerializeObject(result));
+                return RouteData<Wms_StockOutDto[]>.From(dto);
+            }
+            catch (Exception ex)
+            {
+                return RouteData<Wms_StockOutDto[]>.From(PubMessages.E0011_DATABASE_UNKNOW_FAIL, ex.Message);
+            }
+        }
+
+        public async Task<RouteData> SetStockOutNofitied()
+        {
+            try
+            {
+                List<Wms_stockout> result = await _sqlClient.Queryable<Wms_stockout>()
+                    .Where(x => (x.IsNotified == null || x.IsNotified == false) && x.IsDel == DeleteFlag.Normal)
+                    .ToListAsync();
+
+                foreach(Wms_stockout stockout in result)
+                {
+                    stockout.IsNotified = true;
+                    _sqlClient.Updateable<Wms_stockout>(result);
+                }
+                 
+                return new RouteData();
+            }
+            catch (Exception ex)
+            {
+                return RouteData.From(PubMessages.E0004_DATABASE_UPDATE_FAIL, ex.Message);
             }
         }
     }

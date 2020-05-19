@@ -38,15 +38,14 @@ namespace YL
         }
 
         public IConfiguration Configuration { get; }
-
-        public static string MESHost = null;
-        public static string WCSHost = null;
+         
 
         //IServiceProvider This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             WCSApiAccessor.Host = Configuration["Host:WCS"];
             MESApiAccessor.Host = Configuration["Host:MES"];
+            WMSBaseApiAccessor.WMSProxy = Configuration["Host:WMSPROXY"];
 
             services.AddMvc(option =>
             {

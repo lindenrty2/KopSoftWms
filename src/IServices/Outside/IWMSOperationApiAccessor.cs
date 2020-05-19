@@ -30,6 +30,12 @@ namespace IServices.Outside
         /// <summary>
         /// 指定出库单出库
         /// </summary>
+        /// <param name="stockOutIds">出库单Id列表</param>
+        /// <returns></returns>
+        Task<RouteData> DoStockOutBoxOut(long[] stockOutIds);
+        /// <summary>
+        /// 指定出库单出库
+        /// </summary>
         /// <param name="stockOutId">出库单Id</param>
         /// <returns></returns>
         Task<RouteData> DoStockOutBoxOut(long stockOutId);
@@ -130,6 +136,26 @@ namespace IServices.Outside
         /// <param name="materialId"></param>
         /// <returns></returns>
         Task<RouteData<Wms_InventoryBoxMaterialInfo[]>> GetInventoryBoxList(string materialNo);
+
+
+        /// <summary>
+        /// 查询是否有出库单
+        /// </summary>
+        /// <returns></returns>
+        Task<RouteData<bool>> HasStockOutNofity();
+
+        /// <summary>
+        /// 查询需要通知的出库单列表
+        /// </summary>
+        /// <returns></returns>
+        Task<RouteData<Wms_StockOutDto[]>> QueryStockOutNofityList();
+
+        /// <summary>
+        /// 设置出库单已通知
+        /// </summary>
+        /// <returns></returns>
+        Task<RouteData> SetStockOutNofitied();
+
 
     }
 }

@@ -15,7 +15,8 @@ namespace YL.Utils.Pub
         public static MessageItem E0007_WAREHOUSE_NOTFOUND = new MessageItem(-7, "仓库不存在");
         public static MessageItem E0008_PARAMETER_EMPTY = new MessageItem(-8, "参数为空");
         public static MessageItem E0009_PARAMETER_NULL = new MessageItem(-9, "参数为Null");
-        public static MessageItem E0010_PARAMETER_TYPE_INVAILD = new MessageItem(-10, "参数类型不一致"); 
+        public static MessageItem E0010_PARAMETER_TYPE_INVAILD = new MessageItem(-10, "参数类型不一致");
+        public static MessageItem E0011_DATABASE_UNKNOW_FAIL = new MessageItem(-11, "数据库发生未知异常");
 
         public static MessageItem I1001_BOXBACK_SCCUESS = new MessageItem(1001, "料箱出库成功");
         public static MessageItem I1002_BOXOUT_SCCUESS = new MessageItem(1002, "料箱归库成功");
