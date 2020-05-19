@@ -1,6 +1,7 @@
 ﻿using IServices;
 using IServices.Outside;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SqlSugar;
 using System;
@@ -28,6 +29,8 @@ namespace WMSCore.Outside
         private IWms_stockoutServices _stockoutServices;
         private IWms_stockoutdetailServices _stockoutDetailServices;
         private SqlSugarClient _sqlClient;
+        private ILogger _logger;
+
         public MESHookController(
             SqlSugarClient sqlClient,
             IWms_mastaskServices mastaskServices,
@@ -37,7 +40,8 @@ namespace WMSCore.Outside
             IWms_stockinServices stockinService,
             IWms_stockindetailServices stockinDetailServices,
             IWms_stockoutServices stockoutServices,
-            IWms_stockoutdetailServices stockoutDetailServices)
+            IWms_stockoutdetailServices stockoutDetailServices,
+            ILogger<MESHookController> logger)
         {
             _sqlClient = sqlClient;
             _mastaskServices = mastaskServices;
@@ -48,6 +52,7 @@ namespace WMSCore.Outside
             _stockinDetailServices = stockinDetailServices;
             _stockoutServices = stockoutServices;
             _stockoutDetailServices = stockoutDetailServices;
+            _logger = logger;
         }
 
         [HttpGet("Ping")]
@@ -203,12 +208,17 @@ namespace WMSCore.Outside
                     RouteData<OutsideStockInRequestResult[]> data = proxy.StockIn(request).GetAwaiter().GetResult();
                     if (!data.IsSccuess)
                     {
+                        _logger.LogError($"仓库{keyValue.Key}下发入库任务失败,Code={data.Code},Message={data.Message}");
                         result.Add(data);
+                    }
+                    else
+                    {
+                        _logger.LogError($"仓库{keyValue.Key}下发入库任务成功");
                     }
                 }
                 catch (Exception ex)
                 {
-                    //TODO Log
+                    _logger.LogError(ex, $"仓库{keyValue.Key}下发入库任务发生异常");
                 }
             }
 
@@ -377,12 +387,17 @@ namespace WMSCore.Outside
                     RouteData data = proxy.StockOut(request).GetAwaiter().GetResult();
                     if (!data.IsSccuess)
                     {
+                        _logger.LogError($"仓库{keyValue.Key}下发出库任务失败,Code={data.Code},Message={data.Message}");
                         result.Add(data);
+                    }
+                    else
+                    {
+                        _logger.LogError($"仓库{keyValue.Key}下发出库任务成功");
                     }
                 }
                 catch (Exception ex)
                 {
-                    //TODO Log
+                    _logger.LogError(ex, $"仓库{keyValue.Key}下发出库任务发生异常");
                 }
             }
 
