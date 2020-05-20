@@ -88,7 +88,7 @@ namespace WMSCore.Outside
                 _client.BeginTran();
                 foreach (OutsideStockInReportDetail detail in result.Details)
                 {
-                    Wms_stockindetail localDetail = details.FirstOrDefault(x => x.MaterialId == detail.MaterialId);
+                    Wms_stockindetail localDetail = details.FirstOrDefault(x => x.MaterialNo == detail.MaterialNo && x.MaterialOnlyId == detail.MaterialOnlyId);
                     if (localDetail == null)
                     {
                         _client.RollbackTran();
@@ -258,7 +258,7 @@ namespace WMSCore.Outside
                 _client.BeginTran();
                 foreach (OutsideStockOutReportDetail detail in result.Details)
                 {
-                    Wms_stockoutdetail localDetail = details.FirstOrDefault(x => x.MaterialId == detail.MaterialId);
+                    Wms_stockoutdetail localDetail = details.FirstOrDefault(x => x.MaterialNo == detail.MaterialNo && x.MaterialOnlyId == detail.MaterialOnlyId);
                     localDetail.PlanOutQty = detail.PlanOutQty;
                     localDetail.ActOutQty = detail.ActOutQty;
                     localDetail.Status = detail.Status.ToInt32();
