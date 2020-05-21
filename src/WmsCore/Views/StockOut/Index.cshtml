@@ -233,9 +233,9 @@
                         //{ field: 'StorageRackName', title: '货架名称', align: 'center', sortable: true },
                         { field: 'Status', title: '状态', align: 'center', sortable: true, formatter: StockOutStatusFormatter },
                         { field: 'Remark', align: 'center', title: '备注' },
-                        { field: 'CreateUser', title: '创建人', align: 'center', sortable: true },
+                        { field: 'CreateBy', title: '创建人', align: 'center', sortable: true },
                         { field: 'CreateDate', align: 'center', title: '创建时间', sortable: true },
-                        { field: 'ModifiedUser', align: 'center', title: '修改人', sortable: true },
+                        { field: 'ModifiedBy', align: 'center', title: '修改人', sortable: true },
                         { field: 'ModifiedDate', title: '修改时间', align: 'center', sortable: true }
                     ];
                     yui.table2("bootstraptable", "/StockOut/List", "/StockOut/ListDetail?storeId=@ViewData["currentStoreId"]", obj, objSub, "POST", "StockOutId", "StockOutId", true, qParams);

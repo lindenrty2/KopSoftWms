@@ -59,7 +59,7 @@ namespace YL.Core.Dto
         /// <summary>
         /// 详细进度列表
         /// </summary>
-        public object[] Details { get; set; }
+        public OutsideStockInQueryResultDetail[] Details { get; set; }
     }
 
     public class OutsideStockInQueryResultDetail
