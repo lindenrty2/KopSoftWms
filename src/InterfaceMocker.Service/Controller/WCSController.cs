@@ -23,7 +23,7 @@ namespace InterfaceMocker.Service
             return "OK";
         }
 
-        [HttpPost("createOutStock.ashx")]
+        [HttpPost("CreateStockOut.ashx")]
         public CreateOutStockResult CreateOutStock([FromBody]OutStockInfo outStockInfo)
         {
             CreateOutStockResult result = new CreateOutStockResult()
@@ -34,8 +34,13 @@ namespace InterfaceMocker.Service
             return result;
         }
 
-        [HttpPost("createBackStock.ashx")]
-        public CreateBackStockResult CreateBackStock([FromBody]BackStockInfo backStockInfo)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="backStockInfo"></param>
+        /// <returns></returns>
+        [HttpPost("CreateStockIn.ashx")]
+        public CreateBackStockResult CreateStockIn([FromBody]BackStockInfo backStockInfo)
         {
             CreateBackStockResult result = new CreateBackStockResult()
             {

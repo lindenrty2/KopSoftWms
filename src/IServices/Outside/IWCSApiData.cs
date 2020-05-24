@@ -109,15 +109,73 @@ namespace IServices.Outside
 
     }
 
-    public class BackStockInfo
+    /// <summary>
+    /// WCS入库任务指令
+    /// </summary>
+    public class StockInTaskInfo
     {
-        public string TaskId { get; set; }
-        public string GetRow { get; set; }
-        public string GetColumn { get; set; }
-        public string GetFloor { get; set; }
+        //	任务ID，确认出库完成时反馈该ID	
+        public string TaskId	{get;set;}
+        //	托盘条码/料箱条码	
+        public string TrayBarcode	{get;set;}
+        //	默认10即可	
+        public int Priority	{get;set;}
+        //	通道	
+        public string Channel	{get;set;}
+        //	预留	
+        public string PartSn	{get;set;}
+        //	预留	
+        public string PartCode	{get;set;}
+        //	默认1即可	
+        public string PartHeight	{get;set;}
+        //	预留	
+        public int TaskLineId	{get;set;}
+        //	库存表ID	
+        public int BalanceId	{get;set;}
+        //	入库单或者出库单ID	
+        public int	StockId	{get;set;}
+        //	取货货位ID	
+        public int	LocationId	{get;set;}
+        //	取货货位CODE	
+        public string LocationCode	{get;set;}
+        //	放货货位ID	
+        public int SetLocationId	{get;set;}
+        //	放货货位CODE	
+        public string SetLocationCode	{get;set;}
+        //	取货排	
+        public string GetRow	{get;set;}
+        //	取货排	
+        public string GetColumn	{get;set;}
+        //	取货排	
+        public string	GetFloor	{get;set;}
+        //	放货排	
+        public string	SetRow	{get;set;}
+        //	放货列	
+        public string SetColumn	{get;set;}
+        //	放货层	
+        public string SetFloor	{get;set;}
+        //	任务类型 IN=入库 OUT=出库	
+        public string TaskType	{get;set;}
+        //	任务队列，默认100，数字越小越优先	
+        public int	TaskQueue	{get;set;}
+        //	默认0，完成后>=99	
+        public string TaskStatus	{get;set;}
+        //	创建人，0=自动创建	
+        public int CreateBy	{get;set;}
+        //	创建时间	
+        public DateTime	CreateDate	{get;set;}
+        //	堆垛机任务ID，1-30000递增循环	
+        public string TaskNo	{get;set;}
+        //	输送线PLC起始地址	
+        public string GetPlcCode	{get;set;}
+        //	输送点PLC目标地址	
+        public string SetPlcCode	{get;set;}
+        //	分拣台/接驳台位置	
+        public string	Table	{get;set;}
+
     }
 
-    public class CreateBackStockResult
+    public class StockInTaskResult
     {
         public bool Successd { get; set; } = true;
         public bool ErrorCode { get; set; }
@@ -129,42 +187,67 @@ namespace IServices.Outside
         public bool Returncode { get; set; }
     }
 
-    public class OutStockInfo
+    public class StockOutTaskInfo
     {
-        public string TaskId { get; set; }
-        public string TrayBarcode { get; set; }
-        public int Priority { get; set; }
-        public string Channel { get; set; }
-        public string PartSn { get; set; }
-        public string PartCode { get; set; }
-        public string PartHeight { get; set; }
-        public int TaskLineId { get; set; }
-        public int BalanceId { get; set; }
-        public int StockId { get; set; }
-        public int LocationId { get; set; }
-        public string LocationCode { get; set; }
-        public int SetLocationId { get; set; }
-        public string SetLocationCode { get; set; }
-        public string GetRow { get; set; }
-        public string GetColumn { get; set; }
-        public string GetFloor { get; set; }
-        public string SetRow { get; set; }
-        public string SetColumn { get; set; }
-        public string SetFloor { get; set; }
-        public string TaskType { get; set; }
-        public int TaskQueue { get; set; }
-        public string TaskStatus { get; set; }
-        public int CreateBy { get; set; }
-        public DateTime CreateDate { get; set; }
-        public string TaskNo { get; set; }
-        public string GetPlcCode { get; set; }
-        public string SetPlcCode { get; set; }
-        public string LOTID { get; set; }
-        public string TOOLNO { get; set; }
-        public string ITNBR { get; set; }
-        public string ITDSC { get; set; }
-        public string VERSION { get; set; }
-        public string MATWITH { get; set; }
+        //	任务ID，确认出库完成时反馈该ID	
+        public	string	TaskId	{get;set;}
+        //	托盘条码/料箱条码	
+        public	string	TrayBarcode	{get;set;}
+        //	默认10即可	
+        public	int	Priority	{get;set;}
+        //	通道	
+        public	string	Channel	{get;set;}
+        //	预留	
+        public	string	PartSn	{get;set;}
+        //	预留	
+        public	string	PartCode	{get;set;}
+        //	默认1即可	
+        public	string	PartHeight	{get;set;}
+        //	预留	
+        public	int	TaskLineId	{get;set;}
+        //	库存表ID	
+        public	int	BalanceId	{get;set;}
+        //	入库单或者出库单ID	
+        public	int	StockId	{get;set;}
+        //	取货货位ID	
+        public	int	LocationId	{get;set;}
+        //	取货货位CODE	
+        public	string	LocationCode	{get;set;}
+        //	放货货位ID	
+        public	int	SetLocationId	{get;set;}
+        //	放货货位CODE	
+        public	string	SetLocationCode	{get;set;}
+        //	取货排	
+        public	string	GetRow	{get;set;}
+        //	取货排	
+        public	string	GetColumn	{get;set;}
+        //	取货排	
+        public	string	GetFloor	{get;set;}
+        //	放货排	
+        public	string	SetRow	{get;set;}
+        //	放货列	
+        public	string	SetColumn	{get;set;}
+        //	放货层	
+        public	string	SetFloor	{get;set;}
+        //	任务类型 IN=入库 OUT=出库	
+        public	string	TaskType	{get;set;}
+        //	任务队列，默认100，数字越小越优先	
+        public	int	TaskQueue	{get;set;}
+        //	默认0，完成后>=99	
+        public	string	TaskStatus	{get;set;}
+        //	创建人，0=自动创建	
+        public	int	CreateBy	{get;set;}
+        //	创建时间	
+        public	DateTime	CreateDate	{get;set;}
+        //	堆垛机任务ID，1-30000递增循环	
+        public	string	TaskNo	{get;set;}
+        //	输送线PLC起始地址	
+        public	string	GetPlcCode	{get;set;}
+        //	输送点PLC目标地址	
+        public	string	SetPlcCode	{get;set;}
+        //	分拣台/接驳台位置	
+        public	string	Table	{get;set;}
+
     }
 
 
@@ -182,10 +265,13 @@ namespace IServices.Outside
     }
 
 
-
-    public class WCSTaskResult
+    /// <summary>
+    /// WCS任务确认后回调的内容
+    /// </summary>
+    public class WCSStockTaskCallBack
     {
         public bool Success { get; set; } = true;
+
         /// <summary>
         /// 托盘条码
         /// </summary>
@@ -199,7 +285,10 @@ namespace IServices.Outside
 
     }
 
-    public class StockTaskResult
+    /// <summary>
+    /// 调用WCS接口以后的返回值
+    /// </summary>
+    public class WCSApiResult
     {
         public bool Successd { get; set; } = true;
         /// <summary>
@@ -239,12 +328,12 @@ namespace IServices.Outside
         public string Returncode { get; set; }
 
 
-        public StockTaskResult()
+        public WCSApiResult()
         {
 
         }
 
-        public StockTaskResult(MessageItem message)
+        public WCSApiResult(MessageItem message)
         {
             this.Code = message.Code.ToString();
             this.RequestMethod = message.Message;
@@ -252,7 +341,7 @@ namespace IServices.Outside
 
     }
 
-    public class ConfirmOutStockResult : StockTaskResult
+    public class ConfirmOutStockResult : WCSApiResult
     {
         public ConfirmOutStockResult()
         {
@@ -265,7 +354,7 @@ namespace IServices.Outside
         }
     }
 
-    public class ConfirmBackStockResult : StockTaskResult
+    public class ConfirmBackStockResult : WCSApiResult
     {
         public ConfirmBackStockResult()
         {

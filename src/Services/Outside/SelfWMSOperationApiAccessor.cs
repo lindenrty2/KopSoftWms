@@ -495,7 +495,7 @@ namespace Services.Outside
 
                 Wms_inventorybox inventoryBox = await _sqlClient.Queryable<Wms_inventorybox>().FirstAsync(x => x.InventoryBoxId == task.InventoryBoxId);
                 if (inventoryBox == null) { return YL.Core.Dto.RouteData.From(PubMessages.E1011_INVENTORYBOX_NOTFOUND); }
-                if (inventoryBox.Status != InventoryBoxStatus.Outed) { return YL.Core.Dto.RouteData.From(PubMessages.E1014_INVENTORYBOX_NOTOUTED); }
+                if (inventoryBox.Status != InventoryBoxStatus.Outed && inventoryBox.Status != InventoryBoxStatus.None) { return YL.Core.Dto.RouteData.From(PubMessages.E1014_INVENTORYBOX_NOTOUTED); }
 
                 List<Wms_inventory> inventories = await _sqlClient.Queryable<Wms_inventory>().Where(x => x.InventoryBoxId == task.InventoryBoxId).ToListAsync();
                 List<Wms_inventory> updatedInventories = new List<Wms_inventory>();
@@ -915,8 +915,8 @@ namespace Services.Outside
 
             if(wcsTask.TaskType == WCSTaskTypes.StockOut)
             {
-                OutStockInfo outStockInfo = JsonConvert.DeserializeObject<OutStockInfo>(wcsTask.Params);
-                CreateOutStockResult result = await WCSApiAccessor.Instance.CreateOutStockTask(outStockInfo);
+                StockOutTaskInfo outStockInfo = JsonConvert.DeserializeObject<StockOutTaskInfo>(wcsTask.Params);
+                CreateOutStockResult result = await WCSApiAccessor.Instance.CreateStockOutTask(outStockInfo);
                 if (!result.Successd)
                 {
                     return RouteData.From(PubMessages.E2300_WCS_OUTCOMMAND_FAIL); 
@@ -928,8 +928,8 @@ namespace Services.Outside
             }
             else if (wcsTask.TaskType == WCSTaskTypes.StockOut)
             {
-                BackStockInfo backStockInfo = JsonConvert.DeserializeObject<BackStockInfo>(wcsTask.Params);
-                CreateBackStockResult result = await WCSApiAccessor.Instance.CreateBackStockTask(backStockInfo);
+                StockInTaskInfo backStockInfo = JsonConvert.DeserializeObject<StockInTaskInfo>(wcsTask.Params);
+                StockInTaskResult result = await WCSApiAccessor.Instance.CreateStockInTask(backStockInfo);
                 if (!result.Successd)
                 {
                     return RouteData.From(PubMessages.E2310_WCS_BACKCOMMAND_FAIL);
@@ -949,15 +949,25 @@ namespace Services.Outside
                 Wms_storagerack storagerack = _sqlClient.Queryable<Wms_storagerack>().First(x => x.StorageRackId == task.StoragerackId);
 
                 long taskId = PubId.SnowflakeId;
-                OutStockInfo outStockInfo = new OutStockInfo()
+                int channel = ((int)Math.Floor(storagerack.Row / 2.0));
+                StockOutTaskInfo outStockInfo = new StockOutTaskInfo()
                 {
                     TaskId = taskId.ToString(),
+                    TrayBarcode = task.InventoryBoxNo,
+                    Priority = 10, //默认值
+                    Channel = channel.ToString(),
                     GetColumn = storagerack.Column.ToString(),
                     GetRow = storagerack.Row.ToString(),
-                    GetFloor = storagerack.Floor.ToString()
+                    GetFloor = storagerack.Floor.ToString(),
+                    TaskType = "OUT", //固定植:OUT(出库)
+                    TaskStatus = "0", //任务阶段,暂时不用
+                    CreateBy = 0,
+                    CreateDate = DateTime.Now,
+                    SetPlcCode = storagerack.Row.ToString(),
+                    Table = channel == 1 ? "1" : "3"
                 };
                  
-                CreateOutStockResult result = await WCSApiAccessor.Instance.CreateOutStockTask(outStockInfo);
+                CreateOutStockResult result = await WCSApiAccessor.Instance.CreateStockOutTask(outStockInfo);
                 if (result.Successd)
                 {
                     Wms_wcstask wcsTask = new Wms_wcstask()
@@ -982,7 +992,7 @@ namespace Services.Outside
                 return false;
             }
         }
-        public async Task<ConfirmOutStockResult> ConfirmOutStock(WCSTaskResult result)
+        public async Task<ConfirmOutStockResult> ConfirmOutStock(WCSStockTaskCallBack result)
         {
             long taskId = result.TaskId.ToInt64();
             try
@@ -1073,6 +1083,12 @@ namespace Services.Outside
             return new RouteData();
         }
 
+        /// <summary>
+        /// 发送入库(归库)指令
+        /// </summary>
+        /// <param name="task"></param>
+        /// <param name="desc"></param>
+        /// <returns></returns>
         private async Task<bool> SendWCSBackCommand(Wms_inventoryboxTask task, string desc)
         {
             try
@@ -1080,14 +1096,24 @@ namespace Services.Outside
                 long taskId = PubId.SnowflakeId;
                 Wms_storagerack storagerack = await _sqlClient.Queryable<Wms_storagerack>().FirstAsync(x => x.StorageRackId == task.StoragerackId);
 
-                BackStockInfo backStockInfo = new BackStockInfo()
+                int channel = ((int)Math.Floor(storagerack.Row / 2.0));
+                StockInTaskInfo backStockInfo = new StockInTaskInfo()
                 {
-                    TaskId = task.InventoryBoxTaskId.ToString(),
-                    GetColumn = storagerack.Column.ToString(),
-                    GetRow = storagerack.Row.ToString(),
-                    GetFloor = storagerack.Floor.ToString()
+                    TaskId = taskId.ToString(),
+                    TrayBarcode = task.InventoryBoxNo,
+                    Priority = 10, //默认值
+                    Channel = channel.ToString(),
+                    SetColumn = storagerack.Column.ToString(),
+                    SetRow = storagerack.Row.ToString(),
+                    SetFloor = storagerack.Floor.ToString(),
+                    TaskType = "IN", //固定植:IN(入库)
+                    TaskStatus = "0", //任务阶段,暂时不用
+                    CreateBy = 0,
+                    CreateDate = DateTime.Now,
+                    GetPlcCode = storagerack.Row.ToString(),
+                    Table = channel == 1? "1" : "3"
                 };
-                CreateBackStockResult result = await WCSApiAccessor.Instance.CreateBackStockTask(backStockInfo);
+                StockInTaskResult result = await WCSApiAccessor.Instance.CreateStockInTask(backStockInfo);
                 if (result.Successd)
                 {
                     Wms_wcstask wcsTask = new Wms_wcstask()
@@ -1118,7 +1144,7 @@ namespace Services.Outside
         /// </summary>
         /// <param name="result"></param>
         /// <returns></returns>
-        public async Task<ConfirmBackStockResult> ConfirmBackStock(WCSTaskResult result)
+        public async Task<ConfirmBackStockResult> ConfirmBackStock(WCSStockTaskCallBack result)
         {
             long taskId = result.TaskId.ToInt64();
             try
@@ -1264,7 +1290,7 @@ namespace Services.Outside
 
             Wms_inventorybox inventoryBox = await _sqlClient.Queryable<Wms_inventorybox>().FirstAsync(x => x.InventoryBoxId == inventoryBoxId);
             if (inventoryBox == null) { return YL.Core.Dto.RouteData.From(PubMessages.E1011_INVENTORYBOX_NOTFOUND); }
-            if (inventoryBox.Status != InventoryBoxStatus.Outed) { return YL.Core.Dto.RouteData.From(PubMessages.E1014_INVENTORYBOX_NOTOUTED); }
+            if (inventoryBox.Status != InventoryBoxStatus.Outed && inventoryBox.Status != InventoryBoxStatus.None) { return YL.Core.Dto.RouteData.From(PubMessages.E1014_INVENTORYBOX_NOTOUTED); }
 
             Wms_inventoryboxTask inventoryBoxTask = await _sqlClient.Queryable<Wms_inventoryboxTask>().FirstAsync(x => x.InventoryBoxId == inventoryBoxId && x.Status == InventoryBoxTaskStatus.task_outed.ToByte());
             if (inventoryBoxTask == null) { return YL.Core.Dto.RouteData.From(PubMessages.E1014_INVENTORYBOX_NOTOUTED); } //数据异常 

@@ -85,13 +85,13 @@ namespace IServices.Outside
         /// </summary>
         /// <param name="result"></param>
         /// <returns></returns>
-        Task<ConfirmOutStockResult> ConfirmOutStock(WCSTaskResult result);
+        Task<ConfirmOutStockResult> ConfirmOutStock(WCSStockTaskCallBack result);
         /// <summary>
         /// 归库确认
         /// </summary>
         /// <param name="result"></param>
         /// <returns></returns>
-        Task<ConfirmBackStockResult> ConfirmBackStock(WCSTaskResult result);
+        Task<ConfirmBackStockResult> ConfirmBackStock(WCSStockTaskCallBack result);
         /// <summary>
         /// 入库单完成
         /// </summary> 

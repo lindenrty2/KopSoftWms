@@ -4,6 +4,11 @@
     <TargetFramework>net462</TargetFramework>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+
   <ItemGroup>
     <Compile Include="..\Dto\OutsideLogisticsControlDto.cs" Link="Do\OutsideLogisticsControlDto.cs" />
     <Compile Include="..\Dto\OutsideLogisticsEnquiryDto.cs" Link="Do\OutsideLogisticsEnquiryDto.cs" />

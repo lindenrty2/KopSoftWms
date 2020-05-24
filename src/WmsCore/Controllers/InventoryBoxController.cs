@@ -65,6 +65,7 @@ namespace KopSoftWms.Controllers
             {
                 return new PageGridData().JilToJson();
             }
+
             return result.ToGridJson();
             //var sd = _inventoryBoxServices.PageList(bootstrap);
             //return Content(sd);
@@ -354,31 +355,49 @@ namespace KopSoftWms.Controllers
             IWMSBaseApiAccessor wmsAccessor = WMSApiManager.GetBaseApiAccessor(storeId.ToString(), _client, this.UserDto); 
             RouteData<Wms_inventorybox> result = await wmsAccessor.GetInventoryBox(inventoryBoxId);
             if (!result.IsSccuess)
-            {
+            { 
                 return Json(result);
             }
             Wms_inventorybox box = result.Data; 
             Wms_inventoryboxTask task = await _client.Queryable<Wms_inventoryboxTask>().FirstAsync(x => x.InventoryBoxId == inventoryBoxId
-            && ( x.Status != (int)InventoryBoxTaskStatus.task_canceled && x.Status != (int)InventoryBoxTaskStatus.task_backed && x.Status != (int)InventoryBoxTaskStatus.task_leaved ));
-            if (task == null)
+                && ( x.Status != (int)InventoryBoxTaskStatus.task_canceled 
+                && x.Status != (int)InventoryBoxTaskStatus.task_backed  ));
+            if (task == null) //新料箱入库
             {
-                return Json(YL.Core.Dto.RouteData.From(PubMessages.E1011_INVENTORYBOX_NOTFOUND)); 
-            }
-            if (await _client.Queryable<Wms_stockindetail_box>().AnyAsync(x => x.InventoryBoxId == task.InventoryBoxTaskId))
-            {
-                return Redirect($"/inventorybox/stockinboxback?storeId={storeId}&inventoryBoxTaskId=" + task.InventoryBoxTaskId);
+                if (box.Status == InventoryBoxStatus.None)
+                {
+                    task = new Wms_inventoryboxTask() {
+                        InventoryBoxTaskId = PubId.SnowflakeId,
+                        InventoryBoxId = box.InventoryBoxId,
+                        InventoryBoxNo = box.InventoryBoxNo,
+                        ReservoirareaId = (long)box.ReservoirAreaId,
+                        StoragerackId = (long)box.StorageRackId,
+                        Data = null,
+                        OperaterDate = DateTime.Now,
+                        OperaterId = UserDto.UserId,
+                        OperaterUser = UserDto.UserName,
+                        Status = InventoryBoxTaskStatus.task_leaved.ToByte()
+                    };
+
+                    if(_client.Insertable(task).ExecuteCommand() == 0 ) { 
+                        return Json(YL.Core.Dto.RouteData.From(PubMessages.E0005_DATABASE_INSERT_FAIL, "新料箱入库时任务记录生成失败"));
+                    }
+                }
+                else {
+                    return Json(YL.Core.Dto.RouteData.From(PubMessages.E1013_INVENTORYBOXTASK_NOTFOUND)); 
+                }
             }
             else if (await _client.Queryable<Wms_stockindetail_box>().AnyAsync(x => x.InventoryBoxId == task.InventoryBoxTaskId))
             {
+                return Redirect($"/inventorybox/stockinboxback?storeId={storeId}&inventoryBoxTaskId=" + task.InventoryBoxTaskId);
+            }
+            else if (await _client.Queryable<Wms_stockoutdetail_box>().AnyAsync(x => x.InventoryBoxId == task.InventoryBoxTaskId))
+            {
                 return Redirect($"/inventorybox/stockoutboxback?storeId={storeId}&inventoryBoxTaskId=" + task.InventoryBoxTaskId);
             }
-            else
-            {
-                ViewData["InventoryBoxTaskId"] = task.InventoryBoxTaskId;
-                ViewData["currentStoreId"] = storeId;
-                return View(box);
-
-            } 
+            ViewData["InventoryBoxTaskId"] = task.InventoryBoxTaskId;
+            ViewData["currentStoreId"] = storeId;
+            return View(box);
         }
          
 

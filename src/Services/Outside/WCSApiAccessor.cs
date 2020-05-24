@@ -34,22 +34,34 @@ namespace WMSCore.Outside
             }
         }
 
-        public async Task<CreateOutStockResult> CreateOutStockTask([JsonContent]OutStockInfo outStockInfo)
+        /// <summary>
+        /// 创建WCS出库任务
+        /// </summary>
+        /// <param name="stockOutTask"></param>
+        /// <returns></returns>
+        public async Task<CreateOutStockResult> CreateStockOutTask([JsonContent]StockOutTaskInfo stockOutTask)
         {
             if(_apiProxy == null)
             {
                 return new CreateOutStockResult() { Successd = true };
             }
-            return await _apiProxy.CreateOutStockTask(outStockInfo);
+            CreateOutStockResult result =  await _apiProxy.CreateStockOut(stockOutTask);
+            return result;
         }
 
-        public async Task<CreateBackStockResult> CreateBackStockTask([JsonContent]BackStockInfo backStockInfo)
+        /// <summary>
+        /// 创建WCS入库任务
+        /// </summary>
+        /// <param name="stockInTask"></param>
+        /// <returns></returns>
+        public async Task<StockInTaskResult> CreateStockInTask([JsonContent]StockInTaskInfo stockInTask)
         {
             if (_apiProxy == null)
             {
-                return new CreateBackStockResult() { Successd = true };
+                return new StockInTaskResult() { Successd = true };
             }
-            return await _apiProxy.CreateBackStockTask(backStockInfo);
+            StockInTaskResult result = await _apiProxy.CreateStockIn(stockInTask);
+            return result;
         }
 
         public async Task<OutsideLogisticsEnquiryResult> LogisticsEnquiry([JsonContent]OutsideLogisticsEnquiryArg arg)

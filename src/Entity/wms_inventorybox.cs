@@ -26,6 +26,14 @@ namespace YL.Core.Entity
         public long InventoryBoxId { get; set; }
 
         /// <summary>
+        /// Desc:储存箱ID仅显示
+        /// Default:
+        /// Nullable:False
+        /// </summary>
+        [SugarColumn(IsIgnore = true)]
+        public string InventoryBoxIdStr { get { return InventoryBoxId.ToString(); } }
+
+        /// <summary>
         /// Desc:储存箱编号
         /// Default:
         /// Nullable:False

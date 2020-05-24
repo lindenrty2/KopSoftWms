@@ -16,16 +16,16 @@ namespace IServices.Outside
         /// </summary>
         /// <param name="outStockInfo"></param>
         /// <returns></returns>
-        [HttpPost("createOutStock.ashx")]
-        ITask<CreateOutStockResult> CreateOutStockTask([JsonContent] OutStockInfo outStockInfo);
+        [HttpPost("CreateStockOut.ashx")]
+        ITask<CreateOutStockResult> CreateStockOut([JsonContent] StockOutTaskInfo outStockInfo);
 
         /// <summary>
-        /// 归库指令
+        /// 入库(归库)指令
         /// </summary>
         /// <param name="backStockInfo"></param>
         /// <returns></returns>
-        [HttpPost("createBackStock.ashx")]
-        ITask<CreateBackStockResult> CreateBackStockTask([JsonContent] BackStockInfo backStockInfo);
+        [HttpPost("CreateStockIn.ashx")]
+        ITask<StockInTaskResult> CreateStockIn([JsonContent] StockInTaskInfo backStockInfo);
 
         /// <summary>
         /// 物流控制

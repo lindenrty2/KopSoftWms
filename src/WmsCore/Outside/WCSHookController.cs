@@ -64,11 +64,12 @@ namespace WMSCore.Outside
         /// </summary>
         /// <param name="result"></param>
         /// <returns></returns>
-        [HttpPost("confirmOutStock")]
-        public async Task<ConfirmOutStockResult> ConfirmOutStock([FromBody]WCSTaskResult result)
+        [HttpPost("ConfirmStockOut")]
+        public async Task<ConfirmOutStockResult> ConfirmStockOut([FromBody]WCSStockTaskCallBack result)
         {
             SelfWMSOperationApiAccessor accessor = new SelfWMSOperationApiAccessor(null, _client,this.UserDto);
-            return await accessor.ConfirmOutStock(result);
+            ConfirmOutStockResult apiResult = await accessor.ConfirmOutStock(result);
+            return apiResult;
         }
 
         /// <summary>
@@ -76,11 +77,12 @@ namespace WMSCore.Outside
         /// </summary>
         /// <param name="result"></param>
         /// <returns></returns>
-        [HttpPost("confirmBalance")]
-        public async Task<ConfirmBackStockResult> ConfirmBackStock([FromBody]WCSTaskResult result)
+        [HttpPost("ConfirmStockIn")]
+        public async Task<ConfirmBackStockResult> ConfirmStockIn([FromBody]WCSStockTaskCallBack result)
         {
             SelfWMSOperationApiAccessor accessor = new SelfWMSOperationApiAccessor(null, _client, this.UserDto);
-            return await accessor.ConfirmBackStock(result);
+            ConfirmBackStockResult apiResult = await accessor.ConfirmBackStock(result);
+            return apiResult;
         }
 
         [HttpPost("LogisticsFinish")]

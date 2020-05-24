@@ -17,18 +17,16 @@ namespace InterfaceMocker.WindowUI.WebApi
         /// 确认出库完成
         /// </summary>
         /// <param name="result"></param>
-        /// <returns></returns>
-        [Timeout(100000000)]
-        [HttpPost("confirmOutStock")]
+        /// <returns></returns> 
+        [HttpPost("ConfirmStockOut")]
         ITask<ConfirmOutStockResult> ConfirmOutStock([JsonContent]WCSTaskResult result);
 
         /// <summary>
         /// 确认归库完成
         /// </summary>
         /// <param name="result"></param>
-        /// <returns></returns>
-        [Timeout(100000000)]
-        [HttpPost("ConfirmBalance")]
+        /// <returns></returns> 
+        [HttpPost("ConfirmStockIn")]
         ITask<ConfirmBackStockResult> ConfirmBackStock([JsonContent]WCSTaskResult result);
 
         /// <summary>

@@ -64,6 +64,7 @@ namespace YL.NetCore.Attributes
 
                 foreach (var pp in pps)
                 {
+                    if (!pp.CanWrite) continue;
                     if (pp.GetValue(obj) != null)
                     {
                         //当属性等于字符串

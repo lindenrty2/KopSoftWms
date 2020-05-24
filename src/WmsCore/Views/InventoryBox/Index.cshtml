@@ -152,7 +152,7 @@
                         _self.InventoryBoxList = res.data.rows;
                         var html = "<option value=''>请选择</option>";
                         for (var item in _self.InventoryBoxList) {
-                            html += "<option value='" + _self.InventoryBoxList[item].InventoryBoxId + "' " + "data-subtext='" + _self.InventoryBoxList[item].InventoryBoxNo + "'>" + _self.InventoryBoxList[item].InventoryBoxName + "</option>"
+                            html += "<option value='" + _self.InventoryBoxList[item].InventoryBoxIdStr + "' " + "data-subtext='" + _self.InventoryBoxList[item].InventoryBoxNo + "'>" + _self.InventoryBoxList[item].InventoryBoxName + "</option>"
                         }
                         if (type !== 1) {
                             $("#InventoryBoxId").empty();
@@ -167,12 +167,15 @@
                     _self = this;
                     var obj = [
                         { checkbox: true, visible: true },
-                        { field: 'InventoryBoxId', title: 'Id', visible: false },
+                        { field: 'InventoryBoxIdStr', title: 'Id', visible: false },
                         {
                             field: '', title: '操作', align: 'center', sortable: true,
                             formatter: function (value, row, index) {
                                 var html = [];
                                 html.push('<button id="ViewDetailL" type="button" class="btn btn-link" style="margin-top:-8px;margin-left:-10px;">详细</button>');
+                                if (row.Status == 0 || row.Status == 'None') {
+                                    html.push('<button id="BackL" type="button" class="btn btn-link" style="margin-top:-8px;margin-left:-10px;">新箱入库</button>');
+                                }
                                 if (row.Status == 1 || row.Status == 'InPosition') {
                                     html.push('<button id="OutL" type="button" class="btn btn-link" style="margin-top:-8px;margin-left:-10px;">出库</button>');
                                 }
@@ -183,13 +186,13 @@
                             },
                             events: {
                                 'click #ViewDetailL': function (e, value, row, index) {
-                                    app.ShowDetailL(row.InventoryBoxId);
+                                    app.ShowDetailL(row.InventoryBoxIdStr);
                                 },
                                 'click #OutL': function (e, value, row, index) {
-                                    app.OutL(row.InventoryBoxId);
+                                    app.OutL(row.InventoryBoxIdStr);
                                 },
                                 'click #BackL': function (e, value, row, index) {
-                                    app.BackL(row.InventoryBoxId);
+                                    app.BackL(row.InventoryBoxIdStr);
                                 }
                             },
                         },
@@ -210,7 +213,7 @@
                     ];
                     var qParams = {
                     };
-                    yui.table("bootstraptable", "/InventoryBox/List", obj, "POST", "InventoryBoxId", true, qParams);
+                    yui.table("bootstraptable", "/InventoryBox/List", obj, "POST", "InventoryBoxIdStr", true, qParams);
                 },
                 showL: function () {
                     yui.layershow("添加料箱", "/InventoryBox/Add?storeId=@ViewData["currentStoreId"]", 550, 600);
@@ -223,7 +226,7 @@
                     if (arr.length > 0) {
                         var index = layer.confirm("您确定要修改吗？", { btn: ["确定", "取消"] }, function () {
                             layer.close(index);
-                            var id = arr[0].InventoryBoxId;
+                            var id = arr[0].InventoryBoxIdStr;
                             yui.layershow("修改料箱", "/InventoryBox/Add?storeId=@ViewData["currentStoreId"]&id=" + id, 550, 600);
                         }, function () {
 
@@ -237,7 +240,7 @@
                     var arr = $("#bootstraptable").bootstrapTable('getSelections');
                     if (arr.length > 0) {
                         var index = layer.confirm("您确定要删除吗？", { btn: ["确定", "取消"] }, function () {
-                            var id = arr[0].InventoryBoxId;
+                            var id = arr[0].InventoryBoxIdStr;
                             yui.$axiosget('/InventoryBox/Delete?id=' + id)
                                 .then(function (response) {
                                     if (response.data.Item1) {
@@ -263,6 +266,7 @@
                     var _self = this;
                     var index = layer.confirm("您确定要出库吗？", { btn: ["确定", "取消"] }, function () {
                         var data = {
+                            storeId: @ViewData["currentStoreId"],
                             inventoryBoxId: val,
                         };
                         yui.$axiospostform('/InventoryBox/DoInventoryBoxOut', data)
