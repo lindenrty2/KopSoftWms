@@ -28,7 +28,7 @@ namespace YL.Core.Entity
         /// <summary>
         /// 料箱Id
         /// </summary>
-        [SugarColumn(Length = 11, IsNullable = true)]
+        [SugarColumn(IsNullable = true)] //Length = 11,
         public long? InventoryBoxId { get; set; }
         /// <summary>
         /// 料箱Id
@@ -39,7 +39,7 @@ namespace YL.Core.Entity
         /// <summary>
         /// 料箱任务Id
         /// </summary>
-        [SugarColumn(Length = 11, IsNullable = true)]
+        [SugarColumn(IsNullable = true)] //Length = 11,
         public long? InventoryBoxTaskId { get; set; }
 
         /// <summary>
@@ -84,7 +84,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
-        [SugarColumn(Length = 11, IsNullable = true)]
+        [SugarColumn(IsNullable = true)] //Length = 11
         public long? RequestUserId { get; set; }
         /// <summary>
         /// Desc:请求人名
@@ -106,7 +106,7 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:True
         /// </summary>
-        [SugarColumn(Length = 11, IsNullable = true)]
+        [SugarColumn(IsNullable = true)] //Length = 11
         public long? ResponseUserId { get; set; }
         /// <summary>
         /// Desc:回复人名
