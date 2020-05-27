@@ -7,10 +7,15 @@
     <ApplicationIcon />
     <OutputType>Exe</OutputType>
     <StartupObject />
+    <Platforms>AnyCPU;x86</Platforms>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DocumentationFile></DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
+    <DocumentationFile />
   </PropertyGroup>
 
   <ItemGroup>
@@ -247,7 +252,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Dto\Dto.csproj" />
-    <ProjectReference Include="..\IServices\IServices.csproj" />
   </ItemGroup>
 
   <ItemGroup>

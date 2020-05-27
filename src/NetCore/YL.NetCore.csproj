@@ -5,6 +5,7 @@
     <RootNamespace>YL.NetCore</RootNamespace>
     <AssemblyName>YL.NetCore</AssemblyName>
     <LangVersion>7.1</LangVersion>
+    <Platforms>AnyCPU;x86</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
