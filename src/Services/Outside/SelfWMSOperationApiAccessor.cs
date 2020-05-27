@@ -963,8 +963,8 @@ namespace Services.Outside
                     TaskStatus = "0", //任务阶段,暂时不用
                     CreateBy = 0,
                     CreateDate = DateTime.Now,
-                    SetPlcCode = storagerack.Row.ToString(),
-                    Table = channel == 1 ? "1" : "3"
+                    SetPlcCode = storagerack.Row < 3 ? "1010" : "5010",
+                    //Table = channel == 1 ? "1" : "3"
                 };
                  
                 CreateOutStockResult result = await WCSApiAccessor.Instance.CreateStockOutTask(outStockInfo);
@@ -1110,7 +1110,7 @@ namespace Services.Outside
                     TaskStatus = "0", //任务阶段,暂时不用
                     CreateBy = 0,
                     CreateDate = DateTime.Now,
-                    GetPlcCode = storagerack.Row.ToString(),
+                    GetPlcCode = storagerack.Row < 3 ? "1010" : "5010" ,//storagerack.Row.ToString(),
                     Table = channel == 1? "1" : "3"
                 };
                 StockInTaskResult result = await WCSApiAccessor.Instance.CreateStockInTask(backStockInfo);
