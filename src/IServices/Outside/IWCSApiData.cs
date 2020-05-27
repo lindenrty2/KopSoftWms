@@ -254,13 +254,13 @@ namespace IServices.Outside
     public class CreateOutStockResult
     {
         public bool Successd { get; set; } = true;
-        public bool ErrorCode { get; set; }
-        public bool SubErrorCode { get; set; }
-        public bool ErrorDesc { get; set; }
-        public bool SubErrorDesc { get; set; }
-        public bool RequestMethod { get; set; }
-        public bool Code { get; set; }
-        public bool Returncode { get; set; }
+        public string ErrorCode { get; set; }
+        public string SubErrorCode { get; set; }
+        public string ErrorDesc { get; set; }
+        public string SubErrorDesc { get; set; }
+        public string RequestMethod { get; set; }
+        public string Code { get; set; }
+        public string Returncode { get; set; }
 
     }
 
