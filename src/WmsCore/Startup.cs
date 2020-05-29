@@ -165,7 +165,7 @@ namespace YL
                 InitTableData<Sys_rolemenu>(db, "Sys_rolemenu.json");
                 InitTableData<Sys_serialnum>(db, "Sys_serialnum.json");
                 InitTableData<Sys_user>(db, "Sys_user.json");
-                TestData.Create(db); 
+                TestData.Create(db,logger); 
 
                 logger.Log(NLog.LogLevel.Info, "数据库整备结束");
                 return true;
