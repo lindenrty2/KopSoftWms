@@ -84,24 +84,24 @@ namespace YL.Core.Entity
         /// <summary>
         /// 行
         /// </summary>
-        [SugarColumn(IsNullable = true)]
+        [SugarColumn(ColumnName = "RowP", IsNullable = true)]
         public int? Row { get; set; }
         /// <summary>
         /// 列
         /// </summary>
-        [SugarColumn(IsNullable = true)]
+        [SugarColumn(ColumnName = "ColumnP", IsNullable = true)]
         public int? Column { get; set; }
         /// <summary>
         /// 层
         /// </summary>
-        [SugarColumn(IsNullable = true)]
+        [SugarColumn(ColumnName ="FloorP", IsNullable = true)]
         public int? Floor { get; set; }
 
 
         /// <summary>
         /// 格数
         /// </summary>
-        [SugarColumn(IsNullable = false)]
+        [SugarColumn(ColumnName ="SizeP", IsNullable = false)]
         public int Size { get; set; }
 
         /// <summary>

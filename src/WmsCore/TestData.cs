@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using NLog;
 using SqlSugar;
 using System;
 using YL.Core.Entity;
@@ -10,53 +11,77 @@ namespace YL
 {
     public class TestData
     {
-        public static void Create(SqlSugarClient sqlClient)  
+        public static void Create(SqlSugarClient sqlClient,ILogger logger)  
         {
-            if (sqlClient.Queryable<Wms_warehouse>().Any()) return;
-            for (int i = 1; i <= 4; i++)
+            if (sqlClient.Queryable<Wms_warehouse>().Any())
             {
-                Wms_warehouse warehouse = new Wms_warehouse()
+                logger.Info("无需创建初始仓库数据");
+                return;
+            }
+            logger.Info("开始创建初始仓库数据");
+            try
+            {
+                sqlClient.BeginTran();
+                for (int i = 1; i <= 4; i++)
                 {
-                    WarehouseId = i,
-                    WarehouseNo = "CK000" + i,
-                    WarehouseName = "仓库000" + i,
-                    IFAddress = "",
-                    CreateBy = 1,
-                    CreateDate = DateTime.Now,
-                    ModifiedBy = 1,
-                    ModifiedDate = DateTime.Now,
-                    IsDel = DeleteFlag.Normal,
-                    Remark = ""
-                };
-                sqlClient.Insertable(warehouse).ExecuteCommand();
-                if (i == 1)
-                {
-                    CreateReservoirArea(sqlClient, warehouse);
+                    Wms_warehouse warehouse = new Wms_warehouse()
+                    {
+                        WarehouseId = i,
+                        WarehouseNo = "CK000" + i,
+                        WarehouseName = "仓库000" + i,
+                        IFAddress = "",
+                        CreateBy = 1,
+                        CreateDate = DateTime.Now,
+                        ModifiedBy = 1,
+                        ModifiedDate = DateTime.Now,
+                        IsDel = DeleteFlag.Normal,
+                        Remark = ""
+                    };
+                    sqlClient.Insertable(warehouse).ExecuteCommand();
+                    if (i == 1)
+                    {
+                        CreateReservoirArea(sqlClient, warehouse);
+                    }
                 }
-            } 
+                sqlClient.CommitTran();
+                logger.Info("创建初始仓库数据成功");
+            }
+            catch(Exception ex)
+            {
+                logger.Error(ex, "创建初始仓库数据失败");
+                sqlClient.RollbackTran();
+            }
         }
 
         protected static void CreateReservoirArea(SqlSugarClient sqlClient,Wms_warehouse warehouse)
         {
             for (int i = 1; i <= 1; i++)
             {
-                Wms_reservoirarea reservoirarea = new Wms_reservoirarea()
+                try
                 {
-                    ReservoirAreaId = i,
-                    ReservoirAreaNo = "KQ000" + i,
-                    ReservoirAreaName = "库区000" + i,
-                    WarehouseId = warehouse.WarehouseId,
-                    Remark = "",
-                    CreateBy = 1,
-                    CreateUser = "初始数据",
-                    CreateDate = DateTime.Now,
-                    ModifiedBy = 1,
-                    ModifiedUser = "初始数据",
-                    ModifiedDate = DateTime.Now,
-                    IsDel = DeleteFlag.Normal,
-                };
-                sqlClient.Insertable(reservoirarea).ExecuteCommand();
-                CreateStoragerack(sqlClient, warehouse,reservoirarea);
+                    Wms_reservoirarea reservoirarea = new Wms_reservoirarea()
+                    {
+                        ReservoirAreaId = i,
+                        ReservoirAreaNo = "KQ000" + i,
+                        ReservoirAreaName = "库区000" + i,
+                        WarehouseId = warehouse.WarehouseId,
+                        Remark = "",
+                        CreateBy = 1,
+                        CreateUser = "初始数据",
+                        CreateDate = DateTime.Now,
+                        ModifiedBy = 1,
+                        ModifiedUser = "初始数据",
+                        ModifiedDate = DateTime.Now,
+                        IsDel = DeleteFlag.Normal,
+                    };
+                    sqlClient.Insertable(reservoirarea).ExecuteCommand();
+
+                    CreateStoragerack(sqlClient, warehouse, reservoirarea);
+                }
+                catch(Exception e)
+                {
+                    throw e;
+                }
             }
 
         }

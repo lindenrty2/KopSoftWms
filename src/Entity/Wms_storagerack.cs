@@ -67,16 +67,19 @@ namespace YL.Core.Entity
         /// <summary>
         /// 行
         /// </summary>
+        [SugarColumn(ColumnName = "RowP")]
         public int Row { get; set; }
 
         /// <summary>
         /// 列
         /// </summary>
+        [SugarColumn(ColumnName = "ColumnP")]
         public int Column { get; set; }
 
         /// <summary>
         /// 层
         /// </summary>
+        [SugarColumn(ColumnName = "FloorP")]
         public int Floor { get; set; }
 
         /// <summary>
