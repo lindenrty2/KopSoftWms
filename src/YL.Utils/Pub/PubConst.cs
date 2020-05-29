@@ -29,6 +29,10 @@ namespace YL.Utils.Pub
 
         public const string Dict1 = "字典名称重复";
 
+        public const string UnitNotFound = "单位不存在";
+
+        public const string MaterialTypeNotFound = "物料类型不存在"; 
+
         public const string Warehouse1 = "仓库编号或名称重复";
         public const string Warehouse2 = "该仓库下存在库区，不允许删除";
         public const string Warehouse3 = "该库区下存在货架，不允许删除";

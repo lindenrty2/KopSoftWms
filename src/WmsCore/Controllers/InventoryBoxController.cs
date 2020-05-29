@@ -168,20 +168,8 @@ namespace KopSoftWms.Controllers
                 return new PageGridData().JilToJson();
             }
             return result.ToGridJson();
-            //var bootstrap = new InventoryBoxBootstrapParams()
-            //{
-            //    limit = 100,
-            //    offset = 0,
-            //    sort = "CreateDate",
-            //    search = text,
-            //    order = "desc",
-            //    storeId = storeId
-            //};
-            //var json = _inventoryBoxServices.PageList(bootstrap);
-            //return Content(json);
         }
-
-
+        
         [HttpGet]
         public async Task<IActionResult> Detail(long storeId, long id)
         { 
@@ -214,7 +202,6 @@ namespace KopSoftWms.Controllers
                 return result.Message; 
             }
             return result.ToGridJson();
-           
         } 
 
         [HttpGet]
@@ -251,7 +238,6 @@ namespace KopSoftWms.Controllers
             }
         }
         
-
         [HttpGet]
         public IActionResult InventoryBoxOut(long storeId)
         {
@@ -304,8 +290,7 @@ namespace KopSoftWms.Controllers
             return result;
 
         }
-
-
+        
         ///// <summary>
         ///// 归库处理
         ///// </summary>

@@ -11,6 +11,7 @@ namespace YL.Core.Entity
     /// </summary>
     public partial class Wms_wcstask
     {
+        [SugarColumn(IsIgnore = true)]
         public string WcsTaskIdStr { get { return WcsTaskId.ToString(); } }
 
         /// <summary>
@@ -43,9 +44,9 @@ namespace YL.Core.Entity
         public long? InventoryBoxTaskId { get; set; }
 
         /// <summary>
-        /// 料箱任务Id
+        /// 任务描述
         /// </summary>
-        [SugarColumn(Length =200)]
+        [SugarColumn(ColumnName="DescP", Length =200)]
         public string Desc { get; set; }
 
         /// <summary>

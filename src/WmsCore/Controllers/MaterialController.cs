@@ -18,6 +18,7 @@ using YL.Utils.Pub;
 using YL.Utils.Security;
 using YL.Utils.Table; 
 using YL.Utils.Json;
+using System;
 
 namespace KopSoftWms.Controllers
 {
@@ -89,20 +90,44 @@ namespace KopSoftWms.Controllers
                 string msg = results.Errors.Aggregate("", (current, item) => (current + item.ErrorMessage + "</br>"));
                 return BootJsonH((PubEnum.Failed.ToInt32(), msg));
             }
+
+
+            Sys_dict unitDict = _client.Queryable<Sys_dict>().First(x => x.DictId == model.Unit && x.DictType == PubDictType.unit.ToInt32().ToString());
+            if (unitDict == null)
+            {
+                return BootJsonH((false, PubConst.UnitNotFound));
+            }
+            Sys_dict typeDict = _client.Queryable<Sys_dict>().First(x => x.DictId == model.MaterialType && x.DictType == PubDictType.material.ToInt32().ToString());
+            if (typeDict == null)
+            {
+                return BootJsonH((false, PubConst.MaterialTypeNotFound));
+            }
+
             if (id.IsEmptyZero())
             {
                 if (_materialServices.IsAny(c => c.MaterialNo == model.MaterialNo || c.MaterialName == model.MaterialName))
                 {
                     return BootJsonH((false, PubConst.Material1));
                 }
+
                 model.MaterialId = PubId.SnowflakeId;
+                model.UnitName = unitDict.DictName;
+                model.MaterialTypeName = typeDict.DictName;
                 model.CreateBy = UserDtoCache.UserId;
+                model.CreateDate = DateTime.Now;
+                model.CreateUser = UserDtoCache.UserName;
+                model.ModifiedBy = UserDtoCache.UserId;
+                model.ModifiedDate = DateTime.Now;
+                model.ModifiedUser = UserDtoCache.UserName;
+
                 bool flag = _materialServices.Insert(model);
                 return BootJsonH(flag ? (flag, PubConst.Add1) : (flag, PubConst.Add2));
             }
             else
             {
                 model.MaterialId = id.ToInt64();
+                model.UnitName = unitDict.DictName;
+                model.MaterialTypeName = typeDict.DictName;
                 model.ModifiedBy = UserDtoCache.UserId;
                 model.ModifiedDate = DateTimeExt.DateTime;
                 var flag = _materialServices.Update(model);
@@ -135,18 +160,6 @@ namespace KopSoftWms.Controllers
         [HttpGet]
         public async Task<string> Search(long storeId,string text)
         {
-            //var bootstrap = new Bootstrap.BootstrapParams
-            //{
-            //    limit = 100,
-            //    offset = 0,
-            //    sort = "CreateDate",
-            //    search = text,
-            //    order = "desc",
-            //    storeId = storeId
-            //};
-            //var json = _materialServices.PageList(bootstrap);
-            //return Content(json);
-
             IWMSBaseApiAccessor wmsAccessor = WMSApiManager.GetBaseApiAccessor(storeId.ToString(), _client);
             RouteData<Wms_MaterialDto[]> result = (await wmsAccessor.GetMateralList(1, 100, text, new string[0], null,null));
             if (!result.IsSccuess)

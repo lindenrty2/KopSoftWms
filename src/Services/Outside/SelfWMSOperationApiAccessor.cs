@@ -11,6 +11,7 @@ using YL.Utils.Pub;
 using YL.Utils.Extensions;
 using System.Linq;
 using Newtonsoft.Json;
+using Microsoft.Extensions.Logging;
 
 namespace Services.Outside
 {
@@ -144,7 +145,7 @@ namespace Services.Outside
                 Status = InventoryBoxTaskStatus.task_outing.ToByte()
             };
             
-            if (!await SendWCSOutCommand(task, $"料箱编号:{inventoryBox.InventoryBoxNo}"))
+            if (!await SendWCSOutCommand(task, this.UserDto, $"料箱编号:{inventoryBox.InventoryBoxNo}"))
             {
                 return YL.Core.Dto.RouteData.From(PubMessages.E2300_WCS_OUTCOMMAND_FAIL);
             }
@@ -942,14 +943,14 @@ namespace Services.Outside
             return new RouteData();
         }
 
-        private async Task<bool> SendWCSOutCommand(Wms_inventoryboxTask task,string desc)
+        private async Task<bool> SendWCSOutCommand(Wms_inventoryboxTask task,SysUserDto UserDto, string desc)
         {
             try
             {
                 Wms_storagerack storagerack = _sqlClient.Queryable<Wms_storagerack>().First(x => x.StorageRackId == task.StoragerackId);
 
                 long taskId = PubId.SnowflakeId;
-                int channel = ((int)Math.Floor(storagerack.Row / 2.0));
+                int channel = ((int)Math.Floor(storagerack.Row / 2.0)) + 1;
                 StockOutTaskInfo outStockInfo = new StockOutTaskInfo()
                 {
                     TaskId = taskId.ToString(),
@@ -977,17 +978,19 @@ namespace Services.Outside
                         InventoryBoxId = task.InventoryBoxId,
                         InventoryBoxNo = task.InventoryBoxNo,
                         InventoryBoxTaskId = task.InventoryBoxTaskId,
+                        RequestUserId = UserDto.UserId,
+                        RequestDate = DateTime.Now,
+                        RequestUser = UserDto.UserName,
                         Desc = $"出库指令({desc})",
                         WorkStatus = WCSTaskWorkStatus.Working,
                         NotifyStatus = WCSTaskNotifyStatus.WaitResponse,
-                        Params = JsonConvert.SerializeObject(outStockInfo),
-                        RequestDate = DateTime.Now
+                        Params = JsonConvert.SerializeObject(outStockInfo)
                     };
                     await _sqlClient.Insertable(wcsTask).ExecuteCommandAsync();
                 }
                 return result.Successd;
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 return false;
             }
@@ -1096,7 +1099,7 @@ namespace Services.Outside
                 long taskId = PubId.SnowflakeId;
                 Wms_storagerack storagerack = await _sqlClient.Queryable<Wms_storagerack>().FirstAsync(x => x.StorageRackId == task.StoragerackId);
 
-                int channel = ((int)Math.Floor(storagerack.Row / 2.0));
+                int channel = ((int)Math.Floor(storagerack.Row / 2.0)) + 1;
                 StockInTaskInfo backStockInfo = new StockInTaskInfo()
                 {
                     TaskId = taskId.ToString(),

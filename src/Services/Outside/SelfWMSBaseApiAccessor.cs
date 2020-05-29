@@ -111,6 +111,8 @@ namespace Services.Outside
             {
                 query = query.Where(x => x.ModifiedDate <= maxDate);
             }
+
+            RefAsync<int> totalCount = new RefAsync<int>();
             List<Wms_MaterialDto> result = await query.Select(
               (x) => new Wms_MaterialDto
               {
@@ -120,9 +122,9 @@ namespace Services.Outside
                   MaterialName = x.MaterialName,
                   MaterialType = x.MaterialTypeName,
                   Unit = x.UnitName
-              }).ToPageListAsync(pageIndex,pageSize);
-                                 
-            return RouteData<Wms_MaterialDto[]>.From(result.ToArray());
+              }).ToPageListAsync(pageIndex,pageSize,totalCount);
+            
+            return RouteData<Wms_MaterialDto[]>.From(result.ToArray(), totalCount);
         }
 
         //-------------------------------库区----------------------------------
