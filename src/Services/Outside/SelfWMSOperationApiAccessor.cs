@@ -950,7 +950,7 @@ namespace Services.Outside
                 Wms_storagerack storagerack = _sqlClient.Queryable<Wms_storagerack>().First(x => x.StorageRackId == task.StoragerackId);
 
                 long taskId = PubId.SnowflakeId;
-                int channel = ((int)Math.Floor(storagerack.Row / 2.0)) + 1;
+                int channel = ((int)Math.Ceiling(storagerack.Row / 2.0));
                 StockOutTaskInfo outStockInfo = new StockOutTaskInfo()
                 {
                     TaskId = taskId.ToString(),
@@ -1099,7 +1099,7 @@ namespace Services.Outside
                 long taskId = PubId.SnowflakeId;
                 Wms_storagerack storagerack = await _sqlClient.Queryable<Wms_storagerack>().FirstAsync(x => x.StorageRackId == task.StoragerackId);
 
-                int channel = ((int)Math.Floor(storagerack.Row / 2.0)) + 1;
+                int channel = ((int)Math.Ceiling(storagerack.Row / 2.0));
                 StockInTaskInfo backStockInfo = new StockInTaskInfo()
                 {
                     TaskId = taskId.ToString(),
