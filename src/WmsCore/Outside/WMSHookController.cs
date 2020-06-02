@@ -58,7 +58,7 @@ namespace WMSCore.Outside
         /// </summary>
         /// <param name="result"></param>
         /// <returns></returns>
-        [HttpPost("/StockIn/{stockInId}/Status")]
+        [HttpPost("StockIn/{stockInId}/Status")]
         public async Task<RouteData> StockInReport(long stockInId,[FromBody]OutsideStockInReportDto result)
         {
             try
@@ -228,7 +228,7 @@ namespace WMSCore.Outside
         /// </summary>
         /// <param name="result"></param>
         /// <returns></returns>
-        [HttpPost("/StockOut/{stockOutId}/Status")]
+        [HttpPost("StockOut/{stockOutId}/Status")]
         public async Task<RouteData> StockOutReport(long stockOutId, [FromBody]OutsideStockOutReportDto result)
         {
             try
