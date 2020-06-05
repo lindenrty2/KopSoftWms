@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.WindowsServices;
+using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using YL.Utils.Configs;
 
@@ -12,6 +14,11 @@ namespace YL
     {
         public static void Main(string[] args)
         {
+            if (!Debugger.IsAttached)
+            {
+                string dir = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+                Environment.CurrentDirectory = dir;
+            }
             if (args.Contains("-s"))
             {
                 CreateWebHostBuilder(args).Build().RunAsService();
