@@ -20,7 +20,7 @@ namespace InterfaceMocker.WindowUI
         private string[] OnlySuppliesItems = new string[] {
             "TPY01-00001", "TPY01-00002", "TPY01-00003", "TPY01-00004", "TPY02-00001", "TPY02-00001", "GBX02-00001", "GBX02-00002", "GBX02-00003", "GBX02-00004" };
 
-        private List<YL.Core.Dto.OutsideMaterialDto> SuppliesInfoList;
+        private List<YL.Core.Dto.OutsideWarehouseEntryMaterialDto> SuppliesInfoList;
         public MesStockoutCreateWindow()
         {
             InitializeComponent();
@@ -33,7 +33,7 @@ namespace InterfaceMocker.WindowUI
             _data.BatchPlanId = DateTime.Now.TimeOfDay.Ticks.ToString();
             _data.WorkAreaName = "工作区1";
             _data.SuppliesKinds = 1;
-            this.SuppliesInfoList = new List<YL.Core.Dto.OutsideMaterialDto>();
+            this.SuppliesInfoList = new List<YL.Core.Dto.OutsideWarehouseEntryMaterialDto>();
             _data.SuppliesInfoList = JsonConvert.SerializeObject(this.SuppliesInfoList);
             AddMaterial_Click(null,null);
             this.DataContext = _data;
@@ -49,8 +49,10 @@ namespace InterfaceMocker.WindowUI
         private void AddMaterial_Click(object sender, RoutedEventArgs e)
         {
             string suppliy = SuppliesItems[SuppliesInfoList.Count % 10];
-            IEnumerable<YL.Core.Dto.OutsideMaterialDto> newItem = new YL.Core.Dto.OutsideMaterialDto[] { new YL.Core.Dto.OutsideMaterialDto()
+            IEnumerable<YL.Core.Dto.OutsideWarehouseEntryMaterialDto> newItem = new YL.Core.Dto.OutsideWarehouseEntryMaterialDto[] { new YL.Core.Dto.OutsideWarehouseEntryMaterialDto()
                 {
+                    WarehouseId="",
+                    SubWarehouseEntryId = "SW-"+ DateTime.Now.ToString("yyyyMMddHHmmss"),
                     SuppliesOnlyId =  null,
                     SuppliesId = suppliy,
                     SuppliesName =  "物料-" + suppliy,
@@ -66,8 +68,10 @@ namespace InterfaceMocker.WindowUI
         private void AddSingleMaterial_Click(object sender, RoutedEventArgs e)
         {
             string onlySuppliy = OnlySuppliesItems[SuppliesInfoList.Count % 10];
-            IEnumerable<YL.Core.Dto.OutsideMaterialDto> newItem = new YL.Core.Dto.OutsideMaterialDto[] { new YL.Core.Dto.OutsideMaterialDto()
+            IEnumerable<YL.Core.Dto.OutsideWarehouseEntryMaterialDto> newItem = new YL.Core.Dto.OutsideWarehouseEntryMaterialDto[] { new YL.Core.Dto.OutsideWarehouseEntryMaterialDto()
                 {
+                    WarehouseId="",
+                    SubWarehouseEntryId = "SW-"+ DateTime.Now.ToString("yyyyMMddHHmmss"),
                     SuppliesOnlyId = onlySuppliy,
                     SuppliesId = null,
                     SuppliesName = "物料-" + DateTime.Now.ToString("yyyyMMddHHmmss"),

@@ -81,7 +81,7 @@ namespace WMSCore.Outside
 
                 _sqlClient.BeginTran();
                 string jsonSuppliesInfoStr = data.SuppliesInfoList;
-                OutsideMaterialDto[] suppliesInfos = JsonConvert.DeserializeObject<OutsideMaterialDto[]>(jsonSuppliesInfoStr);
+                OutsideWarehousingMaterialDto[] suppliesInfos = JsonConvert.DeserializeObject<OutsideWarehousingMaterialDto[]>(jsonSuppliesInfoStr);
                 Wms_mestask mesTask = new Wms_mestask()
                 {
                     MesTaskId = PubId.SnowflakeId,
@@ -145,39 +145,50 @@ namespace WMSCore.Outside
 
         }
 
-        private RouteData CreateWMSStockin(Wms_mestask mesTask, OutsideMaterialDto[] suppliesInfoList)
+        private RouteData CreateWMSStockin(Wms_mestask mesTask, OutsideWarehousingMaterialDto[] suppliesInfoList)
         {
-            Dictionary<long, List<Wms_MaterialInventoryDto>> map = new Dictionary<long, List<Wms_MaterialInventoryDto>>();
+            Dictionary<long, List<Wms_WarehousingMaterialInventoryDto>> map = new Dictionary<long, List<Wms_WarehousingMaterialInventoryDto>>();
             Sys_dict[] typeDicts = _sqlClient.Queryable<Sys_dict>()
                      .Where(x => x.DictType == PubDictType.material.ToByte().ToString())
                      .ToArray();
 
-            foreach (OutsideMaterialDto materialDto in suppliesInfoList)
+            foreach (OutsideWarehousingMaterialDto materialDto in suppliesInfoList)
             {
 
-                Sys_dict typeDict = typeDicts.FirstOrDefault(x => x.DictName == materialDto.SuppliesType);
-                if (typeDict == null)
+                //Sys_dict typeDict = typeDicts.FirstOrDefault(x => x.DictName == materialDto.SuppliesType);
+                //if (typeDict == null)
+                //{
+                //    return RouteData<Wms_material>.From(PubMessages.E1001_SUPPLIESTYPE_NOTFOUND, $"SuppliesType = {materialDto.SuppliesType}");
+                //}
+                //else if (typeDict.WarehouseId == null)
+                //{
+                //    return RouteData<Wms_material>.From(PubMessages.E1002_SUPPLIESTYPE_WAREHOUSEID_NOTSET, $"SuppliesType = {materialDto.SuppliesType}");
+                //}
+                //long warehouseId = typeDict.WarehouseId.Value;
+
+
+                string warehouseNo = string.IsNullOrWhiteSpace( materialDto.WarehouseId) ? "A00" : materialDto.WarehouseId;
+                //MES的WarehouseID对应WMS的WarehouseNo
+                Wms_warehouse warehouse = WMSApiManager.GetWarehouse(warehouseNo);
+                if(warehouse == null)
                 {
-                    return RouteData<Wms_material>.From(PubMessages.E1001_SUPPLIESTYPE_NOTFOUND, $"SuppliesType = {materialDto.SuppliesType}");
+                    return RouteData<Wms_material>.From(PubMessages.E1026_SUPPLIES_WAREHOUSEID_NOTFOUND, $"warehouseId = {warehouseNo}");
                 }
-                else if (typeDict.WarehouseId == null)
-                {
-                    return RouteData<Wms_material>.From(PubMessages.E1002_SUPPLIESTYPE_WAREHOUSEID_NOTSET, $"SuppliesType = {materialDto.SuppliesType}");
-                }
-                long warehouseId = typeDict.WarehouseId.Value;
-                List<Wms_MaterialInventoryDto> warehouseMaterialList = null;
+                long warehouseId = warehouse.WarehouseId; 
+                List<Wms_WarehousingMaterialInventoryDto> warehouseMaterialList = null;
                 if (map.ContainsKey(warehouseId))
                 {
                     warehouseMaterialList = map[warehouseId];
                 }
                 else
                 {
-                    warehouseMaterialList = new List<Wms_MaterialInventoryDto>();
+                    warehouseMaterialList = new List<Wms_WarehousingMaterialInventoryDto>();
                     map.Add(warehouseId, warehouseMaterialList);
                 }
-                warehouseMaterialList.Add(new Wms_MaterialInventoryDto()
+                warehouseMaterialList.Add(new Wms_WarehousingMaterialInventoryDto()
                 {
                     MaterialId = "-1",
+                    SubWarehousingId = materialDto.SubWarehouseId,
                     MaterialOnlyId = materialDto.SuppliesOnlyId,
                     MaterialNo = materialDto.SuppliesId,
                     MaterialName = materialDto.SuppliesName,
@@ -188,7 +199,7 @@ namespace WMSCore.Outside
             }
 
             List<RouteData<OutsideStockInRequestResult[]>> result = new List<RouteData<OutsideStockInRequestResult[]>>();
-            foreach (KeyValuePair<long, List<Wms_MaterialInventoryDto>> keyValue in map)
+            foreach (KeyValuePair<long, List<Wms_WarehousingMaterialInventoryDto>> keyValue in map)
             {
                 try
                 {
@@ -261,7 +272,7 @@ namespace WMSCore.Outside
 
                 _sqlClient.BeginTran();
                 string jsonSuppliesInfoStr = data.SuppliesInfoList;
-                OutsideMaterialDto[] suppliesInfos = JsonConvert.DeserializeObject<OutsideMaterialDto[]>(jsonSuppliesInfoStr);
+                OutsideWarehouseEntryMaterialDto[] suppliesInfos = JsonConvert.DeserializeObject<OutsideWarehouseEntryMaterialDto[]>(jsonSuppliesInfoStr);
                 Wms_mestask mesTask = new Wms_mestask()
                 {
                     MesTaskId = PubId.SnowflakeId,
@@ -327,35 +338,47 @@ namespace WMSCore.Outside
             }
         }
 
-        private RouteData CreateWMSStockout(Wms_mestask mesTask, OutsideMaterialDto[] suppliesInfoList)
+        private RouteData CreateWMSStockout(Wms_mestask mesTask, OutsideWarehouseEntryMaterialDto[] suppliesInfoList)
         {
-            Dictionary<long, List<Wms_MaterialInventoryDto>> map = new Dictionary<long, List<Wms_MaterialInventoryDto>>();
-            foreach (OutsideMaterialDto materialDto in suppliesInfoList)
+            Dictionary<long, List<Wms_WarehouseEntryMaterialInventoryDto>> map =
+                new Dictionary<long, List<Wms_WarehouseEntryMaterialInventoryDto>>();
+            foreach (OutsideWarehouseEntryMaterialDto materialDto in suppliesInfoList)
             {
-                Sys_dict typeDict = _sqlClient.Queryable<Sys_dict>()
-                       .First(x => x.DictType == PubDictType.material.ToByte().ToString() && x.DictName == materialDto.SuppliesType);
-                if (typeDict == null)
+                //Sys_dict typeDict = _sqlClient.Queryable<Sys_dict>()
+                //       .First(x => x.DictType == PubDictType.material.ToByte().ToString() && x.DictName == materialDto.SuppliesType);
+                //if (typeDict == null)
+                //{
+                //    return RouteData<Wms_material>.From(PubMessages.E1001_SUPPLIESTYPE_NOTFOUND, $"SuppliesType = {materialDto.SuppliesType}");
+                //}
+                //else if (typeDict.WarehouseId == null)
+                //{
+                //    return RouteData<Wms_material>.From(PubMessages.E1002_SUPPLIESTYPE_WAREHOUSEID_NOTSET, $"SuppliesType = {materialDto.SuppliesType}");
+                //}
+                //long warehouseId = typeDict.WarehouseId.Value;
+
+
+                string warehouseNo = string.IsNullOrWhiteSpace(materialDto.WarehouseId) ? "A00" : materialDto.WarehouseId;
+                //MES的WarehouseID对应WMS的WarehouseNo
+                Wms_warehouse warehouse = WMSApiManager.GetWarehouse(warehouseNo);
+                if (warehouse == null)
                 {
-                    return RouteData<Wms_material>.From(PubMessages.E1001_SUPPLIESTYPE_NOTFOUND, $"SuppliesType = {materialDto.SuppliesType}");
+                    return RouteData<Wms_material>.From(PubMessages.E1026_SUPPLIES_WAREHOUSEID_NOTFOUND, $"warehouseId = {warehouseNo}");
                 }
-                else if (typeDict.WarehouseId == null)
-                {
-                    return RouteData<Wms_material>.From(PubMessages.E1002_SUPPLIESTYPE_WAREHOUSEID_NOTSET, $"SuppliesType = {materialDto.SuppliesType}");
-                }
-                long warehouseId = typeDict.WarehouseId.Value;
-                List<Wms_MaterialInventoryDto> warehouseMaterialList = null;
+                long warehouseId = warehouse.WarehouseId;
+                List<Wms_WarehouseEntryMaterialInventoryDto> warehouseMaterialList = null;
                 if (map.ContainsKey(warehouseId))
                 {
                     warehouseMaterialList = map[warehouseId];
                 }
                 else
                 {
-                    warehouseMaterialList = new List<Wms_MaterialInventoryDto>();
+                    warehouseMaterialList = new List<Wms_WarehouseEntryMaterialInventoryDto>();
                     map.Add(warehouseId, warehouseMaterialList);
                 }
-                warehouseMaterialList.Add(new Wms_MaterialInventoryDto()
+                warehouseMaterialList.Add(new Wms_WarehouseEntryMaterialInventoryDto()
                 {
                     MaterialId = "-1",
+                    SubWarehouseEntryId = materialDto.SubWarehouseEntryId,
                     MaterialOnlyId = materialDto.SuppliesOnlyId,
                     MaterialNo = materialDto.SuppliesId,
                     MaterialName = materialDto.SuppliesName,
@@ -366,7 +389,7 @@ namespace WMSCore.Outside
             }
 
             List<RouteData> result = new List<RouteData>();
-            foreach (KeyValuePair<long, List<Wms_MaterialInventoryDto>> keyValue in map)
+            foreach (KeyValuePair<long, List<Wms_WarehouseEntryMaterialInventoryDto>> keyValue in map)
             {
                 try
                 {

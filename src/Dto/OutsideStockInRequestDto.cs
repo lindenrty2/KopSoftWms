@@ -37,7 +37,7 @@ namespace YL.Core.Dto
         /// <summary>
         /// 物料列表
         /// </summary>
-        public Wms_MaterialInventoryDto[] MaterialList { get; set; }
+        public Wms_WarehousingMaterialInventoryDto[] MaterialList { get; set; }
 
         public long? StockInId { get; set; }
         public string StockInNo { get; set; }

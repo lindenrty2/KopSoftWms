@@ -41,6 +41,14 @@ namespace YL.Core.Entity
         public long WarehouseId { get; set; }
 
         /// <summary>
+        /// Desc:出库单Id
+        /// Default:
+        /// Nullable:True
+        /// </summary>
+        [SugarColumn(IsNullable = true)]
+        public string SubWarehouseEntryId { get; set; }
+
+        /// <summary>
         /// Desc:
         /// Default:
         /// Nullable:True

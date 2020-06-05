@@ -44,7 +44,7 @@ namespace YL.Core.Dto
         /// <summary>
         /// 物料列表
         /// </summary>
-        public Wms_MaterialInventoryDto[] MaterialList { get; set; } 
+        public Wms_WarehouseEntryMaterialInventoryDto[] MaterialList { get; set; } 
         /// <summary>
         /// 对接用出库Id
         /// </summary>

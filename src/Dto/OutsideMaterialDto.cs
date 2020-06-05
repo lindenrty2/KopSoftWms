@@ -5,10 +5,38 @@ using System.Text;
 namespace YL.Core.Dto
 {
     /// <summary>
+    /// 外部出库物料信息
+    /// </summary>
+    public class OutsideWarehouseEntryMaterialDto : OutsideMaterialDto
+    {
+        /// <summary>
+        /// 出库单子单号
+        /// </summary>
+        public string SubWarehouseEntryId { get; set; }
+
+    }
+
+    /// <summary>
+    /// 外部入库物料信息
+    /// </summary>
+    public class OutsideWarehousingMaterialDto : OutsideMaterialDto
+    {
+        /// <summary>
+        /// 入库库单子单号
+        /// </summary>
+        public string SubWarehouseId { get; set; }
+
+    }
+
+    /// <summary>
     /// 外部物料信息
     /// </summary>
     public class OutsideMaterialDto
     {
+        /// <summary>
+        /// 仓库编号
+        /// </summary>
+        public string WarehouseId { get; set; }
         /// <summary>
         /// 物料唯一编号
         /// </summary>

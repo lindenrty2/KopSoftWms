@@ -347,7 +347,7 @@ namespace Services.Outside
             };
             stockInList.Add(stockin);
 
-            foreach (Wms_MaterialInventoryDto materialDto in request.MaterialList)
+            foreach (Wms_WarehousingMaterialInventoryDto materialDto in request.MaterialList)
             {
                 RouteData<Wms_material> materialResult = await GetMaterial(materialDto, true);
                 if (!materialResult.IsSccuess)
@@ -361,6 +361,7 @@ namespace Services.Outside
                     StockInDetailId = PubId.SnowflakeId,
                     StockInId = stockin.StockInId,
                     WarehouseId = request.WarehouseId,
+                    SubWarehousingId = materialDto.SubWarehousingId,
                     MaterialId = material.MaterialId,
                     MaterialNo = material.MaterialNo,
                     MaterialOnlyId = material.MaterialOnlyId,
@@ -608,7 +609,7 @@ namespace Services.Outside
 
             List<Wms_stockout> stockOutList = new List<Wms_stockout>();
             List<Wms_stockoutdetail> stockOutDetailList = new List<Wms_stockoutdetail>();
-            foreach (Wms_MaterialInventoryDto materialDto in request.MaterialList)
+            foreach (Wms_WarehouseEntryMaterialInventoryDto materialDto in request.MaterialList)
             {
                 RouteData<Wms_material> materialResult = await GetMaterial(materialDto, false);
                 if (!materialResult.IsSccuess)
@@ -645,6 +646,7 @@ namespace Services.Outside
                     StockOutDetailId = PubId.SnowflakeId,
                     StockOutId = stockout.StockOutId,
                     WarehouseId = request.WarehouseId,
+                    SubWarehouseEntryId = materialDto.SubWarehouseEntryId,
                     MaterialId = material.MaterialId,
                     MaterialNo = material.MaterialNo,
                     MaterialOnlyId = material.MaterialOnlyId,

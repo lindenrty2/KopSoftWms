@@ -54,7 +54,8 @@
         <Label Grid.Row="6" Grid.Column="0">物料列表(Supplies)</Label>
         <DataGrid Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="2" x:Name="ctlSuppliesInfoList" AutoGenerateColumns="False" ItemsSource="{Binding SuppliesInfoList}" >
             <DataGrid.Columns>
-                <DataGridCheckBoxColumn Binding="{Binding IsActive}" Width="40"/>
+                <DataGridTextColumn Header="仓库No(WarehouseId)" Binding="{Binding WarehouseId}" Width="100" />
+                <DataGridTextColumn Header="子出库单Id(SubWarehouseEntryId)" Binding="{Binding SubWarehouseEntryId}" Width="100" />
                 <DataGridTextColumn Header="物料唯一编号(SuppliesOnlyId)" Binding="{Binding SuppliesOnlyId}" Width="100" />
                 <DataGridComboBoxColumn x:Name="colSupplies" Header="物料编号/图号(SuppliesId)" SelectedValueBinding="{Binding SuppliesId}" ></DataGridComboBoxColumn>
                 <DataGridTextColumn Header="物料名称(SuppliesName)" Binding="{Binding SuppliesName}" Width="100" />

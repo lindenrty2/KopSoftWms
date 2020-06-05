@@ -49,6 +49,7 @@ namespace YL.Utils.Pub
         public static MessageItem E1023_INVENTORYBOX_ADD_FAIL = new MessageItem(-1023, "料箱添加失败");
         public static MessageItem E1024_INVENTORYBOX_UPDATE_FAIL = new MessageItem(-1024, "料箱更新失败");
         public static MessageItem E1025_INVENTORYBOX_DELETE_FAIL = new MessageItem(-1025, "料箱删除失败");
+        public static MessageItem E1026_SUPPLIES_WAREHOUSEID_NOTFOUND = new MessageItem(-1026, "物料所指定的仓库ID无法识别");
 
         public static MessageItem I2000_STOCKOUT_SCAN_SCCUESS = new MessageItem(2000, "归库扫码关联成功");
         public static MessageItem I2001_STOCKIN_SCAN_SCCUESS = new MessageItem(2001, "入库扫码关联成功");

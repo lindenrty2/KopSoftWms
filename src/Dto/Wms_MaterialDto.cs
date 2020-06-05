@@ -35,11 +35,28 @@ namespace YL.Core.Dto
 
     public class Wms_MaterialInventoryDto : Wms_MaterialDto
     {
-
         /// <summary>
         /// 数量
         /// </summary>
         public int Qty { get; set; }
+    }
+
+    public class Wms_WarehouseEntryMaterialInventoryDto : Wms_MaterialInventoryDto
+    {
+
+        /// <summary>
+        /// 子(出库/入库)单号
+        /// </summary>
+        public string SubWarehouseEntryId { get; set; } 
+    }
+
+    public class Wms_WarehousingMaterialInventoryDto : Wms_MaterialInventoryDto
+    {
+
+        /// <summary>
+        /// 子(出库/入库)单号
+        /// </summary>
+        public string SubWarehousingId { get; set; }
     }
 
 }

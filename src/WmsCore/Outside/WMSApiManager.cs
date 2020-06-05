@@ -3,6 +3,7 @@ using Services.Outside;
 using SqlSugar;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using YL.Core.Dto;
 using YL.Core.Entity;
 
@@ -10,10 +11,30 @@ namespace WMSCore.Outside
 {
     public class WMSApiManager
     {
-        public static Dictionary<string, IWMSBaseApiAccessor> _baseApiInstanceMap = new Dictionary<string, IWMSBaseApiAccessor>();
-        public static Dictionary<string, IWMSOperationApiAccessor> _operationApiInstanceMap = new Dictionary<string, IWMSOperationApiAccessor>();
-        public static Dictionary<string, IWMSManagementApiAccessor> _managementApiInstanceMap = new Dictionary<string, IWMSManagementApiAccessor>();
-        public static Dictionary<string, Wms_warehouse> _warehouseMap = new Dictionary<string, Wms_warehouse>();
+        private static Dictionary<string, IWMSBaseApiAccessor> _baseApiInstanceMap = new Dictionary<string, IWMSBaseApiAccessor>();
+        private static Dictionary<string, IWMSOperationApiAccessor> _operationApiInstanceMap = new Dictionary<string, IWMSOperationApiAccessor>();
+        private static Dictionary<string, IWMSManagementApiAccessor> _managementApiInstanceMap = new Dictionary<string, IWMSManagementApiAccessor>();
+        private static Dictionary<string, Wms_warehouse> _warehouseMap = new Dictionary<string, Wms_warehouse>();
+
+        /// <summary>
+        /// 获取仓库信息
+        /// </summary>
+        /// <param name="warehouseNo"></param>
+        /// <returns></returns>
+        public static Wms_warehouse GetWarehouse(string warehouseNo)
+        {
+            return _warehouseMap.Values.FirstOrDefault(x => x.WarehouseNo == warehouseNo);
+        }
+
+        /// <summary>
+        /// 获取仓库信息
+        /// </summary>
+        /// <param name="warehouseId"></param>
+        /// <returns></returns>
+        public static Wms_warehouse GetWarehouse(long warehouseId)
+        {
+            return _warehouseMap[warehouseId.ToString()];
+        }
 
         /// <summary>
         /// 获取基本Api
