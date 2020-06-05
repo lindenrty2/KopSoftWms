@@ -65,6 +65,10 @@ namespace YL.Core.Dto
     public class OutsideStockInQueryResultDetail
     {
         /// <summary>
+        /// 入库单子编号
+        /// </summary>
+        public string SubWarehousingId { get; set; }
+        /// <summary>
         /// 入库详细Id
         /// </summary>
         public string StockInDetailId { get; set; }

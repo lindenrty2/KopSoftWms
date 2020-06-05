@@ -254,7 +254,7 @@ namespace KopSoftWms.Controllers
         public async Task<RouteData> DoAutoSelectBox(long storeId,int requestSize)
         {
             IWMSOperationApiAccessor wmsAccessor = WMSApiManager.GetOperationApiAccessor(storeId.ToString(), _client, this.UserDto);
-            RouteData result = await wmsAccessor.DoAutoSelectBoxOut(requestSize); 
+            RouteData result = await wmsAccessor.DoAutoSelectBoxOut(requestSize, PLCPosition.Auto); 
 
             return result;
         }
@@ -270,7 +270,7 @@ namespace KopSoftWms.Controllers
         public async Task<RouteData> DoStockOutBoxOut(long storeId, long stockOutId)
         {
             IWMSOperationApiAccessor wmsAccessor = WMSApiManager.GetOperationApiAccessor(storeId.ToString(), _client, this.UserDto);
-            RouteData result = await wmsAccessor.DoStockOutBoxOut(stockOutId);
+            RouteData result = await wmsAccessor.DoStockOutBoxOut(stockOutId,PLCPosition.Auto);
 
             return result;
         }
@@ -282,10 +282,10 @@ namespace KopSoftWms.Controllers
         /// <param name="inventoryBoxId"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<RouteData> DoInventoryBoxOut(long storeId, long inventoryBoxId)
+        public async Task<RouteData> DoInventoryBoxOut(long storeId, long inventoryBoxId, PLCPosition pos)
         {
             IWMSOperationApiAccessor wmsAccessor = WMSApiManager.GetOperationApiAccessor(storeId.ToString(), _client, this.UserDto);
-            RouteData result = await wmsAccessor.DoInventoryBoxOut(inventoryBoxId);
+            RouteData result = await wmsAccessor.DoInventoryBoxOut(inventoryBoxId, pos);
 
             return result;
 
@@ -452,10 +452,10 @@ namespace KopSoftWms.Controllers
         /// <param name="details"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<RouteData> DoInventoryBoxBack(long storeId,int mode, long inventoryBoxTaskId,  InventoryDetailDto[] details)
+        public async Task<RouteData> DoInventoryBoxBack(long storeId,int mode, long inventoryBoxTaskId,  InventoryDetailDto[] details ,PLCPosition pos )
         {
             IWMSOperationApiAccessor wmsAccessor = WMSApiManager.GetOperationApiAccessor(storeId.ToString(), _client, this.UserDto);
-            RouteData result = await wmsAccessor.DoInventoryBoxBack(mode, inventoryBoxTaskId, details);
+            RouteData result = await wmsAccessor.DoInventoryBoxBack(mode, inventoryBoxTaskId, details, pos);
 
             return result;
         }

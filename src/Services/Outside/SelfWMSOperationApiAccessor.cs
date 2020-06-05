@@ -48,7 +48,7 @@ namespace Services.Outside
             return RouteData<Wms_inventoryboxTask>.From(task);
         }
 
-        public async Task<RouteData> DoAutoSelectBoxOut(int requestSize)
+        public async Task<RouteData> DoAutoSelectBoxOut(int requestSize, PLCPosition pos)
         {
 
 
@@ -82,7 +82,7 @@ namespace Services.Outside
             {
                 return YL.Core.Dto.RouteData.From(PubMessages.E1007_INVENTORYBOX_ALLOWUSED);
             }
-            RouteData result = await DoInventoryBoxOut( inventoryBox.InventoryBoxId);
+            RouteData result = await DoInventoryBoxOut( inventoryBox.InventoryBoxId ,pos);
 
             return result;
         }
@@ -92,12 +92,12 @@ namespace Services.Outside
         /// </summary>
         /// <param name="inventoryBoxId"></param>
         /// <returns></returns>
-        public async Task<RouteData> DoInventoryBoxOut(long inventoryBoxId)
+        public async Task<RouteData> DoInventoryBoxOut(long inventoryBoxId, PLCPosition pos)
         {
             try
             {
                 _sqlClient.Ado.BeginTran();
-                RouteData result = await DoInventoryBoxOutCore(inventoryBoxId);
+                RouteData result = await DoInventoryBoxOutCore(inventoryBoxId,pos);
                 if (!result.IsSccuess)
                 {
                     _sqlClient.Ado.RollbackTran();
@@ -119,7 +119,7 @@ namespace Services.Outside
         /// </summary>
         /// <param name="inventoryBoxId"></param>
         /// <returns></returns>
-        private async Task<RouteData> DoInventoryBoxOutCore(long inventoryBoxId)
+        private async Task<RouteData> DoInventoryBoxOutCore(long inventoryBoxId, PLCPosition pos)
         {
             Wms_inventorybox inventoryBox = await _sqlClient.Queryable<Wms_inventorybox>().FirstAsync(x => x.InventoryBoxId == inventoryBoxId);
             if (inventoryBox == null) { return YL.Core.Dto.RouteData.From(PubMessages.E1011_INVENTORYBOX_NOTFOUND); }
@@ -145,7 +145,7 @@ namespace Services.Outside
                 Status = InventoryBoxTaskStatus.task_outing.ToByte()
             };
             
-            if (!await SendWCSOutCommand(task, this.UserDto, $"料箱编号:{inventoryBox.InventoryBoxNo}"))
+            if (!await SendWCSOutCommand(task,pos, this.UserDto, $"料箱编号:{inventoryBox.InventoryBoxNo}"))
             {
                 return YL.Core.Dto.RouteData.From(PubMessages.E2300_WCS_OUTCOMMAND_FAIL);
             }
@@ -167,11 +167,11 @@ namespace Services.Outside
             return YL.Core.Dto.RouteData.From(PubMessages.I2300_WCS_OUTCOMMAND_SCCUESS, "料箱:" + inventoryBox.InventoryBoxName);
         }
          
-        public async Task<RouteData> DoStockOutBoxOut(long[] stockOutIds)
+        public async Task<RouteData> DoStockOutBoxOut(long[] stockOutIds,PLCPosition pos)
         {
             foreach(long stockOutId in stockOutIds)
             {
-                RouteData result = await DoStockOutBoxOut(stockOutId);
+                RouteData result = await DoStockOutBoxOut(stockOutId ,pos);
                 if (!result.IsSccuess)
                 {
                     return result;
@@ -180,12 +180,12 @@ namespace Services.Outside
             return new RouteData();
         }
 
-        public async Task<RouteData> DoStockOutBoxOut(long stockOutId)
+        public async Task<RouteData> DoStockOutBoxOut(long stockOutId,PLCPosition pos)
         {
             try
             {
                 _sqlClient.Ado.BeginTran();
-                RouteData result = await DoStockOutBoxOutCore( stockOutId);
+                RouteData result = await DoStockOutBoxOutCore( stockOutId ,pos);
                 if (!result.IsSccuess)
                 {
                     _sqlClient.Ado.RollbackTran();
@@ -202,7 +202,7 @@ namespace Services.Outside
 
         }
 
-        public async Task<RouteData> DoStockOutBoxOutCore(long stockOutId)
+        public async Task<RouteData> DoStockOutBoxOutCore(long stockOutId, PLCPosition pos)
         {
             Wms_stockout stockout = await _sqlClient.Queryable<Wms_stockout>().FirstAsync(x => x.StockOutId == stockOutId);
             if (stockout == null) { return YL.Core.Dto.RouteData.From(PubMessages.E2113_STOCKOUT_NOTFOUND); }
@@ -250,7 +250,7 @@ namespace Services.Outside
             int outCount = 0;
             foreach (long targetBoxId in targetBoxIdList)
             {
-                RouteData result = await DoInventoryBoxOutCore( targetBoxId);
+                RouteData result = await DoInventoryBoxOutCore( targetBoxId , pos);
                 if (!result.IsSccuess)
                 {
                     if (result.Code != PubMessages.E1012_INVENTORYBOX_NOTINPOSITION.Code)
@@ -484,7 +484,7 @@ namespace Services.Outside
         /// <param name="inventoryBoxTaskId"></param>
         /// <param name="details"></param>
         /// <returns></returns>
-        public async Task<RouteData> DoInventoryBoxBack(int mode, long inventoryBoxTaskId, InventoryDetailDto[] details)
+        public async Task<RouteData> DoInventoryBoxBack(int mode, long inventoryBoxTaskId, InventoryDetailDto[] details,PLCPosition pos)
         {
             try
             {
@@ -650,7 +650,7 @@ namespace Services.Outside
                 //离库的情况下不发WCS命令
                 if (mode != 4)
                 {
-                    if (!await SendWCSBackCommand(task,$"料箱编号:{inventoryBox.InventoryBoxNo}"))
+                    if (!await SendWCSBackCommand(task,pos ,$"料箱编号:{inventoryBox.InventoryBoxNo}"))
                     {
                         return YL.Core.Dto.RouteData.From(PubMessages.E2310_WCS_BACKCOMMAND_FAIL);
                     }
@@ -943,7 +943,7 @@ namespace Services.Outside
             return new RouteData();
         }
 
-        private async Task<bool> SendWCSOutCommand(Wms_inventoryboxTask task,SysUserDto UserDto, string desc)
+        private async Task<bool> SendWCSOutCommand(Wms_inventoryboxTask task, PLCPosition pos,SysUserDto UserDto, string desc)
         {
             try
             {
@@ -1092,7 +1092,7 @@ namespace Services.Outside
         /// <param name="task"></param>
         /// <param name="desc"></param>
         /// <returns></returns>
-        private async Task<bool> SendWCSBackCommand(Wms_inventoryboxTask task, string desc)
+        private async Task<bool> SendWCSBackCommand(Wms_inventoryboxTask task, PLCPosition pos, string desc)
         {
             try
             {
@@ -1113,7 +1113,7 @@ namespace Services.Outside
                     TaskStatus = "0", //任务阶段,暂时不用
                     CreateBy = 0,
                     CreateDate = DateTime.Now,
-                    GetPlcCode = storagerack.Row < 3 ? "1010" : "5010" ,//storagerack.Row.ToString(),
+                    GetPlcCode = PLCManager.GetPLC(storagerack.ReservoirAreaId.Value, pos) ,//storagerack.Row.ToString(),
                     Table = channel == 1? "1" : "3"
                 };
                 StockInTaskResult result = await WCSApiAccessor.Instance.CreateStockInTask(backStockInfo);
@@ -1732,5 +1732,48 @@ namespace Services.Outside
                 return RouteData.From(PubMessages.E0004_DATABASE_UPDATE_FAIL, ex.Message);
             }
         }
+    }
+
+    public class PLCManager
+    {
+        private static int _count1 = 0;
+        private static int _count2 = 0;
+
+        public static string GetPLC(long reservoirAreaId, PLCPosition pos)
+        {
+            if(reservoirAreaId == 1)
+            {
+                if(pos == PLCPosition.Left)
+                {
+                    return "1010";
+                }
+                else if (pos == PLCPosition.Right)
+                {
+                    return "1020";
+                }
+                else
+                {
+                    _count1++;
+                    return _count1 % 2 == 1 ? "1010" : "1020";
+                }
+            }
+            else
+            {
+                if (pos == PLCPosition.Left)
+                {
+                    return "5010";
+                }
+                else if (pos == PLCPosition.Right)
+                {
+                    return "5020";
+                }
+                else
+                {
+                    _count2++;
+                    return _count2 % 2 == 1 ? "5010" : "5020";
+                }
+            }
+        }
+
     }
 }

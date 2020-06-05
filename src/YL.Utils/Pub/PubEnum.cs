@@ -289,6 +289,19 @@ namespace YL.Utils.Pub
         ManualResponsed = 4
     }
 
+    /// <summary>
+    /// PLC位置指定
+    /// </summary>
+    public enum PLCPosition
+    {
+        [Description("自动")]
+        Auto = 0,
+        [Description("左边")]
+        Left = 1,
+        [Description("右边")]
+        Right = 2
+    }
+
     public enum ScanMode
     {
         Unknow = 0,

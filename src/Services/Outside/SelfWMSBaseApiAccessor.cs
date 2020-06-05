@@ -457,6 +457,7 @@ namespace Services.Outside
                 OutsideStockInQueryResultDetail detail = new OutsideStockInQueryResultDetail()
                 {
                     StockInDetailId = stockInDetail.StockInDetailId.ToString(),
+                    SubWarehousingId = stockInDetail.SubWarehousingId,
                     MaterialId = stockInDetail.MaterialId.Value.ToString(),
                     MaterialNo = stockInDetail.MaterialNo,
                     MaterialName = stockInDetail.MaterialName,
@@ -507,6 +508,7 @@ namespace Services.Outside
                 OutsideStockOutQueryResultDetail detail = new OutsideStockOutQueryResultDetail()
                 {
                     StockOutDetailId = stockOutDetail.StockOutDetailId.ToString(),
+                    SubWarehouseEntryId = stockOutDetail.SubWarehouseEntryId,
                     MaterialId = stockOutDetail.MaterialId.Value.ToString(),
                     MaterialNo = stockOutDetail.MaterialNo,
                     MaterialName = stockOutDetail.MaterialName,

@@ -199,6 +199,16 @@
                 },
                 okL: function () {
                     var _self = this;
+                    var index = layer.confirm("您确定要归库吗？", { btn: ["归库左边", "归库右边", "取消"] },
+                        function () {
+                            _self.DoBack( 1);
+                        },
+                        function () {
+                            _self.DoBack( 2);
+                        }
+                    );
+                },
+                DoBack: function (pos) {
 
                     var index = layer.load(1, {
                         shade: [0.1, '#fff'] //0.1透明度的白色背景
@@ -207,7 +217,8 @@
                         storeId: '@ViewData["currentStoreId"]',
                         mode:3,
                         inventoryBoxTaskId: '@ViewData["InventoryBoxTaskId"]',
-                        details: this.tableData
+                        details: this.tableData,
+                        pos: pos
                     };
                     yui.$axiospostform('/InventoryBox/DoInventoryBoxBack', data)
                         .then(function (response) {

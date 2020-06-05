@@ -55,7 +55,7 @@ namespace YL
 
         protected static void CreateReservoirArea(SqlSugarClient sqlClient,Wms_warehouse warehouse)
         {
-            for (int i = 1; i <= 1; i++)
+            for (int i = 1; i <= 3; i++)
             {
                 try
                 {
@@ -76,7 +76,24 @@ namespace YL
                     };
                     sqlClient.Insertable(reservoirarea).ExecuteCommand();
 
-                    CreateStoragerack(sqlClient, warehouse, reservoirarea);
+                    if(i == 1)
+                    {
+                        CreateStoragerack(sqlClient, warehouse, reservoirarea, 1, 10, 4);
+                        CreateStoragerack(sqlClient, warehouse, reservoirarea, 2, 10, 4);
+                    }
+                    else if(i == 2)
+                    {
+                        CreateStoragerack(sqlClient, warehouse, reservoirarea, 3, 14, 7);
+                        CreateStoragerack(sqlClient, warehouse, reservoirarea, 4, 14, 7);
+                        CreateStoragerack(sqlClient, warehouse, reservoirarea, 5, 14, 7);
+                        CreateStoragerack(sqlClient, warehouse, reservoirarea, 6, 14, 7);
+
+                    }
+                    else if (i == 3)
+                    {
+                        CreateStoragerack(sqlClient, warehouse, reservoirarea, 7, 14, 16);
+                        CreateStoragerack(sqlClient, warehouse, reservoirarea, 8, 14, 16); 
+                    }
                 }
                 catch(Exception e)
                 {
@@ -85,19 +102,7 @@ namespace YL
             }
 
         }
-
-        protected static void CreateStoragerack(SqlSugarClient sqlClient, Wms_warehouse warehouse, Wms_reservoirarea reservoirarea)
-        {
-            CreateStoragerack(sqlClient, warehouse, reservoirarea, 1, 10, 4);
-            CreateStoragerack(sqlClient, warehouse, reservoirarea, 2, 10, 4);
-            CreateStoragerack(sqlClient, warehouse, reservoirarea, 3, 14, 7);
-            CreateStoragerack(sqlClient, warehouse, reservoirarea, 4, 14, 7);
-            CreateStoragerack(sqlClient, warehouse, reservoirarea, 5, 14, 7);
-            CreateStoragerack(sqlClient, warehouse, reservoirarea, 6, 14, 7);
-            CreateStoragerack(sqlClient, warehouse, reservoirarea, 7, 14, 16);
-            CreateStoragerack(sqlClient, warehouse, reservoirarea, 8, 14, 16);
-        }
-
+         
         protected static void CreateStoragerack(SqlSugarClient sqlClient, Wms_warehouse warehouse, Wms_reservoirarea reservoirarea,int row,int columnCount,int floorCount)
         {
             for (int column = 1; column <= columnCount; column++)

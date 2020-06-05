@@ -26,6 +26,10 @@ namespace YL.Core.Dto
     public class OutsideStockInReportDetail
     {
         /// <summary>
+        /// 入库单子编号
+        /// </summary>
+        public string SubWarehousingId { get; set; }
+        /// <summary>
         /// 对接用物料唯一Id
         /// </summary>
         public long MaterialId { get; set; }

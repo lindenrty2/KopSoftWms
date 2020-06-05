@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using YL.Core.Dto;
 using YL.Core.Entity;
+using YL.Utils.Pub;
 
 namespace IServices.Outside
 {
@@ -20,25 +21,25 @@ namespace IServices.Outside
         /// </summary>
         /// <param name="size"></param>
         /// <returns></returns>
-        Task<RouteData> DoAutoSelectBoxOut(int size);
+        Task<RouteData> DoAutoSelectBoxOut(int size,PLCPosition pos);
         /// <summary>
         /// 指定料箱出库
         /// </summary>
         /// <param name="inventoryBoxId">料箱</param>
         /// <returns></returns>
-        Task<RouteData> DoInventoryBoxOut(long inventoryBoxId);
+        Task<RouteData> DoInventoryBoxOut(long inventoryBoxId,PLCPosition pos);
         /// <summary>
         /// 指定出库单出库
         /// </summary>
         /// <param name="stockOutIds">出库单Id列表</param>
         /// <returns></returns>
-        Task<RouteData> DoStockOutBoxOut(long[] stockOutIds);
+        Task<RouteData> DoStockOutBoxOut(long[] stockOutIds,PLCPosition pos);
         /// <summary>
         /// 指定出库单出库
         /// </summary>
         /// <param name="stockOutId">出库单Id</param>
         /// <returns></returns>
-        Task<RouteData> DoStockOutBoxOut(long stockOutId);
+        Task<RouteData> DoStockOutBoxOut(long stockOutId, PLCPosition pos);
 
         /// <summary>
         /// 获取料想入库任务操作详细
@@ -60,7 +61,7 @@ namespace IServices.Outside
         /// <param name="inventoryBoxTaskId"></param>
         /// <param name="details"></param>
         /// <returns></returns>
-        Task<RouteData> DoInventoryBoxBack(int mode, long inventoryBoxTaskId, InventoryDetailDto[] details);
+        Task<RouteData> DoInventoryBoxBack(int mode, long inventoryBoxTaskId, InventoryDetailDto[] details, PLCPosition pos);
         /// <summary>
         /// 获取WCS任务列表
         /// </summary>
