@@ -174,10 +174,12 @@ namespace KopSoftWms.Controllers
         }
 
         [HttpGet]
-        public IActionResult Work(string pid)
+        public async Task<IActionResult> Work(long storeId,string pid)
         {
+            IWMSBaseApiAccessor baseApiAccessor = WMSApiManager.GetBaseApiAccessor(storeId.ToString(), _client, this.UserDto);
             var model = _stockinServices.QueryableToEntity(c => c.StockInId == SqlFunc.ToInt64(pid) && c.IsDel == 1);
             ViewData["currentStoreId"] = model.WarehouseId;
+            ViewData["reservoirAreaList"] = (await baseApiAccessor.GetReservoirAreaList(1, 20, "", new string[0], "", "")).Data;
             return View(model);
         }
 

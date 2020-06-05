@@ -21,7 +21,7 @@ namespace IServices.Outside
         /// </summary>
         /// <param name="size"></param>
         /// <returns></returns>
-        Task<RouteData> DoAutoSelectBoxOut(int size,PLCPosition pos);
+        Task<RouteData> DoAutoSelectBoxOut(long? reservoirAreaId,int size,PLCPosition pos);
         /// <summary>
         /// 指定料箱出库
         /// </summary>

@@ -264,14 +264,15 @@
                 },
                 OutL: function (val) {
                     var _self = this;
-                    var index = layer.confirm("您确定要出库吗？", { btn: ["出库左边", "出库右边", "取消"] },
-                        function () {
-                            _self.DoOutL(val,1);
+                    var index = layer.confirm("您确定要出库吗？", {
+                        btn: ["出库左边", "出库右边", "取消"],
+                        btn1:function() {
+                            _self.DoOutL(val, 1);
                         },
-                        function () {
-                            _self.DoOutL(val,2);
+                        btn2:function() {
+                            _self.DoOutL(val, 2);
                         }
-                    );
+                    });
                 },
                 DoOutL: function (boxId, m) {
                     var data = {

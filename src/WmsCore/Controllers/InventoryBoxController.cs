@@ -251,10 +251,10 @@ namespace KopSoftWms.Controllers
         /// <param name="requestSize">期望料箱的格数</param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<RouteData> DoAutoSelectBox(long storeId,int requestSize)
+        public async Task<RouteData> DoAutoSelectBox(long storeId,long? reservoirAreaId,int requestSize, PLCPosition pos)
         {
             IWMSOperationApiAccessor wmsAccessor = WMSApiManager.GetOperationApiAccessor(storeId.ToString(), _client, this.UserDto);
-            RouteData result = await wmsAccessor.DoAutoSelectBoxOut(requestSize, PLCPosition.Auto); 
+            RouteData result = await wmsAccessor.DoAutoSelectBoxOut(reservoirAreaId, requestSize, pos); 
 
             return result;
         }
@@ -267,10 +267,10 @@ namespace KopSoftWms.Controllers
         /// <param name="stockOutId"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<RouteData> DoStockOutBoxOut(long storeId, long stockOutId)
+        public async Task<RouteData> DoStockOutBoxOut(long storeId, long stockOutId, PLCPosition pos)
         {
             IWMSOperationApiAccessor wmsAccessor = WMSApiManager.GetOperationApiAccessor(storeId.ToString(), _client, this.UserDto);
-            RouteData result = await wmsAccessor.DoStockOutBoxOut(stockOutId,PLCPosition.Auto);
+            RouteData result = await wmsAccessor.DoStockOutBoxOut(stockOutId, pos);
 
             return result;
         }

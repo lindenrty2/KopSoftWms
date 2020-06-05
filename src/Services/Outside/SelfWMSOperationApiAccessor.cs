@@ -48,21 +48,17 @@ namespace Services.Outside
             return RouteData<Wms_inventoryboxTask>.From(task);
         }
 
-        public async Task<RouteData> DoAutoSelectBoxOut(int requestSize, PLCPosition pos)
+        public async Task<RouteData> DoAutoSelectBoxOut(long? reservoirAreaId,int requestSize, PLCPosition pos)
         {
-
-
             //查询是否有符合要求的料箱
             var query = _sqlClient.Queryable<Wms_inventorybox>()
-               .Where((ib) => ib.UsedSize == 0 && ib.Status == InventoryBoxStatus.InPosition);
-            if (requestSize == 1)
+               .Where((ib) => ib.UsedSize < ib.Size && ib.Size == requestSize && ib.Status == InventoryBoxStatus.InPosition);
+
+            if (reservoirAreaId != null)
             {
-                query = query.Where((ib) => ib.Size == 1);
+                query = query.Where((ib) => ib.ReservoirAreaId == reservoirAreaId.Value);
             }
-            else
-            {
-                query = query.Where((ib) => ib.Size == requestSize);
-            }
+
             Wms_inventorybox inventoryBox = await query.FirstAsync();
             //如果没有符合要求的料想,且是要求多宫格料箱时,尝试选取完整料箱进行分割
             if (inventoryBox == null && requestSize > 1)
