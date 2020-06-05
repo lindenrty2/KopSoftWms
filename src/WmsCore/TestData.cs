@@ -27,7 +27,7 @@ namespace YL
                     Wms_warehouse warehouse = new Wms_warehouse()
                     {
                         WarehouseId = i,
-                        WarehouseNo = "CK000" + i,
+                        WarehouseNo = $"A0{i - 1}" ,
                         WarehouseName = "仓库000" + i,
                         IFAddress = "",
                         CreateBy = 1,
