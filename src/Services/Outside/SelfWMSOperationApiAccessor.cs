@@ -228,7 +228,7 @@ namespace Services.Outside
                 //TODO：尽量减少出库料箱数量
                 //优先出库自身生产令号的物料
                 Wms_inventory[] inventories = _sqlClient.Queryable<Wms_inventory>()
-                    .Where(x => x.MaterialId == detail.MaterialId && (x.OrderNo == stockout.OrderNo || (string.IsNullOrEmpty(x.OrderNo) && !x.IsLocked)))
+                    .Where(x => x.MaterialId == detail.MaterialId)  //生产令号的逻辑暂时屏蔽 && (x.OrderNo == stockout.OrderNo || (string.IsNullOrEmpty(x.OrderNo) && !x.IsLocked))
                     .OrderBy(x => x.OrderNo, OrderByType.Desc).ToArray();
                 int outedQty = 0;
                 int needQty = detail.PlanOutQty - detail.ActOutQty;
@@ -750,7 +750,7 @@ namespace Services.Outside
                 }
 
                 _sqlClient.Ado.CommitTran();
-                return YL.Core.Dto.RouteData.From(PubMessages.I2000_STOCKOUT_SCAN_SCCUESS);
+                return YL.Core.Dto.RouteData.From(PubMessages.I2001_STOCKIN_SCAN_SCCUESS);
             }
             catch (Exception)
             {
