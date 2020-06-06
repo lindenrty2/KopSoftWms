@@ -44,6 +44,22 @@ function IsMaterialNo(no) {
     return false;
 }
 
+
+function StorageRackStatusFormatter(value, row, index) {
+    if (value == 'Normal' || value == '0') {
+        return '<span class="label label-default radius">正常</span>';
+    }
+    else if (value == 'MissingBox' || value == '1') {
+        return '<span class="label label-danger radius">空出</span>';
+    }
+    else if (value == 'UnknowBox' || value == '2') {
+        return '<span class="label label-danger radius">满入</span>';
+    }
+    else {
+        return '<span class="label label-danger radius">未知状态</span>';
+    }
+}
+
 function StockStatusFormatter(value, row, index) { 
     switch (value) {
         case -1:

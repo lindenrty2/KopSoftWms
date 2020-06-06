@@ -170,7 +170,7 @@ namespace Services.Outside
         }
 
 
-        public async Task<RouteData<Wms_storagerack[]>> GetStorageRackList(long? reservoirAreaId, int pageIndex, int pageSize, string search, string[] order, string datemin, string datemax)
+        public async Task<RouteData<Wms_storagerack[]>> GetStorageRackList(long? reservoirAreaId, StorageRackStatus? status, int pageIndex, int pageSize, string search, string[] order, string datemin, string datemax)
         {
             ISugarQueryable<Wms_storagerack> query = _sqlClient.Queryable<Wms_storagerack>();
          
@@ -181,6 +181,10 @@ namespace Services.Outside
             if (!string.IsNullOrWhiteSpace(search))
             {
                 query = query.Where(x => x.StorageRackNo.ToString().Contains(search) || x.StorageRackName.Contains(search));
+            }
+            if (status != null)
+            {
+                query = query.Where(x => x.Status == status);
             }
             DateTime minDate;
             if (!string.IsNullOrWhiteSpace(datemin) && DateTime.TryParse(datemin, out minDate))
@@ -209,6 +213,22 @@ namespace Services.Outside
             if (!string.IsNullOrWhiteSpace(search))
             {
                 query = query.Where((i,ib) => i.MaterialNo.ToString().Contains(search) || i.MaterialOnlyId.ToString().Contains(search) || i.MaterialName.Contains(search) || ib.InventoryBoxNo.Contains(search) );
+            }
+            if (reservoirAreaId != null)
+            {
+                query = query.Where((i, ib) => ib.ReservoirAreaId == reservoirAreaId);
+            }
+            if (storageRackId != null)
+            {
+                query = query.Where((i, ib) => ib.StorageRackId == storageRackId);
+            }
+            if (inventoryBoxId != null)
+            {
+                query = query.Where((i, ib) => ib.InventoryBoxId == inventoryBoxId);
+            }
+            if (materialId != null)
+            {
+                query = query.Where((i, ib) => i.MaterialId == materialId);
             }
             DateTime minDate;
             if (!string.IsNullOrWhiteSpace(datemin) && DateTime.TryParse(datemin, out minDate))

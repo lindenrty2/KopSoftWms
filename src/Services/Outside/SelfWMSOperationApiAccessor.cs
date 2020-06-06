@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using WMSCore.Outside;
 using YL.Core.Dto;
-using YL.Core.Entity; 
+using YL.Core.Entity;
 using YL.Utils.Pub;
 using YL.Utils.Extensions;
 using System.Linq;
@@ -20,7 +20,7 @@ namespace Services.Outside
 
         private ISqlSugarClient _sqlClient;
         private Wms_warehouse _warehouse;
-        public Wms_warehouse Warehouse { get { return _warehouse; } } 
+        public Wms_warehouse Warehouse { get { return _warehouse; } }
         private SysUserDto _userDto;
         private SysUserDto UserDto { get { return _userDto; } }
 
@@ -30,7 +30,7 @@ namespace Services.Outside
             _sqlClient = sqlClient;
             _userDto = userDto;
         }
-        
+
         public async Task<RouteData<Wms_inventoryboxTask>> GetInventoryBoxkTask(long inventoryBoxTaskId)
         {
             Wms_inventoryboxTask task = await _sqlClient.Queryable<Wms_inventoryboxTask>()
@@ -48,7 +48,7 @@ namespace Services.Outside
             return RouteData<Wms_inventoryboxTask>.From(task);
         }
 
-        public async Task<RouteData> DoAutoSelectBoxOut(long? reservoirAreaId,int requestSize, PLCPosition pos)
+        public async Task<RouteData> DoAutoSelectBoxOut(long? reservoirAreaId, int requestSize, PLCPosition pos)
         {
             //查询是否有符合要求的料箱
             var query = _sqlClient.Queryable<Wms_inventorybox>()
@@ -78,7 +78,7 @@ namespace Services.Outside
             {
                 return YL.Core.Dto.RouteData.From(PubMessages.E1007_INVENTORYBOX_ALLOWUSED);
             }
-            RouteData result = await DoInventoryBoxOut( inventoryBox.InventoryBoxId ,pos);
+            RouteData result = await DoInventoryBoxOut(inventoryBox.InventoryBoxId, pos);
 
             return result;
         }
@@ -93,7 +93,7 @@ namespace Services.Outside
             try
             {
                 _sqlClient.Ado.BeginTran();
-                RouteData result = await DoInventoryBoxOutCore(inventoryBoxId,pos);
+                RouteData result = await DoInventoryBoxOutCore(inventoryBoxId, pos);
                 if (!result.IsSccuess)
                 {
                     _sqlClient.Ado.RollbackTran();
@@ -140,8 +140,8 @@ namespace Services.Outside
                 OperaterUser = UserDto.UserName,
                 Status = InventoryBoxTaskStatus.task_outing.ToByte()
             };
-            
-            if (!await SendWCSOutCommand(task,pos, this.UserDto, $"料箱编号:{inventoryBox.InventoryBoxNo}"))
+
+            if (!await SendWCSOutCommand(task, pos, $"料箱编号:{inventoryBox.InventoryBoxNo}", false))
             {
                 return YL.Core.Dto.RouteData.From(PubMessages.E2300_WCS_OUTCOMMAND_FAIL);
             }
@@ -162,12 +162,12 @@ namespace Services.Outside
 
             return YL.Core.Dto.RouteData.From(PubMessages.I2300_WCS_OUTCOMMAND_SCCUESS, "料箱:" + inventoryBox.InventoryBoxName);
         }
-         
-        public async Task<RouteData> DoStockOutBoxOut(long[] stockOutIds,PLCPosition pos)
+
+        public async Task<RouteData> DoStockOutBoxOut(long[] stockOutIds, PLCPosition pos)
         {
-            foreach(long stockOutId in stockOutIds)
+            foreach (long stockOutId in stockOutIds)
             {
-                RouteData result = await DoStockOutBoxOut(stockOutId ,pos);
+                RouteData result = await DoStockOutBoxOut(stockOutId, pos);
                 if (!result.IsSccuess)
                 {
                     return result;
@@ -176,12 +176,12 @@ namespace Services.Outside
             return new RouteData();
         }
 
-        public async Task<RouteData> DoStockOutBoxOut(long stockOutId,PLCPosition pos)
+        public async Task<RouteData> DoStockOutBoxOut(long stockOutId, PLCPosition pos)
         {
             try
             {
                 _sqlClient.Ado.BeginTran();
-                RouteData result = await DoStockOutBoxOutCore( stockOutId ,pos);
+                RouteData result = await DoStockOutBoxOutCore(stockOutId, pos);
                 if (!result.IsSccuess)
                 {
                     _sqlClient.Ado.RollbackTran();
@@ -246,7 +246,7 @@ namespace Services.Outside
             int outCount = 0;
             foreach (long targetBoxId in targetBoxIdList)
             {
-                RouteData result = await DoInventoryBoxOutCore( targetBoxId , pos);
+                RouteData result = await DoInventoryBoxOutCore(targetBoxId, pos);
                 if (!result.IsSccuess)
                 {
                     if (result.Code != PubMessages.E1012_INVENTORYBOX_NOTINPOSITION.Code)
@@ -472,7 +472,7 @@ namespace Services.Outside
 
             return YL.Core.Dto.RouteData<InventoryDetailDto[]>.From(resultList.ToArray());
         }
-
+        
         /// <summary>
         /// 料箱归库
         /// </summary>
@@ -480,7 +480,7 @@ namespace Services.Outside
         /// <param name="inventoryBoxTaskId"></param>
         /// <param name="details"></param>
         /// <returns></returns>
-        public async Task<RouteData> DoInventoryBoxBack(int mode, long inventoryBoxTaskId, InventoryDetailDto[] details,PLCPosition pos)
+        public async Task<RouteData> DoInventoryBoxBack(int mode, long inventoryBoxTaskId, InventoryDetailDto[] details, PLCPosition pos)
         {
             try
             {
@@ -563,12 +563,12 @@ namespace Services.Outside
                         _sqlClient.Ado.RollbackTran();
                         return YL.Core.Dto.RouteData.From(PubMessages.E1019_INVENTORY_LOCKED, $"料箱编号{inventoryBox.InventoryBoxNo},物料编号{detail.MaterialNo}");
                     }
-                    if (mode == 1)
+                    if (mode == 1) //入库
                     {
                         inventory.Qty += detail.Qty; //加上入库数量
                         qty = detail.Qty;
                     }
-                    else if (mode == 2)
+                    else if (mode == 2) //出库
                     {
                         inventory.Qty -= detail.Qty; //减去出库数量
                         qty -= detail.Qty;
@@ -597,7 +597,7 @@ namespace Services.Outside
                         }
                         updatedStockindetails.Add(stockindetail);
                         if (!relationStockins.Any(x => x.StockInId == stockindetail.StockInId))
-                        { 
+                        {
                             relationStockins.Add(stockin);
                         }
                     }
@@ -617,7 +617,7 @@ namespace Services.Outside
 
                     Wms_inventoryrecord record = new Wms_inventoryrecord()
                     {
-                        InventoryrecordId = PubId.SnowflakeId, 
+                        InventoryrecordId = PubId.SnowflakeId,
                         StockInDetailId = stockindetail == null ? (long?)null : stockindetail.StockInDetailId,
                         StockOutDetailId = stockoutdetail == null ? (long?)null : stockoutdetail.StockOutDetailId,
                         StockNo = stockNo,
@@ -646,7 +646,7 @@ namespace Services.Outside
                 //离库的情况下不发WCS命令
                 if (mode != 4)
                 {
-                    if (!await SendWCSBackCommand(task,pos ,$"料箱编号:{inventoryBox.InventoryBoxNo}"))
+                    if (!await SendWCSBackCommand(task, pos, $"料箱编号:{inventoryBox.InventoryBoxNo}", false))
                     {
                         return YL.Core.Dto.RouteData.From(PubMessages.E2310_WCS_BACKCOMMAND_FAIL);
                     }
@@ -700,7 +700,7 @@ namespace Services.Outside
                 }
                 task.Status = mode == 4 ? InventoryBoxTaskStatus.task_leaved.ToByte() : InventoryBoxTaskStatus.task_backing.ToByte();
                 task.OperaterId = UserDto.UserId;
-                task.OperaterDate = DateTime.Now; 
+                task.OperaterDate = DateTime.Now;
                 if (_sqlClient.Updateable(task).ExecuteCommand() == 0)
                 {
                     _sqlClient.Ado.RollbackTran();
@@ -720,15 +720,15 @@ namespace Services.Outside
                 inventoryBox.UsedSize = inventories.Count;
                 inventoryBox.ModifiedBy = UserDto.UserId;
                 inventoryBox.ModifiedDate = DateTime.Now;
-                if(_sqlClient.Updateable(inventoryBox).ExecuteCommand() == 0)
+                if (_sqlClient.Updateable(inventoryBox).ExecuteCommand() == 0)
                 {
-                    return YL.Core.Dto.RouteData.From(PubMessages.E0004_DATABASE_UPDATE_FAIL); 
+                    return YL.Core.Dto.RouteData.From(PubMessages.E0004_DATABASE_UPDATE_FAIL);
                 }
 
 
                 foreach (Wms_stockin stockin in relationStockins)
                 {
-                    if (_sqlClient.Queryable<Wms_stockindetail>().Any(x => x.Status != StockInStatus.task_finish.ToByte()))
+                    if (_sqlClient.Queryable<Wms_stockindetail>().Any(x => x.StockInId == stockin.StockInId && x.Status != StockInStatus.task_finish.ToByte()))
                     {
                         //尚有未入库任务
                     }
@@ -775,7 +775,7 @@ namespace Services.Outside
                 .ToListAsync();
         }
 
-        public async Task<RouteData<Wms_wcstask[]>> GetWCSTaskList(bool failOnly,int pageIndex, int pageSize, string search, string[] order, string datemin, string datemax)
+        public async Task<RouteData<Wms_wcstask[]>> GetWCSTaskList(bool failOnly, int pageIndex, int pageSize, string search, string[] order, string datemin, string datemax)
         {
             ISugarQueryable<Wms_wcstask> query = _sqlClient.Queryable<Wms_wcstask>();
             if (failOnly)
@@ -784,7 +784,7 @@ namespace Services.Outside
             }
             if (!string.IsNullOrWhiteSpace(search))
             {
-                query = query.Where(x => x.InventoryBoxNo.Contains(search) );
+                query = query.Where(x => x.InventoryBoxNo.Contains(search));
             }
             DateTime minDate;
             if (!string.IsNullOrWhiteSpace(datemin) && DateTime.TryParse(datemin, out minDate))
@@ -796,16 +796,16 @@ namespace Services.Outside
             {
                 query = query.Where(x => x.RequestDate <= maxDate);
             }
-            if(order== null || order.Length == 0)
+            if (order == null || order.Length == 0)
             {
                 query = query.OrderBy(x => x.RequestDate, OrderByType.Desc);
             }
             else
             {
-                query = query.OrderBy(string.Join(",",order)); 
+                query = query.OrderBy(string.Join(",", order));
             }
             RefAsync<int> totalNumber = new RefAsync<int>();
-            List<Wms_wcstask> result = await query.ToPageListAsync(pageIndex, pageSize,totalNumber);
+            List<Wms_wcstask> result = await query.ToPageListAsync(pageIndex, pageSize, totalNumber);
             return RouteData<Wms_wcstask[]>.From(result.ToArray(), totalNumber);
         }
 
@@ -813,14 +813,14 @@ namespace Services.Outside
         /// 手工设置WCS指令状态
         /// </summary>
         /// <param name="wcsTaskId"></param>
-        /// <param name="isSccuess"></param>
+        /// <param name="code"></param>
         /// <returns></returns>
-        public async Task<RouteData> SetWCSTaskStatus(long wcsTaskId, bool isSccuess)
+        public async Task<RouteData> SetWCSTaskStatus(long wcsTaskId, string code)
         {
             try
             {
                 _sqlClient.Ado.BeginTran();
-                RouteData result = await SetWCSTaskStatusCore(wcsTaskId, isSccuess);
+                RouteData result = await SetWCSTaskStatusCore(wcsTaskId, code);
                 if (!result.IsSccuess)
                 {
                     _sqlClient.Ado.RollbackTran();
@@ -831,14 +831,14 @@ namespace Services.Outside
                 }
                 return result;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _sqlClient.Ado.RollbackTran();
-                return RouteData.From(PubMessages.E2307_WCS_TASKSTATUS_UPDATE_FAIL,ex.Message);
+                return RouteData.From(PubMessages.E2307_WCS_TASKSTATUS_UPDATE_FAIL, ex.Message);
             }
         }
 
-        public async Task<RouteData> SetWCSTaskStatusCore(long wcsTaskId, bool isSccuess)
+        public async Task<RouteData> SetWCSTaskStatusCore(long wcsTaskId, string code)
         {
             Wms_wcstask wcsTask = await _sqlClient.Queryable<Wms_wcstask>().FirstAsync(x => x.WcsTaskId == wcsTaskId);
             if (wcsTask == null)
@@ -849,12 +849,13 @@ namespace Services.Outside
             {
                 return RouteData.From(PubMessages.E2306_WCS_TASK_ALLOW_COMPLATED);
             }
+            bool isSccuess = IsWCSSccuessCode(code);
             wcsTask.WorkStatus = isSccuess ? WCSTaskWorkStatus.WorkComplated : WCSTaskWorkStatus.Failed;
             wcsTask.NotifyStatus = WCSTaskNotifyStatus.ManualResponsed;
             wcsTask.ResponseDate = DateTime.Now;
             wcsTask.ResponseUserId = UserDto.UserId;
             wcsTask.ResponseUser = UserDto.UserName;
-            
+
             if (await _sqlClient.Updateable(wcsTask).ExecuteCommandAsync() == 0)
             {
                 return RouteData.From(PubMessages.E2307_WCS_TASKSTATUS_UPDATE_FAIL);
@@ -864,11 +865,11 @@ namespace Services.Outside
                 RouteData result = null;
                 if (wcsTask.TaskType == WCSTaskTypes.StockOut)
                 {
-                    result = await ConfirmOutStockCore(wcsTask.WcsTaskId,true);
+                    result = await ConfirmOutStockCore(wcsTask.WcsTaskId, code, true);
                 }
                 else if (wcsTask.TaskType == WCSTaskTypes.StockBack)
                 {
-                    result = await ConfirmBackStockCore(wcsTask.WcsTaskId,true);
+                    result = await ConfirmBackStockCore(wcsTask.WcsTaskId, code, true);
                 }
                 else
                 {
@@ -879,7 +880,7 @@ namespace Services.Outside
                     return result;
                 }
             }
-            
+
             return RouteData.From(PubMessages.I2301_WCS_TASKSTATUS_UPDATE_SCCUESS);
         }
 
@@ -900,7 +901,7 @@ namespace Services.Outside
                 return RouteData.From(PubMessages.E2306_WCS_TASK_ALLOW_COMPLATED);
             }
             wcsTask.WorkStatus = WCSTaskWorkStatus.Working;
-            wcsTask.NotifyStatus = WCSTaskNotifyStatus.WaitResponse; 
+            wcsTask.NotifyStatus = WCSTaskNotifyStatus.WaitResponse;
             wcsTask.RequestDate = DateTime.Now;
             wcsTask.RequestUserId = UserDto.UserId;
             wcsTask.RequestUser = UserDto.UserName;
@@ -910,20 +911,20 @@ namespace Services.Outside
                 return RouteData.From(PubMessages.E0004_DATABASE_UPDATE_FAIL, "WCS指令状态更新失败");
             }
 
-            if(wcsTask.TaskType == WCSTaskTypes.StockOut)
+            if (wcsTask.TaskType == WCSTaskTypes.StockOut)
             {
                 StockOutTaskInfo outStockInfo = JsonConvert.DeserializeObject<StockOutTaskInfo>(wcsTask.Params);
                 CreateOutStockResult result = await WCSApiAccessor.Instance.CreateStockOutTask(outStockInfo);
                 if (!result.Successd)
                 {
-                    return RouteData.From(PubMessages.E2300_WCS_OUTCOMMAND_FAIL); 
+                    return RouteData.From(PubMessages.E2300_WCS_OUTCOMMAND_FAIL);
                 }
                 else
                 {
-                    return RouteData.From(PubMessages.I2300_WCS_OUTCOMMAND_SCCUESS); 
+                    return RouteData.From(PubMessages.I2300_WCS_OUTCOMMAND_SCCUESS);
                 }
             }
-            else if (wcsTask.TaskType == WCSTaskTypes.StockOut)
+            else if (wcsTask.TaskType == WCSTaskTypes.StockBack)
             {
                 StockInTaskInfo backStockInfo = JsonConvert.DeserializeObject<StockInTaskInfo>(wcsTask.Params);
                 StockInTaskResult result = await WCSApiAccessor.Instance.CreateStockInTask(backStockInfo);
@@ -932,14 +933,22 @@ namespace Services.Outside
                     return RouteData.From(PubMessages.E2310_WCS_BACKCOMMAND_FAIL);
                 }
                 else
-                { 
+                {
                     return RouteData.From(PubMessages.I2300_WCS_BACKCOMMAND_SCCUESS);
                 }
             }
             return new RouteData();
         }
 
-        private async Task<bool> SendWCSOutCommand(Wms_inventoryboxTask task, PLCPosition pos,SysUserDto UserDto, string desc)
+        /// <summary>
+        /// 发送WCS出库指令
+        /// </summary>
+        /// <param name="task"></param>
+        /// <param name="pos"></param>
+        /// <param name="desc"></param>
+        /// <param name="isBackOut">是否是入库异常导致的出库</param>
+        /// <returns></returns>
+        private async Task<bool> SendWCSOutCommand(Wms_inventoryboxTask task, PLCPosition pos, string desc, bool isBackOut)
         {
             try
             {
@@ -953,6 +962,7 @@ namespace Services.Outside
                     TrayBarcode = task.InventoryBoxNo,
                     Priority = 10, //默认值
                     Channel = channel.ToString(),
+                    TaskLineId = isBackOut? 1 : 0,
                     GetColumn = storagerack.Column.ToString(),
                     GetRow = storagerack.Row.ToString(),
                     GetFloor = storagerack.Floor.ToString(),
@@ -960,10 +970,10 @@ namespace Services.Outside
                     TaskStatus = "0", //任务阶段,暂时不用
                     CreateBy = 0,
                     CreateDate = DateTime.Now,
-                    SetPlcCode = PLCManager.GetPLC(storagerack.ReservoirAreaId.Value, pos),
+                    SetPlcCode = SelfReservoirAreaManager.GetPLC(storagerack.ReservoirAreaId.Value, pos),
                     //Table = channel == 1 ? "1" : "3"
                 };
-                 
+
                 CreateOutStockResult result = await WCSApiAccessor.Instance.CreateStockOutTask(outStockInfo);
                 if (result.Successd)
                 {
@@ -997,7 +1007,7 @@ namespace Services.Outside
             try
             {
                 _sqlClient.Ado.BeginTran();
-                RouteData confirmResult = await ConfirmOutStockCore(taskId);
+                RouteData confirmResult = await ConfirmOutStockCore(taskId, result.Code);
                 if (!confirmResult.IsSccuess)
                 {
                     _sqlClient.Ado.RollbackTran();
@@ -1024,7 +1034,7 @@ namespace Services.Outside
             }
         }
 
-        protected async Task<RouteData> ConfirmOutStockCore(long taskId,bool isManual = false)
+        protected async Task<RouteData> ConfirmOutStockCore(long taskId, string code, bool isManual = false)
         {
             if (taskId == 0)
             {
@@ -1055,8 +1065,8 @@ namespace Services.Outside
                 return RouteData.From(PubMessages.E1008_INVENTORYBOX_NOTOUT);
             }
 
-
-            wcsTask.WorkStatus = WCSTaskWorkStatus.WorkComplated;
+            bool isSccuess = IsWCSSccuessCode(code);
+            wcsTask.WorkStatus = isSccuess ? WCSTaskWorkStatus.WorkComplated : WCSTaskWorkStatus.Failed;
             wcsTask.NotifyStatus = isManual ? WCSTaskNotifyStatus.ManualResponsed : WCSTaskNotifyStatus.Responsed;
             wcsTask.ResponseDate = DateTime.Now;
             if (await _sqlClient.Updateable(wcsTask).ExecuteCommandAsync() == 0)
@@ -1064,20 +1074,22 @@ namespace Services.Outside
                 return RouteData.From(PubMessages.E0004_DATABASE_UPDATE_FAIL);
             }
 
-            boxTask.Status = InventoryBoxTaskStatus.task_outed.ToByte();
-            boxTask.ModifiedBy = PubConst.InterfaceUserId;
-            boxTask.ModifiedDate = DateTime.Now;
-            if (await _sqlClient.Updateable(boxTask).ExecuteCommandAsync() == 0)
-            {
-                return RouteData.From(PubMessages.E0004_DATABASE_UPDATE_FAIL);
-            }
+            if (isSccuess) { 
+                boxTask.Status = InventoryBoxTaskStatus.task_outed.ToByte();
+                boxTask.ModifiedBy = PubConst.InterfaceUserId;
+                boxTask.ModifiedDate = DateTime.Now;
+                if (await _sqlClient.Updateable(boxTask).ExecuteCommandAsync() == 0)
+                {
+                    return RouteData.From(PubMessages.E0004_DATABASE_UPDATE_FAIL);
+                }
 
-            box.Status = InventoryBoxStatus.Outed;
-            box.ModifiedBy = PubConst.InterfaceUserId;
-            box.ModifiedDate = DateTime.Now;
-            if (await _sqlClient.Updateable(box).ExecuteCommandAsync() == 0)
-            {
-                return RouteData.From(PubMessages.E0004_DATABASE_UPDATE_FAIL);
+                box.Status = InventoryBoxStatus.Outed;
+                box.ModifiedBy = PubConst.InterfaceUserId;
+                box.ModifiedDate = DateTime.Now;
+                if (await _sqlClient.Updateable(box).ExecuteCommandAsync() == 0)
+                {
+                    return RouteData.From(PubMessages.E0004_DATABASE_UPDATE_FAIL);
+                }
             }
             return new RouteData();
         }
@@ -1087,8 +1099,9 @@ namespace Services.Outside
         /// </summary>
         /// <param name="task"></param>
         /// <param name="desc"></param>
+        /// <param name="isReBack">是否是重发</param>
         /// <returns></returns>
-        private async Task<bool> SendWCSBackCommand(Wms_inventoryboxTask task, PLCPosition pos, string desc)
+        private async Task<bool> SendWCSBackCommand(Wms_inventoryboxTask task, PLCPosition pos, string desc, bool isReBack)
         {
             try
             {
@@ -1102,6 +1115,7 @@ namespace Services.Outside
                     TrayBarcode = task.InventoryBoxNo,
                     Priority = 10, //默认值
                     Channel = channel.ToString(),
+                    TaskLineId = isReBack ? 1 : 0,
                     SetColumn = storagerack.Column.ToString(),
                     SetRow = storagerack.Row.ToString(),
                     SetFloor = storagerack.Floor.ToString(),
@@ -1109,8 +1123,8 @@ namespace Services.Outside
                     TaskStatus = "0", //任务阶段,暂时不用
                     CreateBy = 0,
                     CreateDate = DateTime.Now,
-                    GetPlcCode = PLCManager.GetPLC(storagerack.ReservoirAreaId.Value, pos) ,//storagerack.Row.ToString(),
-                    Table = channel == 1? "1" : "3"
+                    GetPlcCode = SelfReservoirAreaManager.GetPLC(storagerack.ReservoirAreaId.Value, pos),//storagerack.Row.ToString(),
+                    Table = channel == 1 ? "1" : "3"
                 };
                 StockInTaskResult result = await WCSApiAccessor.Instance.CreateStockInTask(backStockInfo);
                 if (result.Successd)
@@ -1143,13 +1157,13 @@ namespace Services.Outside
         /// </summary>
         /// <param name="result"></param>
         /// <returns></returns>
-        public async Task<ConfirmBackStockResult> ConfirmBackStock(WCSStockTaskCallBack result)
+        public async Task<ConfirmBackStockResult> ConfirmBackStock(WCSStockTaskCallBack callback)
         {
-            long taskId = result.TaskId.ToInt64();
             try
             {
+                long taskId = callback.TaskId.ToInt64();
                 _sqlClient.Ado.BeginTran();
-                RouteData confirmResult = await ConfirmBackStockCore(taskId);
+                RouteData confirmResult = await ConfirmBackStockCore(taskId, callback.Code, false);
                 if (!confirmResult.IsSccuess)
                 {
                     _sqlClient.Ado.RollbackTran();
@@ -1160,7 +1174,7 @@ namespace Services.Outside
                         ErrorDesc = confirmResult.Message
 
                     };
-                }
+                } 
                 _sqlClient.Ado.CommitTran();
                 return new ConfirmBackStockResult();
             }
@@ -1174,9 +1188,9 @@ namespace Services.Outside
                     ErrorDesc = ex.Message
                 };
             }
-        }
+        } 
 
-        protected async Task<RouteData> ConfirmBackStockCore(long taskId, bool isManual = false)
+        protected async Task<RouteData> ConfirmBackStockCore(long taskId ,string code, bool isManual = false)
         {
             try
             {
@@ -1188,6 +1202,10 @@ namespace Services.Outside
                 if (wcsTask == null)
                 {
                     return RouteData.From(PubMessages.E2305_WCS_TASKID_NOTFOUND);
+                }
+                if(wcsTask.NotifyStatus == WCSTaskNotifyStatus.Responsed || wcsTask.NotifyStatus == WCSTaskNotifyStatus.ManualResponsed)
+                {
+                    return RouteData.From(PubMessages.E2306_WCS_TASK_ALLOW_COMPLATED); 
                 }
                 Wms_inventoryboxTask boxTask = await _sqlClient.Queryable<Wms_inventoryboxTask>().FirstAsync(x => x.InventoryBoxTaskId == wcsTask.InventoryBoxTaskId);
                 if (boxTask == null)
@@ -1211,28 +1229,97 @@ namespace Services.Outside
 
                 _sqlClient.Ado.BeginTran();
 
-                wcsTask.WorkStatus = WCSTaskWorkStatus.WorkComplated;
+                bool isSccuess = IsWCSSccuessCode(code);
+                wcsTask.WorkStatus = isSccuess ? WCSTaskWorkStatus.WorkComplated : WCSTaskWorkStatus.Failed;
                 wcsTask.NotifyStatus = WCSTaskNotifyStatus.Responsed;
                 wcsTask.ResponseDate = DateTime.Now;
+                wcsTask.Desc = $"{box.StorageRackName}满入失败";
                 if (await _sqlClient.Updateable(wcsTask).ExecuteCommandAsync() == 0)
                 {
                     return RouteData.From(PubMessages.E0004_DATABASE_UPDATE_FAIL);
                 }
 
-                boxTask.Status = InventoryBoxTaskStatus.task_backed.ToByte();
-                boxTask.ModifiedBy = PubConst.InterfaceUserId;
-                boxTask.ModifiedDate = DateTime.Now;
-                if (await _sqlClient.Updateable(boxTask).ExecuteCommandAsync() == 0)
+                if (code == "401") //满入失败
                 {
-                    return RouteData.From(PubMessages.E0004_DATABASE_UPDATE_FAIL);
-                }
+                    //1,3库满库时自动离库
+                    if(SelfReservoirAreaManager.IsPositionFix(boxTask.ReservoirareaId))
+                    {
+                        bool result = await SendWCSOutCommand(boxTask, PLCPosition.Auto,
+                            $"[满入退出]料箱编号:{box.InventoryBoxNo}", true);
+                        if (!result)
+                        {
+                            return YL.Core.Dto.RouteData.From(PubMessages.E2310_WCS_BACKCOMMAND_FAIL);
+                        }
+                    }
+                    else
+                    {
+                        //标记库位满入异常
+                        Wms_storagerack errorStorageRack = await _sqlClient.Queryable<Wms_storagerack>().FirstAsync(x => x.StorageRackId == box.StorageRackId);
+                        if(errorStorageRack == null)
+                        {
+                            return RouteData.From(PubMessages.E0012_DATA_MISSING,$"{box.StorageRackName}"); 
+                        }
+                        errorStorageRack.Status = StorageRackStatus.UnknowBox;
+                        if (await _sqlClient.Updateable(errorStorageRack).ExecuteCommandAsync() == 0)
+                        {
+                            return RouteData.From(PubMessages.E0004_DATABASE_UPDATE_FAIL, $"将库位更新为满库异常时更新失败");
+                        }
 
-                box.Status = InventoryBoxStatus.InPosition;
-                box.ModifiedBy = PubConst.InterfaceUserId;
-                box.ModifiedDate = DateTime.Now;
-                if (await _sqlClient.Updateable(box).ExecuteCommandAsync() == 0)
-                {
-                    return RouteData.From(PubMessages.E0004_DATABASE_UPDATE_FAIL);
+                        Wms_storagerack storagerack = await _sqlClient.Queryable<Wms_storagerack, Wms_inventorybox>(
+                            (s, ib) => new object[] {
+                               JoinType.Left,s.StorageRackId==ib.StorageRackId ,
+                            }
+                          ).Where((s, ib) => ib.InventoryBoxNo == null && s.ReservoirAreaId == box.ReservoirAreaId && s.Status == StorageRackStatus.Normal)
+                          .Select((s, ib) => s).FirstAsync();
+                        if(storagerack == null)
+                        {
+                            return RouteData.From(PubMessages.E2308_WCS_STORGERACK_FULL, $"料箱编号:{box.InventoryBoxNo}"); 
+                        }
+                        boxTask.StoragerackId = storagerack.StorageRackId;
+                        boxTask.ModifiedBy = PubConst.InterfaceUserId;
+                        boxTask.ModifiedUser = PubConst.InterfaceUserName;
+                        boxTask.ModifiedDate = DateTime.Now;
+                        if (await _sqlClient.Updateable(boxTask).ExecuteCommandAsync() == 0)
+                        {
+                            return RouteData.From(PubMessages.E0004_DATABASE_UPDATE_FAIL);
+                        }
+                        box.StorageRackId = storagerack.StorageRackId;
+                        box.Row = storagerack.Row;
+                        box.Column = storagerack.Column;
+                        box.Floor = storagerack.Floor;
+                        boxTask.ModifiedBy = PubConst.InterfaceUserId;
+                        boxTask.ModifiedUser = PubConst.InterfaceUserName;
+                        box.ModifiedDate = DateTime.Now;
+                        if (await _sqlClient.Updateable(box).ExecuteCommandAsync() == 0)
+                        {
+                            return RouteData.From(PubMessages.E0004_DATABASE_UPDATE_FAIL, "满入更新新库位信息");
+                        }
+
+                        bool result = await SendWCSBackCommand(boxTask, PLCPosition.Auto,
+                            $"[满入重发]料箱编号:{box.InventoryBoxNo}", true);
+                        if (!result)
+                        {
+                            return YL.Core.Dto.RouteData.From(PubMessages.E2310_WCS_BACKCOMMAND_FAIL);
+                        }
+                    }
+                  
+                }
+                else {
+                    boxTask.Status = InventoryBoxTaskStatus.task_backed.ToByte();
+                    boxTask.ModifiedBy = PubConst.InterfaceUserId;
+                    boxTask.ModifiedDate = DateTime.Now;
+                    if (await _sqlClient.Updateable(boxTask).ExecuteCommandAsync() == 0)
+                    {
+                        return RouteData.From(PubMessages.E0004_DATABASE_UPDATE_FAIL);
+                    }
+
+                    box.Status = InventoryBoxStatus.InPosition;
+                    box.ModifiedBy = PubConst.InterfaceUserId;
+                    box.ModifiedDate = DateTime.Now;
+                    if (await _sqlClient.Updateable(box).ExecuteCommandAsync() == 0)
+                    {
+                        return RouteData.From(PubMessages.E0004_DATABASE_UPDATE_FAIL);
+                    }
                 }
 
                 _sqlClient.Ado.CommitTran();
@@ -1246,6 +1333,10 @@ namespace Services.Outside
 
         }
 
+        private bool IsWCSSccuessCode(string code)
+        {
+            return code == "ok" || code == "200" || string.IsNullOrWhiteSpace(code);
+        }
 
         /// <summary>
         /// 入库扫描完成处理
@@ -1276,10 +1367,10 @@ namespace Services.Outside
             }
 
         }
-         
-        private async Task<RouteData> DoStockInScanComplateCore(long stockInId, long inventoryBoxId, Wms_StockMaterialDetailDto[] materials, string remark )
+
+        private async Task<RouteData> DoStockInScanComplateCore(long stockInId, long inventoryBoxId, Wms_StockMaterialDetailDto[] materials, string remark)
         {
-            if(materials.Select(x => x.Position).GroupBy(x => x).Any(x => x.Count() > 1))
+            if (materials.Select(x => x.Position).GroupBy(x => x).Any(x => x.Count() > 1))
             {
                 return YL.Core.Dto.RouteData.From(PubMessages.E2018_STOCKIN_POSITION_DUPLICATE);
             }
@@ -1298,9 +1389,9 @@ namespace Services.Outside
             int count = inventories.Count(); //料格使用数量
             foreach (Wms_StockMaterialDetailDto material in materials)
             {
-                if(inventories.Any(x => x.Position == material.Position))
+                if (inventories.Any(x => x.Position == material.Position))
                 {
-                    return YL.Core.Dto.RouteData.From(PubMessages.E2019_STOCKIN_POSITION_USED,$"料格:{material.Position}"); 
+                    return YL.Core.Dto.RouteData.From(PubMessages.E2019_STOCKIN_POSITION_USED, $"料格:{material.Position}");
                 }
                 Wms_stockindetail detail = await _sqlClient.Queryable<Wms_stockindetail>().FirstAsync(x => x.StockInId == stockInId && x.MaterialId.ToString() == material.MaterialId);
                 if (detail == null) { return YL.Core.Dto.RouteData.From(PubMessages.E2001_STOCKINDETAIL_NOTFOUND, $"MaterialId='{material.MaterialId}'"); }
@@ -1323,7 +1414,7 @@ namespace Services.Outside
                     if (count > inventoryBox.Size)
                     {
                         return YL.Core.Dto.RouteData<InventoryDetailDto[]>.From(PubMessages.E1010_INVENTORYBOX_BLOCK_OVERLOAD);
-                    } 
+                    }
                     detailbox = new Wms_stockindetail_box()
                     {
                         DetailBoxId = PubId.SnowflakeId,
@@ -1360,7 +1451,7 @@ namespace Services.Outside
 
             return YL.Core.Dto.RouteData.From(PubMessages.I2001_STOCKIN_SCAN_SCCUESS);
         }
-         
+
         /// <summary>
         /// 入库单完成
         /// </summary>
@@ -1375,7 +1466,8 @@ namespace Services.Outside
 
                 Wms_stockin stockin = await _sqlClient.Queryable<Wms_stockin>().FirstAsync(x => x.StockInId == stockInId);
                 if (stockin == null) { return YL.Core.Dto.RouteData.From(PubMessages.E2013_STOCKIN_NOTFOUND); }
-                if (stockin.StockInStatus == StockInStatus.task_finish.ToByte()) {
+                if (stockin.StockInStatus == StockInStatus.task_finish.ToByte())
+                {
                     return YL.Core.Dto.RouteData.From(PubMessages.E2014_STOCKIN_ALLOW_FINISHED);
                 }
 
@@ -1468,7 +1560,7 @@ namespace Services.Outside
                 return YL.Core.Dto.RouteData.From(PubMessages.E2118_STOCKOUT_LOCK_FAIL, ex.Message);
             }
         }
-         
+
         /// <summary>
         /// 出库扫描完成
         /// </summary>
@@ -1639,13 +1731,13 @@ namespace Services.Outside
             try
             {
 
-                List<Wms_InventoryBoxMaterialInfo> inventoryBoxs = await _sqlClient.Queryable<Wms_inventorybox,Wms_inventory>(
+                List<Wms_InventoryBoxMaterialInfo> inventoryBoxs = await _sqlClient.Queryable<Wms_inventorybox, Wms_inventory>(
                     (ib, i) => new object[] {
-                       JoinType.Left,ib.InventoryBoxId==i.InventoryBoxId , 
+                       JoinType.Left,ib.InventoryBoxId==i.InventoryBoxId ,
                       }
                     )
-                    .Where((ib,i) => i.MaterialNo == materialNo || i.MaterialOnlyId == materialNo)
-                    .Select((ib,i) => new Wms_InventoryBoxMaterialInfo
+                    .Where((ib, i) => i.MaterialNo == materialNo || i.MaterialOnlyId == materialNo)
+                    .Select((ib, i) => new Wms_InventoryBoxMaterialInfo
                     {
                         InventoryBoxId = ib.InventoryBoxId,
                         InventoryBoxNo = ib.InventoryBoxNo,
@@ -1715,12 +1807,12 @@ namespace Services.Outside
                     .Where(x => (x.IsNotified == null || x.IsNotified == false) && x.IsDel == DeleteFlag.Normal)
                     .ToListAsync();
 
-                foreach(Wms_stockout stockout in result)
+                foreach (Wms_stockout stockout in result)
                 {
                     stockout.IsNotified = true;
                     _sqlClient.Updateable<Wms_stockout>(result);
                 }
-                 
+
                 return new RouteData();
             }
             catch (Exception ex)
@@ -1729,47 +1821,5 @@ namespace Services.Outside
             }
         }
     }
-
-    public class PLCManager
-    {
-        private static int _count1 = 0;
-        private static int _count2 = 0;
-
-        public static string GetPLC(long reservoirAreaId, PLCPosition pos)
-        {
-            if(reservoirAreaId == 1)
-            {
-                if(pos == PLCPosition.Left)
-                {
-                    return "1010";
-                }
-                else if (pos == PLCPosition.Right)
-                {
-                    return "1020";
-                }
-                else
-                {
-                    _count1++;
-                    return _count1 % 2 == 1 ? "1010" : "1020";
-                }
-            }
-            else
-            {
-                if (pos == PLCPosition.Left)
-                {
-                    return "5010";
-                }
-                else if (pos == PLCPosition.Right)
-                {
-                    return "5020";
-                }
-                else
-                {
-                    _count2++;
-                    return _count2 % 2 == 1 ? "5010" : "6010";
-                }
-            }
-        }
-
-    }
+     
 }

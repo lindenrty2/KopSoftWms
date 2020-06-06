@@ -69,7 +69,7 @@ namespace WMSCore.Controllers
             {
                 return  YL.Core.Dto.RouteData.From(PubMessages.E0007_WAREHOUSE_NOTFOUND);
             }
-            RouteData result = await accessor.SetWCSTaskStatus(wcsTaskId, isSccuess);
+            RouteData result = await accessor.SetWCSTaskStatus(wcsTaskId, isSccuess ? "ok" : "500");
             if (!result.IsSccuess)
             { 
             }

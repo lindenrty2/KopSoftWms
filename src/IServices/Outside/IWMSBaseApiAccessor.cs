@@ -76,7 +76,7 @@ namespace IServices.Outside
         /// <param name="datemin"></param>
         /// <param name="datemax"></param>
         /// <returns></returns> 
-        Task<RouteData<Wms_storagerack[]>> GetStorageRackList(long? reservoirAreaId, int pageIndex, int pageSize, string search, string[] order, string datemin, string datemax);
+        Task<RouteData<Wms_storagerack[]>> GetStorageRackList(long? reservoirAreaId, StorageRackStatus? status, int pageIndex, int pageSize, string search, string[] order, string datemin, string datemax);
 
 
         //-----------------------------------------------------------------

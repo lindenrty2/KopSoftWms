@@ -1,4 +1,5 @@
-﻿using static YL.Utils.Table.Bootstrap;
+﻿using YL.Utils.Pub;
+using static YL.Utils.Table.Bootstrap;
 
 namespace YL.Core.Dto
 {
@@ -48,6 +49,12 @@ namespace YL.Core.Dto
             /// 物料Id
             /// </summary>
             public string MaterialId { get; set; }
+        }
+
+        public class StorageRackBootstrapParams : BootstrapParams
+        {
+            public long? ReservoirAreaId { get; set; }
+            public StorageRackStatus? Status { get; set; }
         }
 
         /// <summary>

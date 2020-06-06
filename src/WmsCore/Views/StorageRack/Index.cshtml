@@ -19,7 +19,22 @@
                             <span class="input-group-addon">日期范围</span>
                             <input type="text" v-model="datemin" ref="datemin" id="datemin" class="form-control" style="width:120px;">
                             <input type="text" v-model="datemax" ref="datemax" id="datemax" class="form-control" style="width:120px;margin-left:10px;">
-                            <input type="text" v-model="storeId" ref="storeId" id="storeId" style="display:none">
+                            <input type="text" v-model="storeId" ref="storeId" id="storeId" style="display:none"> 
+                            <select class="form-control" style="width:150px;margin-left:10px;" v-model="ReservoirAreaId" size="1">
+                                <option value="">全部</option>
+@{ 
+    foreach (Wms_reservoirarea item in (Wms_reservoirarea[])ViewData["reservoirAreaList"])
+    {
+                                <option value="@item.ReservoirAreaId">@item.ReservoirAreaName</option>
+    } 
+}
+                            </select> 
+                            <select class="form-control" style="width:150px;margin-left:10px;" v-model="Status" size="1">
+                                <option value="">全部</option>
+                                <option value="0">正常</option>
+                                <option value="1">空出</option>
+                                <option value="2">满入</option>
+                            </select>
                             <button name="search" v-on:click="searchL" type="submit" class="btn btn-success" style="margin-left:10px;"><i class="fa fa-search"></i> 搜货架</button>
                         </div>
                         <div id="toolbar" class="btn-group">
@@ -41,13 +56,15 @@
     </section>
 </div>
 @section scripts{
-    <script src="~/js/common.wms.js"></script>
+    <script src="~/js/common.wms.js?ver=2020060701"></script>
     <script type="text/javascript">
         var app = new Vue({
             el: '#app',
             data: {
                 datemin: '',
                 datemax: '',
+                ReservoirAreaId:'',
+                Status: '',
                 storeId: '0'
             },
             mounted: function () {
@@ -57,6 +74,8 @@
                     _self.$refs.StorageRack.parentNode.parentNode.classList.add("active");
                     _self.$refs.StorageRack.classList.add("active");
                     _self.$refs.storeId = '@ViewData["currentStoreId"]';
+                    _self.$refs.ReservoirAreaId = null;
+                    _self.$refs.Status = null;
 
                     _self.datemin = "1900-01-01";
                     _self.datemax = "2099-01-01";
@@ -83,7 +102,8 @@
                     _self = this;
                     var obj = [
                         { checkbox: true, visible: true },
-                        { field: 'StorageRackId', title: 'Id', visible: false },
+                        { field: 'StorageRackId', title: 'Id', visible: false }, 
+                        { field: 'Status', title: '状态', align: 'center', sortable: true, formatter: StorageRackStatusFormatter },
                         { field: 'StorageRackNo', title: '货架编号', align: 'center', sortable: true },
                         { field: 'StorageRackName', title: '货架名称', align: 'center', sortable: true },
                         { field: 'ReservoirAreaName', title: '所属库区', align: 'center', sortable: true },
@@ -102,7 +122,13 @@
                     yui.layershow("添加货架", "/StorageRack/Add?storeId=@ViewData["currentStoreId"]", 550, 460);
                 },
                 searchL: function () {
-                    $("#bootstraptable").bootstrapTable('refresh');
+                    var qParams = {
+                        datemin: _self.datemin,
+                        datemax: _self.datemax, 
+                        ReservoirAreaId: _self.ReservoirAreaId == "" ? null : _self.ReservoirAreaId ,
+                        Status: _self.Status == "" ? null : _self.Status 
+                    };
+                    $("#bootstraptable").bootstrapTable('refresh', { query: qParams });
                 },
                 editL: function () {
                     var arr = $("#bootstraptable").bootstrapTable('getSelections');
@@ -110,7 +136,7 @@
                         var index = layer.confirm("您确定要修改吗？", { btn: ["确定", "取消"] }, function () {
                             layer.close(index);
                             var id = arr[0].StorageRackId;
-                            yui.layershow("修改货架", "/StorageRack/Add?id=" + id, 550, 460);
+                            yui.layershow("修改货架", "/StorageRack/Add?storeId=@ViewData["currentStoreId"]&id=" + id, 550, 460);
                         }, function () {
 
                         });

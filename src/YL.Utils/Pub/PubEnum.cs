@@ -302,6 +302,19 @@ namespace YL.Utils.Pub
         Right = 2
     }
 
+    /// <summary>
+    /// 库位状态
+    /// </summary>
+    public enum StorageRackStatus
+    {
+        [Description("正常")]
+        Normal = 0,
+        [Description("空出")]
+        MissingBox = 1,
+        [Description("满入")]
+        UnknowBox = 2,
+    }
+
     public enum ScanMode
     {
         Unknow = 0,

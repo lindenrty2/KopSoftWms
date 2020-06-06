@@ -23,9 +23,12 @@
                 <div class="col-sm-10">
                     <select class="form-control" v-model="ReservoirAreaId" size="1">
                         <option value="">请选择</option>
-                        <template v-for="item in list">
-                            <option :value="item.ReservoirAreaId">{{item.ReservoirAreaName}}</option>
-                        </template>
+@{
+    foreach (Wms_reservoirarea item in (Wms_reservoirarea[])ViewData["reservoirAreaList"])
+    {
+                            <option value="@item.ReservoirAreaId">@item.ReservoirAreaName</option>
+    }
+}
                     </select>
                 </div>
             </div>
@@ -35,6 +38,16 @@
                     行:<input class="form-control" v-model="LocRow" type="text">
                     列:<input class="form-control" v-model="LocColumn" type="text">
                     层:<input class="form-control" v-model="LocFloor" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label col-sm-2">状态</label>
+                <div class="col-sm-10">
+                    <select class="form-control" v-model="Status" size="1">
+                        <option value="Normal">正常</option>
+                        <option value="MissingBox">空出</option>
+                        <option value="UnknowBox">满入</option>
+                    </select>
                 </div>
             </div>
             <div class="form-group">
@@ -67,6 +80,7 @@
                 LocRow: "@Model.Row",
                 LocColumn: "@Model.Column",
                 LocFloor: "@Model.Floor",
+                Status: '@Model.Status',
                 list: [] //库区
             },
             computed: {
@@ -75,10 +89,10 @@
                 }
             },
             watch: {
-                WarehouseId: function () {
-                    var _self = this;
-                    _self.loadL(_self.WarehouseId);
-                }
+                //WarehouseId: function () {
+                //    var _self = this;
+                //    _self.loadL(_self.WarehouseId);
+                //}
             },
             mounted: function () {
                 var _self = this;
@@ -90,7 +104,7 @@
                 loadL: function (id) {
                     var _self = this;
                     yui.$axiosget('/StorageRack/GetReservoirarea?id=' + id).then(function (response) {
-                        _self.list = response.data;
+                        _self.list = response.data.rows;
                     });
                 },
                 addL: function () {
@@ -136,6 +150,7 @@
                         Row: row,
                         Column: column,
                         Floor: floor,
+                        Status: _self.Status,
                         Remark: _self.Remark,
                         WarehouseId: _self.WarehouseId,
                         ReservoirAreaId:_self.ReservoirAreaId

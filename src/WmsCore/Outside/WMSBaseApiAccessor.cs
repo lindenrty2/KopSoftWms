@@ -64,9 +64,9 @@ namespace WMSCore.Outside
             return _apiProxy.GetStorageRack(storageRackId);
         }
 
-        public Task<RouteData<Wms_storagerack[]>> GetStorageRackList(long? reservoirAreaId, int pageIndex, int pageSize, string search, string[] order, string datemin, string datemax)
+        public Task<RouteData<Wms_storagerack[]>> GetStorageRackList(long? reservoirAreaId, StorageRackStatus? status, int pageIndex, int pageSize, string search, string[] order, string datemin, string datemax)
         {
-            return _apiProxy.GetStorageRackList(reservoirAreaId, pageIndex, pageSize, search, order, datemin, datemax);
+            return _apiProxy.GetStorageRackList(reservoirAreaId, status, pageIndex, pageSize, search, order, datemin, datemax);
         }
 
         public Task<RouteData<Wms_inventorybox>> GetInventoryBox(long inventoryBoxId)

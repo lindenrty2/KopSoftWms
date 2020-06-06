@@ -75,7 +75,7 @@
                     if (dom.length>0) {
                         app.searchMaterial(text,2);
                     }
-                    if (app.MaterialList.length<=0) {
+                    if (typeof (app.MaterialList) != "undefined" && app.MaterialList.length<=0) {
                         app.searchMaterial(text,2);
                     }
                 });
@@ -197,15 +197,15 @@
                     yui.table("bootstraptable", "/Inventory/List", obj, "POST", "InventoryId", true, qParams);
                 },
                 searchL: function () {
-                    //var qParams = {
-                    //    StorageRackId: _self.StorageRackId,
-                    //    MaterialId: _self.MaterialId
-                    //};
+                    var qParams = {
+                        StorageRackId: _self.StorageRackId,
+                        MaterialId: _self.MaterialId
+                    };
                     //var query = {
                     //    silent: true,
                     //    query: qParams
                     //};
-                    $("#bootstraptable").bootstrapTable('refresh'); //query
+                    $("#bootstraptable").bootstrapTable('refresh', { query : qParams }); //query
                 },
             }
         });

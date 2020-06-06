@@ -74,7 +74,7 @@ namespace IServices.Outside
         /// <param name="wcsTaskId"></param>
         /// <param name="isSccuess">成功/失败</param>
         /// <returns></returns>
-        Task<RouteData> SetWCSTaskStatus(long wcsTaskId, bool isSccuess);
+        Task<RouteData> SetWCSTaskStatus(long wcsTaskId, string code );
         /// <summary>
         /// 重发Wcs任务指令
         /// </summary>

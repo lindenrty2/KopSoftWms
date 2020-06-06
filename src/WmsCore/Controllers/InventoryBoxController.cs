@@ -50,7 +50,7 @@ namespace KopSoftWms.Controllers
         {
             long currentStoreId = (long)ViewData["currentStoreId"];
             IWMSBaseApiAccessor wmsAccessor = WMSApiManager.GetBaseApiAccessor(currentStoreId.ToString(),_client);
-            ViewBag.StorageRack = (await wmsAccessor.GetStorageRackList( null, 1, 100, null, null, null, null)).Data;
+            ViewBag.StorageRack = (await wmsAccessor.GetStorageRackList( null,null, 1, 100, null, null, null, null)).Data;
             //ViewBag.StorageRack = _storagerackServices.QueryableToList(c => c.WarehouseId == currentStoreId && c.IsDel == 1);
             return View();
         }

@@ -2,6 +2,7 @@
 using IServices.Outside;
 using Microsoft.AspNetCore.Mvc;
 using SqlSugar;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using WMSCore.Outside;
@@ -14,6 +15,7 @@ using YL.Utils.Extensions;
 using YL.Utils.Json;
 using YL.Utils.Pub;
 using YL.Utils.Table;
+using static YL.Core.Dto.PubParams;
 
 namespace KopSoftWms.Controllers
 {
@@ -46,8 +48,11 @@ namespace KopSoftWms.Controllers
 
         [HttpGet]
         [CheckMenu]
-        public IActionResult Index()
+        public async Task<IActionResult> Index(string storeId)
         {
+            IWMSBaseApiAccessor wmsAccessor = WMSApiManager.GetBaseApiAccessor(storeId, _client);
+            RouteData<Wms_reservoirarea[]> result = (await wmsAccessor.GetReservoirAreaList(1, 100, null, null, null, null));
+            ViewData["reservoirAreaList"] = result.Data;
             return View();
         }
 
@@ -100,7 +105,7 @@ namespace KopSoftWms.Controllers
 
             IWMSBaseApiAccessor wmsAccessor = WMSApiManager.GetBaseApiAccessor(id.ToString(), _client);
             if (wmsAccessor == null) return "";
-            RouteData<Wms_storagerack[]> result = (await wmsAccessor.GetStorageRackList(SqlFunc.ToInt64(id), 1, 100, null, null, null, null));
+            RouteData<Wms_storagerack[]> result = (await wmsAccessor.GetStorageRackList(SqlFunc.ToInt64(id), null, 1, 100, null, null, null, null));
             if (!result.IsSccuess)
             {
                 return new PageGridData().JilToJson();
@@ -110,13 +115,13 @@ namespace KopSoftWms.Controllers
 
         [HttpPost]
         [OperationLog(LogType.select)]
-        public async Task<string> List([FromForm]Bootstrap.BootstrapParams bootstrap)
+        public async Task<string> List([FromForm]StorageRackBootstrapParams bootstrap)
         {
             //var sd = _storagerackServices.PageList(bootstrap);
             //return Content(sd);
 
             IWMSBaseApiAccessor wmsAccessor = WMSApiManager.GetBaseApiAccessor(bootstrap.storeId.ToString(), _client);
-            RouteData<Wms_storagerack[]> result = await wmsAccessor.GetStorageRackList(null, bootstrap.pageIndex, bootstrap.limit, bootstrap.search, bootstrap.order.Split(","), bootstrap.datemin, bootstrap.datemax);
+            RouteData<Wms_storagerack[]> result = await wmsAccessor.GetStorageRackList(bootstrap.ReservoirAreaId,bootstrap.Status,  bootstrap.pageIndex, bootstrap.limit, bootstrap.search, bootstrap.order.Split(","), bootstrap.datemin, bootstrap.datemax);
             if (!result.IsSccuess)
             {
                 return new PageGridData().JilToJson();
@@ -125,8 +130,12 @@ namespace KopSoftWms.Controllers
         }
 
         [HttpGet]
-        public IActionResult Add(string id)
+        public async Task<IActionResult> Add(string id,string storeId)
         {
+            IWMSBaseApiAccessor wmsAccessor = WMSApiManager.GetBaseApiAccessor(storeId, _client);
+            RouteData<Wms_reservoirarea[]> result = (await wmsAccessor.GetReservoirAreaList(1, 100, null, null, null, null));
+            ViewData["reservoirAreaList"] = result.Data;
+
             var model = new Wms_storagerack();
             if (id.IsEmpty())
             {
@@ -142,7 +151,7 @@ namespace KopSoftWms.Controllers
         [HttpPost]
         [FilterXss]
         [OperationLog(LogType.addOrUpdate)]
-        public IActionResult AddOrUpdate([FromForm]Wms_storagerack model, [FromForm]string id)
+        public async Task<IActionResult> AddOrUpdate([FromForm]Wms_storagerack model, [FromForm]string id)
         {
             var validator = new StorageRackFluent();
             var results = validator.Validate(model);
@@ -152,21 +161,37 @@ namespace KopSoftWms.Controllers
                 string msg = results.Errors.Aggregate("", (current, item) => (current + item.ErrorMessage + "</br>"));
                 return BootJsonH((PubEnum.Failed.ToInt32(), msg));
             }
+
+            Wms_reservoirarea reservoirarea = await _client.Queryable<Wms_reservoirarea>().FirstAsync(
+                x => x.ReservoirAreaId == model.ReservoirAreaId);
+            if (reservoirarea == null)
+            {
+                return BootJsonH((PubEnum.Failed.ToInt32(), "找不到库区"));
+            }
             if (id.IsEmptyZero())
             {
                 if (_storagerackServices.IsAny(c => c.StorageRackNo == model.StorageRackNo || c.StorageRackName == model.StorageRackNo))
                 {
                     return BootJsonH((false, PubConst.Warehouse5));
                 }
+             
                 model.StorageRackId = PubId.SnowflakeId;
+                model.ReservoirAreaName = reservoirarea.ReservoirAreaName; 
                 model.CreateBy = UserDtoCache.UserId;
+                model.CreateUser = UserDtoCache.UserName;
+                model.CreateDate = DateTime.Now;
+                model.ModifiedBy = UserDtoCache.UserId;
+                model.ModifiedUser = UserDtoCache.UserName;
+                model.ModifiedDate = DateTime.Now;
                 bool flag = _storagerackServices.Insert(model);
                 return BootJsonH(flag ? (flag, PubConst.Add1) : (flag, PubConst.Add2));
             }
             else
             {
                 model.StorageRackId = id.ToInt64();
+                model.ReservoirAreaName = reservoirarea.ReservoirAreaName;
                 model.ModifiedBy = UserDtoCache.UserId;
+                model.ModifiedUser = UserDtoCache.UserName;
                 model.ModifiedDate = DateTimeExt.DateTime;
                 var flag = _storagerackServices.Update(model);
                 return BootJsonH(flag ? (flag, PubConst.Update1) : (flag, PubConst.Update2));
@@ -213,7 +238,7 @@ namespace KopSoftWms.Controllers
                 order = "desc"
             };
             IWMSBaseApiAccessor wmsAccessor = WMSApiManager.GetBaseApiAccessor(bootstrap.storeId.ToString(), _client);
-            RouteData<Wms_storagerack[]> result = await wmsAccessor.GetStorageRackList(null, bootstrap.offset, bootstrap.limit, bootstrap.search, bootstrap.order.Split(","), bootstrap.datemin, bootstrap.datemax);
+            RouteData<Wms_storagerack[]> result = await wmsAccessor.GetStorageRackList(null,null, bootstrap.offset, bootstrap.limit, bootstrap.search, bootstrap.order.Split(","), bootstrap.datemin, bootstrap.datemax);
             if (!result.IsSccuess)
             {
                 return new PageGridData().JilToJson();

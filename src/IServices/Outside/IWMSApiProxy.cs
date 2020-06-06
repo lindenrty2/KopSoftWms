@@ -78,7 +78,7 @@ namespace IServices.Outside
         /// <param name="datemax"></param>
         /// <returns></returns>
         [HttpGet("StorageRack/List/{pageIndex}")]
-        Task<RouteData<Wms_storagerack[]>> GetStorageRackList(long? reservoirAreaId,int pageIndex, int pageSize, string search, string[] order, string datemin, string datemax);
+        Task<RouteData<Wms_storagerack[]>> GetStorageRackList(long? reservoirAreaId, StorageRackStatus? status, int pageIndex, int pageSize, string search, string[] order, string datemin, string datemax);
 
 
         //-----------------------------------------------------------------

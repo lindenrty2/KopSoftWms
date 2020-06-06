@@ -1,10 +1,11 @@
 ﻿using SqlSugar;
 using System;
+using YL.Utils.Pub;
 
 namespace YL.Core.Entity
 {
     ///<summary>
-    /// 货架
+    /// 货架(库位)
     ///</summary>
     public partial class Wms_storagerack
     {
@@ -98,6 +99,11 @@ namespace YL.Core.Entity
         [SugarColumn(IsNullable = true)]
         public int? IsDel { get; set; }
 
+        /// <summary>
+        /// 库位状态
+        /// </summary>
+        [SugarColumn(IsNullable = true)]
+        public StorageRackStatus Status { get; set; } = StorageRackStatus.Normal;
         /// <summary>
         /// Desc:创建人
         /// Default:

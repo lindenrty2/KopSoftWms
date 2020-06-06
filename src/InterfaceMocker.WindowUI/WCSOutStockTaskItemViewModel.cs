@@ -28,7 +28,7 @@ namespace InterfaceMocker.WindowUI
         {
             return new TaskItemCommand[] {
                 new SimpleTaskItemCommand("出库成功",SendComplateAsync),
-                new SimpleTaskItemCommand("出库失败",SendFail),
+                new SimpleTaskItemCommand("空出失败",SendFail),
             };
         }
 
@@ -57,7 +57,7 @@ namespace InterfaceMocker.WindowUI
             {
                 TaskId = _outStockInfo.TaskId,
                 Success = false,
-                Code = "E0001", 
+                Code = "400", 
             };
             try
             {

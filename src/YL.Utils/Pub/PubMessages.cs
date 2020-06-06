@@ -17,6 +17,7 @@ namespace YL.Utils.Pub
         public static MessageItem E0009_PARAMETER_NULL = new MessageItem(-9, "参数为Null");
         public static MessageItem E0010_PARAMETER_TYPE_INVAILD = new MessageItem(-10, "参数类型不一致");
         public static MessageItem E0011_DATABASE_UNKNOW_FAIL = new MessageItem(-11, "数据库发生未知异常");
+        public static MessageItem E0012_DATA_MISSING = new MessageItem(-12, "找不到应有的数据");
 
         public static MessageItem I1001_BOXBACK_SCCUESS = new MessageItem(1001, "料箱出库成功");
         public static MessageItem I1002_BOXOUT_SCCUESS = new MessageItem(1002, "料箱归库成功");
@@ -102,6 +103,7 @@ namespace YL.Utils.Pub
         public static MessageItem E2305_WCS_TASKID_NOTFOUND = new MessageItem(-2305, "WCS任务不存在");
         public static MessageItem E2306_WCS_TASK_ALLOW_COMPLATED = new MessageItem(-2306, "WCS任务已完成,不能再次操作");
         public static MessageItem E2307_WCS_TASKSTATUS_UPDATE_FAIL = new MessageItem(-2307, "WCS指令状态更新失败");
+        public static MessageItem E2308_WCS_STORGERACK_FULL = new MessageItem(-2308, "没有空余库位可以存放料箱");
 
         public static MessageItem I2300_WCS_BACKCOMMAND_SCCUESS = new MessageItem(2301, "WCS料箱归库命令成功");
         public static MessageItem E2310_WCS_BACKCOMMAND_FAIL = new MessageItem(-2301, "WCS料箱归库命令失败");
