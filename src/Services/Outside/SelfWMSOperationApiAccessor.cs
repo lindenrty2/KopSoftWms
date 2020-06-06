@@ -960,7 +960,7 @@ namespace Services.Outside
                     TaskStatus = "0", //任务阶段,暂时不用
                     CreateBy = 0,
                     CreateDate = DateTime.Now,
-                    SetPlcCode = storagerack.Row < 3 ? "1010" : "5010",
+                    SetPlcCode = PLCManager.GetPLC(storagerack.ReservoirAreaId.Value, pos),
                     //Table = channel == 1 ? "1" : "3"
                 };
                  
@@ -1766,7 +1766,7 @@ namespace Services.Outside
                 else
                 {
                     _count2++;
-                    return _count2 % 2 == 1 ? "5010" : "5020";
+                    return _count2 % 2 == 1 ? "5010" : "6010";
                 }
             }
         }
