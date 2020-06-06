@@ -135,7 +135,7 @@ namespace YL
                     Wms_inventorybox box = new Wms_inventorybox()
                     {
                         InventoryBoxId = id,
-                        InventoryBoxNo = "LX-" + code,
+                        InventoryBoxNo = "LK_LX_" + code,
                         InventoryBoxName = "料箱-" + code,
                         WarehouseId = reservoirarea.WarehouseId,
                         ReservoirAreaId = reservoirarea.ReservoirAreaId,

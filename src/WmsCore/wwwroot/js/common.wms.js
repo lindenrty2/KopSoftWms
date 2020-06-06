@@ -18,10 +18,18 @@ function IsStockOutNo(no) {
 }
 
 function IsInventoryBoxNo(no) {
-    if (no == null || no.length == 0) return false;
-    if (no.split('-').length == 2) {
+    if (no == null || no.length < 7) return false;
+    if (no[0] == "L" && no[1] == "K" && no[2] == "_"
+        && no[3] == "L" && no[4] == "X" && no[5] == "_" ) {
         return true;
     }
+    return false;
+}
+
+function GetInventoryBoxNo(no) {
+    var words = no.split("_");
+    if (words.length < 4) return no;
+    return words[0] + "_" + words[1] + "_" + words[2];
     return false;
 }
 

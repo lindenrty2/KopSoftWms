@@ -152,7 +152,7 @@
     <script src="~/js/bootstrap-select.min.js"></script>
     <script src="~/js/defaults-zh_CN.min.js"></script>
     <script src="~/js/vue.element.min.js"></script>
-    <script src="~/js/common.wms.js"></script>
+    <script src="~/js/common.wms.js?ver=1"></script>
     <script>
         var app = new Vue({
             el: "#app",
@@ -218,6 +218,7 @@
                         _self.onStockOutNoInputed(inputNo);
                     }
                     else if (IsInventoryBoxNo(inputNo)) {
+                        inputNo = GetInventoryBoxNo(inputNo);
                         _self.onInventoryBoxNoInputed(inputNo);
                     }
                     else if (IsMaterialNo(inputNo)) {
