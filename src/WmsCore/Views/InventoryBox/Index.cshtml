@@ -31,17 +31,22 @@
                             <input type="text" ref="datemin" id="datemin" class="form-control" style="width:120px;">
                             <input type="text" ref="datemax" id="datemax" class="form-control" style="width:120px;margin-left:10px;">
                             <input type="text" v-model="storeId" ref="storeId" id="storeId" style="display:none">
-                            <select class="form-control" v-model="StorageRackId" style="width:120px;margin-left:10px;">
-                                <option value="">全部货架</option>
+                            <select class="form-control" style="width:150px;margin-left:10px;" v-model="ReservoirAreaId" size="1">
+                                <option value="">全部</option>
                                 @{
-                                    if (ViewBag.StorageRack != null || ViewBag.StorageRack.Count > 0)
+                                    foreach (Wms_reservoirarea item in (Wms_reservoirarea[])ViewData["reservoirAreaList"])
                                     {
-                                        foreach (var item in ViewBag.StorageRack)
-                                        {
-                                            <option value="@item.StorageRackId">@(item.StorageRackNo + "|" + item.StorageRackName)</option>
-                                        }
+                                        <option value="@item.ReservoirAreaId">@item.ReservoirAreaName</option>
                                     }
                                 }
+                            </select>
+                            <select class="form-control" style="width:150px;margin-left:10px;" v-model="Status" size="1">
+                                <option value="">全部</option>
+                                <option value="0">不在库</option>
+                                <option value="1">在库</option>
+                                <option value="2">出库中</option>
+                                <option value="3">出库完成</option>
+                                <option value="4">归库中</option>
                             </select>
                         </div>
                         <div class="input-group" style="margin-top:5px;margin-left:-10px">
@@ -100,7 +105,9 @@
             data: {
                 datemin: '',
                 datemax: '',
+                ReservoirAreaId: '',
                 StorageRackId: '',
+                Status: '',
                 InventoryBoxId: '',
                 InventoryBoxList: [],
                 url: '',
@@ -165,7 +172,7 @@
                 },
                 loadL: function () {
                     _self = this;
-                    var obj = [
+                    var columns = [
                         { checkbox: true, visible: true },
                         { field: 'InventoryBoxIdStr', title: 'Id', visible: false },
                         {
@@ -211,14 +218,70 @@
                         { field: 'ModifiedUser', align: 'center', title: '修改人', sortable: true },
                         { field: 'ModifiedDate', title: '修改时间', align: 'center', sortable: true, formatter: DateTimeFormatter }
                     ];
-                    var qParams = {
-                    };
-                    yui.table("bootstraptable", "/InventoryBox/List", obj, "POST", "InventoryBoxIdStr", true, qParams);
+                    $("#bootstraptable").bootstrapTable({
+                        url: "/InventoryBox/List",
+                        method: "POST",
+                        contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+                        toolbar: '#toolbar', //工具按钮用哪个容器
+                        striped: true, //是否显示行间隔色
+                        cache: false, //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+                        sortable: true, //是否启用排序
+                        sortOrder: "desc", //排序方式
+                        sortName: "InventoryBoxIdStr",
+                        pagination: true, //是否显示分页（*）
+                        paginationLoop: true,
+                        onlyInfoPagination: false,
+                        sidePagination: "server", //分页方式：client客户端分页，server服务端分页（*）
+                        pageNumber: 1, //初始化加载第一页，默认第一页,并记录
+                        pageSize: 10, //每页的记录行数（*）
+                        pageList: [10, 25, 50, 100, 'All'], //可供选择的每页的行数（*）
+                        search: true, //是否显示表格搜索
+                        strictSearch: false, //设置为 true启用全匹配搜索，否则为模糊搜索。
+                        trimOnSearch: true, //设置为 true 将自动去掉搜索字符的前后空格。
+                        smartDisplay: true,
+                        showPaginationSwitch: false,
+                        showColumns: true, //是否显示所有的列（选择显示的列）
+                        showHeader: true, //是否显示列头。
+                        showFooter: false, //是否显示列脚。
+                        showRefresh: true, //是否显示刷新按钮
+                        showExport: false, //是否显示导出按钮
+                        exportDataType: "all",
+                        buttonsAlign: "right", //按钮位置
+                        exportTypes: ['csv', 'txt', 'sql', 'doc', 'excel', 'xlsx', 'pdf'], //导出文件类型
+                        Icons: 'glyphicon-export',
+                        singleSelect: false, //设置 true 将禁止多选。
+                        minimumCountColumns: 1, //最少允许的列数
+                        clickToSelect: true, //是否启用点击选中行
+                        //height: 500,                      //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
+                        //idField: "Name",
+                        uniqueId: "InventoryBoxIdStr", //每一行的唯一标识，一般为主键列
+                        showToggle: true, //是否显示详细视图和列表视图的切换按钮
+                        showFullscreen: false,
+                        cardView: false, //是否显示详细视图
+                        detailView: false, //是否显示父子表
+                        queryParams: function (params) {
+                            var temp = {
+                                limit: params.limit,     //页面大小
+                                offset: params.offset,   //页码
+                                sort: params.sort,      //排序列名
+                                order: params.order, //排序命令（desc，asc）
+                                search: params.search,
+                                storeId: _self.$refs.storeId === null ? 0 : _self.$refs.storeId,
+                                datemin: _self.$refs.datemin.value,
+                                datemax: _self.$refs.datemax.value,
+                                ReservoirAreaId: _self.ReservoirAreaId == "" ? null : _self.ReservoirAreaId,
+                                Status: _self.Status == "" ? null : _self.Status
+                            }; 
+                            return temp;
+                        },
+                        queryParamsType: 'limit',
+                        columns: columns
+                    }); 
                 },
                 showL: function () {
                     yui.layershow("添加料箱", "/InventoryBox/Add?storeId=@ViewData["currentStoreId"]", 550, 600);
                 },
-                searchL: function () {
+                searchL: function () { 
                     $("#bootstraptable").bootstrapTable('refresh');
                 },
                 editL: function () {
@@ -266,10 +329,12 @@
                     var _self = this;
                     var index = layer.confirm("您确定要出库吗？", {
                         btn: ["出库左边", "出库右边", "取消"],
-                        btn1:function() {
+                        btn1: function () {
+                            layer.close(index);
                             _self.DoOutL(val, 1);
                         },
-                        btn2:function() {
+                        btn2: function () {
+                            layer.close(index);
                             _self.DoOutL(val, 2);
                         }
                     });
@@ -288,11 +353,10 @@
                                 layer.msg(response.data.message || errorMsg, { icon: 5 });
                             }
                             _self.searchL();
-                            layer.close(index);
                         })
                         .catch(function (error) {
-                            layer.close(index);
                         });
+
                 },
                 BackL: function (val) {
                     yui.layershow("料箱归库操作", "/InventoryBox/BoxBack?storeId=@ViewData["currentStoreId"]&inventoryBoxId=" + val, 1000, 800);

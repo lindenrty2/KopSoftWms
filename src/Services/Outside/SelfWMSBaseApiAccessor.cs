@@ -44,7 +44,8 @@ namespace Services.Outside
             return Task.FromResult(RouteData<Wms_inventory[]>.From(box));
         }
 
-        public async Task<RouteData<Wms_inventorybox[]>> GetInventoryBoxList(long? reservoirAreaId, long? storageRackId, int pageIndex,int pageSize, string search, string[] order, string datemin, string datemax)
+        public async Task<RouteData<Wms_inventorybox[]>> GetInventoryBoxList(
+            long? reservoirAreaId, long? storageRackId,InventoryBoxStatus? status, int pageIndex,int pageSize, string search, string[] order, string datemin, string datemax)
         {
             ISugarQueryable<Wms_inventorybox> query = _sqlClient.Queryable<Wms_inventorybox>();
             if(reservoirAreaId != null)
@@ -54,6 +55,10 @@ namespace Services.Outside
             if (storageRackId != null)
             {
                 query = query.Where(x => x.StorageRackId == storageRackId);
+            }
+            if (status != null)
+            {
+                query = query.Where(x => x.Status == status);
             }
             if (!string.IsNullOrWhiteSpace(search))
             {

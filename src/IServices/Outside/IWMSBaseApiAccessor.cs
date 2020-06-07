@@ -98,7 +98,7 @@ namespace IServices.Outside
         /// <param name="datemin"></param>
         /// <param name="datemax"></param>
         /// <returns></returns> 
-        Task<RouteData<Wms_inventorybox[]>> GetInventoryBoxList(long? reservoirAreaId, long? storageRackId, int pageIndex, int pageSize, string search, string[] order, string datemin, string datemax);
+        Task<RouteData<Wms_inventorybox[]>> GetInventoryBoxList(long? reservoirAreaId, long? storageRackId, InventoryBoxStatus? status, int pageIndex, int pageSize, string search, string[] order, string datemin, string datemax);
 
         /// <summary>
         /// 获取料箱物料信息

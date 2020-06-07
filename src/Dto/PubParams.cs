@@ -62,8 +62,10 @@ namespace YL.Core.Dto
         /// </summary>
         public class InventoryBoxBootstrapParams : BootstrapParams
         {
+            public long? ReservoirAreaId { get; set; }
             public string StorageRackId { get; set; }
             public string MaterialId { get; set; }
+            public InventoryBoxStatus? Status { get; set; }
         }
 
         /// <summary>

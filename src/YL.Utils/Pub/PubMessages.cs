@@ -104,6 +104,7 @@ namespace YL.Utils.Pub
         public static MessageItem E2306_WCS_TASK_ALLOW_COMPLATED = new MessageItem(-2306, "WCS任务已完成,不能再次操作");
         public static MessageItem E2307_WCS_TASKSTATUS_UPDATE_FAIL = new MessageItem(-2307, "WCS指令状态更新失败");
         public static MessageItem E2308_WCS_STORGERACK_FULL = new MessageItem(-2308, "没有空余库位可以存放料箱");
+        public static MessageItem E2309_WCS_INVERTORYBOX_STORGERACK_NOTSET = new MessageItem(-2309, "料箱未指定库位");
 
         public static MessageItem I2300_WCS_BACKCOMMAND_SCCUESS = new MessageItem(2301, "WCS料箱归库命令成功");
         public static MessageItem E2310_WCS_BACKCOMMAND_FAIL = new MessageItem(-2301, "WCS料箱归库命令失败");

@@ -46,11 +46,12 @@ namespace KopSoftWms.Controllers
 
         [HttpGet]
         [CheckMenu]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string storeId)
         {
             long currentStoreId = (long)ViewData["currentStoreId"];
-            IWMSBaseApiAccessor wmsAccessor = WMSApiManager.GetBaseApiAccessor(currentStoreId.ToString(),_client);
-            ViewBag.StorageRack = (await wmsAccessor.GetStorageRackList( null,null, 1, 100, null, null, null, null)).Data;
+            IWMSBaseApiAccessor wmsAccessor = WMSApiManager.GetBaseApiAccessor(storeId, _client);
+            RouteData<Wms_reservoirarea[]> result = (await wmsAccessor.GetReservoirAreaList(1, 100, null, null, null, null));
+            ViewData["reservoirAreaList"] = result.Data;
             //ViewBag.StorageRack = _storagerackServices.QueryableToList(c => c.WarehouseId == currentStoreId && c.IsDel == 1);
             return View();
         }
@@ -60,7 +61,8 @@ namespace KopSoftWms.Controllers
         public async Task<string> List([FromForm]PubParams.InventoryBoxBootstrapParams bootstrap)
         {
             IWMSBaseApiAccessor wmsAccessor = WMSApiManager.GetBaseApiAccessor(bootstrap.storeId.ToString(), _client);
-            RouteData<Wms_inventorybox[]> result = (await wmsAccessor.GetInventoryBoxList(null,null,bootstrap.pageIndex,bootstrap.limit,bootstrap.search,bootstrap.order.Split(","),bootstrap.datemin,bootstrap.datemax));
+            RouteData<Wms_inventorybox[]> result = (await wmsAccessor.GetInventoryBoxList(
+                bootstrap.ReservoirAreaId, null, bootstrap.Status, bootstrap.pageIndex,bootstrap.limit,bootstrap.search,bootstrap.order.Split(","),bootstrap.datemin,bootstrap.datemax));
             if (!result.IsSccuess)
             {
                 return new PageGridData().JilToJson();
@@ -162,7 +164,8 @@ namespace KopSoftWms.Controllers
         public async Task<string> Search(long storeId, string text)
         {
             IWMSBaseApiAccessor wmsAccessor = WMSApiManager.GetBaseApiAccessor(storeId.ToString(), _client);
-            RouteData<Wms_inventorybox[]> result = (await wmsAccessor.GetInventoryBoxList(null, null, 1, 20, text, null, null, null));
+            RouteData<Wms_inventorybox[]> result = (await wmsAccessor.GetInventoryBoxList(
+                null, null, null, 1, 20, text, null, null, null));
             if (!result.IsSccuess)
             {
                 return new PageGridData().JilToJson();

@@ -74,9 +74,11 @@ namespace WMSCore.Outside
             return _apiProxy.GetInventoryBox(inventoryBoxId);
         }
 
-        public Task<RouteData<Wms_inventorybox[]>> GetInventoryBoxList(long? reservoirAreaId, long? storageRackId, int pageIndex, int pageSize, string search, string[] order, string datemin, string datemax)
+        public Task<RouteData<Wms_inventorybox[]>> GetInventoryBoxList(
+            long? reservoirAreaId, long? storageRackId, InventoryBoxStatus? status,
+            int pageIndex, int pageSize, string search, string[] order, string datemin, string datemax)
         {
-            return _apiProxy.GetInventoryBoxList(reservoirAreaId, storageRackId, pageIndex, pageSize, search, order, datemin, datemax);
+            return _apiProxy.GetInventoryBoxList(reservoirAreaId, storageRackId, status, pageIndex, pageSize, search, order, datemin, datemax);
         }
 
         public Task<RouteData<Wms_inventory[]>> GetInventoryBoxDetail(long inventoryBoxId)

@@ -435,6 +435,16 @@ namespace KopSoftWms.Controllers
         }
 
         [HttpGet]
+        public IActionResult Preview(long storeId, long pid)
+        {
+            var model = _stockinServices.QueryableToEntity(
+                c => c.WarehouseId == storeId && c.StockInId == pid && c.IsDel == 1);
+
+            ViewBag.StockInId = pid;
+            return View(model);
+        }
+
+        [HttpGet]
         public IActionResult PreviewJson(string id)
         {
             var str = _stockinServices.PrintList(id);
