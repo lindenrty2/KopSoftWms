@@ -256,58 +256,9 @@
                 workL: function (val,no) {
                     yui.layershow("入库操作(" + no + ")", "/StockIn/Work?storeId=@ViewData["currentStoreId"]&pid=" + val, 1600, 900);
                 },
-                htmlL: function (val, type) {
-                    var index = layer.load(1, {
-                        shade: [0.1, '#fff'] //0.1透明度的白色背景
-                    });
-                    var html = "";
-                    yui.$axiosget('/StockIn/PreviewJson?id=' + val)
-                        .then(function (response) {
-                            _self.stockInList = response.data.Item2;
-                            _self.stockInDList = response.data.Item4;
-                            html = response.data.Item5;
-                            if (_self.stockInList.length > 0) {
-                                html = html.replace("{StockInNo}", _self.stockInList[0].StockInNo);
-                                html = html.replace("{OrderNo}", _self.stockInList[0].OrderNo);
-                                html = html.replace("{SupplierNo}", _self.stockInList[0].SupplierNo);
-                                html = html.replace("{SupplierName}", _self.stockInList[0].SupplierName);
-                            }
-                            var detail = "";
-                            if (_self.stockInDList.length > 0) {
-                                for (var item in _self.stockInDList) {
-                                    detail += "<tr>";
-                                    detail += "<td>" + _self.stockInDList[item].MaterialNo + "</td>";
-                                    detail += "<td>" + _self.stockInDList[item].MaterialName + "</td>";
-                                    detail += "<td>" + _self.stockInDList[item].PlanInQty + "</td>";
-                                    detail += "<td>" + _self.stockInDList[item].ActInQty + "</td>";
-                                    detail += "<td>" + _self.stockInDList[item].StorageRackNo + "</td>";
-                                    detail += "<td>" + _self.stockInDList[item].StorageRackName + "</td>";
-                                    detail += "<td>" + _self.stockInDList[item].Status + "</td>";
-                                    detail += "<td>" + _self.formatNull(_self.stockInDList[item].AName) + "</td>";
-                                    //detail += "<td>" + _self.formatL(_self.stockInDList[item].AuditinTime) + "</td>";
-                                    detail += "</tr>";
-                                }
-                            }
-                            html = html.replace("{Content}", detail);
-                            var LODOP = _self.LODOPL();
-                            LODOP.PRINT_INIT("入库单")
-                            LODOP.ADD_PRINT_HTM(0, 100, "100%", "100%", html);
-                            if (type === 1) {
-                                LODOP.PREVIEW();
-                                //LODOP.PRINT_DESIGN();
-                            } else {
-                                LODOP.PRINT();
-                            }
-                        })
-                        .catch(function (error) {
-                            //layer.msg(error.message, { icon: 5 });
-                            layer.msg("请安装Lodop插件", { icon: 5 });
-                        });
-                    layer.close(index);
-                },
                 previewL: function (val) {
                     var _self = this;
-                    _self.htmlL(val, 1);
+                    yui.layershow("预览", "/StockIn/Preview?storeId=@ViewData["currentStoreId"]&pid=" + val, 1600, 900);
                 },
                 printL: function (val) {
                     var _self = this;
