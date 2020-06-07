@@ -1194,6 +1194,7 @@ namespace Services.Outside
         {
             try
             {
+                bool isUnknowBoxInPositon = code == "401"; //是否是满入 
                 if (taskId == 0)
                 {
                     return RouteData.From(PubMessages.E2302_WCS_TASKID_INVAILD);
@@ -1239,11 +1240,28 @@ namespace Services.Outside
                     return RouteData.From(PubMessages.E0004_DATABASE_UPDATE_FAIL);
                 }
 
-                if (code == "401") //满入失败
+                if (isUnknowBoxInPositon) //满入失败
                 {
                     //1,3库满库时自动离库
                     if(SelfReservoirAreaManager.IsPositionFix(boxTask.ReservoirareaId))
                     {
+                        boxTask.Status = InventoryBoxTaskStatus.task_outing.ToByte();
+                        boxTask.ModifiedBy = PubConst.InterfaceUserId;
+                        boxTask.ModifiedUser = PubConst.InterfaceUserName;
+                        boxTask.ModifiedDate = DateTime.Now;
+                        if (await _sqlClient.Updateable(boxTask).ExecuteCommandAsync() == 0)
+                        {
+                            return RouteData.From(PubMessages.E0004_DATABASE_UPDATE_FAIL);
+                        }
+                        box.Status = InventoryBoxStatus.Outing;
+                        box.ModifiedBy = PubConst.InterfaceUserId;
+                        box.ModifiedUser = PubConst.InterfaceUserName;
+                        box.ModifiedDate = DateTime.Now;
+                        if (await _sqlClient.Updateable(box).ExecuteCommandAsync() == 0)
+                        {
+                            return RouteData.From(PubMessages.E0004_DATABASE_UPDATE_FAIL, "满入更新新库位信息");
+                        }
+
                         bool result = await SendWCSOutCommand(boxTask, PLCPosition.Auto,
                             $"[满入退出]料箱编号:{box.InventoryBoxNo}", true);
                         if (!result)
