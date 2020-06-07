@@ -6,6 +6,11 @@
 }
 <div id="app" v-cloak>
     <form class="form-horizontal" onsubmit="return false">
+        <div class="box-header">
+            <div  class="pull-right box-tools print-hide">
+                <input v-on:click="printL" class="btn btn-primary radius" type="submit" v-model="submit">
+            </div>
+        </div>
         <div class="box-body" id="print">
             <table class="table">
                 <thead>
@@ -51,9 +56,6 @@
             </table>
         </div>
         <div class="box-footer">
-            <div class="pull-right box-tools">
-                <input v-on:click="printL" class="btn btn-primary radius" type="submit" v-model="submit">
-            </div>
         </div>
     </form>
 </div>
@@ -95,7 +97,9 @@
                         });
                 },
                 printL: function () {
+                    $(".print-hide").hide();
                     window.print();
+                    $(".print-hide").show();
                 },
                 formatL: function (val) {
                     return this.jsonDateFormat(val);
