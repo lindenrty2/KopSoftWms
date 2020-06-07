@@ -17,6 +17,9 @@ using YL.Utils.Extensions;
 using YL.Utils.Pub;
 using YL.Utils.Table;
 using YL.Utils.Json;
+using QRCoder;
+using System.Drawing;
+using System.Drawing.Imaging;
 
 namespace KopSoftWms.Controllers
 {
@@ -441,7 +444,27 @@ namespace KopSoftWms.Controllers
                 c => c.WarehouseId == storeId && c.StockInId == pid && c.IsDel == 1);
 
             ViewBag.StockInId = pid;
+            ViewBag.StoreId = storeId;
             return View(model);
+        }
+
+        [HttpGet]
+        public void QRCode(long storeId, long pid)
+        {
+            var stockIn = _stockinServices.QueryableToEntity(
+                c => c.WarehouseId == storeId && c.StockInId == pid && c.IsDel == 1);
+
+            var details = _stockindetailServices.QueryableToEntity(
+                c => c.WarehouseId == storeId && c.StockInId == pid && c.IsDel == 1);
+
+            string strQR = JsonConvert.SerializeObject(new { StockIn = stockIn , StockInDetails = details } );
+
+            QRCodeGenerator qrGenerator = new QRCodeGenerator();
+            QRCodeData qrCodeData = qrGenerator.CreateQrCode(
+                strQR, QRCodeGenerator.ECCLevel.Q);
+            QRCode qrCode = new QRCode(qrCodeData);
+            Bitmap qrCodeImage = qrCode.GetGraphic(20);
+            qrCodeImage.Save( this.Response.Body , ImageFormat.Png );
         }
 
         [HttpGet]

@@ -13,22 +13,25 @@
         </div>
         <div class="box-body" id="print">
             <table class="table">
-                <thead>
-                    <tr>
-                        <th style="white-space:nowrap">入库单号</th>
-                        <th style="white-space:nowrap;margin-left:20px;">入库类型</th>
-                        <th style="white-space:nowrap;margin-left:20px;">生产令号</th>
-                        <th style="white-space:nowrap;margin-left:20px;">任务下发日期</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="item in stockInList">
-                        <td style="white-space:nowrap">@Model.StockInNo</td>
-                        <td style="white-space:nowrap">@Model.StockInTypeName</td>
-                        <td style="white-space:nowrap">@Model.OrderNo</td>
-                        <td style="white-space:nowrap">@Model.CreateDate</td>
-                    </tr>
-                </tbody>
+                <tr>
+                    <th style="white-space:nowrap">入库单号</th>
+                    <th style="white-space:nowrap;margin-left:20px;">入库类型</th>
+                    <th style="width:200px" rowspan="4">
+                        <img style="width:150px;height:150px" src="QRCode?storeId=@ViewBag.StoreId&pid=@Model.StockInNo" />
+                    </th>
+                </tr>
+                <tr v-for="item in stockInList">
+                    <td style="white-space:nowrap">@Model.StockInNo</td>
+                    <td style="white-space:nowrap">@Model.StockInTypeName</td>
+                </tr>
+                <tr>
+                    <th style="white-space:nowrap;margin-left:20px;">生产令号</th>
+                    <th style="white-space:nowrap;margin-left:20px;">任务下发日期</th>
+                </tr>
+                <tr v-for="item in stockInList">
+                    <td style="white-space:nowrap">@Model.OrderNo</td>
+                    <td style="white-space:nowrap">@Model.CreateDate</td>
+                </tr>
             </table>
             <br />
             <table class="table" style="border: 1px solid #ddd;width:100%">
