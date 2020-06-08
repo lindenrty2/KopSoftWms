@@ -133,7 +133,21 @@
                             layer.msg("查询料箱任务发生错误" + res, { icon: 2 });
                         });
                 },
+
                 okL: function (isback) {
+                    var _self = this;
+                    var index = layer.confirm("您确定要归库吗？", {
+                        btn: ["归库左边", "归库右边", "取消"],
+                        btn1: function () {
+                            _self.DoBack(isback,1);
+                        },
+                        btn2: function () {
+                            _self.DoBack(isback,2);
+                        }
+                    }
+                    );
+                },
+                DoBack: function (isback,pos) {
                     var _self = this;
 
                     var index = layer.load(1, {
@@ -143,7 +157,8 @@
                         storeId: '@ViewData["currentStoreId"]',
                         mode: isback ? 2 : 4,
                         inventoryBoxTaskId: '@ViewData["InventoryBoxTaskId"]',
-                        details: this.tableData
+                        details: this.tableData,
+                        pos: pos
                     };
                     yui.$axiospostform('/InventoryBox/DoInventoryBoxBack', data)
                         .then(function (response) {

@@ -115,31 +115,34 @@
                     $("#ob" + ibTaskId).remove();
                 },
                 boxOutL: function (isfullbox) {
-                    var index = layer.confirm("您确定要出库料箱吗？", { btn: ["确定", "取消"] }, function () {
-                        layer.close(index);
-
-                        var url = "/InventoryBox/DoStockOutBoxOut";
-                        var data = {
-                            storeId: '@ViewData["currentStoreId"]',
-                            stockOutId: '@Model.StockOutId'
-                        };
-                        yui.$axiospostform(url, data)
-                            .then(function (response) {
-                                if (response.data.isSccuess) {
-                                    layer.msg(response.data.message, { icon: 1, time: 1000 });
-                                    return false;
-                                }
-                                else {
-                                    layer.msg(response.data.message, { icon: 5 });
-                                }
-                                layer.close(index);
-                            })
-                            .catch(function (error) {
-                                layer.close(index);
-                            });
-                    }, function () {
-
+                    var index = layer.confirm("您确定要出库料箱吗？", {
+                        btn: ["出库左边", "出库右边", "取消"],
+                        btn1: function () { layer.close(index); _self.boxOutCoreL(0); },
+                        btn2: function () { layer.close(index); _self.boxOutCoreL(1); },
+                        btn3: function () { layer.close(index); _self.boxOutCoreL(2); },
                     });
+                },
+                boxOutCoreL: function (pos) {
+                    var url = "/InventoryBox/DoStockOutBoxOut";
+                    var data = {
+                        storeId: '@ViewData["currentStoreId"]',
+                        stockOutId: '@Model.StockOutId',
+                        pos : pos
+                    };
+                    yui.$axiospostform(url, data)
+                        .then(function (response) {
+                            if (response.data.isSccuess) {
+                                layer.msg(response.data.message, { icon: 1, time: 1000 });
+                                return false;
+                            }
+                            else {
+                                layer.msg(response.data.message, { icon: 5 });
+                            }
+                            layer.close(index);
+                        })
+                        .catch(function (error) {
+                            layer.close(index);
+                        });
                 },
                 lockL: function () {
                     var index = layer.confirm("是否要锁定此订单？", { btn: ["确定", "取消"] }, function () {

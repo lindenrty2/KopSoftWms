@@ -110,11 +110,12 @@ namespace YL
                 for (int floor = 1; floor <= floorCount; floor++)
                 {
                     string code = warehouse.WarehouseId.ToString().PadLeft(2,'0') + row.ToString().PadLeft(2, '0') + column.ToString().PadLeft(2,'0') + floor.ToString().PadLeft(2,'0');
+                    string no = row.ToString().PadLeft(2, '0') + column.ToString().PadLeft(2, '0') + floor.ToString().PadLeft(2, '0');
                     int id = Convert.ToInt32(code);
                     Wms_storagerack storagerack = new Wms_storagerack()
                     {
                         StorageRackId = id,
-                        StorageRackNo = "KW-" + code,
+                        StorageRackNo = "KW-" + no,
                         StorageRackName = "库位" + code,
                         ReservoirAreaId = reservoirarea.ReservoirAreaId,
                         ReservoirAreaName = reservoirarea.ReservoirAreaName,
