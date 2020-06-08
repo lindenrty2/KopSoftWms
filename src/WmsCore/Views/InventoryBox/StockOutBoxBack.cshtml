@@ -164,7 +164,7 @@
                         .then(function (response) {
                             if (response.data.isSccuess) {
                                 parent.app.refreshL();
-                                layer.msg("", { icon: 1, time: 1000 });
+                                layer.msg("归库成功", { icon: 1, time: 1000 });
                                 setTimeout(function () {
                                     yui.layer_close3();
                                 }, 1000);
