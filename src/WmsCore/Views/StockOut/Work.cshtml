@@ -8,7 +8,7 @@
 }
 <div id="app" v-cloak>
     <div>
-        <button id="lockL" type="button" class="btn btn-outL margin-left:20px" onclick="app.lockL(true);">锁定</button>
+        <!--button id="lockL" type="button" class="btn btn-outL margin-left:20px" onclick="app.lockL(true);">锁定</!button-->
         <button id="box1OutL" type="button" class="btn btn-outL margin-left:20px" onclick="app.boxOutL(true);">料箱出库</button>
         <button id="scanL" type="button" class="btn btn-scanL" onclick="app.scanL();">扫码操作</button>
         <span id="ctlOutedBoxList">
@@ -116,7 +116,7 @@
                 },
                 boxOutL: function (isfullbox) {
                     var index = layer.confirm("您确定要出库料箱吗？", {
-                        btn: ["出库左边", "出库右边", "取消"],
+                        btn: ["平衡出库", "出库左边", "出库右边", "取消"],
                         btn1: function () { layer.close(index); _self.boxOutCoreL(0); },
                         btn2: function () { layer.close(index); _self.boxOutCoreL(1); },
                         btn3: function () { layer.close(index); _self.boxOutCoreL(2); },
