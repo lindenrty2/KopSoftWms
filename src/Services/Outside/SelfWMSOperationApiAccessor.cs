@@ -1052,6 +1052,7 @@ namespace Services.Outside
                     {
                         Successd = false,
                         Code = "-1",
+                        ErrorCode = confirmResult.Code.ToString(),
                         ErrorDesc = confirmResult.Message
 
                     };
@@ -1403,7 +1404,7 @@ namespace Services.Outside
 
         private bool IsWCSSccuessCode(string code)
         {
-            return code == "ok" || code == "200" || string.IsNullOrWhiteSpace(code);
+            return string.IsNullOrWhiteSpace(code) || code.ToUpper() == "OK" || code == "200" ;
         }
 
         /// <summary>
