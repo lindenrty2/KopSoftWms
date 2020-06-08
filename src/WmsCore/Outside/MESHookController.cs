@@ -134,7 +134,7 @@ namespace WMSCore.Outside
                 _sqlClient.RollbackTran();
                 OutsideStockInResult result = new OutsideStockInResult()
                 {
-                    Success = true,
+                    Success = false,
                     ErrorId = "-1",
                     ErrorInfo = ex.ToString()
                     //  WarehousingId = Warehousingid,
@@ -328,7 +328,7 @@ namespace WMSCore.Outside
                 _sqlClient.RollbackTran();
                 OutsideStockOutResult result = new OutsideStockOutResult()
                 {
-                    Success = true,
+                    Success = false,
                     ErrorId = "-1",
                     ErrorInfo = ex.ToString(),
                     //WarehouseEntryId = warehouseEntryid,
