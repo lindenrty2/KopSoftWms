@@ -92,6 +92,8 @@ namespace YL.Utils.Pub
         public static MessageItem E2121_STOCKOUT_ALLOW_LOCKED = new MessageItem(-2121, "该出库单已锁定，无法再次锁定");
         public static MessageItem E2122_WMS_STOCKOUT_RESPONSE_INVAILD = new MessageItem(-2122, "下发出库任务返回值不合法");
         public static MessageItem E2123_WMS_STOCKOUT_OUTED = new MessageItem(-2123, "出库任务已将料箱下发");
+        public static MessageItem E2124_STOCKOUT_NO_BOX = new MessageItem(-2124, "出库单没有任何符合条件的料箱可以出库");
+
 
         public static MessageItem I2300_WCS_OUTCOMMAND_SCCUESS = new MessageItem(2300, "WCS料箱出库命令成功"); 
         public static MessageItem I2301_WCS_TASKSTATUS_UPDATE_SCCUESS = new MessageItem(2301, "WCS指令状态更新成功");

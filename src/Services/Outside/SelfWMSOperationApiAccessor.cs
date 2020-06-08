@@ -255,6 +255,10 @@ namespace Services.Outside
                 }
 
             }
+            if(targetBoxIdList.Where(x => x.Item2).Count() == 0)
+            {
+                return RouteData.From(PubMessages.E2124_STOCKOUT_NO_BOX);
+            }
             //int outCount = 0;
             //foreach (long targetBoxId in targetBoxIdList)
             //{
