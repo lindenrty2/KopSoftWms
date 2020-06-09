@@ -716,7 +716,15 @@ namespace Services.Outside
                         if (_sqlClient.Insertable(inventoriy).ExecuteCommand() == 0)
                         {
                             _sqlClient.Ado.RollbackTran();
-                            return YL.Core.Dto.RouteData.From(PubMessages.E0005_DATABASE_INSERT_FAIL);
+                            return YL.Core.Dto.RouteData.From(PubMessages.E0005_DATABASE_INSERT_FAIL,"插入库存信息时失败");
+                        }
+                    }
+                    else if(inventoriy.Qty == 0)
+                    {
+                        if (_sqlClient.Deleteable(inventoriy).ExecuteCommand() == 0)
+                        {
+                            _sqlClient.Ado.RollbackTran();
+                            return YL.Core.Dto.RouteData.From(PubMessages.E0004_DATABASE_UPDATE_FAIL,"删除库存信息时失败");
                         }
                     }
                     else
@@ -727,7 +735,7 @@ namespace Services.Outside
                         if (_sqlClient.Updateable(inventoriy).ExecuteCommand() == 0)
                         {
                             _sqlClient.Ado.RollbackTran();
-                            return YL.Core.Dto.RouteData.From(PubMessages.E0004_DATABASE_UPDATE_FAIL);
+                            return YL.Core.Dto.RouteData.From(PubMessages.E0004_DATABASE_UPDATE_FAIL, "更新库存信息时失败");
                         }
                     }
                 }
