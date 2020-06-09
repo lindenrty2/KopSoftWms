@@ -214,7 +214,7 @@ namespace Services.Outside
             ISugarQueryable<Wms_inventory, Wms_inventorybox> query = _sqlClient.Queryable<Wms_inventory, Wms_inventorybox>((i, ib) => new object[] {
                    JoinType.Left,i.InventoryBoxId==ib.InventoryBoxId
                  })
-                 .Where((i, ib) => i.IsDel == DeleteFlag.Normal);
+                 .Where((i, ib) => i.MaterialId != null &&  i.Qty > 0 && i.IsDel == DeleteFlag.Normal);
             if (!string.IsNullOrWhiteSpace(search))
             {
                 query = query.Where((i,ib) => i.MaterialNo.ToString().Contains(search) || i.MaterialOnlyId.ToString().Contains(search) || i.MaterialName.Contains(search) || ib.InventoryBoxNo.Contains(search) );
