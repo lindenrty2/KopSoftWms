@@ -105,7 +105,7 @@ namespace KopSoftWms.Controllers
 
             IWMSBaseApiAccessor wmsAccessor = WMSApiManager.GetBaseApiAccessor(id.ToString(), _client);
             if (wmsAccessor == null) return "";
-            RouteData<Wms_storagerack[]> result = (await wmsAccessor.GetStorageRackList(SqlFunc.ToInt64(id), null, 1, 100, null, null, null, null));
+            RouteData<Wms_storagerack[]> result = (await wmsAccessor.GetStorageRackList(SqlFunc.ToInt64(id), null, 1, 500, null, null, null, null));
             if (!result.IsSccuess)
             {
                 return new PageGridData().JilToJson();
