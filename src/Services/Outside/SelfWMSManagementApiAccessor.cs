@@ -34,14 +34,40 @@ namespace Services.Outside
             {
                 return RouteData<Wms_inventorybox>.From(PubMessages.E1022_INVENTORYBOX_NO_DUPLICATE);
             }
-            Wms_storagerack rack = await _sqlClient.Queryable<Wms_storagerack>()
-                .FirstAsync(x => x.ReservoirAreaId == box.ReservoirAreaId && x.StorageRackId == box.StorageRackId);
-            if (rack == null)
+
+            Wms_reservoirarea reservoirArea = null;
+            if (box.ReservoirAreaId != null)
             {
-                return RouteData<Wms_inventorybox>.From(PubMessages.E0006_DATA_VAILD_FAIL);
+                reservoirArea = await _sqlClient.Queryable<Wms_reservoirarea>()
+                    .FirstAsync(x => x.ReservoirAreaId == box.ReservoirAreaId && x.IsDel == DeleteFlag.Normal);
+                if (reservoirArea == null)
+                {
+                    return RouteData<Wms_inventorybox>.From(PubMessages.E0006_DATA_VAILD_FAIL, $"指定库区不存在");
+                }
             }
-            box.ReservoirAreaName = rack.ReservoirAreaName;
-            box.StorageRackName = rack.StorageRackName;
+
+            Wms_storagerack rack = null;
+            if (box.StorageRackId != null)
+            {
+                rack = await _sqlClient.Queryable<Wms_storagerack>()
+                    .FirstAsync(x => x.ReservoirAreaId == box.ReservoirAreaId && x.StorageRackId == box.StorageRackId);
+                if (rack == null)
+                {
+                    return RouteData<Wms_inventorybox>.From(PubMessages.E0006_DATA_VAILD_FAIL, $"指定库位不存在");
+                }
+            }
+
+            if (reservoirArea != null)
+            {
+                box.ReservoirAreaName = rack.ReservoirAreaName;
+            }
+            if (rack != null)
+            {
+                box.StorageRackName = rack.StorageRackName;
+                box.Row = rack.Row;
+                box.Column = rack.Column;
+                box.Floor = rack.Floor;
+            }
             box.InventoryBoxId = PubId.SnowflakeId;
             box.CreateBy = UserDto.UserId;
             box.CreateDate = DateTime.Now;
@@ -61,14 +87,38 @@ namespace Services.Outside
 
         public async Task<RouteData<Wms_inventorybox>> UpdateInventoryBox(long inventoryBoxId,Wms_inventorybox box)
         {
-            Wms_storagerack rack = await _sqlClient.Queryable<Wms_storagerack>()
-            .FirstAsync(x => x.ReservoirAreaId == box.ReservoirAreaId && x.StorageRackId == box.StorageRackId);
-            if (rack == null)
+            Wms_reservoirarea reservoirArea = null;
+            if (box.ReservoirAreaId != null)
             {
-                return RouteData<Wms_inventorybox>.From(PubMessages.E0006_DATA_VAILD_FAIL);
+                reservoirArea = await _sqlClient.Queryable<Wms_reservoirarea>()
+                    .FirstAsync(x => x.ReservoirAreaId == box.ReservoirAreaId && x.IsDel == DeleteFlag.Normal);
+                if (reservoirArea == null)
+                {
+                    return RouteData<Wms_inventorybox>.From(PubMessages.E0006_DATA_VAILD_FAIL, $"指定库区不存在");
+                }
             }
-            box.ReservoirAreaName = rack.ReservoirAreaName;
-            box.StorageRackName = rack.StorageRackName;
+
+            Wms_storagerack rack = null;
+            if (box.StorageRackId != null)
+            {
+                rack = await _sqlClient.Queryable<Wms_storagerack>()
+                    .FirstAsync(x => x.ReservoirAreaId == box.ReservoirAreaId && x.StorageRackId == box.StorageRackId);
+                if (rack == null)
+                {
+                    return RouteData<Wms_inventorybox>.From(PubMessages.E0006_DATA_VAILD_FAIL, $"指定库位不存在");
+                }
+            }
+            if (reservoirArea != null)
+            {
+                box.ReservoirAreaName = rack.ReservoirAreaName;
+            }
+            if (rack != null)
+            {
+                box.StorageRackName = rack.StorageRackName;
+                box.Row = rack.Row;
+                box.Column = rack.Column;
+                box.Floor = rack.Floor;
+            }
             box.InventoryBoxId = inventoryBoxId; 
             box.ModifiedBy = UserDto.UserId;
             box.ModifiedDate = DateTime.Now;
