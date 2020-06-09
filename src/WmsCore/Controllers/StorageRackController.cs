@@ -96,14 +96,14 @@ namespace KopSoftWms.Controllers
         }
 
         [HttpGet]
-        public async Task<string> GetStoragerack(long id)
+        public async Task<string> GetStoragerack(long storeId,long id)
         {
             //var json = _storagerackServices.Queryable().Where(c => c.IsDel == 1 && c.ReservoirAreaId == SqlFunc.ToInt64(id))
             //    .Select(c => new { value = c.StorageRackId.ToString(), name = c.StorageRackName })
             //    .ToList();
             //return Content(json.JilToJson());
 
-            IWMSBaseApiAccessor wmsAccessor = WMSApiManager.GetBaseApiAccessor(id.ToString(), _client);
+            IWMSBaseApiAccessor wmsAccessor = WMSApiManager.GetBaseApiAccessor(storeId.ToString(), _client);
             if (wmsAccessor == null) return "";
             RouteData<Wms_storagerack[]> result = (await wmsAccessor.GetStorageRackList(SqlFunc.ToInt64(id), null, 1, 500, null, null, null, null));
             if (!result.IsSccuess)
