@@ -299,7 +299,7 @@ namespace Services.Outside
                     {
                         continue;
                     }
-                    stockout.StockInStatus = (int)StockInStatus.task_confirm;
+                    stockout.StockOutStatus = (int)StockOutStatus.task_confirm;
                     stockout.ModifiedBy = user.UserId;
                     stockout.ModifiedUser = user.UserName;
                     stockout.ModifiedDate = DateTime.Now;
