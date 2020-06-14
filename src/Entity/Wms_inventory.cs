@@ -70,12 +70,16 @@ namespace YL.Core.Entity
         public int Position { get; set; } = 1;
 
         /// <summary>
-        /// Desc:
-        /// Default:
-        /// Nullable:True
+        /// 已入库数量
         /// </summary>
         [SugarColumn(DefaultValue="0",IsNullable = false)]
         public int Qty { get; set; }
+
+        /// <summary>
+        /// 预备入库的数量,成功后计入Qty
+        /// </summary>
+        [SugarColumn(DefaultValue = "0", IsNullable = false)]
+        public int BufferQty { get; set; }
 
         /// <summary>
         /// Desc:备注

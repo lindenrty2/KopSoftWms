@@ -81,7 +81,7 @@
 @section scripts{
     <script src="~/js/bootstrap-select.min.js"></script>
     <script src="~/js/defaults-zh_CN.min.js"></script>
-    <script src="~/js/common.wms.js"></script>
+    <script src="~/js/common.wms.js?v=20200615"></script>
     <script type="text/javascript">
 
         $(function () {
@@ -209,6 +209,7 @@
                         { field: 'Column', title: '列', align: 'center', sortable: true },
                         { field: 'Floor', title: '层', align: 'center', sortable: true },
                         { field: 'Size', title: '料箱格数', align: 'center', sortable: true },
+                        { field: 'UsedSize', title: '已用格数', align: 'center', sortable: true },
                         { field: 'ReservoirAreaName', title: '库区名称', align: 'center', sortable: true },
                         { field: 'StorageRackName', title: '货架名称', align: 'center', sortable: true },
                         { field: 'Status', title: '状态', align: 'center', sortable: true, formatter: InventoryBoxStatusFormatter },
@@ -249,7 +250,7 @@
                         buttonsAlign: "right", //按钮位置
                         exportTypes: ['csv', 'txt', 'sql', 'doc', 'excel', 'xlsx', 'pdf'], //导出文件类型
                         Icons: 'glyphicon-export',
-                        singleSelect: false, //设置 true 将禁止多选。
+                        singleSelect: true, //设置 true 将禁止多选。
                         minimumCountColumns: 1, //最少允许的列数
                         clickToSelect: true, //是否启用点击选中行
                         //height: 500,                      //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度

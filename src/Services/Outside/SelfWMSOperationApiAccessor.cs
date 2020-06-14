@@ -48,39 +48,22 @@ namespace Services.Outside
             return RouteData<Wms_inventoryboxTask>.From(task);
         }
 
+        /// <summary>
+        /// 自动选择料箱出库
+        /// </summary>
+        /// <param name="reservoirAreaId"></param>
+        /// <param name="requestSize"></param>
+        /// <param name="pos"></param>
+        /// <returns></returns>
         public async Task<RouteData> DoAutoSelectBoxOut(long? reservoirAreaId, int requestSize, PLCPosition pos)
         {
-            //查询是否有符合要求的料箱
-            var query = _sqlClient.Queryable<Wms_inventorybox>()
-               .Where((ib) => ib.UsedSize < ib.Size && ib.Size == requestSize && ib.Status == InventoryBoxStatus.InPosition);
-
-            if (reservoirAreaId != null)
+            RouteData<Wms_inventorybox> searchResult = await _sqlClient.GetBestInvertoryBox(
+                reservoirAreaId, requestSize, pos);
+            if (!searchResult.IsSccuess)
             {
-                query = query.Where((ib) => ib.ReservoirAreaId == reservoirAreaId.Value);
+                return searchResult;
             }
-            
-            Wms_inventorybox inventoryBox = await query.OrderBy((ib) => ib.Column, OrderByType.Desc).FirstAsync();
-            //如果没有符合要求的料想,且是要求多宫格料箱时,尝试选取完整料箱进行分割
-            if (inventoryBox == null && requestSize > 1)
-            {
-                inventoryBox = await _sqlClient.Queryable<Wms_inventorybox>()
-                    .Where((ib) => ib.Size == 1 && ib.UsedSize == 0 && 
-                    ib.Status == InventoryBoxStatus.InPosition)
-                    .OrderBy((ib) => ib.Column , OrderByType.Desc).FirstAsync();
-                if (inventoryBox != null)
-                {
-                    inventoryBox.Size = requestSize;
-                }
-                if (_sqlClient.Updateable(inventoryBox).ExecuteCommand() == 0)
-                {
-                    return YL.Core.Dto.RouteData.From(PubMessages.E0004_DATABASE_UPDATE_FAIL);
-                }
-            }
-            if (inventoryBox == null)
-            {
-                return YL.Core.Dto.RouteData.From(PubMessages.E1007_INVENTORYBOX_ALLOWUSED);
-            }
-            RouteData result = await DoInventoryBoxOut(inventoryBox.InventoryBoxId, pos);
+            RouteData result = await DoInventoryBoxOut(searchResult.Data.InventoryBoxId, pos);
 
             return result;
         }
@@ -121,6 +104,7 @@ namespace Services.Outside
         {
             Wms_inventorybox inventoryBox = await _sqlClient.Queryable<Wms_inventorybox>().FirstAsync(x => x.InventoryBoxId == inventoryBoxId);
             if (inventoryBox == null) { return YL.Core.Dto.RouteData.From(PubMessages.E1011_INVENTORYBOX_NOTFOUND); }
+            if (inventoryBox.StorageRackId == null ) { return YL.Core.Dto.RouteData.From(PubMessages.E1027_INVENTORYBOX_STORGERACK_MISSING); } 
             if (inventoryBox.Status != InventoryBoxStatus.InPosition) { return YL.Core.Dto.RouteData.From(PubMessages.E1012_INVENTORYBOX_NOTINPOSITION); }
 
             Wms_inventoryboxTask task = await _sqlClient.Queryable<Wms_inventoryboxTask>().FirstAsync(
@@ -492,11 +476,11 @@ namespace Services.Outside
         /// <summary>
         /// 料箱归库
         /// </summary>
-        /// <param name="mode">1:入库 2:出库 3:人工修正 4:离库</param>
+        /// <param name="mode">1:入库 2:出库 3:人工修正 4:出库并离库</param>
         /// <param name="inventoryBoxTaskId"></param>
         /// <param name="details"></param>
         /// <returns></returns>
-        public async Task<RouteData> DoInventoryBoxBack(int mode, long inventoryBoxTaskId, InventoryDetailDto[] details, PLCPosition pos)
+        public async Task<RouteData> DoInventoryBoxBack(StockOperation mode, long inventoryBoxTaskId, InventoryDetailDto[] details, PLCPosition pos)
         {
             try
             {
@@ -513,11 +497,11 @@ namespace Services.Outside
                 List<Wms_inventory> inventories = await _sqlClient.Queryable<Wms_inventory>().Where(x => x.InventoryBoxId == task.InventoryBoxId).ToListAsync();
                 List<Wms_inventory> updatedInventories = new List<Wms_inventory>();
 
-                List<Wms_stockindetail> stockindetails = mode != 3 ? await GetStockInDetails(inventoryBoxTaskId) : new List<Wms_stockindetail>();
+                List<Wms_stockindetail> stockindetails = mode != StockOperation.Manual ? await GetStockInDetails(inventoryBoxTaskId) : new List<Wms_stockindetail>();
                 List<Wms_stockindetail> updatedStockindetails = new List<Wms_stockindetail>();
                 List<Wms_stockin> stockins = stockindetails.Count() == 0 ? new List<Wms_stockin>() : await _sqlClient.Queryable<Wms_stockin>().Where(x => stockindetails.Select(y => y.StockInId).Contains(x.StockInId)).ToListAsync();
 
-                List<Wms_stockoutdetail> stockoutdetails = mode != 3 ? await GetStockOutDetails(inventoryBoxTaskId) : new List<Wms_stockoutdetail>();
+                List<Wms_stockoutdetail> stockoutdetails = mode != StockOperation.Manual ? await GetStockOutDetails(inventoryBoxTaskId) : new List<Wms_stockoutdetail>();
                 List<Wms_stockoutdetail> updatedStockoutdetails = new List<Wms_stockoutdetail>();
                 List<Wms_stockout> stockouts = stockoutdetails.Count() == 0 ? new List<Wms_stockout>() : await _sqlClient.Queryable<Wms_stockout>().Where(x => stockoutdetails.Select(y => y.StockOutId).Contains(x.StockOutId)).ToListAsync();
 
@@ -532,17 +516,17 @@ namespace Services.Outside
                     Wms_stockin stockin = stockindetail == null ? null : stockins.FirstOrDefault(x => x.StockInId == stockindetail.StockInId);
                     Wms_stockout stockout = stockoutdetail == null ? null : stockouts.FirstOrDefault(x => x.StockOutId == stockoutdetail.StockOutId);
 
-                    if (mode == 1 && stockindetail == null)
+                    if (mode == StockOperation.StockIn && stockindetail == null)
                     {
                         _sqlClient.Ado.RollbackTran();
                         return YL.Core.Dto.RouteData.From(PubMessages.E2016_STOCKINDETAIL_INVENTORYBOXTASK_NOTMATCH);
                     }
-                    else if (mode == 2 && stockoutdetail == null)
+                    else if ((mode == StockOperation.StockOut || mode == StockOperation.StockOutAndLevel) && stockoutdetail == null)
                     {
                         _sqlClient.Ado.RollbackTran();
                         return YL.Core.Dto.RouteData.From(PubMessages.E2116_STOCKOUTDETAIL_INVENTORYBOXTASK_NOTMATCH);
                     }
-                    int? beforeQty = null;
+                    int beforeQty = 0;
                     int qty = 0;
                     int afterQty = 0;
                     Wms_inventory inventory = string.IsNullOrEmpty(detail.InventoryId) ? null : inventories.FirstOrDefault(x => x.InventoryId == detail.InventoryId.ToInt64());
@@ -579,20 +563,20 @@ namespace Services.Outside
                         _sqlClient.Ado.RollbackTran();
                         return YL.Core.Dto.RouteData.From(PubMessages.E1019_INVENTORY_LOCKED, $"料箱编号{inventoryBox.InventoryBoxNo},物料编号{detail.MaterialNo}");
                     }
-                    if (mode == 1) //入库
+                    if (mode == StockOperation.StockIn) //入库,需要等归库成功才计入数量
                     {
-                        inventory.Qty += detail.Qty; //加上入库数量
-                        qty = detail.Qty;
+                        inventory.BufferQty = detail.Qty; //加上入库数量
+                        //qty = detail.Qty;
                     }
-                    else if (mode == 2) //出库
+                    else if (mode == StockOperation.StockOut || mode == StockOperation.StockOutAndLevel) //出库
                     {
                         inventory.Qty -= detail.Qty; //减去出库数量
                         qty -= detail.Qty;
                     }
-                    else
+                    else //手动归库,此时是直接输入数量
                     {
-                        qty = detail.Qty - inventory.Qty;
-                        inventory.Qty = detail.Qty; //手动出入库，直接填入最终数量
+                        //qty = detail.Qty - inventory.Qty;
+                        inventory.BufferQty = detail.Qty - inventory.Qty; 
                     }
                     afterQty = inventory.Qty;
                     inventory.ModifiedDate = DateTime.Now;
@@ -607,10 +591,11 @@ namespace Services.Outside
                         stockindetail.ActInQty += detail.Qty;
                         stockindetail.ModifiedDate = DateTime.Now;
                         stockindetail.ModifiedBy = this.UserDto.UserId;
-                        if (stockindetail.ActInQty >= stockindetail.PlanInQty)
-                        {
-                            stockindetail.Status = StockInStatus.task_finish.ToByte();
-                        }
+                        //成功归库后才算完成
+                        //if (stockindetail.ActInQty >= stockindetail.PlanInQty)
+                        //{
+                        //    stockindetail.Status = StockInStatus.task_finish.ToByte();
+                        //}
                         updatedStockindetails.Add(stockindetail);
                         if (!relationStockins.Any(x => x.StockInId == stockindetail.StockInId))
                         {
@@ -618,53 +603,55 @@ namespace Services.Outside
                         }
                     }
 
-                    if (stockoutdetail != null)
+                    if (mode == StockOperation.StockOut || mode == StockOperation.StockOutAndLevel)
                     {
-                        stockNo = stockout.StockOutNo;
-                        stockoutdetail.ActOutQty += detail.Qty;
-                        stockoutdetail.ModifiedDate = DateTime.Now;
-                        stockoutdetail.ModifiedBy = this.UserDto.UserId;
-                        if (stockoutdetail.ActOutQty >= stockoutdetail.PlanOutQty)
+                        if (stockoutdetail != null)
                         {
-                            stockoutdetail.Status = StockOutStatus.task_finish.ToByte();
+                            stockNo = stockout.StockOutNo;
+                            stockoutdetail.ActOutQty += detail.Qty;
+                            stockoutdetail.ModifiedDate = DateTime.Now;
+                            stockoutdetail.ModifiedBy = this.UserDto.UserId;
+                            if (stockoutdetail.ActOutQty >= stockoutdetail.PlanOutQty)
+                            {
+                                stockoutdetail.Status = StockOutStatus.task_finish.ToByte();
+                            }
+                            updatedStockoutdetails.Add(stockoutdetail);
+                            if (!relationStockouts.Any(x => x.StockOutId == stockoutdetail.StockOutId))
+                            {
+                                relationStockouts.Add(stockout);
+                            }
                         }
-                        updatedStockoutdetails.Add(stockoutdetail);
-                        if (!relationStockouts.Any(x => x.StockOutId == stockoutdetail.StockOutId))
+                        Wms_inventoryrecord record = new Wms_inventoryrecord()
                         {
-                            relationStockouts.Add(stockout);
+                            InventoryrecordId = PubId.SnowflakeId,
+                            StockInDetailId = stockindetail == null ? (long?)null : stockindetail.StockInDetailId,
+                            StockOutDetailId = stockoutdetail == null ? (long?)null : stockoutdetail.StockOutDetailId,
+                            StockNo = stockNo,
+                            InventoryBoxId = inventoryBox.InventoryBoxId,
+                            InventoryBoxNo = inventoryBox.InventoryBoxNo,
+                            InventoryId = inventory.InventoryId,
+                            InventoryPosition = inventory.Position,
+                            MaterialId = detail.MaterialId.ToInt64(),
+                            MaterialNo = detail.MaterialNo,
+                            MaterialOnlyId = detail.MaterialOnlyId,
+                            MaterialName = detail.MaterialName,
+                            BeforeQty = beforeQty,
+                            Qty = qty,
+                            AfterQty = afterQty,
+                            CreateBy = this.UserDto.UserId,
+                            CreateDate = DateTime.Now,
+                            CreateUser = this.UserDto.UserName,
+                            IsDel = DeleteFlag.Normal
+                        };
+                        if (_sqlClient.Insertable(record).ExecuteCommand() == 0)
+                        {
+                            _sqlClient.Ado.RollbackTran();
+                            return YL.Core.Dto.RouteData.From(PubMessages.E1021_INVENTORYRECORD_FAIL);
                         }
-                    }
-
-                    Wms_inventoryrecord record = new Wms_inventoryrecord()
-                    {
-                        InventoryrecordId = PubId.SnowflakeId,
-                        StockInDetailId = stockindetail == null ? (long?)null : stockindetail.StockInDetailId,
-                        StockOutDetailId = stockoutdetail == null ? (long?)null : stockoutdetail.StockOutDetailId,
-                        StockNo = stockNo,
-                        InventoryBoxId = inventoryBox.InventoryBoxId,
-                        InventoryBoxNo = inventoryBox.InventoryBoxNo,
-                        InventoryId = inventory.InventoryId,
-                        InventoryPosition = inventory.Position,
-                        MaterialId = detail.MaterialId.ToInt64(),
-                        MaterialNo = detail.MaterialNo,
-                        MaterialOnlyId = detail.MaterialOnlyId,
-                        MaterialName = detail.MaterialName,
-                        BeforeQty = beforeQty,
-                        Qty = qty,
-                        AfterQty = afterQty,
-                        CreateBy = this.UserDto.UserId,
-                        CreateDate = DateTime.Now,
-                        CreateUser = this.UserDto.UserName,
-                        IsDel = DeleteFlag.Normal
-                    };
-                    if (_sqlClient.Insertable(record).ExecuteCommand() == 0)
-                    {
-                        _sqlClient.Ado.RollbackTran();
-                        return YL.Core.Dto.RouteData.From(PubMessages.E1021_INVENTORYRECORD_FAIL);
                     }
                 }
                 //离库的情况下不发WCS命令
-                if (mode != 4)
+                if (mode != StockOperation.StockOutAndLevel)
                 {
                     //非固定库位时,自动分配库位
                     if (inventoryBox.StorageRackId == null &&
@@ -721,6 +708,7 @@ namespace Services.Outside
                     }
                     else if(inventoriy.Qty == 0)
                     {
+                        inventoriy.IsDel = DeleteFlag.Deleted;
                         if (_sqlClient.Deleteable(inventoriy).ExecuteCommand() == 0)
                         {
                             _sqlClient.Ado.RollbackTran();
@@ -759,7 +747,7 @@ namespace Services.Outside
 
                     }
                 }
-                task.Status = mode == 4 ? InventoryBoxTaskStatus.task_leaved.ToByte() : InventoryBoxTaskStatus.task_backing.ToByte();
+                task.Status = mode == StockOperation.StockOutAndLevel ? InventoryBoxTaskStatus.task_leaved.ToByte() : InventoryBoxTaskStatus.task_backing.ToByte();
                 task.OperaterId = UserDto.UserId;
                 task.OperaterDate = DateTime.Now;
                 if (_sqlClient.Updateable(task).ExecuteCommand() == 0)
@@ -767,7 +755,7 @@ namespace Services.Outside
                     _sqlClient.Ado.RollbackTran();
                     return YL.Core.Dto.RouteData.From(PubMessages.E0004_DATABASE_UPDATE_FAIL);
                 }
-                if (mode == 4)
+                if (mode == StockOperation.StockOutAndLevel)
                 {
                     inventoryBox.StorageRackId = null;
                     inventoryBox.StorageRackName = "";
@@ -778,7 +766,7 @@ namespace Services.Outside
                     inventoryBox.Status = InventoryBoxStatus.Backing;
 
                 }
-                inventoryBox.UsedSize = inventories.Count;
+                inventoryBox.UsedSize = inventories.Where(x => x.IsDel != DeleteFlag.Deleted).Count();
                 inventoryBox.ModifiedBy = UserDto.UserId;
                 inventoryBox.ModifiedDate = DateTime.Now;
                 if (_sqlClient.Updateable(inventoryBox).ExecuteCommand() == 0)
@@ -1438,6 +1426,16 @@ namespace Services.Outside
                         return RouteData.From(PubMessages.E0004_DATABASE_UPDATE_FAIL);
                     }
 
+                    RouteData confirmInventory = await _sqlClient.ConfirmInventory(box.InventoryBoxId,this.UserDto);
+                    if (!confirmInventory.IsSccuess)
+                    {
+                        return confirmInventory;
+                    }
+                    RouteData confirmStockIn = await _sqlClient.ConfirmRelationStockIn(boxTask.InventoryBoxTaskId, this.UserDto);
+                    if (!confirmStockIn.IsSccuess)
+                    {
+                        return confirmStockIn;
+                    }
                     box.Status = InventoryBoxStatus.InPosition;
                     box.ModifiedBy = PubConst.InterfaceUserId;
                     box.ModifiedDate = DateTime.Now;

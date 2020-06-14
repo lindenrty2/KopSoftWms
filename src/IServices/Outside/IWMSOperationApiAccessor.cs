@@ -61,7 +61,7 @@ namespace IServices.Outside
         /// <param name="inventoryBoxTaskId"></param>
         /// <param name="details"></param>
         /// <returns></returns>
-        Task<RouteData> DoInventoryBoxBack(int mode, long inventoryBoxTaskId, InventoryDetailDto[] details, PLCPosition pos);
+        Task<RouteData> DoInventoryBoxBack(StockOperation mode, long inventoryBoxTaskId, InventoryDetailDto[] details, PLCPosition pos);
         /// <summary>
         /// 获取WCS任务列表
         /// </summary>

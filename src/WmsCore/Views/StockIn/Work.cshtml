@@ -23,7 +23,7 @@
 @section scripts{
     <script src="~/js/bootstrap-select.min.js"></script>
     <script src="~/js/defaults-zh_CN.min.js"></script>
-    <script src="~/js/common.wms.js"></script>
+    <script src="~/js/common.wms.js?v=20200615"></script>
     <script>
         var app = new Vue({
             el: "#app",
@@ -46,8 +46,10 @@
                     var obj = [
                         { checkbox: true, visible: true },
                         { field: 'Detail.StockInDetailId', title: '详细ID', visible: false },
-                        { field: 'Detail.Status', title: '状态', visible: true, sortable: true, formatter: StockStatusFormatter },
-                        { field: 'Detail.MaterialNo', title: '物料编号', align: 'center', sortable: true },
+                        { field: 'InventoryBox.InventoryBoxNo', title: '料箱编号', sortable: true },
+                        { field: 'InventoryBox.Status', title: '料箱状态', width: 60, align: 'center', visible: true, sortable: true, formatter: InventoryBoxStatusFormatter },
+                        { field: 'Detail.MaterialNo', title: '物料编号',  sortable: true },
+                        { field: 'Detail.Status', title: '入库状态', width: 60, align: 'center', visible: true, sortable: true, formatter: StockStatusFormatter },
                         { field: 'Detail.MaterialName', title: '物料名称', align: 'center', sortable: true },
                         { field: 'Detail.PlanInQty', title: '计划数量', align: 'center', sortable: true },
                         { field: 'Detail.ActInQty', title: '实际数量', align: 'center', sortable: true },

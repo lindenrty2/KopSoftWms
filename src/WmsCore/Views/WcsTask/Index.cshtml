@@ -31,7 +31,7 @@
     </section>
 </div>
 @section scripts{
-    <script src="~/js/common.wms.js"></script>
+    <script src="~/js/common.wms.js?v=20200615"></script>
     <script type="text/javascript">
         var app = new Vue({
             el: '#app',
@@ -79,10 +79,8 @@
                                 var html = [];
                                 if (value == 'Failed' || value == 'Working') {
                                     html.push('<button id="repeatL" type="button" class="btn btn-link" style="margin-top:-8px;">重发</button>');
-                                }
-                                if (value == 'Working') {
                                     html.push('<button id="setSccuessL" type="button" class="btn btn-link" style="margin-top:-8px;">成功</button>');
-                                    html.push('<button id="setFailL" type="button" class="btn btn-link" style="margin-top:-8px;">失败</button>');
+                                    //html.push('<button id="setFailL" type="button" class="btn btn-link" style="margin-top:-8px;">失败</button>');
                                 }
                                 return html.join('');
                             },

@@ -307,6 +307,8 @@ namespace YL.Utils.Pub
     /// </summary>
     public enum StorageRackStatus
     {
+        [Description("禁用")]
+        Disabled = -1,
         [Description("正常")]
         Normal = 0,
         [Description("空出")]
@@ -323,5 +325,19 @@ namespace YL.Utils.Pub
         Free = 3
     }
 
+    /// <summary>
+    /// 出入库操作定义
+    /// </summary>
+    public enum StockOperation : int
+    {
+        [Description("入库")]
+        StockIn = 1,
+        [Description("出库")]
+        StockOut = 2,
+        [Description("人工修正")]
+        Manual = 3,
+        [Description("出库并离库")]
+        StockOutAndLevel = 4,
+    }
 
 }

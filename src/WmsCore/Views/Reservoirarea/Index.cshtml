@@ -23,7 +23,7 @@
                             <button name="search" v-on:click="searchL" type="submit" class="btn btn-success" style="margin-left:10px;"><i class="fa fa-search"></i> 搜库区</button>
                         </div>
                         <div id="toolbar" class="btn-group">
-                            <button id="btn_add" v-on:click="showL" type="button" class="btn btn-default">
+                            <!--button id="btn_add" v-on:click="showL" type="button" class="btn btn-default">
                                 <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增
                             </button>
                             <button id="btn_edit" v-on:click="editL" type="button" class="btn btn-default">
@@ -31,7 +31,7 @@
                             </button>
                             <button id="btn_delete" v-on:click="deleteL" type="button" class="btn btn-default">
                                 <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>删除
-                            </button>
+                            </button-->
                         </div>
                         <table id="bootstraptable" class="table table-bordered text-nowrap table-hover"></table>
                     </div>
@@ -41,7 +41,7 @@
     </section>
 </div>
 @section scripts{
-    <script src="~/js/common.wms.js"></script>
+    <script src="~/js/common.wms.js?v=20200615"></script>
     <script type="text/javascript">
         var app = new Vue({
             el: '#app',

@@ -84,8 +84,8 @@
             </el-table>
             <div class="box-footer">
                 <div class="pull-right box-tools">
-                    <input v-on:click="okL(false)" class="btn btn-primary radius" type="button" v-model="submit1">
-                    <input v-on:click="okL(true)" class="btn btn-primary radius" type="button" v-model="submit2">
+                    <input v-on:click="DoBack(false,0)" class="btn btn-primary radius" type="button" v-model="submit1">
+                    <input v-on:click="okL()" class="btn btn-primary radius" type="button" v-model="submit2">
                 </div>
             </div>
         </form>
@@ -134,15 +134,15 @@
                         });
                 },
 
-                okL: function (isback) {
+                okL: function () {
                     var _self = this;
                     var index = layer.confirm("您确定要归库吗？", {
                         btn: ["归库左边", "归库右边", "取消"],
                         btn1: function () {
-                            _self.DoBack(isback,1);
+                            _self.DoBack(true,1);
                         },
                         btn2: function () {
-                            _self.DoBack(isback,2);
+                            _self.DoBack(true,2);
                         }
                     }
                     );

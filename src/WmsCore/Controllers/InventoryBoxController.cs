@@ -450,12 +450,12 @@ namespace KopSoftWms.Controllers
         /// <summary>
         /// 归库
         /// </summary>
-        /// <param name="mode">1:基于入库单,2:基于出库单,3:手工,4料箱离库</param>
+        /// <param name="mode">1:基于入库单,2:基于出库单,3:手工,4出库任务料箱离库</param>
         /// <param name="inventoryBoxTaskId"></param>
         /// <param name="details"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<RouteData> DoInventoryBoxBack(long storeId,int mode, long inventoryBoxTaskId,  InventoryDetailDto[] details ,PLCPosition pos )
+        public async Task<RouteData> DoInventoryBoxBack(long storeId,StockOperation mode, long inventoryBoxTaskId,  InventoryDetailDto[] details ,PLCPosition pos )
         {
             IWMSOperationApiAccessor wmsAccessor = WMSApiManager.GetOperationApiAccessor(storeId.ToString(), _client, this.UserDto);
             RouteData result = await wmsAccessor.DoInventoryBoxBack(mode, inventoryBoxTaskId, details, pos);

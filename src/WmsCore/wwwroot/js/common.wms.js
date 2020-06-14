@@ -126,22 +126,22 @@ function StockOutStatusFormatter(value, row, index) {
 
 function InventoryBoxStatusFormatter(value, row, index) {
     if (value == 'None' || value == '0') {
-        return "未部署";
+        return '<span class="label label-default radius">未部署</span>';
     }
     else if (value == 'InPosition' || value == '1') {
-        return "在库";
+        return '<span class="label label-success radius">在库</span>';
     }
     else if (value == 'Outing' || value == '2') {
-        return "出库中";
+        return '<span class="label label-info radius">出库中</span>';
     }
     else if (value == 'Outed' || value == '3') {
-        return "出库完成";
+        return '<span class="label label-primary radius">出库完成</span>';
     }
     else if (value == 'Backing' || value == '4') {
-        return "归库中";
+        return '<span class="label label-info radius">归库中</span>';
     }
     else {
-        return "异常";
+        return '<span class="label label-danger radius">异常状态</span>';
     }
 }
 
