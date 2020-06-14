@@ -613,7 +613,10 @@ namespace Services.Outside
                             stockoutdetail.ModifiedBy = this.UserDto.UserId;
                             if (stockoutdetail.ActOutQty >= stockoutdetail.PlanOutQty)
                             {
-                                stockoutdetail.Status = StockOutStatus.task_finish.ToByte();
+                                if (mode == StockOperation.StockOutAndLevel)
+                                {
+                                    stockoutdetail.Status = StockOutStatus.task_finish.ToByte();
+                                }
                             }
                             updatedStockoutdetails.Add(stockoutdetail);
                             if (!relationStockouts.Any(x => x.StockOutId == stockoutdetail.StockOutId))
@@ -1425,16 +1428,23 @@ namespace Services.Outside
                     {
                         return RouteData.From(PubMessages.E0004_DATABASE_UPDATE_FAIL);
                     }
-
+                    //更新中间库存
                     RouteData confirmInventory = await _sqlClient.ConfirmInventory(box.InventoryBoxId,this.UserDto);
                     if (!confirmInventory.IsSccuess)
                     {
                         return confirmInventory;
                     }
+                    //更新相关入库任务
                     RouteData confirmStockIn = await _sqlClient.ConfirmRelationStockIn(boxTask.InventoryBoxTaskId, this.UserDto);
                     if (!confirmStockIn.IsSccuess)
                     {
                         return confirmStockIn;
+                    }
+                    //更新相关出库任务
+                    RouteData confirmStockOut = await _sqlClient.ConfirmRelationStockOut(boxTask.InventoryBoxTaskId, this.UserDto);
+                    if (!confirmStockOut.IsSccuess)
+                    {
+                        return confirmStockOut;
                     }
                     box.Status = InventoryBoxStatus.InPosition;
                     box.ModifiedBy = PubConst.InterfaceUserId;

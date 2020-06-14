@@ -247,5 +247,70 @@ namespace Services.Outside
             return new RouteData();
 
         }
+
+        public static async Task<RouteData> ConfirmRelationStockOut(
+            this ISqlSugarClient client, long inventoryBoxTaskId, SysUserDto user)
+        {
+            List<Wms_stockoutdetail_box> stockOutDeltailBoxs =
+                await client.Queryable<Wms_stockoutdetail_box>().Where(x => x.InventoryBoxTaskId == inventoryBoxTaskId).ToListAsync();
+            if (stockOutDeltailBoxs.Count == 0)
+            {
+                return new RouteData(); //如果没有相关任务则不做处理
+            }
+            List<long> confiredStockOutIds = new List<long>();
+            foreach (Wms_stockoutdetail_box detailbox in stockOutDeltailBoxs)
+            {
+                Wms_stockoutdetail stockOutDetail =
+                    await client.Queryable<Wms_stockoutdetail>().Where(x => x.StockOutDetailId == detailbox.StockOutDetailId).FirstAsync();
+                if (stockOutDetail == null)
+                {
+                    continue;
+                }
+                if (stockOutDetail.Status == (int)StockOutStatus.task_finish)
+                {
+                    continue;
+                }
+                if (stockOutDetail.ActOutQty < stockOutDetail.PlanOutQty)
+                {
+                    continue;
+                }
+                stockOutDetail.Status = (int)StockOutStatus.task_finish;
+                stockOutDetail.ModifiedBy = user.UserId;
+                stockOutDetail.ModifiedUser = user.UserName;
+                stockOutDetail.ModifiedDate = DateTime.Now;
+                if (client.Updateable(stockOutDetail).ExecuteCommand() == 0)
+                {
+                    continue;
+                }
+
+                if (!confiredStockOutIds.Contains(stockOutDetail.StockOutId.Value))
+                {
+                    confiredStockOutIds.Add(stockOutDetail.StockOutId.Value);
+                }
+            }
+
+            foreach (long stockOutId in confiredStockOutIds)
+            {
+                bool hasWorking = await client.Queryable<Wms_stockoutdetail>().AnyAsync(x => x.StockOutId == stockOutId && x.Status != (int)StockInStatus.task_finish);
+                if (!hasWorking)
+                {
+                    Wms_stockout stockout = await client.Queryable<Wms_stockout>().FirstAsync(x => x.StockOutId == stockOutId);
+                    if (stockout == null)
+                    {
+                        continue;
+                    }
+                    stockout.StockInStatus = (int)StockInStatus.task_confirm;
+                    stockout.ModifiedBy = user.UserId;
+                    stockout.ModifiedUser = user.UserName;
+                    stockout.ModifiedDate = DateTime.Now;
+                    if (client.Updateable(stockout).ExecuteCommand() == 0)
+                    {
+                        //LOG
+                    }
+                }
+            }
+            return new RouteData();
+
+        }
     }
 }
