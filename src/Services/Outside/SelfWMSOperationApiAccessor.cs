@@ -100,18 +100,18 @@ namespace Services.Outside
         /// </summary>
         /// <param name="inventoryBoxId"></param>
         /// <returns></returns>
-        private async Task<RouteData> DoInventoryBoxOutCore(long inventoryBoxId, PLCPosition pos)
+        private async Task<RouteData<Wms_inventoryboxTask>> DoInventoryBoxOutCore(long inventoryBoxId, PLCPosition pos)
         {
             Wms_inventorybox inventoryBox = await _sqlClient.Queryable<Wms_inventorybox>().FirstAsync(x => x.InventoryBoxId == inventoryBoxId);
-            if (inventoryBox == null) { return YL.Core.Dto.RouteData.From(PubMessages.E1011_INVENTORYBOX_NOTFOUND); }
-            if (inventoryBox.StorageRackId == null ) { return YL.Core.Dto.RouteData.From(PubMessages.E1027_INVENTORYBOX_STORGERACK_MISSING); } 
-            if (inventoryBox.Status != InventoryBoxStatus.InPosition) { return YL.Core.Dto.RouteData.From(PubMessages.E1012_INVENTORYBOX_NOTINPOSITION); }
+            if (inventoryBox == null) { return YL.Core.Dto.RouteData<Wms_inventoryboxTask>.From(PubMessages.E1011_INVENTORYBOX_NOTFOUND); }
+            if (inventoryBox.StorageRackId == null ) { return YL.Core.Dto.RouteData<Wms_inventoryboxTask>.From(PubMessages.E1027_INVENTORYBOX_STORGERACK_MISSING); } 
+            if (inventoryBox.Status != (int)InventoryBoxStatus.InPosition) { return YL.Core.Dto.RouteData<Wms_inventoryboxTask>.From(PubMessages.E1012_INVENTORYBOX_NOTINPOSITION); }
 
             Wms_inventoryboxTask task = await _sqlClient.Queryable<Wms_inventoryboxTask>().FirstAsync(
                 x => x.InventoryBoxId == inventoryBox.InventoryBoxId && x.Status == InventoryBoxStatus.Outed.ToByte());
             if (task != null)
             {
-                return YL.Core.Dto.RouteData.From(PubMessages.E2301_WCS_STOCKOUT_NOTCOMPLATE_EXIST);
+                return YL.Core.Dto.RouteData<Wms_inventoryboxTask>.From(PubMessages.E2301_WCS_STOCKOUT_NOTCOMPLATE_EXIST);
             }
             task = new Wms_inventoryboxTask()
             {
@@ -130,24 +130,27 @@ namespace Services.Outside
             RouteData outresult = await SendWCSOutCommand(task, pos, $"料箱编号:{inventoryBox.InventoryBoxNo}", false);
             if (!outresult.IsSccuess)
             {
-                return outresult;
+                return RouteData<Wms_inventoryboxTask>.From(outresult);
             }
 
             if (await _sqlClient.Insertable(task).ExecuteCommandAsync() == 0)
             {
-                return YL.Core.Dto.RouteData.From(PubMessages.E0005_DATABASE_INSERT_FAIL, "料箱:" + inventoryBox.InventoryBoxName);
+                return YL.Core.Dto.RouteData<Wms_inventoryboxTask>.From(
+                    PubMessages.E0005_DATABASE_INSERT_FAIL, "料箱:" + inventoryBox.InventoryBoxName);
             }
 
-            inventoryBox.Status = InventoryBoxStatus.Outing;
+            inventoryBox.Status = (int)InventoryBoxStatus.Outing;
             inventoryBox.ModifiedBy = UserDto.UserId;
             inventoryBox.ModifiedUser = UserDto.UserName;
             inventoryBox.ModifiedDate = DateTime.Now;
             if (await _sqlClient.Updateable(inventoryBox).ExecuteCommandAsync() == 0)
             {
-                return YL.Core.Dto.RouteData.From(PubMessages.E0004_DATABASE_UPDATE_FAIL, "料箱:" + inventoryBox.InventoryBoxName);
+                return YL.Core.Dto.RouteData<Wms_inventoryboxTask>.From(
+                    PubMessages.E0004_DATABASE_UPDATE_FAIL, "料箱:" + inventoryBox.InventoryBoxName);
             }
 
-            return YL.Core.Dto.RouteData.From(PubMessages.I2300_WCS_OUTCOMMAND_SCCUESS, "料箱:" + inventoryBox.InventoryBoxName);
+            return YL.Core.Dto.RouteData<Wms_inventoryboxTask>.From(
+                PubMessages.I2300_WCS_OUTCOMMAND_SCCUESS, "料箱:" + inventoryBox.InventoryBoxName, task);
         }
 
         public async Task<RouteData> DoStockOutBoxOut(long[] stockOutIds, PLCPosition pos)
@@ -205,7 +208,7 @@ namespace Services.Outside
             }
             List<Wms_stockoutdetail> details = await _sqlClient.Queryable<Wms_stockoutdetail>().Where(
                 x => x.StockOutId == stockout.StockOutId).ToListAsync();
-            List<Tuple<long,bool>> targetBoxIdList = new List<Tuple<long, bool>>();
+            List<Tuple<long, Wms_inventoryboxTask>> targetBoxIdList = new List<Tuple<long, Wms_inventoryboxTask>>();
             foreach (Wms_stockoutdetail detail in details)
             {
                 if (detail.Status == StockOutStatus.task_finish.ToByte()) continue;
@@ -219,16 +222,35 @@ namespace Services.Outside
                 foreach (Wms_inventory inventory in inventories)
                 {
                     long targetBoxId = inventory.InventoryBoxId;
-                    Tuple<long, bool> targetBoxInfo = targetBoxIdList.FirstOrDefault(x => x.Item1 == targetBoxId);
+                    Tuple<long, Wms_inventoryboxTask> targetBoxInfo = targetBoxIdList.FirstOrDefault(x => x.Item1 == targetBoxId);
                     if (targetBoxInfo == null)
                     {
-                        RouteData result = await DoInventoryBoxOutCore(targetBoxId, pos);
-                        targetBoxInfo = new Tuple<long, bool>(targetBoxId, result.IsSccuess);
+                        RouteData<Wms_inventoryboxTask> result = await DoInventoryBoxOutCore(targetBoxId, pos);
+                        targetBoxInfo = new Tuple<long, Wms_inventoryboxTask>(targetBoxId, result.IsSccuess ? result.Data : null);
                         targetBoxIdList.Add(targetBoxInfo);
                     }
-                    if (!targetBoxInfo.Item2)
+                    if (targetBoxInfo.Item2 == null)
                     {
                         continue;
+                    }
+
+                    int planQty = outedQty + inventory.Qty > needQty ? needQty - outedQty : inventory.Qty;
+                    Wms_stockoutdetail_box detailbox = new Wms_stockoutdetail_box()
+                    {
+                        DetailBoxId = PubId.SnowflakeId,
+                        StockOutDetailId = detail.StockOutDetailId,
+                        InventoryBoxId = targetBoxId,
+                        InventoryBoxTaskId = targetBoxInfo.Item2.InventoryBoxTaskId,
+                        Position = inventory.Position,
+                        PlanQty = planQty,
+                        Qty = 0,
+                        CreateBy = this.UserDto.CreateBy,
+                        CreateDate = DateTime.Now,
+                        Remark = ""
+                    };
+                    if (this._sqlClient.Insertable(detailbox).ExecuteCommand() == 0)
+                    {
+                        //插DB出错，正常不会出现
                     }
                     outedQty += inventory.Qty;
                     if (outedQty >= needQty)
@@ -239,7 +261,7 @@ namespace Services.Outside
                 }
 
             }
-            if(targetBoxIdList.Where(x => x.Item2).Count() == 0)
+            if(targetBoxIdList.Where(x => x.Item2 != null).Count() == 0)
             {
                 return RouteData.From(PubMessages.E2124_STOCKOUT_NO_BOX);
             }
@@ -492,7 +514,7 @@ namespace Services.Outside
 
                 Wms_inventorybox inventoryBox = await _sqlClient.Queryable<Wms_inventorybox>().FirstAsync(x => x.InventoryBoxId == task.InventoryBoxId);
                 if (inventoryBox == null) { return YL.Core.Dto.RouteData.From(PubMessages.E1011_INVENTORYBOX_NOTFOUND); }
-                if (inventoryBox.Status != InventoryBoxStatus.Outed && inventoryBox.Status != InventoryBoxStatus.None) { return YL.Core.Dto.RouteData.From(PubMessages.E1014_INVENTORYBOX_NOTOUTED); }
+                if (inventoryBox.Status != (int)InventoryBoxStatus.Outed && inventoryBox.Status != (int)InventoryBoxStatus.None) { return YL.Core.Dto.RouteData.From(PubMessages.E1014_INVENTORYBOX_NOTOUTED); }
 
                 List<Wms_inventory> inventories = await _sqlClient.Queryable<Wms_inventory>().Where(x => x.InventoryBoxId == task.InventoryBoxId).ToListAsync();
                 List<Wms_inventory> updatedInventories = new List<Wms_inventory>();
@@ -762,11 +784,11 @@ namespace Services.Outside
                 {
                     inventoryBox.StorageRackId = null;
                     inventoryBox.StorageRackName = "";
-                    inventoryBox.Status = InventoryBoxStatus.None;
+                    inventoryBox.Status = (int)InventoryBoxStatus.None;
                 }
                 else
                 {
-                    inventoryBox.Status = InventoryBoxStatus.Backing;
+                    inventoryBox.Status = (int)InventoryBoxStatus.Backing;
 
                 }
                 inventoryBox.UsedSize = inventories.Where(x => x.IsDel != DeleteFlag.Deleted).Count();
@@ -1134,7 +1156,7 @@ namespace Services.Outside
             {
                 return RouteData.From(PubMessages.E1011_INVENTORYBOX_NOTFOUND);
             }
-            if (box.Status != InventoryBoxStatus.Outing && box.Status != InventoryBoxStatus.Outed)
+            if (box.Status != (int)InventoryBoxStatus.Outing && box.Status != (int)InventoryBoxStatus.Outed)
             {
                 return RouteData.From(PubMessages.E1008_INVENTORYBOX_NOTOUT);
             }
@@ -1165,7 +1187,7 @@ namespace Services.Outside
                     box.Column = null;
                     box.Floor = null;
                 }
-                box.Status = InventoryBoxStatus.Outed;
+                box.Status = (int)InventoryBoxStatus.Outed;
                 box.ModifiedBy = PubConst.InterfaceUserId;
                 box.ModifiedUser = PubConst.InterfaceUserName;
                 box.ModifiedDate = DateTime.Now;
@@ -1314,7 +1336,7 @@ namespace Services.Outside
                 {
                     return RouteData.From(PubMessages.E1011_INVENTORYBOX_NOTFOUND);
                 }
-                if (box.Status != InventoryBoxStatus.Backing && box.Status != InventoryBoxStatus.InPosition)
+                if (box.Status != (int)InventoryBoxStatus.Backing && box.Status != (int)InventoryBoxStatus.InPosition)
                 {
                     return RouteData.From(PubMessages.E1008_INVENTORYBOX_NOTOUT);
                 }
@@ -1355,7 +1377,7 @@ namespace Services.Outside
                         {
                             return RouteData.From(PubMessages.E0004_DATABASE_UPDATE_FAIL);
                         }
-                        box.Status = InventoryBoxStatus.Outing;
+                        box.Status = (int)InventoryBoxStatus.Outing;
                         box.ModifiedBy = PubConst.InterfaceUserId;
                         box.ModifiedUser = PubConst.InterfaceUserName;
                         box.ModifiedDate = DateTime.Now;
@@ -1446,7 +1468,7 @@ namespace Services.Outside
                     {
                         return confirmStockOut;
                     }
-                    box.Status = InventoryBoxStatus.InPosition;
+                    box.Status = (int)InventoryBoxStatus.InPosition;
                     box.ModifiedBy = PubConst.InterfaceUserId;
                     box.ModifiedDate = DateTime.Now;
                     if (await _sqlClient.Updateable(box).ExecuteCommandAsync() == 0)
@@ -1513,7 +1535,7 @@ namespace Services.Outside
 
             Wms_inventorybox inventoryBox = await _sqlClient.Queryable<Wms_inventorybox>().FirstAsync(x => x.InventoryBoxId == inventoryBoxId);
             if (inventoryBox == null) { return YL.Core.Dto.RouteData.From(PubMessages.E1011_INVENTORYBOX_NOTFOUND); }
-            if (inventoryBox.Status != InventoryBoxStatus.Outed && inventoryBox.Status != InventoryBoxStatus.None) { return YL.Core.Dto.RouteData.From(PubMessages.E1014_INVENTORYBOX_NOTOUTED); }
+            if (inventoryBox.Status != (int)InventoryBoxStatus.Outed && inventoryBox.Status != (int)InventoryBoxStatus.None) { return YL.Core.Dto.RouteData.From(PubMessages.E1014_INVENTORYBOX_NOTOUTED); }
 
             Wms_inventoryboxTask inventoryBoxTask = await _sqlClient.Queryable<Wms_inventoryboxTask>().FirstAsync(x => x.InventoryBoxId == inventoryBoxId && x.Status == InventoryBoxTaskStatus.task_outed.ToByte());
             if (inventoryBoxTask == null) { return YL.Core.Dto.RouteData.From(PubMessages.E1014_INVENTORYBOX_NOTOUTED); } //数据异常 
@@ -1733,7 +1755,7 @@ namespace Services.Outside
 
                 Wms_inventorybox inventoryBox = await _sqlClient.Queryable<Wms_inventorybox>().FirstAsync(x => x.InventoryBoxId == inventoryBoxId);
                 if (inventoryBox == null) { return YL.Core.Dto.RouteData.From(PubMessages.E1011_INVENTORYBOX_NOTFOUND); }
-                if (inventoryBox.Status != InventoryBoxStatus.Outed) { return YL.Core.Dto.RouteData.From(PubMessages.E1014_INVENTORYBOX_NOTOUTED); }
+                if (inventoryBox.Status != (int)InventoryBoxStatus.Outed) { return YL.Core.Dto.RouteData.From(PubMessages.E1014_INVENTORYBOX_NOTOUTED); }
 
                 Wms_inventoryboxTask inventoryBoxTask = await _sqlClient.Queryable<Wms_inventoryboxTask>().FirstAsync(x => x.InventoryBoxId == inventoryBoxId && x.Status == InventoryBoxTaskStatus.task_outed.ToByte());
                 if (inventoryBoxTask == null) { return YL.Core.Dto.RouteData.From(PubMessages.E1014_INVENTORYBOX_NOTOUTED); } //数据异常 
@@ -1747,7 +1769,8 @@ namespace Services.Outside
                     if (detail == null) { return YL.Core.Dto.RouteData.From(PubMessages.E2101_STOCKOUTDETAIL_NOTFOUND, $"MaterialId='{material.MaterialId}'"); }
                     if (detail.Status == StockOutStatus.task_finish.ToByte()) { return YL.Core.Dto.RouteData.From(PubMessages.E2102_STOCKOUTDETAIL_ALLOW_FINISHED); }
 
-                    Wms_stockoutdetail_box box = await _sqlClient.Queryable<Wms_stockoutdetail_box>().FirstAsync(x => x.InventoryBoxTaskId == inventoryBoxTask.InventoryBoxTaskId && x.StockOutDetailId == detail.StockOutDetailId);
+                    Wms_stockoutdetail_box box = await _sqlClient.Queryable<Wms_stockoutdetail_box>().FirstAsync(
+                        x => x.InventoryBoxTaskId == inventoryBoxTask.InventoryBoxTaskId && x.StockOutDetailId == detail.StockOutDetailId);
                     if (box != null)
                     {
                         box.Qty += material.Qty;

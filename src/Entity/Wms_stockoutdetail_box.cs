@@ -29,7 +29,12 @@ namespace YL.Core.Entity
         [SugarColumn(DefaultValue = "0", IsNullable = false)]
         public int Position { get; set; }
         /// <summary>
-        /// 操作数量
+        /// 计划数量
+        /// </summary>
+        [SugarColumn(DefaultValue = "0", IsNullable = false)]
+        public int PlanQty { get; set; }
+        /// <summary>
+        /// 实际操作数量
         /// </summary>
         [SugarColumn(DefaultValue = "0", IsNullable = false)]
         public int Qty { get; set; }

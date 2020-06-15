@@ -424,6 +424,7 @@
                             var detailLength = this.StockDetails.length;
                             for (var i = 0; i < detailLength; i++) {
                                 var stockDetail = this.StockDetails[i];
+                                if (stockDetail.inventoryBoxNo != _self.InventoryBoxNo) continue;
                                 if (stockDetail.materialId != inventoryDetail.materialId) continue;
                                 //if (this.OrderNo != inventoryDetail.orderNo) continue; TODO 暂时屏蔽OrderNo判断
                                 canOutput = true;

@@ -50,7 +50,7 @@ namespace YL.Core.Dto
         /// <summary>
         /// 料箱状态
         /// </summary>
-        public InventoryBoxStatus InventoryBoxStatus { get; set; }
+        public int InventoryBoxStatus { get; set; }
         /// <summary>
         /// 料格位置(1~9)
         /// </summary>

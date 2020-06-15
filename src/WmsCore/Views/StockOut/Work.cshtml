@@ -45,13 +45,16 @@
                     var obj = [
                         { checkbox: true, visible: true },
                         { field: 'Detail.StockOutDetailId', title: '详细ID', visible: false },
-                        { field: 'Detail.Status', title: '状态', visible: true, sortable: true, formatter: StockStatusFormatter },
-                        { field: 'Detail.MaterialNo', title: '物料编号', align: 'center', sortable: true },
-                        { field: 'Detail.MaterialName', title: '物料名称', align: 'center', sortable: true },
-                        { field: 'Detail.PlanOutQty', title: '计划数量', align: 'center', sortable: true },
-                        { field: 'Detail.ActOutQty', title: '实际数量', align: 'center', sortable: true },
-                        { field: 'Detail.Remark', title: '备注', align: 'left', sortable: true },
-                        { field: 'Detail.ModifiedDate', title: '最后更新时间', align: 'center', sortable: true, formatter: DateTimeFormatter },
+                        { field: 'InventoryBoxNo', title: '料箱编号', sortable: true },
+                        { field: 'InventoryBoxStatus', title: '料箱状态', width: 60, align: 'center', visible: true, sortable: true, formatter: InventoryBoxStatusFormatter },
+                        { field: 'StockOutStatus', title: '任务状态', visible: true, sortable: true, formatter: StockStatusFormatter },
+                        { field: 'MaterialNo', title: '物料编号', align: 'center', sortable: true },
+                        { field: 'MaterialName', title: '物料名称', align: 'center', sortable: true },
+                        { field: 'PlanQty', title: '计划数量', align: 'center', sortable: true },
+                        { field: 'Qty', title: '实际数量', align: 'center', sortable: true },
+                        { field: 'Remark', title: '备注', align: 'left', sortable: true },
+                        { field: 'ModifiedUser', title: '最后更新者', align: 'center', sortable: true},
+                        { field: 'ModifiedDate', title: '最后更新时间', align: 'center', sortable: true, formatter: DateTimeFormatter },
                         {
                             field: 'Tasks',
                             title: '操作',
@@ -59,34 +62,7 @@
                             sortable: true,
                             formatter: function (value, row, index) {
                                 var html = [];
-                                for (var i = 0; i < value.length; i++) {
-                                    var item = value[i];
-                                    app.removeOutedBox(item.InventoryBoxTaskId);
-                                    if (item.TaskStatus == 1) { //任务已确认
-                                    }
-                                    else if (item.TaskStatus == 2) { //出库中
-                                        html.push(
-                                            '<span class="label label-primary radius">料箱[' + item.InventoryBoxName + ']出库中</span>'
-                                        );
-                                    }
-                                    else if (item.TaskStatus == 3) { //出库完成
-                                        html.push(
-                                            '<span class="label label-primary radius">料箱[' + item.InventoryBoxName + ']出库完成</span>'
-                                        );
-                                        app.addOutedBox(item.InventoryBoxTaskId, item.InventoryBoxName);
-                                    }
-                                    else if (item.TaskStatus == 4) { //归库中
-                                        html.push(
-                                            '<span class="label label-primary radius">料箱[' + item.InventoryBoxName + ']归库中</span>'
-                                        );
-                                    }
-                                    else if (item.TaskStatus == 5) { //归库完成
-                                        html.push(
-                                            '<span class="label label-success radius">料箱[' + item.InventoryBoxName + ']归库完成</span>'
-                                        );
-                                        app.removeOutedBox(item.InventoryBoxTaskId);
-                                    }
-                                }
+                                html.push('<button type="button" class="btn btn-backL" style="margin-left:3px" onclick="app.boxBackL(\'' + row.InventoryBoxTaskId + '\');">操作确认</button>');
                                 return html.join('<br/>');
                             },
                             events: {

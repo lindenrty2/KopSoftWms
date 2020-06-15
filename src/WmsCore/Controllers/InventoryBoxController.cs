@@ -352,7 +352,7 @@ namespace KopSoftWms.Controllers
                 && x.Status != (int)InventoryBoxTaskStatus.task_backed  ));
             if (task == null) //新料箱入库
             {
-                if (box.Status == InventoryBoxStatus.None)
+                if (box.Status == (int)InventoryBoxStatus.None)
                 {
                     task = new Wms_inventoryboxTask() {
                         InventoryBoxTaskId = PubId.SnowflakeId,

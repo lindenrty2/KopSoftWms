@@ -150,7 +150,7 @@ namespace YL
                         UsedSize = 0,
                         Remark = "",
                         IsDel = DeleteFlag.Normal,
-                        Status = InventoryBoxStatus.InPosition,
+                        Status = (int)InventoryBoxStatus.InPosition,
                         CreateBy = 1,
                         CreateUser = "初始数据",
                         CreateDate = DateTime.Now,

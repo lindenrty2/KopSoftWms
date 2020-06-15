@@ -106,23 +106,25 @@ namespace KopSoftWms.Controllers
                 RouteData<Wms_stockin>.From(PubMessages.E2013_STOCKIN_NOTFOUND);
             }
             Wms_StockOutDto dto = JsonConvert.DeserializeObject<Wms_StockOutDto>(JsonConvert.SerializeObject(model));
-            List<Wms_StockMaterialDetailDto> details = await _client.Queryable<Wms_stockoutdetail, Wms_material>
-                ((sid, m) => new object[] {
+            List<Wms_StockMaterialDetailDto> details = await _client.Queryable< Wms_stockoutdetail_box, Wms_inventorybox, Wms_stockoutdetail, Wms_material>
+                ((sidb, ib, sid, m) => new object[] {
+                   JoinType.Left,sidb.InventoryBoxId==ib.InventoryBoxId,
+                   JoinType.Left,sidb.StockOutDetailId==sid.StockOutDetailId,
                    JoinType.Left,sid.MaterialId==m.MaterialId,
                 })
-                .Where((sid, m) => sid.StockOutId == model.StockOutId)
-                .Select((sid, m) => new Wms_StockMaterialDetailDto()
+                .Where((sidb, ib, sid, m) => sid.StockOutId == model.StockOutId)
+                .Select((sidb, ib, sid, m) => new Wms_StockMaterialDetailDto()
                 {
+                    InventoryBoxNo = ib.InventoryBoxNo,
                     StockId = sid.StockOutId.ToString(),
                     StockDetailId = sid.StockOutDetailId.ToString(),
                     MaterialId = m.MaterialId.ToString(),
                     MaterialNo = m.MaterialNo,
                     MaterialName = m.MaterialName,
-                    PlanQty = (int)sid.PlanOutQty * -1,
-                    ActQty = (int)sid.ActOutQty * -1,
+                    PlanQty = sidb.PlanQty * -1,
+                    ActQty = sidb.Qty * -1,
                     Qty = 0
                 })
-                .MergeTable()
                 .ToListAsync();
 
             dto.Details = details.ToArray();
@@ -212,10 +214,68 @@ namespace KopSoftWms.Controllers
         }
 
         [HttpGet]
-        public ContentResult WorkList(string pid)
+        public async Task<string> WorkList(long pid)
         {
-            var workList = _stockoutdetailServices.PageList(pid); 
-            return Content(workList);
+            Wms_stockout stockout = await _client.Queryable<Wms_stockout>().FirstAsync(x => x.StockOutId == pid);
+            if(stockout == null)
+            {
+                return "";
+            }
+            List<Wms_StockOutWorkDetailDto> result = null;
+            if (stockout.StockOutStatus <= (int)StockOutStatus.task_confirm)
+            {
+                result = await _client.Queryable<Wms_stockoutdetail>()
+                    .Where(c => c.StockOutId == pid)
+                    .OrderBy(c => c.CreateDate, OrderByType.Desc)
+                    .Select(c => new Wms_StockOutWorkDetailDto()
+                    {
+                        InventoryBoxId = null,
+                        InventoryBoxNo = "尚未分配",
+                        InventoryBoxStatus = null,
+                        DetailId = c.StockOutDetailId.ToString(),
+                        MaterialId = c.MaterialId.ToString(),
+                        MaterialNo = c.MaterialNo,
+                        MaterialOnlyId = c.MaterialOnlyId,
+                        MaterialName = c.MaterialName,
+                        PlanQty = c.PlanOutQty,
+                        Qty = c.ActOutQty, //此时是0
+                        StockOutStatus = c.Status,
+                        ModifiedUser = c.ModifiedUser,
+                        ModifiedDate = c.ModifiedDate
+                    } )
+                    .ToListAsync();
+            }
+            else
+            {
+                result = await _client.Queryable<Wms_stockoutdetail_box, Wms_stockoutdetail, Wms_inventorybox, Sys_user>(
+                        (sodb, sod, ib, cu) => new object[] {
+                            JoinType.Left,sodb.StockOutDetailId==sod.StockOutDetailId ,
+                            JoinType.Left,sodb.InventoryBoxId==ib.InventoryBoxId ,
+                            JoinType.Left,sodb.CreateBy==cu.UserId,
+                        }
+                    )
+                    .Where((sodb, sod, ib, cu) => sod.StockOutId == pid)
+                    .OrderBy((sodb, sod, ib, cu) => sod.CreateDate , OrderByType.Desc)
+                    .Select((sodb, sod, ib, cu) => new Wms_StockOutWorkDetailDto(){
+                        InventoryBoxTaskId = sodb.InventoryBoxTaskId.ToString(),
+                        InventoryBoxId = sodb.InventoryBoxId.ToString(),
+                        InventoryBoxNo = ib.InventoryBoxNo,
+                        InventoryBoxStatus = ib.Status,
+                        DetailId = sod.StockOutDetailId.ToString(),
+                        MaterialId = sod.MaterialId.ToString(),
+                        MaterialNo = sod.MaterialNo,
+                        MaterialOnlyId = sod.MaterialOnlyId,
+                        MaterialName = sod.MaterialName,
+                        PlanQty = sodb.PlanQty,
+                        Qty = sodb.Qty, 
+                        StockOutStatus = sod.Status,
+                        ModifiedUser = sod.ModifiedUser,
+                        ModifiedDate = sod.ModifiedDate
+                    }).ToListAsync();
+
+            }
+
+            return Bootstrap.GridData(result, result.Count()).JilToJson();
         }
 
         [HttpGet]
@@ -235,24 +295,7 @@ namespace KopSoftWms.Controllers
             {
                 return YL.Core.Dto.RouteData.From(PubMessages.E0007_WAREHOUSE_NOTFOUND);
             }
-            return await wmsAccessor.DoStockOutScanComplate(stockOutId, inventoryBoxId, materials, remark);
-            //try
-            //{
-            //    _client.BeginTran();
-            //    RouteData result = await _stockoutServices.DoScanComplate(stockOutId, inventoryBoxId, materials, remark, this.UserDto);
-            //    if (!result.IsSccuess)
-            //    {
-            //        _client.RollbackTran();
-            //        return result;
-            //    }
-            //    _client.CommitTran();
-            //    return result;
-            //}
-            //catch (Exception)
-            //{
-            //    _client.RollbackTran();
-            //    return YL.Core.Dto.RouteData.From(PubMessages.E2105_STOCKOUT_BOXOUT_FAIL);
-            //} 
+            return await wmsAccessor.DoStockOutScanComplate(stockOutId, inventoryBoxId, materials, remark); 
         }
 
         [HttpPost]

@@ -103,7 +103,7 @@ namespace Services.Outside
         {
             //查询是否有符合要求的料箱
             var query = client.Queryable<Wms_inventorybox>()
-               .Where((ib) => ib.UsedSize < ib.Size && ib.Size == requestSize && ib.Status == InventoryBoxStatus.InPosition);
+               .Where((ib) => ib.UsedSize < ib.Size && ib.Size == requestSize && ib.Status == (int)InventoryBoxStatus.InPosition);
 
             if (reservoirAreaId != null)
             {
@@ -119,7 +119,7 @@ namespace Services.Outside
             {
                 inventoryBox = await client.Queryable<Wms_inventorybox>()
                     .Where((ib) => ib.Size == 1 && ib.UsedSize == 0 &&
-                    ib.Status == InventoryBoxStatus.InPosition)
+                    ib.Status == (int)InventoryBoxStatus.InPosition)
                     .OrderBy((ib) => ib.Column, OrderByType.Desc)
                     .OrderBy((ib) => ib.Floor, OrderByType.Asc)
                     .FirstAsync();
