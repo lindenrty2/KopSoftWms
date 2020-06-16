@@ -44,8 +44,17 @@
                     _self.$refs.datemax = "2099-01-01";
                     var obj = [
                         { checkbox: true, visible: true },
-                        { field: 'Detail.StockOutDetailId', title: '详细ID', visible: false },
-                        { field: 'InventoryBoxNo', title: '料箱编号', sortable: true },
+                        { field: 'DetailId', title: '详细ID', visible: false },
+                        {
+                            field: 'InventoryBoxNo', title: '料箱编号', sortable: true, formatter: function (value, row, index) {
+                                if (row.Status < 0) {
+                                    return "<span style='color:red'>" + value + "</span>";
+                                }
+                                else {
+                                    return value;
+                                }
+                            }
+                        },
                         { field: 'InventoryBoxStatus', title: '料箱状态', width: 60, align: 'center', visible: true, sortable: true, formatter: InventoryBoxStatusFormatter },
                         { field: 'StockOutStatus', title: '任务状态', visible: true, sortable: true, formatter: StockStatusFormatter },
                         { field: 'MaterialNo', title: '物料编号', align: 'center', sortable: true },
@@ -56,13 +65,15 @@
                         { field: 'ModifiedUser', title: '最后更新者', align: 'center', sortable: true},
                         { field: 'ModifiedDate', title: '最后更新时间', align: 'center', sortable: true, formatter: DateTimeFormatter },
                         {
-                            field: 'Tasks',
+                            field: 'InventoryBoxStatus',
                             title: '操作',
                             visible: true,
                             sortable: true,
                             formatter: function (value, row, index) {
                                 var html = [];
-                                html.push('<button type="button" class="btn btn-backL" style="margin-left:3px" onclick="app.boxBackL(\'' + row.InventoryBoxTaskId + '\');">操作确认</button>');
+                                if (value != null) {
+                                    html.push('<button type="button" class="btn btn-backL" style="margin-left:3px" onclick="app.boxBackL(\'' + row.InventoryBoxTaskId + '\');">操作确认</button>');
+                                }
                                 return html.join('<br/>');
                             },
                             events: {

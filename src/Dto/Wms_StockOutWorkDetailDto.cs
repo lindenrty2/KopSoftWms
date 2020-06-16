@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 using YL.Utils.Pub;
 
@@ -14,7 +15,7 @@ namespace YL.Core.Dto
 
         public string InventoryBoxNo { get; set; }
 
-        public int? InventoryBoxStatus { get; set; }
+        public int? InventoryBoxStatus { get; set; } = null;
 
         public string MaterialId { get; set; }
 
@@ -30,9 +31,21 @@ namespace YL.Core.Dto
 
         public int StockOutStatus { get; set; }
 
+        public int Status { get; set; } = (int)WorkDetailStatus.None;
+
         public string ModifiedUser { get; set; }
 
         public DateTime? ModifiedDate { get; set; }
 
+    }
+
+    public enum WorkDetailStatus : int
+    {
+        [Description("库存不足")]
+        NotEnough = -1,
+        [Description("未开始")]
+        None = 0,
+        [Description("作业中")]
+        Working = 0
     }
 }

@@ -121,6 +121,8 @@ namespace YL.Utils.Pub
 
     public enum InventoryBoxStatus : int
     {
+        [Description("失踪")]
+        Missing = -1,
         [Description("不在库")]
         None = 0,
         [Description("在库")]
