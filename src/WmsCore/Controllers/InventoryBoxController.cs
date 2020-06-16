@@ -49,8 +49,9 @@ namespace KopSoftWms.Controllers
         public async Task<IActionResult> Index(string storeId)
         {
             long currentStoreId = (long)ViewData["currentStoreId"];
+
             IWMSBaseApiAccessor wmsAccessor = WMSApiManager.GetBaseApiAccessor(storeId, _client);
-            RouteData<Wms_reservoirarea[]> result = (await wmsAccessor.GetReservoirAreaList(1, 100, null, null, null, null));
+            RouteData<Wms_reservoirarea[]> result = (await wmsAccessor.GetReservoirAreaList(1, 100, null, null, null, null)); 
             ViewData["reservoirAreaList"] = result.Data;
             //ViewBag.StorageRack = _storagerackServices.QueryableToList(c => c.WarehouseId == currentStoreId && c.IsDel == 1);
             return View();
@@ -62,7 +63,7 @@ namespace KopSoftWms.Controllers
         {
             IWMSBaseApiAccessor wmsAccessor = WMSApiManager.GetBaseApiAccessor(bootstrap.storeId.ToString(), _client);
             RouteData<Wms_inventorybox[]> result = (await wmsAccessor.GetInventoryBoxList(
-                bootstrap.ReservoirAreaId, null, bootstrap.Status, bootstrap.pageIndex,bootstrap.limit,bootstrap.search,bootstrap.order.Split(","),bootstrap.datemin,bootstrap.datemax));
+                bootstrap.ReservoirAreaId, null, bootstrap.Status, bootstrap.pageIndex, bootstrap.limit, bootstrap.search, bootstrap.order.Split(","), bootstrap.datemin, bootstrap.datemax));
             if (!result.IsSccuess)
             {
                 return new PageGridData().JilToJson();

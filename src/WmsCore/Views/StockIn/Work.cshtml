@@ -8,9 +8,11 @@
 }
     <div id="app" v-cloak>
         <div>
-            @{ foreach (Wms_reservoirarea item in (Wms_reservoirarea[])ViewData["reservoirAreaList"]) {
-            <button type="button" class="btn btn-outL margin-left:20px" onclick="app.boxReservoirareaSelectL('@item.ReservoirAreaId','@item.ReservoirAreaName');">出库 @item.ReservoirAreaName 料箱</button>
-                    } }
+            @{ 
+                foreach (Wms_reservoirarea item in (Wms_reservoirarea[])ViewData["reservoirAreaList"]) {
+                    <button type="button" class="btn btn-outL margin-left:20px" onclick="app.boxReservoirareaSelectL('@item.ReservoirAreaId','@item.ReservoirAreaName');">出库 @item.ReservoirAreaName 料箱</button>
+                }
+            }
             <button id="scanL" type="button" class="btn btn-scanL" onclick="app.scanL();">扫码操作</button>
             <span id="ctlOutedBoxList">
 

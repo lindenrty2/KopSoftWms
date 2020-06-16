@@ -65,12 +65,7 @@
             </div> 
         </div>
         <form class="form-horizontal" onsubmit="return false">
-            <el-table :data="tableData"
-                      ref="table"
-                      tooltip-effect="dark"
-                      border
-                      stripe>
-
+            <el-table :data="tableData" ref="table" tooltip-effect="dark" border stripe>
                 <el-table-column label="料格序号" prop="inventoryPosition" align="center"></el-table-column>
                 <el-table-column label="物料编号" prop="materialNo" align="center"></el-table-column>
                 <el-table-column label="物料名" prop="materialName" align="center"></el-table-column>
