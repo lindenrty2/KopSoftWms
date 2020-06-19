@@ -214,115 +214,19 @@ namespace KopSoftWms.Controllers
         }
 
         [HttpGet]
-        public async Task<string> WorkList(long pid)
+        public async Task<string> WorkList(long storeId,long pid)
         {
             Wms_stockout stockout = await _client.Queryable<Wms_stockout>().FirstAsync(x => x.StockOutId == pid);
             if(stockout == null)
             {
                 return "";
             }
-            //获取出库单的物料信息
-            List<Wms_StockOutWorkDetailDto> planResult = await _client.Queryable<Wms_stockoutdetail>()
-                    .Where(c => c.StockOutId == pid)
-                    .OrderBy(c => c.CreateDate, OrderByType.Desc)
-                    .Select(c => new Wms_StockOutWorkDetailDto()
-                    {
-                        InventoryBoxId = null,
-                        InventoryBoxNo = "尚未分配",
-                        //InventoryBoxStatus = null,
-                        DetailId = c.StockOutDetailId.ToString(),
-                        MaterialId = c.MaterialId.ToString(),
-                        MaterialNo = c.MaterialNo,
-                        MaterialOnlyId = c.MaterialOnlyId,
-                        MaterialName = c.MaterialName,
-                        PlanQty = c.PlanOutQty,
-                        Qty = c.ActOutQty, //此时是0
-                        StockOutStatus = c.Status,
-                        ModifiedUser = c.ModifiedUser,
-                        ModifiedDate = c.ModifiedDate
-                    })
-                    .ToListAsync();
+            IWMSOperationApiAccessor wmsAccessor = WMSApiManager.GetOperationApiAccessor(storeId.ToString(), _client, this.UserDto);
+            Wms_StockOutWorkDetailDto[] result = await wmsAccessor.GetStockOutCurrentPlan(pid);
 
-            //获取已关联料箱的出库单的物料信息
-            List<Wms_StockOutWorkDetailDto> outedResult =
-                   await _client.Queryable<Wms_stockoutdetail_box, Wms_stockoutdetail, Wms_inventorybox, Sys_user>(
-                       (sodb, sod, ib, cu) => new object[] {
-                            JoinType.Left,sodb.StockOutDetailId==sod.StockOutDetailId ,
-                            JoinType.Left,sodb.InventoryBoxId==ib.InventoryBoxId ,
-                            JoinType.Left,sodb.CreateBy==cu.UserId,
-                       }
-                   )
-                   .Where((sodb, sod, ib, cu) => sod.StockOutId == pid)
-                   .OrderBy((sodb, sod, ib, cu) => sod.CreateDate, OrderByType.Desc)
-                   .Select((sodb, sod, ib, cu) => new Wms_StockOutWorkDetailDto() {
-                       InventoryBoxTaskId = sodb.InventoryBoxTaskId.ToString(),
-                       InventoryBoxId = sodb.InventoryBoxId.ToString(),
-                       InventoryBoxNo = ib.InventoryBoxNo,
-                       InventoryBoxStatus = ib.Status,
-                       DetailId = sod.StockOutDetailId.ToString(),
-                       MaterialId = sod.MaterialId.ToString(),
-                       MaterialNo = sod.MaterialNo,
-                       MaterialOnlyId = sod.MaterialOnlyId,
-                       MaterialName = sod.MaterialName,
-                       PlanQty = sodb.PlanQty,
-                       Qty = sodb.Qty,
-                       StockOutStatus = sod.Status,
-                       Status = (int)WorkDetailStatus.Working,
-                       ModifiedUser = sod.ModifiedUser,
-                       ModifiedDate = sod.ModifiedDate
-                   }).ToListAsync();
-
-            bool isOuted = outedResult.Count > 0;
-            //关联到料箱时，认为出库任务已开始，显示分解后的出库计划
-            IEnumerable<DistributePlan> planList = planResult.Select(x => new DistributePlan() { Detail = x, SurplusCount = x.PlanQty });
-            List<Wms_StockOutWorkDetailDto> result = new List<Wms_StockOutWorkDetailDto>();
-            //计算未分配到料箱的出库项目
-            foreach (DistributePlan plan in planList)
-            {
-                foreach (Wms_StockOutWorkDetailDto outedDetail in outedResult)
-                {
-                    if (plan.Detail.DetailId != outedDetail.DetailId)
-                    {
-                        continue;
-                    }
-                    plan.SurplusCount -= outedDetail.PlanQty;
-                }
-                if (plan.SurplusCount > 0)
-                {
-                    result.Add(new Wms_StockOutWorkDetailDto()
-                    {
-                        InventoryBoxId = null,
-                        InventoryBoxNo = isOuted ? "未分配到料箱" : "尚未分配料箱",
-                        InventoryBoxStatus = null,
-                        DetailId = plan.Detail.DetailId.ToString(),
-                        MaterialId = plan.Detail.MaterialId.ToString(),
-                        MaterialNo = plan.Detail.MaterialNo,
-                        MaterialOnlyId = plan.Detail.MaterialOnlyId,
-                        MaterialName = plan.Detail.MaterialName,
-                        PlanQty = plan.SurplusCount,
-                        Qty = 0, //此时是0
-                        StockOutStatus = plan.Detail.StockOutStatus,
-                        Status = isOuted ? (int)WorkDetailStatus.NotEnough : (int)WorkDetailStatus.None,
-                        ModifiedUser = plan.Detail.ModifiedUser,
-                        ModifiedDate = plan.Detail.ModifiedDate
-                    });
-                }
-            }
-            //加上分配到料箱的出库项目
-            result.AddRange(outedResult);
-
-            return Bootstrap.GridData(result, result.Count()).JilToJson();
+            return Bootstrap.GridData(result, result.Length).JilToJson();
         }
 
-        /// <summary>
-        /// 分配计划，用于计算没有关联到有效料箱的出库项
-        /// </summary>
-        private class DistributePlan
-        {
-            public Wms_StockOutWorkDetailDto Detail { get; set; }
-
-            public int SurplusCount { get; set; }
-        }
 
         [HttpGet]
         public async Task<IActionResult> ScanPage(long storeId,long stockOutId)

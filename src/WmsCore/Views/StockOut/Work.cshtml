@@ -71,8 +71,9 @@
                             sortable: true,
                             formatter: function (value, row, index) {
                                 var html = [];
-                                if (value != null) {
-                                    html.push('<button type="button" class="btn btn-backL" style="margin-left:3px" onclick="app.boxBackL(\'' + row.InventoryBoxTaskId + '\');">操作确认</button>');
+                                if (value != null && row.Qty > 0) {
+                                    var clz = row.Qty == row.PlanQty ? "btn-success" : "btn-warning";
+                                    html.push('<button class="btn ' + clz + ' btn-backL" style="height:22px;padding:0 10px" onclick="app.boxBackL(\'' + row.InventoryBoxTaskId + '\');">操作确认</button>');
                                 }
                                 return html.join('<br/>');
                             },
@@ -81,6 +82,7 @@
                         }
                     ];
                     var qParams = {
+                        storeId: '@ViewData["currentStoreId"]',
                         pid: "@Model.StockOutId"
                     };
                     yui.table("bootstraptable", "/StockOut/WorkList", obj, "GET", "StockOutDetailId", true, qParams);

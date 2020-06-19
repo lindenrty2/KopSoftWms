@@ -9,11 +9,16 @@ namespace YL.Core.Dto
     public class Wms_StockOutWorkDetailDto 
     {
         public string DetailId { get; set; }
+
+        public string DetailBoxId { get; set; }
+
         public string InventoryBoxTaskId { get; set; }
 
         public string InventoryBoxId { get; set; }
 
         public string InventoryBoxNo { get; set; }
+
+        public int InventoryPosition { get; set; } 
 
         public int? InventoryBoxStatus { get; set; } = null;
 
