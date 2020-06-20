@@ -513,9 +513,10 @@ namespace WMSCore.Outside
         //public OutsideLogisticsControlResult LogisticsControl([FromBody]OutsideLogisticsControlArg arg)
         public string LogisticsControl(String LogisticsId, String StartPoint, String Destination)
         {
-            //var result = WCSApiAccessor.Instance.LogisticsControl(OutsideLogisticsControlArg.Create(LogisticsId,StartPoint, Destination)).Result;
+            var result = WCSApiAccessor.Instance.LogisticsControl(
+                OutsideLogisticsControlArg.Create(LogisticsId,StartPoint, Destination)).Result;
 
-            var result = new OutsideLogisticsControlResult() { EquipmentId = "1", EquipmentName = "EquipmentName-1" };
+            //var result = new OutsideLogisticsControlResult() { EquipmentId = "1", EquipmentName = "EquipmentName-1" };
             return JsonConvert.SerializeObject(result);
         }
 
@@ -526,8 +527,9 @@ namespace WMSCore.Outside
         //public OutsideLogisticsEnquiryResult LogisticsEnquiry(OutsideLogisticsEnquiryArg arg)
         public string LogisticsEnquiry(String LogisticsId, String EquipmentId, String EquipmentName)
         {
-            // var result = WCSApiAccessor.Instance.LogisticsEnquiry(OutsideLogisticsEnquiryArg.Create(LogisticsId,EquipmentId, EquipmentName)).Result;
-            var result = new OutsideLogisticsEnquiryArg() { LogisticsId = LogisticsId, EquipmentId = "1", EquipmentName = "EquipmentName-1" };
+            var result = WCSApiAccessor.Instance.LogisticsEnquiry(
+                OutsideLogisticsEnquiryArg.Create(LogisticsId,EquipmentId, EquipmentName)).Result;
+            //var result = new OutsideLogisticsEnquiryArg() { LogisticsId = LogisticsId, EquipmentId = "1", EquipmentName = "EquipmentName-1" };
             return JsonConvert.SerializeObject(result);
         }
 

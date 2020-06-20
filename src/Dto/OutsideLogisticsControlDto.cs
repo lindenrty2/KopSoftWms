@@ -19,10 +19,11 @@ namespace YL.Core.Dto
         /// </summary>
         public string Destination { get; set; }
 
-        public static OutsideLogisticsControlArg Create(string startpoint, string destination)
+        public static OutsideLogisticsControlArg Create(string logisticsId,string startpoint, string destination)
         {
             return new OutsideLogisticsControlArg()
             {
+                LogisticsId = logisticsId,
                 StartPoint = startpoint,
                 Destination = destination 
             };

@@ -19,10 +19,11 @@ namespace YL.Core.Dto
         /// </summary>
         public string EquipmentName { get; set; }
 
-        public static OutsideLogisticsEnquiryArg Create(string equipmentid, string equipmentname)
+        public static OutsideLogisticsEnquiryArg Create(string logisticsId,string equipmentid, string equipmentname)
         {
             return new OutsideLogisticsEnquiryArg()
             {
+                LogisticsId = logisticsId,
                 EquipmentId = equipmentid,
                 EquipmentName = equipmentname
             };

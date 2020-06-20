@@ -34,7 +34,7 @@ namespace InterfaceMocker.WindowUI.WebApi
         /// </summary>
         /// <param name="result"></param>
         /// <returns></returns>
-        [HttpPost("logisticsFinish")]
+        [HttpPost("LogisticsFinish")]
         ITask<OutsideLogisticsFinishResponseResult> LogisticsFinish([JsonContent]OutsideLogisticsFinishResponse result);
     }
 }
