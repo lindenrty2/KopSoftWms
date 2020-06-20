@@ -49,8 +49,9 @@ namespace KopSoftWms.Controllers
         public async Task<IActionResult> Index(string storeId)
         {
             long currentStoreId = (long)ViewData["currentStoreId"];
+
             IWMSBaseApiAccessor wmsAccessor = WMSApiManager.GetBaseApiAccessor(storeId, _client);
-            RouteData<Wms_reservoirarea[]> result = (await wmsAccessor.GetReservoirAreaList(1, 100, null, null, null, null));
+            RouteData<Wms_reservoirarea[]> result = (await wmsAccessor.GetReservoirAreaList(1, 100, null, null, null, null)); 
             ViewData["reservoirAreaList"] = result.Data;
             //ViewBag.StorageRack = _storagerackServices.QueryableToList(c => c.WarehouseId == currentStoreId && c.IsDel == 1);
             return View();
@@ -354,7 +355,7 @@ namespace KopSoftWms.Controllers
                 && x.Status != (int)InventoryBoxTaskStatus.task_backed  ));
             if (task == null) //新料箱入库
             {
-                if (box.Status == InventoryBoxStatus.None)
+                if (box.Status == (int)InventoryBoxStatus.None)
                 {
                     task = new Wms_inventoryboxTask() {
                         InventoryBoxTaskId = PubId.SnowflakeId,

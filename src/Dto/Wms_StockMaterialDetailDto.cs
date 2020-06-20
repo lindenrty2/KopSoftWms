@@ -6,6 +6,7 @@ namespace YL.Core.Dto
 {
     public class Wms_StockMaterialDetailDto
     {
+        public string InventoryBoxNo { get; set; }
 
         public string StockId { get; set; }
 

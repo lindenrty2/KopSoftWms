@@ -39,11 +39,12 @@ namespace WMSCore.Controllers
         [HttpGet]
         public async Task<IActionResult> InventoryBoxList(long storeId,string materialNo)
         {
-            IWMSOperationApiAccessor accessor = WMSApiManager.GetOperationApiAccessor(storeId.ToString(), _client, this.UserDto);
-
             ViewBag.StoreId = storeId;
-            ViewBag.MaterialNo = materialNo; 
-
+            ViewBag.MaterialNo = materialNo;
+            IWMSOperationApiAccessor accessor = WMSApiManager.GetOperationApiAccessor(storeId.ToString(), _client, this.UserDto);
+            IWMSBaseApiAccessor wmsAccessor = WMSApiManager.GetBaseApiAccessor(storeId.ToString(), _client);
+            RouteData<Wms_reservoirarea[]> reservoirAreaResult = (await wmsAccessor.GetReservoirAreaList(1, 100, null, null, null, null));
+            ViewData["reservoirAreaList"] = reservoirAreaResult.Data;
             RouteData<Wms_InventoryBoxMaterialInfo[]> result = await accessor.GetInventoryBoxList(materialNo);
             ViewBag.Data = JsonConvert.SerializeObject(result.Data);
             return View();

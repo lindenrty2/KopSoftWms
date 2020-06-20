@@ -106,23 +106,25 @@ namespace KopSoftWms.Controllers
                 RouteData<Wms_stockin>.From(PubMessages.E2013_STOCKIN_NOTFOUND);
             }
             Wms_StockOutDto dto = JsonConvert.DeserializeObject<Wms_StockOutDto>(JsonConvert.SerializeObject(model));
-            List<Wms_StockMaterialDetailDto> details = await _client.Queryable<Wms_stockoutdetail, Wms_material>
-                ((sid, m) => new object[] {
+            List<Wms_StockMaterialDetailDto> details = await _client.Queryable< Wms_stockoutdetail_box, Wms_inventorybox, Wms_stockoutdetail, Wms_material>
+                ((sidb, ib, sid, m) => new object[] {
+                   JoinType.Left,sidb.InventoryBoxId==ib.InventoryBoxId,
+                   JoinType.Left,sidb.StockOutDetailId==sid.StockOutDetailId,
                    JoinType.Left,sid.MaterialId==m.MaterialId,
                 })
-                .Where((sid, m) => sid.StockOutId == model.StockOutId)
-                .Select((sid, m) => new Wms_StockMaterialDetailDto()
+                .Where((sidb, ib, sid, m) => sid.StockOutId == model.StockOutId)
+                .Select((sidb, ib, sid, m) => new Wms_StockMaterialDetailDto()
                 {
+                    InventoryBoxNo = ib.InventoryBoxNo,
                     StockId = sid.StockOutId.ToString(),
                     StockDetailId = sid.StockOutDetailId.ToString(),
                     MaterialId = m.MaterialId.ToString(),
                     MaterialNo = m.MaterialNo,
                     MaterialName = m.MaterialName,
-                    PlanQty = (int)sid.PlanOutQty * -1,
-                    ActQty = (int)sid.ActOutQty * -1,
+                    PlanQty = sidb.PlanQty * -1,
+                    ActQty = sidb.Qty * -1,
                     Qty = 0
                 })
-                .MergeTable()
                 .ToListAsync();
 
             dto.Details = details.ToArray();
@@ -215,11 +217,19 @@ namespace KopSoftWms.Controllers
         }
 
         [HttpGet]
-        public ContentResult WorkList(string pid)
+        public async Task<string> WorkList(long storeId,long pid)
         {
-            var workList = _stockoutdetailServices.PageList(pid); 
-            return Content(workList);
+            Wms_stockout stockout = await _client.Queryable<Wms_stockout>().FirstAsync(x => x.StockOutId == pid);
+            if(stockout == null)
+            {
+                return "";
+            }
+            IWMSOperationApiAccessor wmsAccessor = WMSApiManager.GetOperationApiAccessor(storeId.ToString(), _client, this.UserDto);
+            Wms_StockOutWorkDetailDto[] result = await wmsAccessor.GetStockOutCurrentPlan(pid);
+
+            return Bootstrap.GridData(result, result.Length).JilToJson();
         }
+
 
         [HttpGet]
         public async Task<IActionResult> ScanPage(long storeId,long stockOutId)
@@ -238,24 +248,7 @@ namespace KopSoftWms.Controllers
             {
                 return YL.Core.Dto.RouteData.From(PubMessages.E0007_WAREHOUSE_NOTFOUND);
             }
-            return await wmsAccessor.DoStockOutScanComplate(stockOutId, inventoryBoxId, materials, remark);
-            //try
-            //{
-            //    _client.BeginTran();
-            //    RouteData result = await _stockoutServices.DoScanComplate(stockOutId, inventoryBoxId, materials, remark, this.UserDto);
-            //    if (!result.IsSccuess)
-            //    {
-            //        _client.RollbackTran();
-            //        return result;
-            //    }
-            //    _client.CommitTran();
-            //    return result;
-            //}
-            //catch (Exception)
-            //{
-            //    _client.RollbackTran();
-            //    return YL.Core.Dto.RouteData.From(PubMessages.E2105_STOCKOUT_BOXOUT_FAIL);
-            //} 
+            return await wmsAccessor.DoStockOutScanComplate(stockOutId, inventoryBoxId, materials, remark); 
         }
 
         [HttpPost]

@@ -58,7 +58,7 @@ namespace Services.Outside
             }
             if (status != null)
             {
-                query = query.Where(x => x.Status == status);
+                query = query.Where(x => x.Status == (int)status);
             }
             if (!string.IsNullOrWhiteSpace(search))
             {

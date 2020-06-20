@@ -124,7 +124,7 @@ namespace YL.Core.Entity
         /// Nullable:True
         /// </summary>
         [SugarColumn(IsNullable = true)]
-        public InventoryBoxStatus Status { get; set; }
+        public int Status { get; set; }
 
         /// <summary>
         /// Desc:1 0

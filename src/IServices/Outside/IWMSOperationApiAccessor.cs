@@ -42,6 +42,13 @@ namespace IServices.Outside
         Task<RouteData> DoStockOutBoxOut(long stockOutId, PLCPosition pos);
 
         /// <summary>
+        /// 获取指定出库单当前的出库计划
+        /// </summary>
+        /// <param name="pid"></param>
+        /// <returns></returns>
+        Task<Wms_StockOutWorkDetailDto[]> GetStockOutCurrentPlan(long stockoutId);
+
+        /// <summary>
         /// 获取料想入库任务操作详细
         /// </summary>
         /// <param name="inventoryBoxTaskId"></param>
@@ -156,7 +163,5 @@ namespace IServices.Outside
         /// </summary>
         /// <returns></returns>
         Task<RouteData> SetStockOutNofitied();
-
-
     }
 }

@@ -305,10 +305,14 @@
                 onMaterialNoInputed: function (no) {
                     _self = this;
                     if (_self.InventoryBox == null) {
-                        //layer.msg("请先扫码料箱", { icon: 2 });
-                        
-                        yui.layershow("选择料箱", "/Scan/InventoryBoxList?storeId=@ViewBag.StoreId&materialNo=" + no, 1000, 500);
-                        return;
+                        if (_self.IsStockIn) {   
+                            yui.layershow("选择料箱", "/Scan/InventoryBoxList?storeId=@ViewBag.StoreId&materialNo=" + no, 1000, 500);
+                            return;
+                        }
+                        else {
+                            layer.msg("请先扫码料箱", { icon: 2 });
+                            return;
+                        }
                     }
                     for (var i = 0; i < _self.tableData.length; i++) {
                         var material = _self.tableData[i];
@@ -424,6 +428,7 @@
                             var detailLength = this.StockDetails.length;
                             for (var i = 0; i < detailLength; i++) {
                                 var stockDetail = this.StockDetails[i];
+                                if (stockDetail.inventoryBoxNo != _self.InventoryBoxNo) continue;
                                 if (stockDetail.materialId != inventoryDetail.materialId) continue;
                                 //if (this.OrderNo != inventoryDetail.orderNo) continue; TODO 暂时屏蔽OrderNo判断
                                 canOutput = true;
@@ -455,6 +460,18 @@
                     if (_self.tableData.length == 0) {
                         layer.msg("请扫码物料", { icon: 2 });
                         return false;
+                    }
+
+                    for (var i = 0; i < _self.tableData.length; i++) {
+                        var material = _self.tableData[i];
+                        if (self.IsStockIn && material.Qty > material.PlanQty) {
+                            layer.msg("[" + material.MaterialName + "]实际入库数量大于计划数量", { icon: 2 });
+                            return false;
+                        }
+                        else if (!self.IsStockIn && material.Qty > (material.PlanQty * -1)) {
+                            layer.msg("[" + material.MaterialName + "]实际出库库数量大于计划数量", { icon: 2 });
+                            return false;
+                        }
                     }
 
                     var index = layer.load(1, {

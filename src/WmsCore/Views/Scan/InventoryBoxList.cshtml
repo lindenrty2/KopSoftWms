@@ -10,13 +10,12 @@
         <div class="col-xs-12">
             <div class="box">
                 <div class="box-body">
-                    <div id="toolbar" class="btn-group">
-                        <button id="box1OutL" type="button" class="btn btn-outL margin-left:20px" onclick="app.boxOutL(1);">完整箱出库</button>
-                        <button id="box9OutL" type="button" class="btn btn-outL margin-left:20px" onclick="app.boxOutL(2);">2宫格箱出库</button>
-                        <button id="box9OutL" type="button" class="btn btn-outL margin-left:20px" onclick="app.boxOutL(3);">3宫格箱出库</button>
-                        <button id="box9OutL" type="button" class="btn btn-outL margin-left:20px" onclick="app.boxOutL(6);">6宫格箱出库</button>
-                        <button id="box9OutL" type="button" class="btn btn-outL margin-left:20px" onclick="window.close();">使用已出库料箱</button>
-                    </div>
+                    @{ foreach (Wms_reservoirarea item in (Wms_reservoirarea[])ViewData["reservoirAreaList"])
+                        {
+                            <button type="button" class="btn btn-outL margin-left:20px" onclick="app.boxReservoirareaSelectL('@item.ReservoirAreaId','@item.ReservoirAreaName');">出库 @item.ReservoirAreaName 料箱</button>
+                        }
+                    }
+                    <button type="button" class="btn btn-outL margin-left:20px" onclick="window.close();">使用已出库料箱</button>
                     <table id="bootstraptable" class="table table-bordered text-nowrap table-hover"></table>
                 </div>
             </div>
@@ -83,33 +82,50 @@
                 });
             },
             methods: {
-                boxOutL: function (size) {
-                    var index = layer.confirm("您确定要出库" + (size == 1 ? "完整" : size + "宫格") + "料箱吗？", { btn: ["确定", "取消"] },
-                        function () {
-                        layer.close(index);
-
-                        var url = "/InventoryBox/DoAutoSelectBox";
-                        var data = {
-                            storeId: '@ViewBag.StoreId',
-                            requestSize: size
-                        };
-                        yui.$axiospostform(url, data)
-                            .then(function (response) {
-                                if (response.data.isSccuess) {
-                                    layer.msg(response.data.message, { icon: 1, time: 1000 });
-                                    return false;
-                                }
-                                else {
-                                    layer.msg(response.data.message, { icon: 5 });
-                                }
-                                layer.close(index);
-                            })
-                            .catch(function (error) {
-                                layer.close(index);
-                            });
-                    }, function () {
-
-                    });
+                boxReservoirareaSelectL: function (rid, rname) {
+                    var _self = this;
+                    var index = layer.confirm("您确定要出库" + rname + "的料箱吗？",
+                        {
+                            btn: ["出库完整箱", "出库2宫格箱", "出库3宫格箱", "出库6宫格箱", "取消"],
+                            btn1: function () { layer.close(index); _self.boxPLCSelectL(rid, 1); },
+                            btn2: function () { layer.close(index); _self.boxPLCSelectL(rid, 2); },
+                            btn3: function () { layer.close(index); _self.boxPLCSelectL(rid, 3); },
+                            btn4: function () { layer.close(index); _self.boxPLCSelectL(rid, 6); }
+                        }
+                    );
+                },
+                boxPLCSelectL: function (rid, size) {
+                    var _self = this;
+                    var index = layer.confirm("您确定要出库" + (size == 1 ? "完整" : size + "格") + "的料箱吗？",
+                        {
+                            btn: ["出库左边", "出库右边", "取消"],
+                            btn1: function () { layer.close(index); _self.boxOutL(rid, size, 1); },
+                            btn2: function () { layer.close(index); _self.boxOutL(rid, size, 2); }
+                        }
+                    );
+                },
+                boxOutL: function (rid, size, pos) {  
+                    var url = "/InventoryBox/DoAutoSelectBox";
+                    var data = {
+                        storeId: '@ViewBag.StoreId',
+                        reservoirAreaId: rid,
+                        requestSize: size,
+                        pos: pos
+                    };
+                    yui.$axiospostform(url, data)
+                        .then(function (response) {
+                            if (response.data.isSccuess) {
+                                layer.msg(response.data.message, { icon: 1, time: 1000 });
+                                return false;
+                            }
+                            else {
+                                layer.msg(response.data.message, { icon: 5 });
+                            }
+                            layer.close(index);
+                        })
+                        .catch(function (error) {
+                            layer.close(index);
+                        }); 
                 },
                 boxOut: function (inventoryBoxId, inventoryBoxNo) {
                     var index = layer.confirm("您确定要出库" + inventoryBoxNo + "料箱吗？", { btn: ["确定", "取消"] },

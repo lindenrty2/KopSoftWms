@@ -125,7 +125,10 @@ function StockOutStatusFormatter(value, row, index) {
 }
 
 function InventoryBoxStatusFormatter(value, row, index) {
-    if (value == 'None' || value == '0') {
+    if (value == null) {
+        return '';
+    }
+    else if (value == 'None' || value == '0') {
         return '<span class="label label-default radius">未部署</span>';
     }
     else if (value == 'InPosition' || value == '1') {

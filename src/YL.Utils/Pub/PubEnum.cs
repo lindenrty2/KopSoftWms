@@ -101,7 +101,7 @@ namespace YL.Utils.Pub
     /// <summary>
     /// 入出库单状态
     /// </summary>
-    public enum StockOutStatus
+    public enum StockOutStatus : int
     {
         [Description("任务取消")]
         task_canceled = -1,
@@ -119,8 +119,10 @@ namespace YL.Utils.Pub
         task_finish = 4,
     }
 
-    public enum InventoryBoxStatus
+    public enum InventoryBoxStatus : int
     {
+        [Description("失踪")]
+        Missing = -1,
         [Description("不在库")]
         None = 0,
         [Description("在库")]

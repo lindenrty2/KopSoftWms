@@ -218,7 +218,7 @@ namespace WMSCore.Outside
             }
             else
             {
-                return YL.Core.Dto.RouteData.From(PubMessages.E3100_MES_STOCKOUTTASK_NOTFOUND);
+                return YL.Core.Dto.RouteData.From(PubMessages.E3001_MES_STOCKIN_NOFITY_FAIL);
 
             }
         }
@@ -384,7 +384,7 @@ namespace WMSCore.Outside
             }
             else
             {
-                return YL.Core.Dto.RouteData.From(PubMessages.E3100_MES_STOCKOUTTASK_NOTFOUND);
+                return YL.Core.Dto.RouteData.From(PubMessages.E3101_MES_STOCKOUT_NOFITY_FAIL);
 
             }
         }

@@ -8,9 +8,11 @@
 }
     <div id="app" v-cloak>
         <div>
-            @{ foreach (Wms_reservoirarea item in (Wms_reservoirarea[])ViewData["reservoirAreaList"]) {
-            <button type="button" class="btn btn-outL margin-left:20px" onclick="app.boxReservoirareaSelectL('@item.ReservoirAreaId','@item.ReservoirAreaName');">出库 @item.ReservoirAreaName 料箱</button>
-                    } }
+            @{ 
+                foreach (Wms_reservoirarea item in (Wms_reservoirarea[])ViewData["reservoirAreaList"]) {
+                    <button type="button" class="btn btn-outL margin-left:20px" onclick="app.boxReservoirareaSelectL('@item.ReservoirAreaId','@item.ReservoirAreaName');">出库 @item.ReservoirAreaName 料箱</button>
+                }
+            }
             <button id="scanL" type="button" class="btn btn-scanL" onclick="app.scanL();">扫码操作</button>
             <span id="ctlOutedBoxList">
 
@@ -46,8 +48,6 @@
                     var obj = [
                         { checkbox: true, visible: true },
                         { field: 'Detail.StockInDetailId', title: '详细ID', visible: false },
-                        { field: 'InventoryBox.InventoryBoxNo', title: '料箱编号', sortable: true },
-                        { field: 'InventoryBox.Status', title: '料箱状态', width: 60, align: 'center', visible: true, sortable: true, formatter: InventoryBoxStatusFormatter },
                         { field: 'Detail.MaterialNo', title: '物料编号',  sortable: true },
                         { field: 'Detail.Status', title: '入库状态', width: 60, align: 'center', visible: true, sortable: true, formatter: StockStatusFormatter },
                         { field: 'Detail.MaterialName', title: '物料名称', align: 'center', sortable: true },
