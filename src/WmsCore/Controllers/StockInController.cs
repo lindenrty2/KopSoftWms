@@ -85,7 +85,10 @@ namespace KopSoftWms.Controllers
             //return Content(sd);
 
             IWMSBaseApiAccessor wmsAccessor = WMSApiManager.GetBaseApiAccessor(bootstrap.storeId.ToString(), _client);
-            RouteData<OutsideStockInQueryResult[]> result = await wmsAccessor.QueryStockInList(null, null, bootstrap.pageIndex, bootstrap.limit, bootstrap.search, bootstrap.order.Split(","), bootstrap.datemin, bootstrap.datemax);
+            RouteData<OutsideStockInQueryResult[]> result = await wmsAccessor.QueryStockInList(
+                null, null, bootstrap.pageIndex, bootstrap.limit, bootstrap.search,
+                new string[] { bootstrap.sort + " " + bootstrap.order },
+                bootstrap.datemin, bootstrap.datemax);
             if (!result.IsSccuess)
             {
                 return new PageGridData().JilToJson();

@@ -36,7 +36,9 @@ namespace WMSCore.Controllers
             {
                 return "";
             }
-            RouteData<Wms_wcstask[]> result = await accessor.GetWCSTaskList(bootstrap.FailOnly, bootstrap.pageIndex, bootstrap.limit, bootstrap.search, new string[] { bootstrap.sort + " " + bootstrap.order }, bootstrap.datemin, bootstrap.datemax);
+            RouteData<Wms_wcstask[]> result = await accessor.GetWCSTaskList(bootstrap.FailOnly, bootstrap.pageIndex, bootstrap.limit, bootstrap.search, 
+                new string[] { bootstrap.sort + " " + bootstrap.order },
+                bootstrap.datemin, bootstrap.datemax);
             if (!result.IsSccuess)
             {
                 return "";

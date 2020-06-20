@@ -1920,11 +1920,14 @@ namespace Services.Outside
             try
             {
                 List<Wms_stockout> result = await _sqlClient.Queryable<Wms_stockout>()
-                    .Where(x => (x.IsNotified == null || x.IsNotified == false) && x.IsDel == DeleteFlag.Normal)
+                    .Where(x => (x.IsNotified == null || x.IsNotified == false)
+                        && x.StockOutStatus == (int)StockOutStatus.task_confirm
+                        && x.StockOutDate >= DateTime.Today
+                        && x.IsDel == DeleteFlag.Normal)
                     .ToListAsync();
 
                 Wms_StockOutDto[] dto = JsonConvert.DeserializeObject<Wms_StockOutDto[]>(JsonConvert.SerializeObject(result));
-                return RouteData<Wms_StockOutDto[]>.From(dto);
+                return RouteData<Wms_StockOutDto[]>.From(dto, dto.Count());
             }
             catch (Exception ex)
             {

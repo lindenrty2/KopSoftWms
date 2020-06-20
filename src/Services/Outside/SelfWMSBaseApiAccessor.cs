@@ -593,6 +593,7 @@ namespace Services.Outside
                 query = query.Where((s) => s.CreateDate <= maxDate);
             }
 
+            query = query.Sort<Wms_stockout>(order);
             RefAsync<int> totalNumber = 0;
             List<OutsideStockOutQueryResult> result = await query.Select((s) => new OutsideStockOutQueryResult()
             {
@@ -652,6 +653,7 @@ namespace Services.Outside
                         MesTaskId = request.MesTaskId,
                         StockOutId = request.StockOutId ?? CreateStockTaskID(request.WarehouseId),
                         StockOutNo = request.StockOutNo ?? request.WarehousingId,
+                        StockOutDate = Convert.ToDateTime(request.WarehousingTime),
                         StockOutType = stockoutDict.DictId,
                         StockOutTypeName = stockoutDict.DictName,
                         OrderNo = request.OrderNo,
@@ -664,8 +666,7 @@ namespace Services.Outside
                         ModifiedBy = PubConst.InterfaceUserId,
                         ModifiedUser = PubConst.InterfaceUserName,
                         ModifiedDate = DateTime.Now,
-                    };
-                    stockOutList.Add(stockout);
+                    }; ;                    stockOutList.Add(stockout);
                 }
 
                 Wms_stockoutdetail detail = new Wms_stockoutdetail()
@@ -773,6 +774,7 @@ namespace Services.Outside
         {
             return long.Parse($"{warehouseId}{DateTime.Now.ToString("yyyyMMddHHmmss")}");
         }
+
 
         public void Dispose()
         {

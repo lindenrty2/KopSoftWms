@@ -19,7 +19,6 @@
     </div> 
 </div>
 @section scripts{
-    <script src="~/lib/lodop/LodopFuncs.js"></script>
     <script src="~/js/common.wms.js?v=20200615"></script>
     <script type="text/javascript">
         var app = new Vue({
@@ -43,24 +42,22 @@
             methods: {
                 loadL: function () {
                     _self = this;
-                    var obj = [
+                    var columns = [
                         { checkbox: true, visible: true },
-                        { field: 'StockOutId', title: 'Id', visible: false },
-                        { field: 'StockOutNo', title: '出库单号', align: 'center', sortable: true },
-                        { field: 'OrderNo', title: '生产令号', align: 'center', sortable: true },
-                        { field: 'StockOutType', title: '出库类型', align: 'center', sortable: true },
-                        { field: 'StockOutStatus', title: '状态', align: 'center', sortable: true, formatter: StockOutStatusFormatter },
-                        { field: 'Remark', align: 'center', title: '备注' },
-                        { field: 'CreateUser', title: '创建人', align: 'center', sortable: true },
-                        { field: 'CreateDate', align: 'center', title: '创建时间', sortable: true },
-                        { field: 'ModifiedUser', align: 'center', title: '修改人', sortable: true },
-                        { field: 'ModifiedDate', title: '修改时间', align: 'center', sortable: true }
+                        { field: 'stockOutId', title: 'Id', visible: false },
+                        { field: 'stockOutNo', title: '出库单号', align: 'center', sortable: true },
+                        { field: 'orderNo', title: '生产令号', align: 'center', sortable: true },
+                        { field: 'stockOutTypeName', title: '出库类型', align: 'center', sortable: true },
+                        { field: 'stockOutStatus', title: '状态', align: 'center', sortable: true, formatter: StockOutStatusFormatter },
+                        { field: 'remark', align: 'center', title: '备注' },
+                        { field: 'createUser', title: '创建人', align: 'center', sortable: true },
+                        { field: 'createDate', align: 'center', title: '创建时间', sortable: true },
+                        { field: 'modifiedUser', align: 'center', title: '修改人', sortable: true },
+                        { field: 'modifiedDate', title: '修改时间', align: 'center', sortable: true }
                     ];
-                    var qParams = {　
-                    };
                     var objSub = [
                         { checkbox: true, visible: true },
-                        { field: 'StockOUtDetailId', title: 'Id', visible: false }, 
+                        { field: 'StockOutDetailId', title: 'Id', visible: false },
                         { field: 'MaterialNo', title: '物料编号', align: 'center', sortable: true },
                         { field: 'MaterialName', title: '物料名称', align: 'center', sortable: true },
                         { field: 'PlanOutQty', title: '计划数量', align: 'center', sortable: true },
@@ -74,8 +71,50 @@
                         { field: 'ModifiedUser', align: 'center', title: '修改人', sortable: true },
                         { field: 'ModifiedDate', title: '修改时间', align: 'center', sortable: true }
                     ];
-                    yui.table2("bootstraptable", "/StockOut/NofityList?storeId=@ViewData["currentStoreId"]", "", obj, objSub, "POST", "StockOutId", "StockOutId", true, qParams);
+                    
+                    $("#bootstraptable").bootstrapTable({
+                        url: "/StockOut/NofityList?storeId=@ViewData["currentStoreId"]", 
+                        method: "Post",
+                        contentType: "application/x-www-form-urlencoded; charset=UTF-8", 
+                        toolbar: '#toolbar', //工具按钮用哪个容器
+                        striped: true, //是否显示行间隔色
+                        cache: false, 
+                        sortable: true, //是否启用排序
+                        sortOrder: "desc", //排序方式
+                        sortName: "stockOutId",
+                        pagination: true, //是否显示分页（*）
+                        paginationLoop: true,
+                        onlyInfoPagination: false,
+                        sidePagination: "client", //分页方式：client客户端分页，server服务端分页（*） 
+                        pageNumber: 1, //初始化加载第一页，默认第一页,并记录
+                        pageSize: 10, //每页的记录行数（*）
+                        pageList: [10, 25, 50, 100, 'All'], //可供选择的每页的行数（*）
+                        search: true, //是否显示表格搜索
+                        strictSearch: false, //设置为 true启用全匹配搜索，否则为模糊搜索。
+                        trimOnSearch: true, //设置为 true 将自动去掉搜索字符的前后空格。
+                        showPaginationSwitch: false,
+                        showColumns: true, //是否显示所有的列（选择显示的列）
+                        showHeader: true, //是否显示列头。
+                        showFooter: false, //是否显示列脚。
+                        showRefresh: true, //是否显示刷新按钮
+                        showExport: false, //是否显示导出按钮
+                        exportDataType: "all",
+                        buttonsAlign: "right", //按钮位置
+                        exportTypes: ['csv', 'txt', 'sql', 'doc', 'excel', 'xlsx', 'pdf'], //导出文件类型
+                        Icons: 'glyphicon-export',
+                        singleSelect: true, //设置 true 将禁止多选。
+                        uniqueId: "stockOutIdStr", //每一行的唯一标识，一般为主键列
+                        showToggle: true, //是否显示详细视图和列表视图的切换按钮
+                        showFullscreen: false,
+                        cardView: false, //是否显示详细视图
+                        detailView: true, //是否显示父子表 
+                        columns: columns,
+                        onExpandRow: function (index, row, $detail) {
+                            yui.InitSubTable(index, row, $detail, "/StockOut/ListDetail?storeId=@ViewData["currentStoreId"]", objSub, "stockOutId", "Post", true);
+                        }
+                    });
                 },
+
                 doStockOut: function () {
 
                     var idlist = [];
@@ -83,7 +122,18 @@
 
                     var index = layer.confirm("共选择" +  + "件出库单,确认出库？", { btn: ["确定", "取消"] }, function () {
                         layer.close(index);
-
+                        yui.$axiospost('/StockOut/Auditin?id=' + val)
+                            .then(function (response) {
+                                if (response.data.Item1) {
+                                    layer.msg(response.data.Item2 || errorMsg, { icon: 1 });
+                                    _self.searchL();
+                                } else {
+                                    layer.msg(response.data.Item2 || errorMsg, { icon: 5 });
+                                }
+                            })
+                            .catch(function (error) {
+                                layer.msg(error.message, { icon: 5 });
+                            });
 
 
                     });

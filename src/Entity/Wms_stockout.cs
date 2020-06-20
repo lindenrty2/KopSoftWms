@@ -42,6 +42,12 @@ namespace YL.Core.Entity
         public string StockOutNo { get; set; }
 
         /// <summary>
+        /// 出库日期
+        /// </summary>
+        [SugarColumn(IsNullable = true)]
+        public DateTime StockOutDate { get; set; }
+
+        /// <summary>
         /// Desc:出库订单
         /// Default:
         /// Nullable:True

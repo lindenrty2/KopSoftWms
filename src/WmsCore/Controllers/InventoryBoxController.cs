@@ -62,7 +62,9 @@ namespace KopSoftWms.Controllers
         {
             IWMSBaseApiAccessor wmsAccessor = WMSApiManager.GetBaseApiAccessor(bootstrap.storeId.ToString(), _client);
             RouteData<Wms_inventorybox[]> result = (await wmsAccessor.GetInventoryBoxList(
-                bootstrap.ReservoirAreaId, null, bootstrap.Status, bootstrap.pageIndex,bootstrap.limit,bootstrap.search,bootstrap.order.Split(","),bootstrap.datemin,bootstrap.datemax));
+                bootstrap.ReservoirAreaId, null, bootstrap.Status, bootstrap.pageIndex,bootstrap.limit,bootstrap.search,
+                new string[] { bootstrap.sort + " " + bootstrap.order },
+                bootstrap.datemin,bootstrap.datemax));
             if (!result.IsSccuess)
             {
                 return new PageGridData().JilToJson();

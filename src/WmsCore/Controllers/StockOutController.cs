@@ -173,7 +173,10 @@ namespace KopSoftWms.Controllers
             //return Content(sd);
 
             IWMSBaseApiAccessor wmsAccessor = WMSApiManager.GetBaseApiAccessor(bootstrap.storeId.ToString(), _client);
-            RouteData<OutsideStockOutQueryResult[]> result = await wmsAccessor.QueryStockOutList(null, null, bootstrap.pageIndex, bootstrap.limit, bootstrap.search, bootstrap.order.Split(","), bootstrap.datemin, bootstrap.datemax);
+            RouteData<OutsideStockOutQueryResult[]> result = await wmsAccessor.QueryStockOutList(
+                null, null, bootstrap.pageIndex, bootstrap.limit, bootstrap.search, 
+                new string[] { bootstrap.sort + " " + bootstrap.order }, 
+                bootstrap.datemin, bootstrap.datemax);
             if (!result.IsSccuess)
             {
                 return new PageGridData().JilToJson();
@@ -462,21 +465,20 @@ namespace KopSoftWms.Controllers
             return View();
         }
 
-        [HttpGet]
-        public async Task<string> NofityList(long storeId)
+        [HttpPost]
+        public async Task<Wms_StockOutDto[]> NofityList(long storeId)
         {
             IWMSOperationApiAccessor wmsAccessor = WMSApiManager.GetOperationApiAccessor(storeId.ToString(), _client, this.UserDto);
             if(wmsAccessor == null)
             {
-                return "";
+                return null;
             }
             RouteData<Wms_StockOutDto[]> result = await wmsAccessor.QueryStockOutNofityList();
             if (!result.IsSccuess)
-
             {
-                return new PageGridData().JilToJson();
+                return new Wms_StockOutDto[0];
             }
-            return result.ToGridJson();
+            return result.Data;
 
         }
 
