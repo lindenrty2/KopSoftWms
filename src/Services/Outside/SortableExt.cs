@@ -10,6 +10,7 @@ namespace Services.Outside
 
         public static ISugarQueryable<T> Sort<T>(this ISugarQueryable<T> queryable,string[] sorts)
         {
+            if (sorts == null) return queryable;
             foreach (string sort in sorts)
             {
                 queryable = queryable.OrderBy(sort);
@@ -17,5 +18,14 @@ namespace Services.Outside
             return queryable;
         }
 
+        public static ISugarQueryable<T1, T2> Sort<T1,T2>(this ISugarQueryable<T1, T2> queryable, string[] sorts)
+        {
+            if (sorts == null) return queryable;
+            foreach (string sort in sorts)
+            {
+                queryable = queryable.OrderBy(sort);
+            }
+            return queryable;
+        }
     }
 }

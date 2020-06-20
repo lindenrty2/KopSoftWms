@@ -475,7 +475,7 @@ namespace KopSoftWms.Controllers
 
         }
 
-        [HttpGet]
+        [HttpPost]
         public async Task<RouteData> SetStockOutNofitied(long storeId)
         {
             IWMSOperationApiAccessor wmsAccessor = WMSApiManager.GetOperationApiAccessor(storeId.ToString(), _client, this.UserDto);

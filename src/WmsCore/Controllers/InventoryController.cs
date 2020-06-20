@@ -40,7 +40,9 @@ namespace KopSoftWms.Controllers
             long? materialId = string.IsNullOrWhiteSpace(bootstrap.MaterialId) ? (long?)null : long.Parse(bootstrap.MaterialId);
              
             IWMSBaseApiAccessor wmsAccessor = WMSApiManager.GetBaseApiAccessor(bootstrap.storeId.ToString(), _client);
-            RouteData<OutsideInventoryDto[]> result = (await wmsAccessor.QueryInventory(null,null, null, materialId, bootstrap.pageIndex, bootstrap.limit, bootstrap.search, bootstrap.order.Split(","), bootstrap.datemin, bootstrap.datemax));
+            RouteData<OutsideInventoryDto[]> result = (await wmsAccessor.QueryInventory(
+                null,null, null, materialId, bootstrap.pageIndex, bootstrap.limit, bootstrap.search,
+                new string[] { bootstrap.sort + " " + bootstrap.order }, bootstrap.datemin, bootstrap.datemax));
             if (!result.IsSccuess)
             {
                 return new PageGridData().JilToJson();

@@ -74,6 +74,7 @@ namespace Services.Outside
             {
                 query = query.Where(x => x.ModifiedDate <= maxDate || x.CreateDate <= maxDate);
             }
+            query = query.Sort(order);
             //Order
             RefAsync<int> totalCount = new RefAsync<int>();
             List<Wms_inventorybox> result = await query.ToPageListAsync(pageIndex,pageSize, totalCount); 
@@ -116,6 +117,7 @@ namespace Services.Outside
             {
                 query = query.Where(x => x.ModifiedDate <= maxDate);
             }
+            query = query.Sort(order);
 
             RefAsync<int> totalCount = new RefAsync<int>();
             List<Wms_MaterialDto> result = await query.Select(
@@ -159,6 +161,7 @@ namespace Services.Outside
             {
                 query = query.Where(x => x.ModifiedDate <= maxDate);
             }
+            query = query.Sort(order);
             RefAsync<int> totalCount = new RefAsync<int>();
             List<Wms_reservoirarea> result = await query.ToPageListAsync(pageIndex, pageSize, totalCount);
             return RouteData<Wms_reservoirarea[]>.From(result.ToArray(), totalCount.Value);
@@ -201,6 +204,7 @@ namespace Services.Outside
             {
                 query = query.Where(x => x.ModifiedDate <= maxDate);
             }
+            query = query.Sort(order);
             RefAsync<int> totalCount = new RefAsync<int>();
             List<Wms_storagerack> result = await query.ToPageListAsync(pageIndex, pageSize, totalCount);
             return RouteData<Wms_storagerack[]>.From(result.ToArray(), totalCount.Value);
@@ -245,6 +249,7 @@ namespace Services.Outside
             {
                 query = query.Where((i, ib) => i.ModifiedDate <= maxDate);
             }
+            query = query.Sort(order);
 
             RefAsync<int> totalCount = new RefAsync<int>();
             List<OutsideInventoryDto> result = await query.Select(
@@ -296,6 +301,7 @@ namespace Services.Outside
             {
                 query = query.Where((ir, ib) => ir.CreateDate <= maxDate);
             }
+            query = query.Sort(order);
 
             RefAsync<int> totalCount = new RefAsync<int>();
             List<OutsideInventoryRecordDto> result = await query.Select(
@@ -450,6 +456,7 @@ namespace Services.Outside
             {
                 query = query.Where((s) => s.CreateDate <= maxDate);
             }
+            query = query.Sort(order);
 
             RefAsync<int> totalNumber = 0;
             List<OutsideStockInQueryResult> result = await query.Select((s) => new OutsideStockInQueryResult()
@@ -593,7 +600,7 @@ namespace Services.Outside
                 query = query.Where((s) => s.CreateDate <= maxDate);
             }
 
-            query = query.Sort<Wms_stockout>(order);
+            query = query.Sort(order);
             RefAsync<int> totalNumber = 0;
             List<OutsideStockOutQueryResult> result = await query.Select((s) => new OutsideStockOutQueryResult()
             {

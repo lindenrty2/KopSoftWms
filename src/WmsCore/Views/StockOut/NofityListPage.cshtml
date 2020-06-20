@@ -55,8 +55,7 @@
                         { field: 'modifiedUser', align: 'center', title: '修改人', sortable: true },
                         { field: 'modifiedDate', title: '修改时间', align: 'center', sortable: true }
                     ];
-                    var objSub = [
-                        { checkbox: true, visible: true },
+                    var objSub = [ 
                         { field: 'StockOutDetailId', title: 'Id', visible: false },
                         { field: 'MaterialNo', title: '物料编号', align: 'center', sortable: true },
                         { field: 'MaterialName', title: '物料名称', align: 'center', sortable: true },
@@ -102,7 +101,8 @@
                         buttonsAlign: "right", //按钮位置
                         exportTypes: ['csv', 'txt', 'sql', 'doc', 'excel', 'xlsx', 'pdf'], //导出文件类型
                         Icons: 'glyphicon-export',
-                        singleSelect: true, //设置 true 将禁止多选。
+                        singleSelect: false, //设置 true 将禁止多选。
+                        clickToSelect: true, //是否启用点击选中行
                         uniqueId: "stockOutIdStr", //每一行的唯一标识，一般为主键列
                         showToggle: true, //是否显示详细视图和列表视图的切换按钮
                         showFullscreen: false,
@@ -118,25 +118,39 @@
                 doStockOut: function () {
 
                     var idlist = [];
+                    var rows = $("#bootstraptable").bootstrapTable('getSelections');
+                    for (var i = 0; i < rows.length; i++) {
+                        idlist.push(rows[i].stockOutId);
+                    }
 
-
-                    var index = layer.confirm("共选择" +  + "件出库单,确认出库？", { btn: ["确定", "取消"] }, function () {
-                        layer.close(index);
-                        yui.$axiospost('/StockOut/Auditin?id=' + val)
-                            .then(function (response) {
-                                if (response.data.Item1) {
-                                    layer.msg(response.data.Item2 || errorMsg, { icon: 1 });
-                                    _self.searchL();
-                                } else {
-                                    layer.msg(response.data.Item2 || errorMsg, { icon: 5 });
-                                }
-                            })
-                            .catch(function (error) {
-                                layer.msg(error.message, { icon: 5 });
-                            });
-
-
+                    var _self = this;
+                    var index = layer.confirm("您确定要执行出库任务(总计" + rows.length + "项)吗？", {
+                        btn: ["平衡出库", "出库左边", "出库右边", "取消"],
+                        btn1: function () { layer.close(index); _self.boxOutCoreL(idlist, 0); },
+                        btn2: function () { layer.close(index); _self.boxOutCoreL(idlist, 1); },
+                        btn3: function () { layer.close(index); _self.boxOutCoreL(idlist, 2); },
                     });
+                }, 
+                boxOutCoreL: function (ids, pos) {
+                    var url = "/InventoryBox/DoStockOutsBoxOut";
+                    var data = {
+                        storeId: '@ViewData["currentStoreId"]',
+                        stockOutIds: ids,
+                        pos : pos
+                    };
+                    yui.$axiospostform(url, data)
+                        .then(function (response) {
+                            if (response.data.isSccuess) {
+                                layer.msg(response.data.message, { icon: 1, time: 1000 });
+                                return false;
+                            }
+                            else {
+                                layer.msg(response.data.message, { icon: 5 });
+                            }
+                            $("#bootstraptable").bootstrapTable('refresh');
+                        })
+                        .catch(function (error) {
+                        });
                 },
 
             }

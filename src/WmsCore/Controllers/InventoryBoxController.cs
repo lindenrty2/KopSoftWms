@@ -282,6 +282,21 @@ namespace KopSoftWms.Controllers
         }
 
         /// <summary>
+        /// 根据出库单自动出库料箱
+        /// </summary>
+        /// <param name="storeId"></param>
+        /// <param name="stockOutId"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<RouteData> DoStockOutsBoxOut(long storeId, long[] stockOutIds, PLCPosition pos)
+        {
+            IWMSOperationApiAccessor wmsAccessor = WMSApiManager.GetOperationApiAccessor(storeId.ToString(), _client, this.UserDto);
+            RouteData result = await wmsAccessor.DoStockOutBoxOut(stockOutIds, pos);
+
+            return result;
+        }
+
+        /// <summary>
         /// 出库指定料箱
         /// </summary>
         /// <param name="storeId"></param>

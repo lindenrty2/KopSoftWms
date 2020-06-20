@@ -2133,7 +2133,7 @@ namespace Services.Outside
                 List<Wms_stockout> result = await _sqlClient.Queryable<Wms_stockout>()
                     .Where(x => (x.IsNotified == null || x.IsNotified == false)
                         && x.StockOutStatus == (int)StockOutStatus.task_confirm
-                        && x.StockOutDate >= DateTime.Today
+                        && x.StockOutDate <= DateTime.Today.AddDays(1)
                         && x.IsDel == DeleteFlag.Normal)
                     .ToListAsync();
 
@@ -2157,7 +2157,7 @@ namespace Services.Outside
                 foreach (Wms_stockout stockout in result)
                 {
                     stockout.IsNotified = true;
-                    _sqlClient.Updateable<Wms_stockout>(result);
+                    _sqlClient.Updateable<Wms_stockout>(result).ExecuteCommand();
                 }
 
                 return new RouteData();

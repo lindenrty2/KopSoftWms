@@ -52,10 +52,45 @@
             var idx = yui.layerfullshow("扫码操作", "/Scan/MainScanPage?storeId=@ViewData["CurrentStoreId"]&mode=2");
             layer.full(idx);
         };
-        //检查是否有通知
-        function checkNofity() {
-            yui.layershow("出库通知", "/StockOut/NofityListPage?storeId=@ViewData["currentStoreId"]", 1000, 800);
+        function showStockoutNofity() {
+            layer.open({
+                type: 2, area: ['1000px', '800px'],
+                fix: false, maxmin: true, shade: 0.4, title: "出库通知",
+                content: "/StockOut/NofityListPage?storeId=@ViewData["currentStoreId"]",
+                cancel: function () {
+                    setStockoutNofitied();
+                }
+            });
         };
+        var STOCKOUT_NOFITY_CHECKTIME = 60000;
+        //检查是否有通知
+        function checkStockoutNofity() {
+            var url = "/StockOut/NofityList?storeId=@ViewData["currentStoreId"]"; 
+            yui.$axiospostform(url)
+                .then(function (response) {
+                    if (response.data.length > 0) {
+                        showStockoutNofity();
+                    }
+                    else {
+                        setTimeout(checkStockoutNofity, STOCKOUT_NOFITY_CHECKTIME); 
+                    }
+                })
+                .catch(function (error) {
+                });
+        };
+        function setStockoutNofitied() {
+            var url = "/StockOut/SetStockOutNofitied?storeId=@ViewData["currentStoreId"]"; 
+            yui.$axiospostform(url)
+                .then(function (response) {
+                    if (!response.data.isSccuess) {
+                        layer.msg(response.data.message, { icon: 5 });
+                    } 
+                    setTimeout(checkStockoutNofity, STOCKOUT_NOFITY_CHECKTIME); 
+                })
+                .catch(function (error) {
+                }); 
+        };
+        setTimeout(checkStockoutNofity, STOCKOUT_NOFITY_CHECKTIME);
     </script>
 </body>
 </html>
