@@ -14,6 +14,7 @@ using YL.Utils.Extensions;
 using YL.Utils.Json;
 using YL.Utils.Pub;
 using YL.Utils.Table;
+using Services.Outside;
 
 namespace WMSCore.Controllers
 {
@@ -52,6 +53,7 @@ namespace WMSCore.Controllers
             {
                 query = query.Where(x => x.ModifiedDate <= maxDate || x.CreateDate <= maxDate);
             }
+            query = query.Sort<Wms_mestask>(new string[] { bootstrap.sort + " " + bootstrap.order });
             //Order
             RefAsync<int> totalCount = new RefAsync<int>();
             List<Wms_mestask> result = await query.ToPageListAsync(bootstrap.pageIndex, bootstrap.limit, totalCount);
