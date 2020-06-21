@@ -134,7 +134,7 @@
                         { checkbox: true, visible: true },
                         { field: 'StockInId', title: 'Id', visible: false },
                         {
-                            field: 'StockInStatusValue', title: '操作', align: 'center', sortable: true,
+                            field: 'StockInStatusValue', title: '操作', align: 'center', sortable: false,
                             formatter: function (value, row, index) {
                                 var html = [];
                                 if (value == 1) {
@@ -200,7 +200,7 @@
                         { checkbox: true, visible: true },
                         { field: 'StockInDetailId', title: 'Id', visible: false },
                         {
-                            field: 'StatusValue', title: '操作', align: 'center', sortable: true,
+                            field: 'StatusValue', title: '操作', align: 'center', sortable: false,
                             formatter: function (value, row, index) {
                                 if (value < 2) {
                                     return [

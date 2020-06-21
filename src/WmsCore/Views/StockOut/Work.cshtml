@@ -61,14 +61,14 @@
                         { field: 'MaterialName', title: '物料名称', align: 'center', sortable: true },
                         { field: 'PlanQty', title: '计划数量', align: 'center', sortable: true },
                         { field: 'Qty', title: '实际数量', align: 'center', sortable: true },
-                        { field: 'Remark', title: '备注', align: 'left', sortable: true },
+                        { field: 'Remark', title: '备注', align: 'left' },
                         { field: 'ModifiedUser', title: '最后更新者', align: 'center', sortable: true},
                         { field: 'ModifiedDate', title: '最后更新时间', align: 'center', sortable: true, formatter: DateTimeFormatter },
                         {
                             field: 'InventoryBoxStatus',
                             title: '操作',
                             visible: true,
-                            sortable: true,
+                            sortable: false,
                             formatter: function (value, row, index) {
                                 var html = [];
                                 if (value != null && row.Qty > 0) {

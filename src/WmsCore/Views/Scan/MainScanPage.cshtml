@@ -86,7 +86,7 @@
                     <el-table-column label="物料名" prop="MaterialName" align="center"></el-table-column>
                     <el-table-column label="现有数" prop="NowQty" align="center"></el-table-column>
                     <el-table-column label="计划数" prop="PlanQty" align="center"></el-table-column>
-                    <el-table-column label="已出库数" prop="ActQty" align="center"></el-table-column>
+                    <el-table-column label="已操作数" prop="ActQty" align="center"></el-table-column>
                     <el-table-column label="物料位置" prop="Position" align="center" >
                         <template slot-scope="scope">
                             <table v-if="InventoryBox.size==1" class="inventory_position_table tablesize_1">
@@ -464,11 +464,12 @@
 
                     for (var i = 0; i < _self.tableData.length; i++) {
                         var material = _self.tableData[i];
-                        if (self.IsStockIn && material.Qty > material.PlanQty) {
+                        debugger;
+                        if (_self.IsStockIn && material.Qty > material.PlanQty) {
                             layer.msg("[" + material.MaterialName + "]实际入库数量大于计划数量", { icon: 2 });
                             return false;
                         }
-                        else if (!self.IsStockIn && material.Qty > (material.PlanQty * -1)) {
+                        else if (!_self.IsStockIn && material.Qty > (material.PlanQty * -1)) {
                             layer.msg("[" + material.MaterialName + "]实际出库库数量大于计划数量", { icon: 2 });
                             return false;
                         }

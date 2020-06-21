@@ -56,7 +56,7 @@
                         { field: 'Detail.Remark', title: '备注', align: 'left', sortable: true },
                         { field: 'Detail.ModifiedDate', title: '最后更新时间', align: 'center', sortable: true, formatter: DateTimeFormatter },
                         {
-                            field: 'Tasks', title: '操作', visible: true, sortable: true,
+                            field: 'Tasks', title: '操作', visible: true, sortable: false,
                             formatter: function (value, row, index) {
                                 var html = [];
                                 for (var i = 0; i < value.length; i++) {

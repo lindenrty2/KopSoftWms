@@ -23,7 +23,8 @@ namespace Services.Outside
             if (sorts == null) return queryable;
             foreach (string sort in sorts)
             {
-                queryable = queryable.OrderBy(sort);
+                var sortStr = sort.ToUpper().Replace("ROW ", "ROWP ").Replace("COLUMN ", "COLUMNP ").Replace("DESC ", "DESCP ");
+                queryable = queryable.OrderBy(sortStr);
             }
             return queryable;
         }

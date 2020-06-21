@@ -74,7 +74,7 @@
                     var obj = [
                         { checkbox: true, visible: true },
                         {
-                            field: 'WorkStatus', title: '操作', align: 'center', sortable: true,
+                            field: 'WorkStatus', title: '操作', align: 'center', sortable: false,
                             formatter: function (value, row, index) {
                                 var html = [];
                                 if (value == 'Failed' || value == 'Working') {
@@ -101,7 +101,7 @@
                         },
                         { field: 'WcsTaskId', title: 'Id', visible: false },
                         { field: 'TaskType', title: '任务类型', align: 'center', sortable: true, formatter: WCSTaskTypeFormatter},
-                        { field: 'Desc', title: '描述', align: 'center', sortable: true },
+                        { field: 'Desc', title: '描述', align: 'center' },
                         { field: 'WorkStatus', align: 'center', title: '作业状态', sortable: true, formatter: WCSWorkStatusFormatter},
                         { field: 'NotifyStatus', align: 'center', title: 'WCS回馈状态', sortable: true, formatter: WCSNotifyStatusFormatter },
                         { field: 'RequestDate', title: '发送时间', align: 'center', sortable: true, formatter: DateTimeFormatter },
