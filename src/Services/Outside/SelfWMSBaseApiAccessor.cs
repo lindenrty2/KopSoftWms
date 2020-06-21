@@ -361,6 +361,7 @@ namespace Services.Outside
                 MesTaskId = request.MesTaskId,
                 StockInId = request.StockInId ?? CreateStockTaskID(request.WarehouseId),
                 StockInNo = request.StockInNo ?? request.WarehousingId,
+                StockInDate = Convert.ToDateTime(request.WarehousingTime),
                 StockInType = stockinDict.DictId,
                 StockInTypeName = stockinDict.DictName,
                 OrderNo = request.OrderNo,

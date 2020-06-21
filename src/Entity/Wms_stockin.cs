@@ -38,6 +38,12 @@ namespace YL.Core.Entity
         public string StockInNo { get; set; }
 
         /// <summary>
+        /// 入库日期
+        /// </summary>
+        [SugarColumn(IsNullable = true)]
+        public DateTime StockInDate { get; set; }
+
+        /// <summary>
         /// Desc:入库类型
         /// Default:
         /// Nullable:True

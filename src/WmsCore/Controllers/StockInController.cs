@@ -452,15 +452,32 @@ namespace KopSoftWms.Controllers
         }
 
         [HttpGet]
-        public void QRCode(long storeId, long pid)
+        public void QRCode(long storeId, long pid,long detialId)
         {
             var stockIn = _stockinServices.QueryableToEntity(
                 c => c.WarehouseId == storeId && c.StockInId == pid && c.IsDel == 1);
 
-            var details = _stockindetailServices.QueryableToEntity(
-                c => c.WarehouseId == storeId && c.StockInId == pid && c.IsDel == 1);
+            var detail = _stockindetailServices.QueryableToEntity(
+                c => c.WarehouseId == storeId && c.StockInId == pid && c.StockInDetailId == detialId && c.IsDel == 1);
 
-            string strQR = JsonConvert.SerializeObject(new { StockIn = stockIn , StockInDetails = details } );
+            string strQR = JsonConvert.SerializeObject(new {
+                stockIn.StockInId,
+                stockIn.StockInNo,
+                stockIn.StockInTypeName,
+                stockIn.StockInDate,
+                stockIn.Remark,
+                detail = new
+                {
+                    detail.SubWarehousingId,
+                    detail.MaterialId,
+                    detail.MaterialNo,
+                    detail.MaterialOnlyId,
+                    detail.MaterialName,
+                    detail.PlanInQty,
+                    detail.Remark
+                }
+            }
+            );
 
             QRCodeGenerator qrGenerator = new QRCodeGenerator();
             QRCodeData qrCodeData = qrGenerator.CreateQrCode(

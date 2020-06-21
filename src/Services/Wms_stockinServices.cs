@@ -119,7 +119,7 @@ namespace Services
                      StockInType = d.DictName,
                      StockInTypeId = s.StockInType.ToString(),
                      s.StockInStatus,
-                     s.StockInNo,
+                     s.StockInNo, 
                      s.OrderNo,
                      s.SupplierId,
                      p.SupplierNo,
@@ -145,6 +145,7 @@ namespace Services
                   {
                       StockInId = s.StockInId.ToString(),
                       StockInDetailId = s.StockInDetailId.ToString(),
+                      s.SubWarehousingId,
                       m.MaterialNo,
                       m.MaterialName,
                       Status = SqlFunc.IF(s.Status == 1).Return(StockInStatus.initial.GetDescription())
@@ -154,6 +155,7 @@ namespace Services
                       .End(StockInStatus.task_finish.GetDescription()),
                       s.PlanInQty,
                       s.ActInQty,
+                      m.UnitName,
                       s.IsDel,
                       s.Remark,
                       CName = c.UserNickname,
