@@ -249,7 +249,6 @@ namespace Services.Outside
             {
                 query = query.Where((i, ib) => i.ModifiedDate <= maxDate);
             }
-            query = query.Sort(order);
 
             RefAsync<int> totalCount = new RefAsync<int>();
             List<OutsideInventoryDto> result = await query.Select(
@@ -274,7 +273,9 @@ namespace Services.Outside
                     CreateDate = i.CreateDate.Value.ToString(PubConst.Format_DateTime),
                     ModifiedBy = i.ModifiedUser,
                     ModifiedDate = i.ModifiedDate.Value.ToString(PubConst.Format_DateTime),
-              }).ToPageListAsync(pageIndex, pageSize, totalCount);
+              })
+              .Sort(order)
+              .ToPageListAsync(pageIndex, pageSize, totalCount);
             return RouteData<OutsideInventoryDto[]>.From(result.ToArray(), totalCount.Value);
         }
 
@@ -283,47 +284,44 @@ namespace Services.Outside
 
         public async Task<RouteData<OutsideInventoryRecordDto[]>> QueryInventoryRecord(long? reservoirAreaId, long? storageRackId, long? inventoryBoxId, long? materialId, int pageIndex, int pageSize, string search, string[] order, string datemin, string datemax)
         {
-            ISugarQueryable<Wms_inventoryrecord, Wms_inventorybox> query = _sqlClient.Queryable<Wms_inventoryrecord, Wms_inventorybox>((ir, ib) => new object[] {
-                   JoinType.Left,ir.InventoryBoxId==ib.InventoryBoxId,
-                 })
-                            .Where((ir, ib) => ir.IsDel == DeleteFlag.Normal);
+            ISugarQueryable<Wms_inventoryrecord> query = _sqlClient.Queryable<Wms_inventoryrecord>()
+                            .Where((x) => x.IsDel == DeleteFlag.Normal);
             if (!string.IsNullOrWhiteSpace(search))
             {
-                query = query.Where((ir, ib) => ir.MaterialNo.ToString().Contains(search) || ir.MaterialOnlyId.ToString().Contains(search) || ir.MaterialName.Contains(search));
+                query = query.Where((x) => x.MaterialNo.ToString().Contains(search) || x.MaterialOnlyId.ToString().Contains(search) || x.MaterialName.Contains(search));
             }
             DateTime minDate;
             if (!string.IsNullOrWhiteSpace(datemin) && DateTime.TryParse(datemin, out minDate))
             {
-                query = query.Where((ir, ib) => ir.CreateDate >= minDate);
+                query = query.Where((x) => x.CreateDate >= minDate);
             }
             DateTime maxDate;
             if (!string.IsNullOrWhiteSpace(datemax) && DateTime.TryParse(datemax, out maxDate))
             {
-                query = query.Where((ir, ib) => ir.CreateDate <= maxDate);
+                query = query.Where((x) => x.CreateDate <= maxDate);
             }
-            query = query.Sort(order);
+            query = query.Sort(order, new string[,] { { "POSITION", "INVENTORYPOSITION" } });
 
             RefAsync<int> totalCount = new RefAsync<int>();
             List<OutsideInventoryRecordDto> result = await query.Select(
-              (ir, ib) => new OutsideInventoryRecordDto
+              (x) => new OutsideInventoryRecordDto
               {
-                  StockNo = ir.StockNo,
-                  MaterialId = ir.MaterialId,
-                  MaterialNo = ir.MaterialNo,
-                  MaterialOnlyId = ir.MaterialOnlyId,
-                  MaterialName = ir.MaterialName, 
-                  Qty = ir.Qty,
-                  AfterQty = ir.AfterQty,
-                  StorageRackId = ib.StorageRackId??0,
-                  //StorageRackNo = ib.StorageRackNo, 
-                  InventoryBoxId = ib.InventoryBoxId,
-                  InventoryBoxNo = ib.InventoryBoxNo,
-                  Position = ir.InventoryPosition,
-                  CreateBy = ir.CreateUser,
-                  CreateDate = ir.CreateDate.Value.ToString(PubConst.Format_DateTime),
-                  ModifiedBy = ir.ModifiedUser,
-                  ModifiedDate = ir.ModifiedDate.Value.ToString(PubConst.Format_DateTime),
+                  StockNo = x.StockNo,
+                  MaterialId = x.MaterialId,
+                  MaterialNo = x.MaterialNo,
+                  MaterialOnlyId = x.MaterialOnlyId,
+                  MaterialName = x.MaterialName, 
+                  Qty = x.Qty,
+                  AfterQty = x.AfterQty,
+                  InventoryBoxId = x.InventoryBoxId,
+                  InventoryBoxNo = x.InventoryBoxNo,
+                  Position = x.InventoryPosition,
+                  CreateBy = x.CreateUser,
+                  CreateDate = x.CreateDate.Value.ToString(PubConst.Format_DateTime),
+                  ModifiedBy = x.ModifiedUser,
+                  ModifiedDate = x.ModifiedDate.Value.ToString(PubConst.Format_DateTime),
               }).ToPageListAsync(pageIndex, pageSize, totalCount);
+
 
             return RouteData<OutsideInventoryRecordDto[]>.From(result.ToArray(), totalCount.Value);
         }
