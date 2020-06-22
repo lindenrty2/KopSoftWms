@@ -102,8 +102,16 @@ namespace Services.Outside
         public static async Task<RouteData<Wms_inventorybox>> GetBestInvertoryBox(this ISqlSugarClient client, long? reservoirAreaId, int requestSize, PLCPosition pos)
         {
             //查询是否有符合要求的料箱
-            var query = client.Queryable<Wms_inventorybox>()
-               .Where((ib) => ib.UsedSize < ib.Size && ib.Size == requestSize && ib.Status == (int)InventoryBoxStatus.InPosition);
+            var query = client.Queryable<Wms_inventorybox,Wms_storagerack>(
+                (ib, s) => new object[] {
+                        JoinType.Left,ib.StorageRackId==s.StorageRackId ,
+                })
+               .Where((ib, s) => 
+                   ib.UsedSize < ib.Size
+                   && ib.Size == requestSize 
+                   && ib.Status == (int)InventoryBoxStatus.InPosition
+                   && s.Status == (int)StorageRackStatus.Normal
+               );
 
             if (reservoirAreaId != null)
             {
@@ -117,12 +125,17 @@ namespace Services.Outside
             //如果没有符合要求的料想,且是要求多宫格料箱时,尝试选取完整料箱进行分割
             if (inventoryBox == null && requestSize > 1)
             {
-                inventoryBox = await client.Queryable<Wms_inventorybox>()
+                var query2 = client.Queryable<Wms_inventorybox>()
                     .Where((ib) => ib.Size == 1 && ib.UsedSize == 0 &&
                     ib.Status == (int)InventoryBoxStatus.InPosition)
                     .OrderBy((ib) => ib.Column, OrderByType.Desc)
-                    .OrderBy((ib) => ib.Floor, OrderByType.Asc)
-                    .FirstAsync();
+                    .OrderBy((ib) => ib.Floor, OrderByType.Asc);
+                if (reservoirAreaId != null)
+                {
+                    query2 = query2.Where((ib) => ib.ReservoirAreaId == reservoirAreaId.Value);
+                }
+                inventoryBox = await query2.FirstAsync();
+
                 if (inventoryBox != null)
                 {
                     inventoryBox.Size = requestSize;
@@ -234,7 +247,7 @@ namespace Services.Outside
                     {
                         continue;
                     }
-                    stockin.StockInStatus = (int)StockInStatus.task_confirm;
+                    stockin.StockInStatus = (int)StockInStatus.task_finish;
                     stockin.ModifiedBy = user.UserId;
                     stockin.ModifiedUser = user.UserName;
                     stockin.ModifiedDate = DateTime.Now;

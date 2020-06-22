@@ -2081,6 +2081,7 @@ namespace Services.Outside
                       }
                     )
                     .Where((ib, i) => i.MaterialNo == materialNo || i.MaterialOnlyId == materialNo)
+                    .OrderBy((ib, i) => i.ModifiedDate , OrderByType.Desc ) 
                     .Select((ib, i) => new Wms_InventoryBoxMaterialInfo
                     {
                         InventoryBoxId = ib.InventoryBoxId,
