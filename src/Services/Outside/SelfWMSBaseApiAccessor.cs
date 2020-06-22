@@ -249,6 +249,12 @@ namespace Services.Outside
             {
                 query = query.Where((i, ib) => i.ModifiedDate <= maxDate);
             }
+            query = query.Sort(order,new string[,] {
+                {"CREATEDATE", "i.CREATEDATE" },
+                {"CREATEBY", "i.CREATEUSER" },
+                {"MODIFIEDDATE", "i.MODIFIEDDATE" },
+                {"MODIFIEDBY", "i.MODIFIEDUSER" }}
+            );
 
             RefAsync<int> totalCount = new RefAsync<int>();
             List<OutsideInventoryDto> result = await query.Select(
@@ -274,7 +280,6 @@ namespace Services.Outside
                     ModifiedBy = i.ModifiedUser,
                     ModifiedDate = i.ModifiedDate.Value.ToString(PubConst.Format_DateTime),
               })
-              .Sort(order)
               .ToPageListAsync(pageIndex, pageSize, totalCount);
             return RouteData<OutsideInventoryDto[]>.From(result.ToArray(), totalCount.Value);
         }
