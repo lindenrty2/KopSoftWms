@@ -22,17 +22,8 @@ namespace Services.Outside
             foreach (string sort in sorts)
             {
                 var sortStr = sort.ToUpper();
-                for(int i =0;i< DEFAULT_MAPPING.GetLength(0); i++)
-                {
-                    sortStr = sortStr.Replace(DEFAULT_MAPPING[i,0] + " ", DEFAULT_MAPPING[i,1] + " ");
-                }
-                if (mapping != null)
-                {
-                    for (int i = 0; i < mapping.GetLength(0); i++)
-                    {
-                        sortStr = sortStr.Replace(mapping[i, 0] + " ", mapping[i, 1] + " ");
-                    }
-                }
+                sortStr = DoColumnMapping(sortStr, DEFAULT_MAPPING);
+                sortStr = DoColumnMapping(sortStr, mapping);
                 queryable = queryable.OrderBy(sortStr);
             }
             return queryable;
@@ -44,20 +35,26 @@ namespace Services.Outside
             foreach (string sort in sorts)
             {
                 var sortStr = sort.ToUpper();
-                for (int i = 0; i < DEFAULT_MAPPING.GetLength(0); i++)
-                {
-                    sortStr = sortStr.Replace(DEFAULT_MAPPING[i, 0] + " ", DEFAULT_MAPPING[i, 1] + " ");
-                }
-                if (mapping != null)
-                {
-                    for (int i = 0; i < mapping.GetLength(0); i++)
-                    {
-                        sortStr = sortStr.Replace(mapping[i, 0] + " ", mapping[i, 1] + " ");
-                    }
-                }
+                sortStr = DoColumnMapping(sortStr, DEFAULT_MAPPING);
+                sortStr = DoColumnMapping(sortStr, mapping); 
                 queryable = queryable.OrderBy(sortStr);
             }
             return queryable;
+        }
+
+        private static string DoColumnMapping(string value,string[,] mapping)
+        {
+            if (mapping == null) return value;
+            for (int i = 0; i < mapping.GetLength(0); i++)
+            {
+                string before = mapping[i, 0];
+                string after = mapping[i, 1];
+                if (value.StartsWith(before + " "))
+                {
+                    value = value.Replace(before + " ", after + " ");
+                }
+            }
+            return value;
         }
 
     }
