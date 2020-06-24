@@ -463,7 +463,8 @@ namespace Services.Outside
             query = query.Sort(order);
 
             RefAsync<int> totalNumber = 0;
-            List<OutsideStockInQueryResult> result = await query.Select((s) => new OutsideStockInQueryResult()
+            List<Wms_stockin> datas = await query.ToPageListAsync(pageIndex, pageSize, totalNumber);
+            OutsideStockInQueryResult[] result = datas.Select((s) => new OutsideStockInQueryResult()
             {
                 StockInId = s.StockInId.ToString(),
                 StockInTypeName = s.StockInTypeName,
@@ -475,8 +476,8 @@ namespace Services.Outside
                 CreateDate = s.CreateDate.Value.ToString(PubConst.Format_DateTime),
                 ModifiedBy = s.ModifiedUser,
                 ModifiedDate = s.ModifiedDate.Value.ToString(PubConst.Format_DateTime)
-            }).ToPageListAsync(pageIndex, pageSize, totalNumber);
-            return RouteData<OutsideStockInQueryResult[]>.From(result.ToArray(),totalNumber.Value);
+            }).ToArray();
+            return RouteData<OutsideStockInQueryResult[]>.From(result, totalNumber.Value);
         }
 
 
@@ -606,7 +607,8 @@ namespace Services.Outside
 
             query = query.Sort(order);
             RefAsync<int> totalNumber = 0;
-            List<OutsideStockOutQueryResult> result = await query.Select((s) => new OutsideStockOutQueryResult()
+            List<Wms_stockout> datas = await query.ToPageListAsync(pageIndex, pageSize, totalNumber);
+            OutsideStockOutQueryResult[] result = datas.Select((s) => new OutsideStockOutQueryResult()
             {
                 StockOutId = s.StockOutId.ToString(),
                 StockOutTypeName = s.StockOutTypeName,
@@ -618,8 +620,8 @@ namespace Services.Outside
                 CreateDate = s.CreateDate.Value.ToString(PubConst.Format_DateTime),
                 ModifiedBy = s.ModifiedUser,
                 ModifiedDate = s.ModifiedDate.Value.ToString(PubConst.Format_DateTime)
-            }).ToPageListAsync(pageIndex, pageSize, totalNumber);
-            return RouteData<OutsideStockOutQueryResult[]>.From(result.ToArray(), totalNumber.Value);
+            }).ToArray();
+            return RouteData<OutsideStockOutQueryResult[]>.From(result, totalNumber.Value);
         }
 
         public async Task<RouteData<OutsideStockOutRequestResult[]>> StockOut(OutsideStockOutRequestDto request)
