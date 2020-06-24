@@ -786,10 +786,58 @@ namespace Services.Outside
             return long.Parse($"{warehouseId}{DateTime.Now.ToString("yyyyMMddHHmmss")}");
         }
 
+        //-------------------------------盘库----------------------------------
+
+        public async Task<RouteData<Wms_stockcount[]>> QueryStockCountList(StockCountStatus? stockCountStatus, int pageIndex, int pageSize, string search, string[] order, string datemin, string datemax)
+        {
+            var query = _sqlClient.Queryable<Wms_stockcount>()
+              .Where((s) => s.WarehouseId == this.Warehouse.WarehouseId && s.IsDel == 1)
+              ;
+            if (!string.IsNullOrEmpty(search))
+            {
+                query.Where((s) => s.StockCountNo.Contains(search) || s.Remark.Contains(search));
+            } 
+            if (stockCountStatus != null)
+            {
+                query.Where((s) => s.Status == stockCountStatus.ToByte());
+            }
+            DateTime minDate;
+            if (!string.IsNullOrWhiteSpace(datemin) && DateTime.TryParse(datemin, out minDate))
+            {
+                query = query.Where((s) => s.CreateDate >= minDate);
+            }
+            DateTime maxDate;
+            if (!string.IsNullOrWhiteSpace(datemax) && DateTime.TryParse(datemax, out maxDate))
+            {
+                query = query.Where((s) => s.CreateDate <= maxDate);
+            }
+
+            query = query.Sort(order);
+            RefAsync<int> totalNumber = 0;
+            List<Wms_stockcount> result = await query.ToPageListAsync(pageIndex, pageSize, totalNumber);
+            return RouteData<Wms_stockcount[]>.From(result.ToArray(), totalNumber.Value);
+        }
+
+        public async Task<RouteData<Wms_stockcount>> QueryStockCount(string stockCountNo)
+        {
+            var query = _sqlClient.Queryable<Wms_stockcount>()
+               .Where((s) => s.WarehouseId == this.Warehouse.WarehouseId && s.IsDel == 1)
+               ;
+
+            if (!string.IsNullOrWhiteSpace(stockCountNo))
+            {
+                query.Where((s) => s.StockCountNo == stockCountNo);
+            } 
+            
+            RefAsync<int> totalNumber = 0;
+            Wms_stockcount result = await query.FirstAsync();
+            return RouteData<Wms_stockcount>.From(result);
+        }
 
         public void Dispose()
         {
             _sqlClient = null;
         }
+
     }
 }

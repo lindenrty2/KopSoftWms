@@ -6,6 +6,7 @@ namespace YL.Core.Dto
 {
     public class Wms_MaterialDto
     {
+        public bool IsSelected { get; set; }
         /// <summary>
         /// 对接用唯一物料定义Id
         /// </summary>

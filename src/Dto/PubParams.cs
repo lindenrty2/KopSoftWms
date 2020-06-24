@@ -77,6 +77,14 @@ namespace YL.Core.Dto
             public string StockOutStatus { get; set; }
         }
 
+        /// <summary>
+        /// 盘库查询参数
+        /// </summary>
+        public class StockCountBootstrapParams : BootstrapParams
+        {
+            public StockCountStatus StockCountStatus { get; set; }
+        }
+
         public class StatusBootstrapParams : BootstrapParams
         {
             public string Status { get; set; }

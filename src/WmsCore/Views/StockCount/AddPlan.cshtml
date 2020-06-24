@@ -1,0 +1,131 @@
+﻿@{
+    Layout = "_LayoutH";
+}
+@section styles{
+    <link rel="stylesheet" href="~/css/bootstrap-select.min.css" />
+}
+<div id="app" v-cloak >
+    <section class="content">
+        <div class="row" style="padding-bottom:1px;">
+            <div class="col-md-12">
+                <div class="box">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">基本信息</h3>
+                        <div class="box-tools pull-right">
+                            <button type="button" id="test" class="btn btn-box-tool" data-widget="" data-toggle="tooltip">
+                                <i class="fa fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="box-body">
+                        <div class="input-group">
+                            <input type="text" v-model="storeId" ref="storeId" id="storeId" style="display:none">
+                            <input type="text" ref="stockCountNo" id="stockCountNo" class="form-control" style="width:300px;margin-left:10px;" placeholder="盘库编号">
+                            <input type="date" ref="stockCountDate" id="stockCountDate" class="form-control" style="width:300px;margin-left:10px;" placeholder="盘库日期">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box">
+                    <div class="box-body">
+                        <div id="materialToolbar" class="btn-group"> 
+                        </div>
+                        <table id="materialTable" class="table table-bordered text-nowrap table-hover"></table>
+                    </div>
+                </div>
+            </div> 
+        </div>
+        <div class="col-xs-12" style="text-align:center">
+            <button name="ok" v-on:click="okL" type="submit" class="btn btn-success" ><i class="fa fa-search"></i> 确定</button>
+        </div>
+    </section>
+</div>
+@section scripts{
+    <script src="~/js/bootstrap-select.min.js"></script>
+    <script src="~/js/defaults-zh_CN.min.js"></script>
+    <script src="~/js/common.wms.js?v=20200615"></script>
+    <script type="text/javascript">
+
+        var app = new Vue({
+            el: '#app',
+            data: {
+                ReservoirareaId: '',
+                MaterialTypeId: '',
+                MaterialTypeList: '',
+                storeId:'0'
+            },
+            mounted: function () {
+                var _self = this;
+                _self.$nextTick(function () {
+                    //显示active
+                    _self.$refs.storeId = '@ViewData["currentStoreId"]';
+                    _self.searchL();
+                });
+            },
+            methods: {
+                searchL: function () {
+                    _self = this;
+                    var columns = [
+                        { field: 'isSelected', checkbox: true, visible: true, sortable: true  },
+                        { field: 'materialNo', title: '物料编号', align: 'center', sortable: true },
+                        { field: 'materialName', title: '物料名称', align: 'center', sortable: true },
+                        { field: 'materialType', title: '物料分类', align: 'center', sortable: true },
+                        { field: 'unit', title: '单位类别', align: 'center', sortable: true },
+                        //{ field: 'Qty', title: '安全库存', align: 'center', sortable: true },
+                        //{ field: 'WarehouseName', title: '所属仓库', align: 'center', sortable: true },
+                        { field: 'remark', align: 'center', title: '备注' },
+                    ]; 
+
+                    $("#materialTable").bootstrapTable({
+                        url: "/BasicInfo/MaterialList",
+                        method: "Get",
+                        contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+                        toolbar: '#materialToolbar', //工具按钮用哪个容器
+                        striped: true, //是否显示行间隔色
+                        cache: false,
+                        sortable: true, //是否启用排序
+                        sortOrder: "desc", //排序方式
+                        sortName: "MaterialNo",
+                        pagination: true, //是否显示分页（*）
+                        paginationLoop: true,
+                        onlyInfoPagination: false,
+                        sidePagination: "client", //分页方式：client客户端分页，server服务端分页（*）
+                        maintainSelected: true,
+                        pageNumber: 1, //初始化加载第一页，默认第一页,并记录
+                        pageSize: 10, //每页的记录行数（*）
+                        pageList: [10, 25, 50, 100, 'All'], //可供选择的每页的行数（*）
+                        search: true, //是否显示表格搜索
+                        strictSearch: false, //设置为 true启用全匹配搜索，否则为模糊搜索。
+                        trimOnSearch: true, //设置为 true 将自动去掉搜索字符的前后空格。
+                        showPaginationSwitch: false,
+                        showColumns: true, //是否显示所有的列（选择显示的列）
+                        showHeader: true, //是否显示列头。
+                        showFooter: false, //是否显示列脚。
+                        showRefresh: true, //是否显示刷新按钮
+                        buttonsAlign: "right", //按钮位置
+                        singleSelect: false, //设置 true 将禁止多选。
+                        clickToSelect: true, //是否启用点击选中行
+                        uniqueId: "MaterialId", //每一行的唯一标识，一般为主键列
+                        onCheck: function (row) {
+                        },
+                        queryParams: function (params) {
+                            return {
+                                limit: 2000,    //页面大小
+                                offset: 1,  //页码
+                                sort: params.sort,      //排序列名
+                                order: params.order,    //排序命令（desc，asc）
+                                search: params.search,
+                                storeId: '@ViewData["currentStoreId"]'
+                            };
+                        },
+                        columns: columns
+                    });
+                }
+
+            }
+        });
+    </script>
+}

@@ -177,7 +177,7 @@ namespace Services.Outside
                    JoinType.Left,i.MaterialId==m.MaterialId,
                    JoinType.Left,ib.StorageRackId==s.StorageRackId
                  })
-                .Where((i, ib) => i.IsDel == DeleteFlag.Normal);
+                .Where((i, m, ib, s) => i.IsDel == DeleteFlag.Normal);
             if (materialTypeId.HasValue)
             {
                 query = query.Where((i, m, ib, s) => m.MaterialType  == materialTypeId.Value);
@@ -211,5 +211,6 @@ namespace Services.Outside
 
             return RouteData<Wms_StockCountInventoryBoxDto[]>.From(result.ToArray(), result.Count);
         }
+         
     }
 }

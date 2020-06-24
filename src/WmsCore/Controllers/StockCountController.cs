@@ -58,8 +58,24 @@ namespace KopSoftWms.Controllers
             }
             return result.ToGridJson(); 
         }
-         
 
-         
+        [HttpGet]
+        public async Task<IActionResult> AddPlan(long storeId, long stockCountId)
+        {
+            ViewData["currentStoreId"] = storeId; 
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> QueryPlanList(StockCountBootstrapParams bootstrap)
+        {
+            IWMSBaseApiAccessor baseAccessor = WMSApiManager.GetBaseApiAccessor(bootstrap.storeId.ToString(), _client);
+            ViewBag.ReservoirAreas = await baseAccessor.QueryStockCountList(
+                bootstrap.StockCountStatus, bootstrap.pageIndex, bootstrap.limit, bootstrap.search,
+                new string[] { bootstrap.sort + " " + bootstrap.order },
+                bootstrap.datemin, bootstrap.datemax
+                );
+            return View();
+        }
     }
 }

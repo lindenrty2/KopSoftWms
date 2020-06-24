@@ -28,21 +28,9 @@
                     <div class="box-body">
                         <div class="input-group">
                             <input type="text" v-model="storeId" ref="storeId" id="storeId" style="display:none">
-                            <select class="form-control" v-model="ReservoirareaId" style="width:120px;margin-left:10px;">
-                                <option value="">全部库区</option>
-                                @{
-                                    if (ViewBag.Reservoirareas != null || ViewBag.Reservoirareas.Count > 0)
-                                    {
-                                        foreach (var item in ViewBag.Reservoirareas)
-                                        {
-                                            <option value="@item.ReservoirAreaId">@( item.ReservoirAreaName)</option>
-                                        }
-                                    }
-                                }
-                            </select>
-                            <select id="ctlMaterialType" class="selectpicker" v-model="MaterialTypeId" data-live-search="true"></select>
-                            <input type="text" ref="productionplanid" id="productionplanid" class="form-control" style="width:300px;margin-left:10px;" placeholder="生产令号">
-                            <input type="text" ref="materialname" id="materialname" class="form-control" style="width:300px;margin-left:10px;" placeholder="料箱编号/物料名称/物料编号">
+                            <span class="input-group-addon">日期范围</span>
+                            <input type="text" ref="datemin" id="datemin" class="form-control" style="width:120px;">
+                            <input type="text" ref="datemax" id="datemax" class="form-control" style="width:120px;margin-left:10px;">
                             <button name="search" v-on:click="searchL" type="submit" class="btn btn-success" style="margin-left:10px;"><i class="fa fa-search"></i> 搜索</button>
                         </div> 
                     </div>
@@ -54,11 +42,14 @@
                 <div class="box">
                     <div class="box-body">
                         <div id="toolbar" class="btn-group">
-                            <button id="btn_countall" v-on:click="countallL" type="button" class="btn btn-default">
-                                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>全部盘库
+                            <button id="btn_addplan" v-on:click="addPlanL" type="button" class="btn btn-default">
+                                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>添加盘库计划
                             </button>
-                            <button id="btn_count" v-on:click="countL" type="button" class="btn btn-default">
-                                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>指定盘库
+                            <button id="btn_addplan" v-on:click="editPlanL" type="button" class="btn btn-default">
+                                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>编辑盘库计划
+                            </button>
+                            <button id="btn_addplan" v-on:click="deletePlanL" type="button" class="btn btn-default">
+                                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>删除盘库计划
                             </button>
                         </div>
                         <table id="bootstraptable" class="table table-bordered text-nowrap table-hover"></table>
@@ -73,28 +64,10 @@
     <script src="~/js/defaults-zh_CN.min.js"></script>
     <script src="~/js/common.wms.js?v=20200615"></script>
     <script type="text/javascript">
-         
-
-        $(function () {
-            $('#ctlMaterialType').on('show.bs.select', function (e, clickedIndex, isSelected, previousValue) {
-                var divdom = $("div[class='bs-searchbox']")[0].childNodes[0];
-                $(divdom).on("input propertychange", function () {
-                    var dom = $("li[class='no-results']");
-                    var text = divdom.value;
-                    if (dom.length > 0) {
-                        app.searchMaterialType(text, 2);
-                    }
-                    if (app.MaterialTypeList.length <= 0) {
-                        app.searchMaterialType(text, 2);
-                    }
-                });
-            });
-        });
-
         var app = new Vue({
             el: '#app',
             data: {
-                ReservoirareaId: '', 
+                ReservoirareaId: '',
                 MaterialTypeId: '',
                 MaterialTypeList: '',
                 storeId:'0'
@@ -105,103 +78,104 @@
                     //显示active
                     _self.$refs.StockCount.parentNode.parentNode.classList.add("active");
                     _self.$refs.StockCount.classList.add("active");
-                    _self.$refs.storeId = '@ViewData["currentStoreId"]'; 
-
-                    $("#ctlMaterialType").selectpicker({
-                        noneSelectedText: '请选择型号',
-                    });
-                    yui.$axiosget('/BasicInfo/GetMaterialTypes?storeId=@ViewData["currentStoreId"]')
-                        .then(function (response) {
-                            if (!response.data.isSccuess) { 
-                                layer.msg(response.data.message || errorMsg, { icon: 5 });
-                                return;
-                            }
-                            _self.MaterialTypeList = response.data.data;
-                            _self.searchMaterialType('',1); 
-                        })
-                        .catch(function (error) { 
-                        });
-
-
-                    setTimeout(function () {
-                        _self.loadL();
-                        yui.getDomById("test").click();
-                        //$("div[class='pull-right search']")[0].children[0].setAttribute("placeholder", "物料编号或名称");
-                    }, 500);
-                   
+                    _self.$refs.storeId = '@ViewData["currentStoreId"]';
+                    _self.$refs.datemin.value = "1900-01-01";
+                    _self.$refs.datemax.value = "2099-01-01";
+                    _self.loadL();
                 });
             },
             methods: {
-                searchMaterialType: function (val,type) {
-                    var _self = this;
-                    var html = "<option value=''>请选择型号</option>";
-                    for (var item in _self.MaterialTypeList) {
-                        html += "<option value='" + _self.MaterialTypeList[item].dictId + "' >" + _self.MaterialTypeList[item].dictName + "</option>"
-                    }
-                    var ctlMaterialType = $("#ctlMaterialType");
-                    if (type !== 1) {
-                        ctlMaterialType.empty();
-                    }
-                    ctlMaterialType.append(html)
-                    ctlMaterialType.selectpicker('refresh');
-                },
                 loadL: function () {
                     _self = this;
-                    var obj = [
-                        { checkbox: true, visible: true },
-                        { field: 'Reservoirarea', title: '库区', align: 'center', sortable: true },
-                        { field: 'Row', title: '排', align: 'center', sortable: true },
-                        { field: 'Column', title: '列', align: 'center', sortable: true },
-                        { field: 'Floor', title: '层', align: 'center', sortable: true },
-                        { field: 'InventoryBoxNo', title: '货架编号', align: 'center', sortable: true },
-                        { field: 'InventoryBoxNo', title: '料箱编号', align: 'center', sortable: true }, 
-                        { field: 'Size', title: '格号', align: 'center', sortable: true },
-                        { field: 'MaterialNo', title: '物料编号', align: 'center', sortable: true },
-                        { field: 'MaterialName', title: '物料名', align: 'center', sortable: true },
-                        { field: 'MaterialType', title: '物料类型', align: 'center', sortable: true },
-                        { field: 'Qty', title: '数量', align: 'center', sortable: true },  
-                        { field: 'Remark', align: 'center', title: '备注' },
-                        { field: 'CreateUser', title: '创建人', align: 'center', sortable: true },
-                        { field: 'CreateDate', align: 'center', title: '创建时间', sortable: true, formatter: DateTimeFormatter },
-                        { field: 'ModifiedUser', align: 'center', title: '修改人', sortable: true },
-                        { field: 'ModifiedDate', title: '修改时间', align: 'center', sortable: true, formatter: DateTimeFormatter }
-                    ];
-                    var qParams = {
-                    };
-                    yui.table("bootstraptable", "/StockCount/List", obj, "POST", "InventoryBoxId", true, qParams);
-                },
-                showL: function () {
-                    yui.layershow("添加料箱", "/InventoryBox/Add?storeId=@ViewData["currentStoreId"]", 550, 600);
+                    var columns = [
+                        { checkbox: true, visible: true }, 
+                        {
+                            field: 'status', title: '操作', align: 'center', sortable: false,
+                            formatter: function (value, row, index) {
+                                html.push('<button id="doStockCountL" type="button" class="btn btn-link" style="margin-top:-8px;">执行盘库</button>');
+                                return html.join('');
+                            },
+                            events: {
+                                'click #doStockCountL': function (e, value, row, index) {
+                                    app.doStockCountL(row.stockCountNo);
+                                }
+                            },
+                        }, 
+                        { field: 'stockCountNo', title: '盘库编号', align: 'center', sortable: true }, 
+                        { field: 'stockCountDate', title: '盘库日期', align: 'center', sortable: true }, 
+                        { field: 'materialCount', title: '盘点物料数量', align: 'center', sortable: true }, 
+                        { field: 'stepTotalCount', title: '分解任务总数', align: 'center', sortable: true }, 
+                        { field: 'stepFinishCount', title: '分解任务完成数量', align: 'center', sortable: true }, 
+                        { field: 'remark', title: '备注' ,align: 'center'},
+                        { field: 'createUser', title: '创建人', align: 'center', sortable: true },
+                        { field: 'createDate', title: '创建时间', align: 'center',  sortable: true, formatter: DateTimeFormatter },
+                        { field: 'modifiedUser', title: '修改人', align: 'center',  sortable: true },
+                        { field: 'modifiedDate', title: '修改时间', align: 'center', sortable: true, formatter: DateTimeFormatter }
+                    ];                    
+                    $("#bootstraptable").bootstrapTable({
+                        url: "/StockCount/QueryPlanList",
+                        method: "Get",
+                        contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+                        toolbar: '#toolbar', //工具按钮用哪个容器
+                        striped: true, //是否显示行间隔色
+                        cache: false,
+                        sortable: true, //是否启用排序
+                        sortOrder: "desc", //排序方式
+                        sortName: "stockCountNo",
+                        pagination: true, //是否显示分页（*）
+                        paginationLoop: true,
+                        onlyInfoPagination: false,
+                        sidePagination: "client", //分页方式：client客户端分页，server服务端分页（*）
+                        maintainSelected: true,
+                        pageNumber: 1, //初始化加载第一页，默认第一页,并记录
+                        pageSize: 10, //每页的记录行数（*）
+                        pageList: [10, 25, 50, 100, 'All'], //可供选择的每页的行数（*）
+                        search: true, //是否显示表格搜索
+                        strictSearch: false, //设置为 true启用全匹配搜索，否则为模糊搜索。
+                        trimOnSearch: true, //设置为 true 将自动去掉搜索字符的前后空格。
+                        showPaginationSwitch: false,
+                        showColumns: true, //是否显示所有的列（选择显示的列）
+                        showHeader: true, //是否显示列头。
+                        showFooter: false, //是否显示列脚。
+                        showRefresh: true, //是否显示刷新按钮
+                        buttonsAlign: "right", //按钮位置
+                        singleSelect: true, //设置 true 将禁止多选。
+                        clickToSelect: true, //是否启用点击选中行
+                        uniqueId: "stockCountNo", //每一行的唯一标识，一般为主键列
+                        onCheck: function (row) {
+                        },
+                        queryParams: function (params) {
+                            return {
+                                limit: params.limit,    //页面大小
+                                offset: params.offset,  //页码
+                                sort: params.sort,      //排序列名
+                                order: params.order,    //排序命令（desc，asc）
+                                search: params.search,
+                                storeId: '@ViewData["currentStoreId"]'
+                            };
+                        },
+                        columns: columns
+                    });
                 },
                 searchL: function () {
                     $("#bootstraptable").bootstrapTable('refresh');
-                }, 
-                countL: function (val) { 
                 },
-                countallL: function (val) {
-                    var _self = this;
-                    var index = layer.confirm("您确定要盘库吗？", { btn: ["确定", "取消"] }, function () {
-                        var data = {
-                            inventoryBoxId: val,
-                        };
-                        yui.$axiospostform('/InventoryBox/DoInventoryBoxOut', data)
-                            .then(function (response) {
-                                if (response.data.isSccuess) {
-                                    layer.msg(response.data.message, { icon: 1, time: 1000 });
-                                } else {
-                                    layer.msg(response.data.message || errorMsg, { icon: 5 });
-                                }
-                                _self.searchL();
-                                layer.close(index);
-                            })
-                            .catch(function (error) {
-                                layer.close(index);
-                            });
-                    });
+                addPlanL: function (val) {
+                    var idx = layer.open({
+                        type: 2, area: ['1000px', '800px'],
+                        fix: false, maxmin: true, shade: 0.4, title: "添加盘库计划",
+                        content: "/StockCount/AddPlan?storeId=@ViewData["currentStoreId"]",
+                        cancel: function () {
+                            $("#bootstraptable").bootstrapTable('refresh');
+                        }
+                    }); 
                 },
-                BackL: function (val) {
-                    yui.layershow("料箱归库操作", "/InventoryBox/BoxBack?storeId=@ViewData["currentStoreId"]&inventoryBoxId=" + val, 1000, 800);
+                editPlanL: function (val) {
                 },
+                deletePlanL: function (val) {
+                },
+                doStockCountL: function (stockCountNo) {
+                }
             }
         });
     </script>

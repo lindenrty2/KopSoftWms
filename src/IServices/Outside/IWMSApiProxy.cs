@@ -210,6 +210,31 @@ namespace IServices.Outside
         Task<RouteData<OutsideInventoryRecordDto[]>> QueryInventoryRecord(long? reservoirAreaId, long? storageRackId, long? inventoryBoxId, long? materialId, int pageIndex, int pageSize, string search, string[] order, string datemin, string datemax);
 
 
+        /// <summary>
+        /// 获取入库列表
+        /// </summary>
+        /// <param name="offset"></param>
+        /// <param name="limit"></param>
+        /// <param name="search"></param>
+        /// <param name="v"></param>
+        /// <param name="datemin"></param>
+        /// <param name="datemax"></param>
+        /// <returns></returns>
+        [HttpGet("/StockCount/List")]
+        Task<RouteData<Wms_stockcount[]>> QueryStockCountList(StockCountStatus? stockInStatus, int pageIndex, int pageSize, string search, string[] order, string datemin, string datemax);
+
+        /// <summary>
+        /// 获取入库列表
+        /// </summary>
+        /// <param name="offset"></param>
+        /// <param name="limit"></param>
+        /// <param name="search"></param>
+        /// <param name="v"></param>
+        /// <param name="datemin"></param>
+        /// <param name="datemax"></param>
+        /// <returns></returns>
+        [HttpGet("/StockCount/{stockCountNo}")]
+        Task<RouteData<Wms_stockcount>> QueryStockCount(string stockCountNo);
 
 
     }

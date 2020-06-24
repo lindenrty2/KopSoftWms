@@ -342,4 +342,26 @@ namespace YL.Utils.Pub
         StockOutAndLevel = 4,
     }
 
+
+    /// <summary>
+    /// 盘库状态
+    /// </summary>
+    public enum StockCountStatus : int
+    {
+        [Description("任务取消")]
+        task_canceled = -1,
+
+        [Description("任务创建中")]
+        initial = 1,
+
+        [Description("任务确认")]
+        task_confirm = 2,
+
+        [Description("任务进行中")]
+        task_working = 3,
+
+        [Description("任务完成")]
+        task_finish = 4,
+    }
+
 }

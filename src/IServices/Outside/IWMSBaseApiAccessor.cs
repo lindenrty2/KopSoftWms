@@ -196,6 +196,31 @@ namespace IServices.Outside
         /// <returns></returns> 
         Task<RouteData<OutsideInventoryRecordDto[]>> QueryInventoryRecord(long? reservoirAreaId, long? storageRackId, long? inventoryBoxId, long? materialId, int pageIndex, int pageSize, string search, string[] order, string datemin, string datemax);
 
+        /// <summary>
+        /// 获取盘库列表
+        /// </summary>
+        /// <param name="stockCountStatus"></param>
+        /// <param name="pageIndex"></param>
+        /// <param name="pageSize"></param>
+        /// <param name="search"></param>
+        /// <param name="order"></param>
+        /// <param name="datemin"></param>
+        /// <param name="datemax"></param>
+        /// <returns></returns>
+        Task<RouteData<Wms_stockcount[]>> QueryStockCountList (StockCountStatus? stockCountStatus, int pageIndex, int pageSize, string search, string[] order, string datemin, string datemax);
+
+        /// <summary>
+        /// 获取盘库列表
+        /// </summary>
+        /// <param name="stockCountStatus"></param>
+        /// <param name="pageIndex"></param>
+        /// <param name="pageSize"></param>
+        /// <param name="search"></param>
+        /// <param name="order"></param>
+        /// <param name="datemin"></param>
+        /// <param name="datemax"></param>
+        /// <returns></returns>
+        Task<RouteData<Wms_stockcount>> QueryStockCount(string stockCountNo);
 
     }
 

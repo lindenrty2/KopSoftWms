@@ -102,7 +102,7 @@
                         { field: 'UName', align: 'center', title: '修改人', sortable: false },
                         { field: 'ModifiedDate', title: '修改时间', align: 'center', sortable: true }
                     ];
-                    yui.table("bootstraptable", "/Material/List", obj, "POST", "StorageRackId");
+                    yui.table("bootstraptable", "/Material/List", obj, "POST", "MaterialNo");
                 },
                 showL: function () {
                     yui.layershow("添加物料", "/Material/Add?storeId=@ViewData["currentStoreId"]", 550, 600);
