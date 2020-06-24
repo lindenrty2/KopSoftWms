@@ -11,17 +11,19 @@
 </div>
 
 @section scripts{
+    <script src="~/js/common.wms.js?v=20200615"></script>
     <script src="~/js/bootstrap-select.min.js"></script>
     <script src="~/js/defaults-zh_CN.min.js"></script>
-    <script> 
-         
+    <script>
+
+
         var app = new Vue({
             el: "#app",
             data: {
                 InventoryBoxId: "@Model.InventoryBoxIdStr",
                 InventoryBoxNo:"@Model.InventoryBoxNo",
                 InventoryBoxName:"@Model.InventoryBoxName",
-                urlM: '', 
+                urlM: '',
                 storeId: '@ViewData["currentStoreId"]'
             },
             mounted: function () {
@@ -30,78 +32,31 @@
                     _self.$refs.storeId = '@ViewData["currentStoreId"]';
                     _self.$refs.datemin = "1900-01-01";
                     _self.$refs.datemax = "2099-01-01";
-                    var obj = [{
-                        checkbox: true,             //是否显示复选框
-                        visible: true
-                    },
-                    {
-                        field: 'Position',
-                        title: '格号',
-                        visible: false
-                    },
-                    {
-                        field: 'MaterialNo',
-                        title: '物料编号',
-                        align: 'center',
-                        sortable: true
-                    }, 
-                    {
-                        field: 'MaterialOnlyId',
-                        title: '物料唯一编号',
-                        align: 'center',
-                        sortable: true
-                    },
-                    {
-                        field: 'MaterialName',
-                        title: '物料编号',
-                        align: 'center',
-                        sortable: true
-                    }, 
-                    {
-                        field: 'OrderNo',
-                        title: '生产令号',
-                        align: 'center',
-                        sortable: true
-                    },
-                    {
-                        field: 'IsLocked',
-                        title: '状态',
-                        align: 'center',
-                        sortable: true,
-                        formatter: function (value, row, index) {
-                            if (value) {
-                                return '<span class="label label-danger radius">锁定</span>';
+                    var obj = [
+                        { checkbox: true, visible: true },
+                        { field: 'Position', title: '格号', visible: true },
+                        { field: 'MaterialNo', title: '物料编号', align: 'center', sortable: true },
+                        { field: 'MaterialOnlyId', title: '物料唯一编号', align: 'center', sortable: true },
+                        { field: 'MaterialName', title: '物料编号', align: 'center', sortable: true },
+                        { field: 'OrderNo', title: '生产令号', align: 'center', sortable: true },
+                        {
+                            field: 'IsLocked', title: '状态', align: 'center', sortable: true, formatter: function (value, row, index) {
+                                if (value) {
+                                    return '<span class="label label-danger radius">锁定</span>';
+                                }
+                                else {
+                                    return '<span class="label label-default radius">正常</span>';
+                                }
                             }
-                            else { 
-                                return '<span class="label label-default radius">正常</span>';
-                            }
-                        }
-                    },
-                    {
-                        field: 'Qty',
-                        title: '数量',
-                        align: 'center',
-                        sortable: true
-                    },
-                    {
-                        field: 'UserName',
-                        title: '更新者',
-                        align: 'center',
-                        sortable: true
-                    },
-                    {
-                        field: 'ModifiedDate',
-                        title: '最后更新时间',
-                        align: 'center',
-                        sortable: true,
-                        formatter: function (value, row, index) {
-                            return _self.jsonDateFormat(value);
-                        }
-                    }];             
+                        },
+                        { field: 'Qty', title: '数量', align: 'center', sortable: true },
+                        { field: 'UserName', title: '更新者', align: 'center', sortable: true },
+                        { field: 'ModifiedDate', title: '最后更新时间', align: 'center', sortable: true, formatter: DateTimeFormatter }
+                    ];
                     var qParams = {
                         Id: "@Model.InventoryBoxIdStr"
                     };
-                    yui.table("bootstraptable", "/InventoryBox/DetailList", obj, "GET", "InventoryId", true, qParams); 
+                    yui.table("bootstraptable", "/InventoryBox/DetailList", obj, "GET", "InventoryId", true, qParams);
                 })
             },
             computed: {

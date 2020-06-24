@@ -1732,7 +1732,7 @@ namespace Services.Outside
             int count = inventories.Count(); //料格使用数量
             foreach (Wms_StockMaterialDetailDto material in materials)
             {
-                if (inventories.Any(x => x.Position == material.Position))
+                if (inventories.Any(x => x.Position == material.Position && x.MaterialId?.ToString() != material.MaterialId))
                 {
                     return YL.Core.Dto.RouteData.From(PubMessages.E2019_STOCKIN_POSITION_USED, $"料格:{material.Position}");
                 }

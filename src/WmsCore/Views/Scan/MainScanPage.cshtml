@@ -77,17 +77,18 @@
             <div class="group-body">
                 <el-table :data="tableData"
                           ref="table"
-                          tooltip-effect="dark" 
+                          tooltip-effect="dark"
                           border
                           stripe>
 
                     <el-table-column label="序号" type="index" width="60" align="center"></el-table-column>
                     <el-table-column label="物料编号" prop="MaterialNo" align="center"></el-table-column>
+                    <el-table-column label="物料唯一Id" prop="MaterialOnlyId" align="center"></el-table-column>
                     <el-table-column label="物料名" prop="MaterialName" align="center"></el-table-column>
                     <el-table-column label="现有数" prop="NowQty" align="center"></el-table-column>
                     <el-table-column label="计划数" prop="PlanQty" align="center"></el-table-column>
                     <el-table-column label="已操作数" prop="ActQty" align="center"></el-table-column>
-                    <el-table-column label="物料位置" prop="Position" align="center" >
+                    <el-table-column label="物料位置" prop="Position" align="center">
                         <template slot-scope="scope">
                             <table v-if="InventoryBox.size==1" class="inventory_position_table tablesize_1">
                                 <tr>
@@ -112,8 +113,8 @@
                                     <td v-bind:class="{'selected':scope.row.Position==1}" @@click='_self.positionclick($event,scope,1);'><span>1</span></td>
                                     <td v-bind:class="{'selected':scope.row.Position==2}" @@click='_self.positionclick($event,scope,2);'><span>2</span></td>
                                     <td v-bind:class="{'selected':scope.row.Position==3}" @@click='_self.positionclick($event,scope,3);'><span>3</span></td>
-                                </tr>                                                 
-                                <tr>                                                  
+                                </tr>
+                                <tr>
                                     <td v-bind:class="{'selected':scope.row.Position==4}" @@click='_self.positionclick($event,scope,4);'><span>4</span></td>
                                     <td v-bind:class="{'selected':scope.row.Position==5}" @@click='_self.positionclick($event,scope,5);'><span>5</span></td>
                                     <td v-bind:class="{'selected':scope.row.Position==6}" @@click='_self.positionclick($event,scope,6);'><span>6</span></td>
@@ -325,34 +326,58 @@
                         layer.msg("料箱中没有该物料", { icon: 2 });
                         return;
                     }
-                    if (_self.InventoryBox.size < (_self.InventoryDetails.length + _self.NewMaterialCount + 1)) {
-                        layer.msg("料箱无法装载更多物料", { icon: 2 });
-                        return;
-
-                    }
+                    //if (_self.InventoryBox.size < (_self.InventoryDetails.length + _self.NewMaterialCount + 1)) {
+                    //    layer.msg("料箱无法装载更多物料", { icon: 2 });
+                    //    return; 
+                    //}
                     if (this.StockDetails != null) {
                         for (var i = 0; i < this.StockDetails.length; i++) {
                             var stockDetail = this.StockDetails[i];
-                            if (stockDetail.materialNo != no) {
+                            if (stockDetail.materialNo != no && stockDetail.materialOnlyId != no) {
                                 continue;
                             }
                             var pos = 1;
+                            var hasPos = false;//是否有可以装载的位置
                             for (pos = 1; pos <= _self.InventoryBox.size; pos++) {
-                                var pass = true;
-                                for (var inventoryDetail in this.InventoryDetails) {
-                                    if (inventoryDetail.Position == pos) {
-                                        pass = false;
-                                        break;
+                                var pass = true; //是否匹配
+                                for (var idx = 0; idx < this.InventoryDetails.length; idx++ ) {
+                                    var inventoryDetail = this.InventoryDetails[idx];
+                                    if (inventoryDetail.inventoryPosition == pos) {
+                                        if (inventoryDetail.materialNo == no && inventoryDetail.materialOnlyId == '') {
+                                            //相同物料编号
+                                        }
+                                        else if (inventoryDetail.materialOnlyId == no) {
+                                            //相同物料唯一Id
+                                        }
+                                        else { 
+                                            pass = false;
+                                            break;
+                                        }
                                     }
                                 }
                                 for (var j = 0; j < this.tableData.length; j++) {
                                     var inventoryDetail = this.tableData[j];
                                     if (inventoryDetail.Position == pos) {
-                                        pass = false;
-                                        break;
+                                        if (inventoryDetail.materialNo == no && inventoryDetail.materialOnlyId == '') {
+                                            //相同物料编号
+                                        }
+                                        else if (inventoryDetail.materialOnlyId == no) {
+                                            //相同物料唯一Id
+                                        }
+                                        else {
+                                            pass = false;
+                                            break;
+                                        }
                                     }
                                 }
-                                if (pass) break;
+                                if (pass) {
+                                    hasPos = true;
+                                    break;
+                                }
+                            }
+                            if (!hasPos) {
+                                layer.msg("料箱无法装载更多物料", { icon: 2 });
+                                return;
                             }
                             var list = {
                                 StockId: stockDetail.stockId,
