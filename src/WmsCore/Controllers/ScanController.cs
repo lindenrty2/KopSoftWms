@@ -46,7 +46,7 @@ namespace WMSCore.Controllers
             RouteData<Wms_reservoirarea[]> reservoirAreaResult = (await wmsAccessor.GetReservoirAreaList(1, 100, null, null, null, null));
             ViewData["reservoirAreaList"] = reservoirAreaResult.Data;
             RouteData<Wms_InventoryBoxMaterialInfo[]> result = await accessor.GetInventoryBoxList(materialNo);
-            Wms_InventoryBoxMaterialInfo last = result.Data.FirstOrDefault();
+            Wms_InventoryBoxMaterialInfo last = result.Data.FirstOrDefault(x => x.InventoryBoxStatus == (int)InventoryBoxStatus.InPosition);
             ViewBag.Data = JsonConvert.SerializeObject(new Wms_InventoryBoxMaterialInfo[] { last });
             return View();
         }
