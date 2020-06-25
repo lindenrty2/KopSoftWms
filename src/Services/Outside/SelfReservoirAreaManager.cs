@@ -172,6 +172,7 @@ namespace Services.Outside
                     continue;
                 }
                 inventory.Qty += inventory.BufferQty;
+                inventory.BufferQty = 0;
                 inventory.ModifiedBy = user.UserId;
                 inventory.ModifiedUser = user.UserName;
                 inventory.ModifiedDate = DateTime.Now;
