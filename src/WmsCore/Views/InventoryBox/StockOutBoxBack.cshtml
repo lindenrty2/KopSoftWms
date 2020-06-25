@@ -84,7 +84,7 @@
             </el-table>
             <div class="box-footer">
                 <div class="pull-right box-tools">
-                    <input v-on:click="DoBack(false,0)" class="btn btn-primary radius" type="button" v-model="submit1">
+                    <input v-on:click="doBack(false,0)" class="btn btn-primary radius" type="button" v-model="submit1">
                     <input v-on:click="okL()" class="btn btn-primary radius" type="button" v-model="submit2">
                 </div>
             </div>
@@ -132,24 +132,38 @@
                         }).catch(function (res) {
                             layer.msg("查询料箱任务发生错误" + res, { icon: 2 });
                         });
-                },
-
+                }, 
                 okL: function () {
+                    if (!this.doCheck()) {
+                        return;
+                    }
                     var _self = this;
                     var index = layer.confirm("您确定要归库吗？", {
                         btn: ["归库左边", "归库右边", "取消"],
                         btn1: function () {
-                            _self.DoBack(true,1);
+                            _self.doBack(true,1);
                         },
                         btn2: function () {
-                            _self.DoBack(true,2);
+                            _self.doBack(true,2);
                         }
                     }
                     );
+                }, 
+                doCheck: function () {
+                    for (var i = 0; i < this.tableData.length; i++) {
+                        var row = this.tableData[i];
+                        if (row.qty > row.planQty - row.complateQty) {
+                            layer.msg("[" + row.materialNo + "]出库数量已大于计划数量", { icon: 2 });
+                            return false;
+                        }
+                    }
+                    return true;
                 },
-                DoBack: function (isback,pos) {
-                    var _self = this;
-
+                doBack: function (isback,pos) {
+                    var _self = this; 
+                    if (!this.doCheck()) {
+                        return;
+                    }
                     var index = layer.load(1, {
                         shade: [0.1, '#fff'] //0.1透明度的白色背景
                     });
