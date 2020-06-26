@@ -197,17 +197,13 @@ namespace IServices.Outside
         Task<RouteData<OutsideInventoryRecordDto[]>> QueryInventoryRecord(long? reservoirAreaId, long? storageRackId, long? inventoryBoxId, long? materialId, int pageIndex, int pageSize, string search, string[] order, string datemin, string datemax);
 
         /// <summary>
-        /// 获取盘库列表
+        /// 下发盘库任务
         /// </summary>
-        /// <param name="stockCountStatus"></param>
-        /// <param name="pageIndex"></param>
-        /// <param name="pageSize"></param>
-        /// <param name="search"></param>
-        /// <param name="order"></param>
-        /// <param name="datemin"></param>
-        /// <param name="datemax"></param>
+        /// <param name="stockCountNo"></param>
+        /// <param name="planDate"></param>
+        /// <param name="materials"></param>
         /// <returns></returns>
-        Task<RouteData<Wms_stockcount[]>> QueryStockCountList (StockCountStatus? stockCountStatus, int pageIndex, int pageSize, string search, string[] order, string datemin, string datemax);
+        Task<RouteData> StockCount(OutsideStockCountRequestDto request);
 
         /// <summary>
         /// 获取盘库列表
@@ -220,7 +216,20 @@ namespace IServices.Outside
         /// <param name="datemin"></param>
         /// <param name="datemax"></param>
         /// <returns></returns>
-        Task<RouteData<Wms_stockcount>> QueryStockCount(string stockCountNo);
+        Task<RouteData<OutsideStockCountDto[]>> QueryStockCountList (StockCountStatus? stockCountStatus, int pageIndex, int pageSize, string search, string[] order, string datemin, string datemax);
+
+        /// <summary>
+        /// 获取盘库列表
+        /// </summary>
+        /// <param name="stockCountStatus"></param>
+        /// <param name="pageIndex"></param>
+        /// <param name="pageSize"></param>
+        /// <param name="search"></param>
+        /// <param name="order"></param>
+        /// <param name="datemin"></param>
+        /// <param name="datemax"></param>
+        /// <returns></returns>
+        Task<RouteData<OutsideStockCountDto>> QueryStockCount(string stockCountNo);
 
     }
 

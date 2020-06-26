@@ -43,6 +43,7 @@
                 <TextBox Grid.Row="0" Grid.Column="1" x:Name="ctlMESAddress" Text="" IsReadOnly="True" />
                 <Label Grid.Row="1" Grid.Column="0" Content="操作" />
                 <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal">
+                    <Button Margin="5" Content="新盘库任务" Click="NewStockCount_Click" />
                     <Button Margin="5" Content="新入库任务" Click="NewStockIn_Click" />
                     <Button Margin="5" Content="新出库任务" Click="NewStockOut_Click" />
                     <Button Margin="5" Content="库存查询" />

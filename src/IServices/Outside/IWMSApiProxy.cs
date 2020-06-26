@@ -208,7 +208,14 @@ namespace IServices.Outside
         /// <returns></returns>
         [HttpGet("InventoryRecord/List/{pageIndex}")]
         Task<RouteData<OutsideInventoryRecordDto[]>> QueryInventoryRecord(long? reservoirAreaId, long? storageRackId, long? inventoryBoxId, long? materialId, int pageIndex, int pageSize, string search, string[] order, string datemin, string datemax);
-
+        
+        /// <summary>
+        /// 下发盘库任务
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPost("/StockCount")]
+        Task<RouteData> StockCount([JsonContent]OutsideStockCountRequestDto request);
 
         /// <summary>
         /// 获取入库列表
@@ -221,7 +228,7 @@ namespace IServices.Outside
         /// <param name="datemax"></param>
         /// <returns></returns>
         [HttpGet("/StockCount/List")]
-        Task<RouteData<Wms_stockcount[]>> QueryStockCountList(StockCountStatus? stockInStatus, int pageIndex, int pageSize, string search, string[] order, string datemin, string datemax);
+        Task<RouteData<OutsideStockCountDto[]>> QueryStockCountList(StockCountStatus? stockInStatus, int pageIndex, int pageSize, string search, string[] order, string datemin, string datemax);
 
         /// <summary>
         /// 获取入库列表
@@ -234,7 +241,7 @@ namespace IServices.Outside
         /// <param name="datemax"></param>
         /// <returns></returns>
         [HttpGet("/StockCount/{stockCountNo}")]
-        Task<RouteData<Wms_stockcount>> QueryStockCount(string stockCountNo);
+        Task<RouteData<OutsideStockCountDto>> QueryStockCount(string stockCountNo);
 
 
     }

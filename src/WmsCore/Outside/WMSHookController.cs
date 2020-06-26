@@ -59,7 +59,7 @@ namespace WMSCore.Outside
         /// <param name="result"></param>
         /// <returns></returns>
         [HttpPost("StockIn/{stockInId}/Status")]
-        public async Task<RouteData> StockInReport(long stockInId,[FromBody]OutsideStockInReportDto result)
+        public async Task<RouteData> StockInReport(long stockInId, [FromBody]OutsideStockInReportDto result)
         {
             try
             {
@@ -145,7 +145,7 @@ namespace WMSCore.Outside
         /// <returns></returns>
         private async Task<RouteData> NofityStockIn(Wms_mestask mesTask)
         {
-         
+
 
             mesTask.ModifiedDate = DateTime.Now;
             mesTask.WorkStatus = MESTaskWorkStatus.WorkComplated;
@@ -160,7 +160,7 @@ namespace WMSCore.Outside
                 foreach (Wms_stockin stockIn in stockIns)
                 {
                     OutsideStockInResponseWarehouse warehouse = warehouseList.FirstOrDefault(x => x.WarehouseId == stockIn.WarehouseId.ToString());
-                    if(warehouse == null)
+                    if (warehouse == null)
                     {
 
                         warehouse = new OutsideStockInResponseWarehouse()
@@ -168,7 +168,7 @@ namespace WMSCore.Outside
                             WarehouseId = stockIn.WarehouseId.ToString(),
                             WarehouseName = "", //TODO
                             WarehousePosition = "",
-                            WarehousingFinishTime = stockIn.ModifiedDate.Value.ToString("yyyy-MM-dd HH:mm:ss"), 
+                            WarehousingFinishTime = stockIn.ModifiedDate.Value.ToString("yyyy-MM-dd HH:mm:ss"),
                         };
                         warehouseList.Add(warehouse);
                     }
@@ -202,11 +202,11 @@ namespace WMSCore.Outside
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "入库完成通知时发生异常"); 
+                _logger.LogError(ex, "入库完成通知时发生异常");
                 //逻辑继续,寻找其它时机重新通知
             }
             mesTask.NotifyStatus = notifyComplate ? MESTaskNotifyStatus.Responsed : MESTaskNotifyStatus.Failed;
-            if(_client.Updateable(mesTask).ExecuteCommand() == 0)
+            if (_client.Updateable(mesTask).ExecuteCommand() == 0)
             {
                 return YL.Core.Dto.RouteData.From(PubMessages.E0002_UPDATE_COUNT_FAIL);
 
@@ -264,7 +264,7 @@ namespace WMSCore.Outside
                     localDetail.Status = detail.Status.ToInt32();
                     localDetail.ModifiedBy = PubConst.InterfaceUserId;
                     localDetail.ModifiedUser = detail.ModifiedBy;
-                    localDetail.ModifiedDate = Convert.ToDateTime(detail.ModifiedDate); 
+                    localDetail.ModifiedDate = Convert.ToDateTime(detail.ModifiedDate);
                     localDetail.Remark = detail.Remark;
                 }
 
@@ -283,7 +283,7 @@ namespace WMSCore.Outside
                     _client.RollbackTran();
                     return YL.Core.Dto.RouteData.From(PubMessages.E0002_UPDATE_COUNT_FAIL);
                 }
-                 
+
                 Wms_stockout[] stockouts = _client.Queryable<Wms_stockout>()
                     .Where(x => x.MesTaskId == mesTask.MesTaskId).ToArray();
 
@@ -333,7 +333,7 @@ namespace WMSCore.Outside
                         {
                             WarehouseId = stockOut.WarehouseId.ToString(),
                             WarehouseName = "", //TODO
-                            WorkAreaName = mesTask.WorkAreaName, 
+                            WorkAreaName = mesTask.WorkAreaName,
                             WarehouseEntryFinishTime = stockOut.ModifiedDate.Value.ToString("yyyy-MM-dd HH:mm:ss"),
                         };
                         warehouseList.Add(warehouse);
@@ -389,6 +389,17 @@ namespace WMSCore.Outside
             }
         }
 
+        /// <summary>
+        /// 盘库任务完成通知
+        /// </summary>
+        /// <param name="result"></param>
+        /// <returns></returns>
+        [HttpPost("StockCount")]
+        public async Task<RouteData> StockCountComplete([FromBody]OutsideStockCountReportDto report)
+        {
+
+            return new RouteData();
+        }
     }
 
 

@@ -60,22 +60,46 @@ namespace KopSoftWms.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> AddPlan(long storeId, long stockCountId)
+        public async Task<IActionResult> StepList(long storeId, string stockCountNo)
         {
             ViewData["currentStoreId"] = storeId; 
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> QueryPlanList(StockCountBootstrapParams bootstrap)
+        public async Task<PageGridData> QueryPlanList(StockCountBootstrapParams bootstrap)
         {
             IWMSBaseApiAccessor baseAccessor = WMSApiManager.GetBaseApiAccessor(bootstrap.storeId.ToString(), _client);
-            ViewBag.ReservoirAreas = await baseAccessor.QueryStockCountList(
+            RouteData<OutsideStockCountDto[]> result = await baseAccessor.QueryStockCountList(
                 bootstrap.StockCountStatus, bootstrap.pageIndex, bootstrap.limit, bootstrap.search,
                 new string[] { bootstrap.sort + " " + bootstrap.order },
                 bootstrap.datemin, bootstrap.datemax
                 );
-            return View();
+            return result.ToGridData();
+        }
+
+        [HttpPost]
+        public async Task<OutsideStockCountMaterial[]> QueryPlanMaterialList(StockCountMaterialBootstrapParams bootstrap)
+        {
+            IWMSBaseApiAccessor baseAccessor = WMSApiManager.GetBaseApiAccessor(bootstrap.storeId.ToString(), _client);
+            RouteData<OutsideStockCountDto> result = await baseAccessor.QueryStockCount(bootstrap.StockCountNo);
+            if (!result.IsSccuess || result.Data == null)
+            {
+                return new OutsideStockCountMaterial[0];
+            }
+            return result.Data.MaterialList;
+        }
+
+        [HttpPost]
+        public async Task<OutsideStockCountStep[]> QueryPlanStepList(StockCountMaterialBootstrapParams bootstrap)
+        {
+            IWMSBaseApiAccessor baseAccessor = WMSApiManager.GetBaseApiAccessor(bootstrap.storeId.ToString(), _client);
+            RouteData<OutsideStockCountDto> result = await baseAccessor.QueryStockCount(bootstrap.StockCountNo);
+            if (!result.IsSccuess || result.Data == null)
+            {
+                return new OutsideStockCountStep[0];
+            }
+            return result.Data.StepList;
         }
     }
 }

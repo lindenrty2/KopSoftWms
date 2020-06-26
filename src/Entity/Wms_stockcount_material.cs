@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Text;
 using SqlSugar;
+using YL.Utils.Pub;
 
 namespace YL.Core.Entity
 {
@@ -23,10 +24,10 @@ namespace YL.Core.Entity
         public long StockCountMaterialId { get; set; }
 
         /// <summary>
-        /// 盘库任务Id
+        /// 盘库任务No
         /// </summary>
         [SugarColumn()]
-        public long StockCountId { get; set; }
+        public string StockCountNo { get; set; }
 
         /// <summary>
         /// 物料Id
@@ -59,20 +60,22 @@ namespace YL.Core.Entity
         public string MaterialTypeName { get; set; }
 
         /// <summary>
-        /// Desc:单位名称
-        /// Default:
-        /// Nullable:True
+        /// 单位名称
         /// </summary>
         [SugarColumn(IsNullable = true)]
         public string UnitName { get; set; }
 
         /// <summary>
-        /// Desc:
-        /// Default:
-        /// Nullable:True
+        /// 预计数量
         /// </summary>
-        [SugarColumn(IsNullable = true)]
-        public int? Status { get; set; }
+        [SugarColumn()]
+        public int ProjectedQty { get; set; }
+
+        /// <summary>
+        /// 盘库数量
+        /// </summary>
+        [SugarColumn()]
+        public int StockCountQty { get; set; }
 
         /// <summary>
         /// Desc:备注
@@ -81,6 +84,13 @@ namespace YL.Core.Entity
         /// </summary>
         [SugarColumn(Length = 255, IsNullable = true)]
         public string Remark { get; set; }
+
+
+        /// <summary>
+        /// 状态
+        /// </summary>
+        [SugarColumn()]
+        public int Status { get; set; } = (int)StockCountStatus.task_confirm;
 
         /// <summary>
         /// 是否被删除

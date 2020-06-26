@@ -209,6 +209,8 @@ namespace YL.Utils.Pub
         StockIn = 1,
         [Description("出库任务")]
         StockOut = 2,
+        [Description("盘库任务")]
+        StockCount = 3,
 
     }
 

@@ -35,6 +35,17 @@ namespace InterfaceMocker.WindowUI
 
         }
 
+        private void NewStockCount_Click(object sender, RoutedEventArgs e)
+        {
+            MesStockCountCreateWindow window = new MesStockCountCreateWindow();
+            if (window.ShowDialog() != true)
+            {
+                return;
+            }
+            TaskItemControl taskControl = new TaskItemControl(new MesStockCountTaskItemViewModel(window.Data));
+            ctlMESTasks.Children.Add(taskControl);
+        }
+
         private void NewStockIn_Click(object sender, RoutedEventArgs e)
         {
             MesStockinCreateWindow window = new MesStockinCreateWindow();

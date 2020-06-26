@@ -6,6 +6,7 @@ using System.Linq;
 using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using WMSService;
 using YL.Core.Dto;
 
@@ -55,8 +56,14 @@ namespace InterfaceMocker.WindowUI
             //        workareaname = _data.WorkAreaName
             //    }
             //};
-            var result = await _mesHook.WarehousingAsync(_data.WarehousingId,_data.WarehousingType,_data.WarehousingTime,_data.ProductionPlanId,_data.BatchPlanId,_data.WorkAreaName,_data.SuppliesKinds.ToString(),_data.SuppliesInfoList);
-            this.Datas.Add(new TaskItemData("发送结果", JsonConvert.SerializeObject(result)));
+            try { 
+                var result = await _mesHook.WarehousingAsync(_data.WarehousingId,_data.WarehousingType,_data.WarehousingTime,_data.ProductionPlanId,_data.BatchPlanId,_data.WorkAreaName,_data.SuppliesKinds.ToString(),_data.SuppliesInfoList);
+                this.Datas.Add(new TaskItemData("发送结果", JsonConvert.SerializeObject(result)));
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         [EventSubscriber]

@@ -1,4 +1,5 @@
 ﻿using IServices.Outside;
+using Newtonsoft.Json;
 using SqlSugar;
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,7 @@ using WMSCore.Outside;
 using YL.Core.Dto;
 using YL.Core.Entity;
 using YL.Utils.Extensions;
+using YL.Utils.Json;
 using YL.Utils.Pub;
 
 namespace Services.Outside
@@ -23,7 +25,7 @@ namespace Services.Outside
         private SysUserDto _userDto;
         private SysUserDto UserDto { get { return _userDto; } }
 
-        public SelfWMSBaseApiAccessor(Wms_warehouse warehouse, SqlSugar.ISqlSugarClient sqlClient,SysUserDto userDto)
+        public SelfWMSBaseApiAccessor(Wms_warehouse warehouse, SqlSugar.ISqlSugarClient sqlClient, SysUserDto userDto)
         {
             _warehouse = warehouse;
             _sqlClient = sqlClient;
@@ -45,10 +47,10 @@ namespace Services.Outside
         }
 
         public async Task<RouteData<Wms_inventorybox[]>> GetInventoryBoxList(
-            long? reservoirAreaId, long? storageRackId,InventoryBoxStatus? status, int pageIndex,int pageSize, string search, string[] order, string datemin, string datemax)
+            long? reservoirAreaId, long? storageRackId, InventoryBoxStatus? status, int pageIndex, int pageSize, string search, string[] order, string datemin, string datemax)
         {
             ISugarQueryable<Wms_inventorybox> query = _sqlClient.Queryable<Wms_inventorybox>();
-            if(reservoirAreaId != null)
+            if (reservoirAreaId != null)
             {
                 query = query.Where(x => x.ReservoirAreaId == reservoirAreaId);
             }
@@ -62,7 +64,7 @@ namespace Services.Outside
             }
             if (!string.IsNullOrWhiteSpace(search))
             {
-                query = query.Where(x => x.InventoryBoxNo.ToString().Contains(search) || x.InventoryBoxName.Contains(search) );
+                query = query.Where(x => x.InventoryBoxNo.ToString().Contains(search) || x.InventoryBoxName.Contains(search));
             }
             DateTime minDate;
             if (!string.IsNullOrWhiteSpace(datemin) && DateTime.TryParse(datemin, out minDate))
@@ -77,7 +79,7 @@ namespace Services.Outside
             query = query.Sort(order);
             //Order
             RefAsync<int> totalCount = new RefAsync<int>();
-            List<Wms_inventorybox> result = await query.ToPageListAsync(pageIndex,pageSize, totalCount); 
+            List<Wms_inventorybox> result = await query.ToPageListAsync(pageIndex, pageSize, totalCount);
             return RouteData<Wms_inventorybox[]>.From(result.ToArray(), totalCount.Value);
         }
 
@@ -97,12 +99,12 @@ namespace Services.Outside
                     MaterialType = x.MaterialTypeName,
                     Unit = x.UnitName
                 }).FirstAsync();
-            return RouteData<Wms_MaterialDto>.From(box); 
+            return RouteData<Wms_MaterialDto>.From(box);
         }
 
         public async Task<RouteData<Wms_MaterialDto[]>> GetMateralList(int pageIndex, int pageSize, string search, string[] order, string datemin, string datemax)
         {
-            ISugarQueryable<Wms_material> query = _sqlClient.Queryable<Wms_material>().Where(x => x.IsDel == DeleteFlag.Normal ); 
+            ISugarQueryable<Wms_material> query = _sqlClient.Queryable<Wms_material>().Where(x => x.IsDel == DeleteFlag.Normal);
             DateTime minDate;
             if (!string.IsNullOrWhiteSpace(search))
             {
@@ -129,8 +131,8 @@ namespace Services.Outside
                   MaterialName = x.MaterialName,
                   MaterialType = x.MaterialTypeName,
                   Unit = x.UnitName
-              }).ToPageListAsync(pageIndex,pageSize,totalCount);
-            
+              }).ToPageListAsync(pageIndex, pageSize, totalCount);
+
             return RouteData<Wms_MaterialDto[]>.From(result.ToArray(), totalCount);
         }
 
@@ -181,7 +183,7 @@ namespace Services.Outside
         public async Task<RouteData<Wms_storagerack[]>> GetStorageRackList(long? reservoirAreaId, StorageRackStatus? status, int pageIndex, int pageSize, string search, string[] order, string datemin, string datemax)
         {
             ISugarQueryable<Wms_storagerack> query = _sqlClient.Queryable<Wms_storagerack>();
-         
+
             if (reservoirAreaId != null)
             {
                 query = query.Where(x => x.ReservoirAreaId == reservoirAreaId);
@@ -213,15 +215,15 @@ namespace Services.Outside
 
         //-------------------------------库存----------------------------------
 
-        public async Task<RouteData<OutsideInventoryDto[]>> QueryInventory(long? reservoirAreaId, long? storageRackId,long? inventoryBoxId, long? materialId, int pageIndex, int pageSize, string search, string[] order, string datemin, string datemax)
+        public async Task<RouteData<OutsideInventoryDto[]>> QueryInventory(long? reservoirAreaId, long? storageRackId, long? inventoryBoxId, long? materialId, int pageIndex, int pageSize, string search, string[] order, string datemin, string datemax)
         {
             ISugarQueryable<Wms_inventory, Wms_inventorybox> query = _sqlClient.Queryable<Wms_inventory, Wms_inventorybox>((i, ib) => new object[] {
                    JoinType.Left,i.InventoryBoxId==ib.InventoryBoxId
                  })
-                 .Where((i, ib) => i.MaterialId != null &&  i.Qty > 0 && i.IsDel == DeleteFlag.Normal);
+                 .Where((i, ib) => i.MaterialId != null && i.Qty > 0 && i.IsDel == DeleteFlag.Normal);
             if (!string.IsNullOrWhiteSpace(search))
             {
-                query = query.Where((i,ib) => i.MaterialNo.ToString().Contains(search) || i.MaterialOnlyId.ToString().Contains(search) || i.MaterialName.Contains(search) || ib.InventoryBoxNo.Contains(search) );
+                query = query.Where((i, ib) => i.MaterialNo.ToString().Contains(search) || i.MaterialOnlyId.ToString().Contains(search) || i.MaterialName.Contains(search) || ib.InventoryBoxNo.Contains(search));
             }
             if (reservoirAreaId != null)
             {
@@ -249,7 +251,7 @@ namespace Services.Outside
             {
                 query = query.Where((i, ib) => i.ModifiedDate <= maxDate);
             }
-            query = query.Sort(order,new string[,] {
+            query = query.Sort(order, new string[,] {
                 {"CREATEDATE", "i.CREATEDATE" },
                 {"CREATEBY", "i.CREATEUSER" },
                 {"MODIFIEDDATE", "i.MODIFIEDDATE" },
@@ -258,27 +260,27 @@ namespace Services.Outside
 
             RefAsync<int> totalCount = new RefAsync<int>();
             List<OutsideInventoryDto> result = await query.Select(
-              (i,ib) => new OutsideInventoryDto
+              (i, ib) => new OutsideInventoryDto
               {
-                    MaterialId = i.MaterialId ?? -1,
-                    MaterialNo = i.MaterialNo,
-                    MaterialOnlyId = i.MaterialOnlyId,
-                    MaterialName = i.MaterialName,
-                    Qty = i.Qty,
-                    IsLocked = i.IsLocked,
-                    StorageRackId = ib.StorageRackId??0,
-                    //StorageRackNo = ib.StorageRackNo,
-                    StorageRackName = ib.StorageRackName, 
-                    InventoryBoxId = ib.InventoryBoxId,
-                    InventoryBoxNo = ib.InventoryBoxNo, 
-                    Floor = ib.Floor?? 0,
-                    Row = ib.Row ?? 0,
-                    Column = ib.Column ?? 0,
-                    Position = i.Position,
-                    CreateBy = i.CreateUser,
-                    CreateDate = i.CreateDate.Value.ToString(PubConst.Format_DateTime),
-                    ModifiedBy = i.ModifiedUser,
-                    ModifiedDate = i.ModifiedDate.Value.ToString(PubConst.Format_DateTime),
+                  MaterialId = i.MaterialId ?? -1,
+                  MaterialNo = i.MaterialNo,
+                  MaterialOnlyId = i.MaterialOnlyId,
+                  MaterialName = i.MaterialName,
+                  Qty = i.Qty,
+                  IsLocked = i.IsLocked,
+                  StorageRackId = ib.StorageRackId ?? 0,
+                  //StorageRackNo = ib.StorageRackNo,
+                  StorageRackName = ib.StorageRackName,
+                  InventoryBoxId = ib.InventoryBoxId,
+                  InventoryBoxNo = ib.InventoryBoxNo,
+                  Floor = ib.Floor ?? 0,
+                  Row = ib.Row ?? 0,
+                  Column = ib.Column ?? 0,
+                  Position = i.Position,
+                  CreateBy = i.CreateUser,
+                  CreateDate = i.CreateDate.Value.ToString(PubConst.Format_DateTime),
+                  ModifiedBy = i.ModifiedUser,
+                  ModifiedDate = i.ModifiedDate.Value.ToString(PubConst.Format_DateTime),
               })
               .ToPageListAsync(pageIndex, pageSize, totalCount);
             return RouteData<OutsideInventoryDto[]>.From(result.ToArray(), totalCount.Value);
@@ -315,7 +317,7 @@ namespace Services.Outside
                   MaterialId = x.MaterialId,
                   MaterialNo = x.MaterialNo,
                   MaterialOnlyId = x.MaterialOnlyId,
-                  MaterialName = x.MaterialName, 
+                  MaterialName = x.MaterialName,
                   Qty = x.Qty,
                   AfterQty = x.AfterQty,
                   InventoryBoxId = x.InventoryBoxId,
@@ -389,7 +391,7 @@ namespace Services.Outside
                 {
                     return RouteData<Wms_stockin[]>.From(materialResult);
                 }
-                Wms_material material = materialResult.Data; 
+                Wms_material material = materialResult.Data;
 
                 Wms_stockindetail detail = new Wms_stockindetail()
                 {
@@ -501,12 +503,12 @@ namespace Services.Outside
                     MaterialOnlyId = stockInDetail.MaterialOnlyId,
                     PlanInQty = stockInDetail.PlanInQty,
                     ActInQty = stockInDetail.ActInQty,
-                    Remark = stockInDetail.Remark, 
+                    Remark = stockInDetail.Remark,
                     CreateBy = stockInDetail.CreateUser,
                     CreateDate = stockInDetail.CreateDate.Value.ToString(PubConst.Format_DateTime),
                     ModifiedBy = stockInDetail.ModifiedUser,
                     ModifiedDate = stockInDetail.ModifiedDate.Value.ToString(PubConst.Format_DateTime),
-                    
+
                     Status = (StockInStatus)stockInDetail.Status
                 };
                 details.Add(detail);
@@ -636,7 +638,7 @@ namespace Services.Outside
                     x => new OutsideStockOutRequestResult { StockOutId = x.StockOutId, StockOutNo = x.StockOutNo }
                     ).ToArray()
                 );
-        } 
+        }
 
         private async Task<RouteData<Wms_stockout[]>> CreateWMSStockout(OutsideStockOutRequestDto request)
         {
@@ -679,7 +681,7 @@ namespace Services.Outside
                         ModifiedBy = PubConst.InterfaceUserId,
                         ModifiedUser = PubConst.InterfaceUserName,
                         ModifiedDate = DateTime.Now,
-                    }; ;                    stockOutList.Add(stockout);
+                    }; ; stockOutList.Add(stockout);
                 }
 
                 Wms_stockoutdetail detail = new Wms_stockoutdetail()
@@ -708,11 +710,11 @@ namespace Services.Outside
             }
             try
             {
-                if(_sqlClient.Insertable(stockOutList).ExecuteCommand() == 0)
+                if (_sqlClient.Insertable(stockOutList).ExecuteCommand() == 0)
                 {
                     throw new Exception("stockOutList更新失败");
                 }
-                if(_sqlClient.Insertable(stockOutDetailList).ExecuteCommand() == 0)
+                if (_sqlClient.Insertable(stockOutDetailList).ExecuteCommand() == 0)
                 {
                     throw new Exception("stockOutDetailList更新失败");
                 }
@@ -724,7 +726,7 @@ namespace Services.Outside
             }
 
         }
-         
+
         private async Task<RouteData<Wms_material>> GetMaterial(Wms_MaterialInventoryDto materialDto, bool autoCreate)
         {
             Wms_material material = null;
@@ -754,7 +756,7 @@ namespace Services.Outside
                 if (unitDict == null)
                 {
                     return RouteData<Wms_material>.From(PubMessages.E1003_UNIT_NOTFOUND);
-                } 
+                }
 
                 material = new Wms_material()
                 {
@@ -790,7 +792,93 @@ namespace Services.Outside
 
         //-------------------------------盘库----------------------------------
 
-        public async Task<RouteData<Wms_stockcount[]>> QueryStockCountList(StockCountStatus? stockCountStatus, int pageIndex, int pageSize, string search, string[] order, string datemin, string datemax)
+        /// <summary>
+        /// 下发盘库任务
+        /// </summary>
+        /// <param name="stockCountNo"></param>
+        /// <param name="planDate"></param>
+        /// <param name="materials"></param>
+        /// <returns></returns>
+        public async Task<RouteData> StockCount(OutsideStockCountRequestDto request)
+        {
+            try
+            {
+                _sqlClient.Ado.BeginTran();
+                Wms_stockcount stockcount = new Wms_stockcount()
+                { 
+                    StockCountNo = request.StockCountNo,
+                    StockCountDate = request.PlanDate.SerialNumberToDateTime(),
+                    MesTaskId = request.MesTaskId,
+                    WarehouseId = this.Warehouse.WarehouseId,
+                    StepTotalCount = null,
+                    StepFinishCount = null,
+                    MaterialCount = request.MaterialList.Length,
+                    Status = (int)StockCountStatus.task_confirm,
+                    IsDel = DeleteFlag.Normal,
+                    CreateBy = PubConst.InterfaceUserId,
+                    CreateUser = PubConst.InterfaceUserName,
+                    CreateDate = DateTime.Now,
+                    ModifiedBy = PubConst.InterfaceUserId,
+                    ModifiedUser = PubConst.InterfaceUserName,
+                    ModifiedDate = DateTime.Now
+                };
+
+                List<Wms_stockcount_material> materialList = new List<Wms_stockcount_material>();
+                foreach (OutsideStockCountMaterial om in request.MaterialList)
+                {
+                    string materialOnlyId = om.MaterialOnlyId ?? "";
+                    Wms_material material = await _sqlClient.Queryable<Wms_material>().FirstAsync(
+                        x => x.MaterialNo == om.MaterialNo && x.MaterialOnlyId == materialOnlyId);
+                    if(material == null)
+                    {
+                        return RouteData.From(PubMessages.E1005_MATERIALNO_NOTFOUND);
+                    }
+                    Wms_stockcount_material sm = new Wms_stockcount_material()
+                    {
+                        StockCountMaterialId = PubId.SnowflakeId, 
+                        StockCountNo = stockcount.StockCountNo,
+                        MaterialId = material.MaterialId,
+                        MaterialNo = material.MaterialNo,
+                        MaterialName = material.MaterialName,
+                        MaterialOnlyId = material.MaterialOnlyId,
+                        MaterialTypeName = material.MaterialTypeName,
+                        UnitName = material.UnitName,
+                        ProjectedQty = 0,
+                        StockCountQty = 0,
+                        Status = (int)StockCountStatus.task_confirm,
+                        IsDel = DeleteFlag.Normal,
+                        CreateBy = PubConst.InterfaceUserId,
+                        CreateUser = PubConst.InterfaceUserName,
+                        CreateDate = DateTime.Now,
+                        ModifiedBy = PubConst.InterfaceUserId,
+                        ModifiedUser = PubConst.InterfaceUserName,
+                        ModifiedDate = DateTime.Now
+                    };
+                    materialList.Add(sm);
+                }
+
+                if(_sqlClient.Insertable(stockcount).ExecuteCommand() == 0)
+                {
+                    _sqlClient.Ado.RollbackTran();
+                    return RouteData.From(PubMessages.E0002_UPDATE_COUNT_FAIL,"盘库任务添加失败");
+                }
+                if (_sqlClient.Insertable(materialList).ExecuteCommand() == 0)
+                {
+                    _sqlClient.Ado.RollbackTran();
+                    return RouteData.From(PubMessages.E0002_UPDATE_COUNT_FAIL, "盘库物料添加失败"); 
+                } 
+                _sqlClient.Ado.CommitTran();
+                return new RouteData();
+            }
+            catch(Exception ex)
+            {
+                _sqlClient.Ado.RollbackTran();
+                return RouteData.From(-1, ex.Message);
+            }
+        }
+         
+
+        public async Task<RouteData<OutsideStockCountDto[]>> QueryStockCountList(StockCountStatus? stockCountStatus, int pageIndex, int pageSize, string search, string[] order, string datemin, string datemax)
         {
             var query = _sqlClient.Queryable<Wms_stockcount>()
               .Where((s) => s.WarehouseId == this.Warehouse.WarehouseId && s.IsDel == 1)
@@ -817,23 +905,40 @@ namespace Services.Outside
             query = query.Sort(order);
             RefAsync<int> totalNumber = 0;
             List<Wms_stockcount> result = await query.ToPageListAsync(pageIndex, pageSize, totalNumber);
-            return RouteData<Wms_stockcount[]>.From(result.ToArray(), totalNumber.Value);
+            OutsideStockCountDto[] datas = result.CastTo<OutsideStockCountDto[]>();
+            return RouteData<OutsideStockCountDto[]>.From(datas, totalNumber.Value);
         }
 
-        public async Task<RouteData<Wms_stockcount>> QueryStockCount(string stockCountNo)
+        public async Task<RouteData<OutsideStockCountDto>> QueryStockCount(string stockCountNo)
         {
             var query = _sqlClient.Queryable<Wms_stockcount>()
-               .Where((s) => s.WarehouseId == this.Warehouse.WarehouseId && s.IsDel == 1)
-               ;
-
-            if (!string.IsNullOrWhiteSpace(stockCountNo))
-            {
-                query.Where((s) => s.StockCountNo == stockCountNo);
-            } 
+               .Where((x) => x.WarehouseId == this.Warehouse.WarehouseId 
+                   && x.StockCountNo == stockCountNo 
+                   && x.IsDel == DeleteFlag.Normal
+                   )
+               ;  
             
             RefAsync<int> totalNumber = 0;
-            Wms_stockcount result = await query.FirstAsync();
-            return RouteData<Wms_stockcount>.From(result);
+            Wms_stockcount data = await query.FirstAsync();
+            if(data == null)
+            {
+                return null;
+            }
+
+            var materials = _sqlClient.Queryable<Wms_stockcount_material>().Where( (x) =>
+                x.StockCountNo == stockCountNo
+                && x.IsDel == DeleteFlag.Normal
+            ).ToArray();
+            var steps = _sqlClient.Queryable<Wms_stockcount_step>().Where((x) =>
+               x.StockCountNo == stockCountNo
+               && x.IsDel == DeleteFlag.Normal
+            ).ToArray();
+
+            OutsideStockCountDto result = data.CastTo<OutsideStockCountDto>();
+            result.MaterialList = materials.CastTo<OutsideStockCountMaterial[]>();
+            result.StepList = materials.CastTo<OutsideStockCountStep[]>();
+             
+            return RouteData<OutsideStockCountDto>.From(result);
         }
 
         public void Dispose()

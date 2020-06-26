@@ -157,12 +157,17 @@ namespace WMSCore.Outside
             return _apiProxy.QueryStockInList(stockInType, stockInStatus, pageIndex, pageSize, search, order, datemin, datemax);
         }
 
-        public Task<RouteData<Wms_stockcount[]>> QueryStockCountList(StockCountStatus? stockCountStatus, int pageIndex, int pageSize, string search, string[] order, string datemin, string datemax)
+        public Task<RouteData> StockCount(OutsideStockCountRequestDto request)
+        {
+            return _apiProxy.StockCount(request);
+        }
+
+        public Task<RouteData<OutsideStockCountDto[]>> QueryStockCountList(StockCountStatus? stockCountStatus, int pageIndex, int pageSize, string search, string[] order, string datemin, string datemax)
         {
             return _apiProxy.QueryStockCountList(stockCountStatus, pageIndex, pageSize, search, order, datemin, datemax);
         }
 
-        public Task<RouteData<Wms_stockcount>> QueryStockCount(string stockCountNo)
+        public Task<RouteData<OutsideStockCountDto>> QueryStockCount(string stockCountNo)
         {
             return _apiProxy.QueryStockCount(stockCountNo);
         }
@@ -171,5 +176,6 @@ namespace WMSCore.Outside
         {
             _apiProxy = null;
         }
+
     }
 }

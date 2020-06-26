@@ -17,17 +17,9 @@ namespace YL.Core.Entity
         }
 
         /// <summary>
-        /// Desc:
-        /// Default:
-        /// Nullable:False
-        /// </summary>
-        [SugarColumn(ColumnName = "Id", IsPrimaryKey = true, IsIdentity = true)]
-        public long StockCountId { get; set; }
-
-        /// <summary>
         /// 盘库编号
         /// </summary>
-        [SugarColumn(Length = 32, IsNullable = true/*, IsIdentity = true*/)]
+        [SugarColumn(Length = 32, IsNullable = true, IsPrimaryKey = true)]
         public string StockCountNo { get; set; }
 
         /// <summary>

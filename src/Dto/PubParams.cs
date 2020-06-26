@@ -82,7 +82,19 @@ namespace YL.Core.Dto
         /// </summary>
         public class StockCountBootstrapParams : BootstrapParams
         {
-            public StockCountStatus StockCountStatus { get; set; }
+            public StockCountStatus? StockCountStatus { get; set; }
+        }
+
+        public class StockCountMaterialBootstrapParams : BootstrapParams
+        {
+            public string StockCountNo { get; set; }
+            public StockCountStatus? StockCountStatus { get; set; }
+        }
+
+        public class StockCountStepBootstrapParams : BootstrapParams
+        {
+            public string StockCountNo { get; set; }
+            public StockCountStatus? StockCountStatus { get; set; }
         }
 
         public class StatusBootstrapParams : BootstrapParams

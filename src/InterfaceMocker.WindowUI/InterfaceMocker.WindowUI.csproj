@@ -27,6 +27,7 @@
   </ItemGroup>
   
   <ItemGroup>
+    <None Remove="MesStockCountCreateWindow.xaml" />
     <None Remove="MesStockinCreateWindow.xaml" />
     <None Remove="MesStockOutCreateWindow.xaml" />
     <None Remove="MesStockoutTaskControl.xaml" />
@@ -43,6 +44,10 @@
   </ItemGroup>
   
   <ItemGroup>
+    <Compile Update="MesStockCountCreateWindow.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>MesStockCountCreateWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Update="MesStockOutCreateWindow.xaml.cs">
       <SubType>Code</SubType>
       <DependentUpon>MesStockoutCreateWindow.xaml</DependentUpon>

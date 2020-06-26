@@ -560,7 +560,7 @@ namespace Services.Outside
                 inventoryCount++;
                 InventoryDetailDto newInventory = new InventoryDetailDto()
                 {
-                    InventoryPosition = inventoryCount,
+                    InventoryPosition = raw.Position,
                     MaterialId = raw.MaterialId.ToString(),
                     MaterialNo = raw.MaterialNo,
                     MaterialName = raw.MaterialName,
@@ -1732,7 +1732,8 @@ namespace Services.Outside
             int count = inventories.Count(); //料格使用数量
             foreach (Wms_StockMaterialDetailDto material in materials)
             {
-                if (inventories.Any(x => x.Position == material.Position && x.MaterialId?.ToString() != material.MaterialId))
+                Wms_inventory inventory = inventories.FirstOrDefault(x => x.Position == material.Position );
+                if (inventory!=null && inventory.MaterialId?.ToString() != material.MaterialId)
                 {
                     return YL.Core.Dto.RouteData.From(PubMessages.E2019_STOCKIN_POSITION_USED, $"料格:{material.Position}");
                 }
@@ -1741,7 +1742,8 @@ namespace Services.Outside
                 if (detail.Status == StockInStatus.task_finish.ToByte()) { return YL.Core.Dto.RouteData.From(PubMessages.E2002_STOCKINDETAIL_ALLOW_FINISHED); }
 
                 Wms_stockindetail_box detailbox = await _sqlClient.Queryable<Wms_stockindetail_box>().FirstAsync(
-                    x => x.InventoryBoxTaskId == inventoryBoxTask.InventoryBoxTaskId && x.StockinDetailId == detail.StockInDetailId);
+                    x => x.InventoryBoxTaskId == inventoryBoxTask.InventoryBoxTaskId 
+                    && x.StockinDetailId == detail.StockInDetailId);
                 if (detailbox != null && detailbox.Position == material.Position)
                 {
                     detailbox.Qty += material.Qty;
@@ -1752,12 +1754,16 @@ namespace Services.Outside
                     }
                 }
                 else
-                {
-                    count++;
-                    if (count > inventoryBox.Size)
-                    {
-                        return YL.Core.Dto.RouteData<InventoryDetailDto[]>.From(PubMessages.E1010_INVENTORYBOX_BLOCK_OVERLOAD);
-                    }
+                { 
+                    //if (inventory == null)
+                    //{
+                    //    count++;
+                    //    if (count > inventoryBox.Size)
+                    //    {
+                    //        return YL.Core.Dto.RouteData<InventoryDetailDto[]>.From(PubMessages.E1010_INVENTORYBOX_BLOCK_OVERLOAD);
+                    //    }
+                    //}
+
                     detailbox = new Wms_stockindetail_box()
                     {
                         DetailBoxId = PubId.SnowflakeId,

@@ -23,10 +23,10 @@ namespace YL.Core.Entity
         public long StockCountStepId { get; set; }
 
         /// <summary>
-        /// 盘库任务Id
+        /// 盘库任务No
         /// </summary>
         [SugarColumn()]
-        public long StockCountId { get; set; }
+        public string StockCountNo { get; set; }
 
         /// <summary>
         /// 物料Id
@@ -174,7 +174,7 @@ namespace YL.Core.Entity
         /// 修改人
         /// </summary>
         [SugarColumn(IsNullable = true)]
-        public long? ModifiedBy { get; set; }
+        public long? StockCountBy { get; set; }
 
         /// <summary>
         /// Desc:修改人名
@@ -182,7 +182,7 @@ namespace YL.Core.Entity
         /// Nullable:True
         /// </summary>
         [SugarColumn(Length = 50, IsNullable = true)]
-        public string ModifiedUser { get; set; }
+        public string StockCountUser { get; set; }
 
         /// <summary>
         /// Desc:修改时间
@@ -190,6 +190,6 @@ namespace YL.Core.Entity
         /// Nullable:True
         /// </summary>
         [SugarColumn(IsNullable = true)]
-        public DateTime? ModifiedDate { get; set; }
+        public DateTime? StockCountDate { get; set; }
     }
 }

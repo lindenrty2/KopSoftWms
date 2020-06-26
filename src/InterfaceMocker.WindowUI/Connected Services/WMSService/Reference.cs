@@ -9,7 +9,75 @@
 
 namespace WMSService
 {
+    using System.Runtime.Serialization;
     
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="RouteData", Namespace="http://schemas.datacontract.org/2004/07/YL.Core.Dto")]
+    public partial class RouteData : object
+    {
+        
+        private int CodeField;
+        
+        private string CodeStringField;
+        
+        private bool IsSccuessField;
+        
+        private string MessageField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int Code
+        {
+            get
+            {
+                return this.CodeField;
+            }
+            set
+            {
+                this.CodeField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string CodeString
+        {
+            get
+            {
+                return this.CodeStringField;
+            }
+            set
+            {
+                this.CodeStringField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public bool IsSccuess
+        {
+            get
+            {
+                return this.IsSccuessField;
+            }
+            set
+            {
+                this.IsSccuessField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string Message
+        {
+            get
+            {
+                return this.MessageField;
+            }
+            set
+            {
+                this.MessageField = value;
+            }
+        }
+    }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
     [System.ServiceModel.ServiceContractAttribute(ConfigurationName="WMSService.IMESHookController")]
@@ -39,6 +107,9 @@ namespace WMSService
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IMESHookController/WarehouseEntryStatusEnquiry", ReplyAction="http://tempuri.org/IMESHookController/WarehouseEntryStatusEnquiryResponse")]
         System.Threading.Tasks.Task<string> WarehouseEntryStatusEnquiryAsync(string WarehouseEntryId, string WarehouseEntryType);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IMESHookController/StockCount", ReplyAction="http://tempuri.org/IMESHookController/StockCountResponse")]
+        System.Threading.Tasks.Task<WMSService.RouteData> StockCountAsync(string WarehouseId, string stockCountNo, string planDate, string materialList);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
@@ -129,6 +200,11 @@ namespace WMSService
         public System.Threading.Tasks.Task<string> WarehouseEntryStatusEnquiryAsync(string WarehouseEntryId, string WarehouseEntryType)
         {
             return base.Channel.WarehouseEntryStatusEnquiryAsync(WarehouseEntryId, WarehouseEntryType);
+        }
+        
+        public System.Threading.Tasks.Task<WMSService.RouteData> StockCountAsync(string WarehouseId, string stockCountNo, string planDate, string materialList)
+        {
+            return base.Channel.StockCountAsync(WarehouseId, stockCountNo, planDate, materialList);
         }
         
         public virtual System.Threading.Tasks.Task OpenAsync()

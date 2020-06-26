@@ -42,12 +42,6 @@
                 <div class="box">
                     <div class="box-body">
                         <div id="toolbar" class="btn-group">
-                            <button id="btn_addplan" v-on:click="addPlanL" type="button" class="btn btn-default">
-                                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>添加盘库计划
-                            </button>
-                            <button id="btn_addplan" v-on:click="editPlanL" type="button" class="btn btn-default">
-                                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>编辑盘库计划
-                            </button>
                             <button id="btn_addplan" v-on:click="deletePlanL" type="button" class="btn btn-default">
                                 <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>删除盘库计划
                             </button>
@@ -92,6 +86,7 @@
                         {
                             field: 'status', title: '操作', align: 'center', sortable: false,
                             formatter: function (value, row, index) {
+                                var html = [];
                                 html.push('<button id="doStockCountL" type="button" class="btn btn-link" style="margin-top:-8px;">执行盘库</button>');
                                 return html.join('');
                             },
@@ -101,6 +96,7 @@
                                 }
                             },
                         }, 
+                        { field: 'status', title: '状态', align: 'center', sortable: true, formatter: StockCountStatusFormatter }, 
                         { field: 'stockCountNo', title: '盘库编号', align: 'center', sortable: true }, 
                         { field: 'stockCountDate', title: '盘库日期', align: 'center', sortable: true }, 
                         { field: 'materialCount', title: '盘点物料数量', align: 'center', sortable: true }, 
@@ -111,10 +107,20 @@
                         { field: 'createDate', title: '创建时间', align: 'center',  sortable: true, formatter: DateTimeFormatter },
                         { field: 'modifiedUser', title: '修改人', align: 'center',  sortable: true },
                         { field: 'modifiedDate', title: '修改时间', align: 'center', sortable: true, formatter: DateTimeFormatter }
-                    ];                    
+                    ];    
+                    var subColumns = [
+                        { field: 'status', title: '状态', align: 'center', sortable: true, formatter: StockCountStatusFormatter },
+                        { field: 'materialNo', title: '物料编号', align: 'center', sortable: true },
+                        { field: 'materialOnlyId', title: '物料唯一Id', align: 'center', sortable: true },
+                        { field: 'materialName', title: '物料名称', align: 'center', sortable: true },
+                        { field: 'materialTypeName', title: '物料类型', align: 'center', sortable: true },
+                        { field: 'unitName', title: '单位', align: 'center', sortable: true },
+                        { field: 'projectedQty', title: '预计数量', align: 'center', sortable: true },
+                        { field: 'stockCountQty', title: '盘库数量', align: 'center', sortable: true },
+                    ];
                     $("#bootstraptable").bootstrapTable({
                         url: "/StockCount/QueryPlanList",
-                        method: "Get",
+                        method: "Post",
                         contentType: "application/x-www-form-urlencoded; charset=UTF-8",
                         toolbar: '#toolbar', //工具按钮用哪个容器
                         striped: true, //是否显示行间隔色
@@ -125,7 +131,7 @@
                         pagination: true, //是否显示分页（*）
                         paginationLoop: true,
                         onlyInfoPagination: false,
-                        sidePagination: "client", //分页方式：client客户端分页，server服务端分页（*）
+                        sidePagination: "server", //分页方式：client客户端分页，server服务端分页（*）
                         maintainSelected: true,
                         pageNumber: 1, //初始化加载第一页，默认第一页,并记录
                         pageSize: 10, //每页的记录行数（*）
@@ -141,9 +147,7 @@
                         buttonsAlign: "right", //按钮位置
                         singleSelect: true, //设置 true 将禁止多选。
                         clickToSelect: true, //是否启用点击选中行
-                        uniqueId: "stockCountNo", //每一行的唯一标识，一般为主键列
-                        onCheck: function (row) {
-                        },
+                        uniqueId: "stockCountNo", //每一行的唯一标识，一般为主键列 
                         queryParams: function (params) {
                             return {
                                 limit: params.limit,    //页面大小
@@ -154,27 +158,44 @@
                                 storeId: '@ViewData["currentStoreId"]'
                             };
                         },
-                        columns: columns
+                        columns: columns,
+                        detailView: true, //是否显示父子表
+                        onExpandRow: function (index, row, $detail) {
+                            var parentid = row["materialNo"];
+                            var cur_table = $detail.html('<table></table>').find('table');
+                            $(cur_table).bootstrapTable({
+                                url: "/StockCount/QueryPlanMaterialList?storeId=@ViewData["currentStoreId"]&StockCountNo=" + row.stockCountNo,
+                                method: "Post",
+                                contentType: "application/x-www-form-urlencoded; charset=UTF-8", 
+                                sidePagination: "client",
+                                clickToSelect: true, //是否启用点击选中行
+                                singleSelect: true,
+                                detailView: false,//父子表
+                                uniqueId: "materialNo",
+                                pagination: true, //是否显示分页（*）
+                                pageNumber: 1,
+                                pageSize: 10,
+                                pageList: [10, 25, 50, 100, 'All'],
+                                columns: subColumns, 
+                            });
+                        }
                     });
                 },
                 searchL: function () {
                     $("#bootstraptable").bootstrapTable('refresh');
+                }, 
+                deletePlanL: function (val) {
                 },
-                addPlanL: function (val) {
+                doStockCountL: function (stockCountNo) {
                     var idx = layer.open({
                         type: 2, area: ['1000px', '800px'],
-                        fix: false, maxmin: true, shade: 0.4, title: "添加盘库计划",
-                        content: "/StockCount/AddPlan?storeId=@ViewData["currentStoreId"]",
+                        fix: false, maxmin: true, shade: 0.4, title: "执行盘库",
+                        content: "/StockCount/StepList?storeId=@ViewData["currentStoreId"]&StockCountNo=" + stockCountNo,
                         cancel: function () {
                             $("#bootstraptable").bootstrapTable('refresh');
                         }
                     }); 
-                },
-                editPlanL: function (val) {
-                },
-                deletePlanL: function (val) {
-                },
-                doStockCountL: function (stockCountNo) {
+                    layer.full(idx);
                 }
             }
         });

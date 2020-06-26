@@ -77,6 +77,31 @@ function StockStatusFormatter(value, row, index) {
     }
 }
 
+function StockCountStatusFormatter(value, row, index) {
+    switch (value) {
+        case -1:
+        case 'task_canceled':
+            return '<span class="label label-danger radius">盘库任务取消</span>';
+        case 1:
+        case 'initial':
+            return '<span class="label label-default radius">盘库任务创建中</span>';
+        //return "初始";
+        case 2:
+        case 'task_confirm':
+            return '<span class="label label-info radius">盘库任务确认</span>';
+        //return "审核通过";
+        case 3:
+        case 'task_working':
+            return '<span class="label label-primary radius">盘库中</span>';
+        case 4:
+        case 'task_finish':
+            return '<span class="label label-success radius">盘库完成</span>';
+        // "审核未通过";
+        default:
+            return '<span class="label label-success radius">-</span>';
+    }
+}
+
 function StockInStatusFormatter(value, row, index) {
     switch (value) {
         case -1:
