@@ -19,7 +19,7 @@ namespace YL.Core.Entity
         /// <summary>
         /// 盘库编号
         /// </summary>
-        [SugarColumn(Length = 32, IsNullable = true, IsPrimaryKey = true)]
+        [SugarColumn(Length = 32, IsPrimaryKey = true)]
         public string StockCountNo { get; set; }
 
         /// <summary>

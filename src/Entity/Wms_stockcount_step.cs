@@ -74,61 +74,67 @@ namespace YL.Core.Entity
         /// 盘前数量
         /// </summary>
         [SugarColumn(IsNullable = true)]
-        public string BeforeCount { get; set; }
+        public int BeforeCount { get; set; }
 
         /// <summary>
         /// 盘点数量
         /// </summary>
         [SugarColumn(IsNullable = true)]
-        public string StockCount { get; set; }
+        public int? StockCount { get; set; }
 
         /// <summary>
         /// 差异数量
         /// </summary>
         [SugarColumn(IsNullable = true)]
-        public string DiffCount { get; set; }
+        public int? DiffCount { get; set; }
 
         /// <summary>
         /// 包装数
         /// </summary>
         [SugarColumn(IsNullable = true)]
-        public string PackageCount { get; set; }
+        public int? PackageCount { get; set; }
 
         /// <summary>
         /// 是否标示
         /// </summary>
         [SugarColumn(IsNullable = true)]
-        public string IsMark { get; set; }
+        public bool? IsMark { get; set; }
 
         /// <summary>
         /// 是否混料
         /// </summary>
         [SugarColumn(IsNullable = true)]
-        public string IsMixture { get; set; }
-
-        /// <summary>
-        /// 库位Id
-        /// </summary>
-        [SugarColumn(IsNullable = true)]
-        public long StorageRackId { get; set; }
-
-        /// <summary>
-        /// 库位编号
-        /// </summary>
-        [SugarColumn(IsNullable = true)]
-        public string StorageRackNo { get; set; }
-
-        /// <summary>
-        /// 库位名称
-        /// </summary>
-        [SugarColumn(IsNullable = true)]
-        public string StorageRackName { get; set; }
+        public bool? IsMixture { get; set; }
 
         /// <summary>
         /// 外观良好
         /// </summary>
         [SugarColumn(IsNullable = true)]
-        public string IsExteriorPerfect { get; set; }
+        public bool? IsExteriorPerfect { get; set; }
+
+        /// <summary>
+        /// 库位Id
+        /// </summary>
+        [SugarColumn()]
+        public long InventoryBoxId { get; set; }
+
+        /// <summary>
+        /// 料箱编号
+        /// </summary>
+        [SugarColumn()]
+        public string InventoryBoxNo { get; set; }
+
+        /// <summary>
+        /// 料箱名称
+        /// </summary>
+        [SugarColumn()]
+        public string InventoryBoxName { get; set; }
+
+        /// <summary>
+        /// 料格
+        /// </summary>
+        [SugarColumn()]
+        public int InventoryPosition { get; set; }
 
         /// <summary>
         /// Desc:

@@ -69,6 +69,8 @@ namespace IServices.Outside
         /// <param name="details"></param>
         /// <returns></returns>
         Task<RouteData> DoInventoryBoxBack(StockOperation mode, long inventoryBoxTaskId, InventoryDetailDto[] details, PLCPosition pos);
+       
+
         /// <summary>
         /// 获取WCS任务列表
         /// </summary>
@@ -163,5 +165,12 @@ namespace IServices.Outside
         /// </summary>
         /// <returns></returns>
         Task<RouteData> SetStockOutNofitied();
+
+        /// <summary>
+        /// 开始盘库
+        /// </summary>
+        /// <param name="stockCountNo"></param>
+        /// <returns></returns>
+        Task<RouteData<OutsideStockCountDto>> BeginStockCount(string stockCountNo);
     }
 }

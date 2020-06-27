@@ -259,30 +259,32 @@ namespace Services.Outside
             );
 
             RefAsync<int> totalCount = new RefAsync<int>();
-            List<OutsideInventoryDto> result = await query.Select(
-              (i, ib) => new OutsideInventoryDto
+            IEnumerable<OutsideInventoryDto> result = (await query.Select((i, ib) => 
+                new { Inventory = i,InventoryBox = ib }
+            ).ToPageListAsync(pageIndex, pageSize, totalCount)).Select(
+              (x) => new OutsideInventoryDto
               {
-                  MaterialId = i.MaterialId ?? -1,
-                  MaterialNo = i.MaterialNo,
-                  MaterialOnlyId = i.MaterialOnlyId,
-                  MaterialName = i.MaterialName,
-                  Qty = i.Qty,
-                  IsLocked = i.IsLocked,
-                  StorageRackId = ib.StorageRackId ?? 0,
-                  //StorageRackNo = ib.StorageRackNo,
-                  StorageRackName = ib.StorageRackName,
-                  InventoryBoxId = ib.InventoryBoxId,
-                  InventoryBoxNo = ib.InventoryBoxNo,
-                  Floor = ib.Floor ?? 0,
-                  Row = ib.Row ?? 0,
-                  Column = ib.Column ?? 0,
-                  Position = i.Position,
-                  CreateBy = i.CreateUser,
-                  CreateDate = i.CreateDate.Value.ToString(PubConst.Format_DateTime),
-                  ModifiedBy = i.ModifiedUser,
-                  ModifiedDate = i.ModifiedDate.Value.ToString(PubConst.Format_DateTime),
+                  MaterialId = x.Inventory.MaterialId ?? -1,
+                  MaterialNo = x.Inventory.MaterialNo,
+                  MaterialOnlyId = x.Inventory.MaterialOnlyId,
+                  MaterialName = x.Inventory.MaterialName,
+                  Qty = x.Inventory.Qty,
+                  IsLocked = x.Inventory.IsLocked,
+                  StorageRackId = x.InventoryBox.StorageRackId ?? 0,
+                  //StorageRackNo = x.InventoryBox.StorageRackNo,
+                  StorageRackName = x.InventoryBox.StorageRackName,
+                  InventoryBoxId = x.InventoryBox.InventoryBoxId,
+                  InventoryBoxNo = x.InventoryBox.InventoryBoxNo,
+                  Floor = x.InventoryBox.Floor ?? 0,
+                  Row = x.InventoryBox.Row ?? 0,
+                  Column = x.InventoryBox.Column ?? 0,
+                  Position = x.Inventory.Position,
+                  CreateBy = x.Inventory.CreateUser,
+                  CreateDate = x.Inventory.CreateDate.Value.ToString(PubConst.Format_DateTime),
+                  ModifiedBy = x.Inventory.ModifiedUser,
+                  ModifiedDate = x.Inventory.ModifiedDate.Value.ToString(PubConst.Format_DateTime),
               })
-              .ToPageListAsync(pageIndex, pageSize, totalCount);
+              ;
             return RouteData<OutsideInventoryDto[]>.From(result.ToArray(), totalCount.Value);
         }
 
@@ -310,7 +312,8 @@ namespace Services.Outside
             query = query.Sort(order, new string[,] { { "POSITION", "INVENTORYPOSITION" } });
 
             RefAsync<int> totalCount = new RefAsync<int>();
-            List<OutsideInventoryRecordDto> result = await query.Select(
+
+            IEnumerable<OutsideInventoryRecordDto> result = (await query.ToPageListAsync(pageIndex, pageSize, totalCount)).Select(
               (x) => new OutsideInventoryRecordDto
               {
                   StockNo = x.StockNo,
@@ -326,8 +329,8 @@ namespace Services.Outside
                   CreateBy = x.CreateUser,
                   CreateDate = x.CreateDate.Value.ToString(PubConst.Format_DateTime),
                   ModifiedBy = x.ModifiedUser,
-                  ModifiedDate = x.ModifiedDate.Value.ToString(PubConst.Format_DateTime),
-              }).ToPageListAsync(pageIndex, pageSize, totalCount);
+                  ModifiedDate = x.ModifiedDate?.ToString(PubConst.Format_DateTime),
+              });
 
 
             return RouteData<OutsideInventoryRecordDto[]>.From(result.ToArray(), totalCount.Value);

@@ -1,6 +1,7 @@
 ﻿using SqlSugar;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using YL.Core.Dto;
@@ -160,23 +161,78 @@ namespace Services.Outside
         /// <param name="requestSize"></param>
         /// <param name="pos"></param>
         /// <returns></returns>
-        public static async Task<RouteData> ConfirmInventory(this ISqlSugarClient client, long? inventoryBoxId, SysUserDto user)
+        public static async Task<RouteData> ConfirmInventory(
+            this ISqlSugarClient client,long inventoryBoxTaskId, long inventoryBoxId, SysUserDto user)
         {
             List<Wms_inventory> inventories =
                 await client.Queryable<Wms_inventory>().Where(x => x.InventoryBoxId == inventoryBoxId).ToListAsync();
+
+            //仅查询入库详细,出库物料在归库前已结算归库后无需处理
+            var stockInDetailInfos =
+                await client.Queryable<Wms_stockindetail_box, Wms_stockindetail, Wms_stockin, Wms_inventorybox>(
+                (sidb, sid, si, ib) => new object[] {
+                        JoinType.Left,sidb.StockinDetailId==sid.StockInDetailId ,
+                        JoinType.Left,sid.StockInId==sid.StockInId ,
+                        JoinType.Left,sidb.InventoryBoxId==ib.InventoryBoxId
+                }
+            )
+            .Where((sidb, sid, si, ib) => sidb.InventoryBoxTaskId == inventoryBoxTaskId)
+            .Select((sidb, sid, si, ib) =>
+                new {
+                    si.StockInId,
+                    si.StockInNo,
+                    sid.StockInDetailId,
+                    sidb.InventoryBoxId,
+                    ib.InventoryBoxNo,
+                    sidb.Position
+                }
+            ).ToListAsync();
+
             List<Wms_inventory> updateList = new List<Wms_inventory>();
+            List<Wms_inventoryrecord> updateRecordList = new List<Wms_inventoryrecord>();
             foreach (Wms_inventory inventory in inventories)
             {
                 if (inventory.BufferQty == 0)
                 {
                     continue;
                 }
+                int beforeQty = inventory.Qty;
+                int qty = inventory.BufferQty;
                 inventory.Qty += inventory.BufferQty;
                 inventory.BufferQty = 0;
                 inventory.ModifiedBy = user.UserId;
                 inventory.ModifiedUser = user.UserName;
                 inventory.ModifiedDate = DateTime.Now;
                 updateList.Add(inventory);
+
+                var stockInDetailInfo = stockInDetailInfos.FirstOrDefault(
+                    x => x.InventoryBoxId == inventoryBoxId && x.Position == inventory.Position);
+                if (stockInDetailInfo != null)
+                {
+                    Wms_inventoryrecord record = new Wms_inventoryrecord()
+                    {
+                        InventoryrecordId = PubId.SnowflakeId,
+                        StockInDetailId = stockInDetailInfo.StockInDetailId,
+                        StockOutDetailId = null,
+                        StockNo = stockInDetailInfo.StockInNo,
+                        InventoryBoxId = inventory.InventoryBoxId,
+                        InventoryBoxNo = stockInDetailInfo.InventoryBoxNo,
+                        InventoryId = inventory.InventoryId,
+                        InventoryPosition = inventory.Position,
+                        MaterialId = inventory.MaterialId.Value,
+                        MaterialNo = inventory.MaterialNo,
+                        MaterialOnlyId = inventory.MaterialOnlyId,
+                        MaterialName = inventory.MaterialName,
+                        BeforeQty = beforeQty,
+                        Qty = qty,
+                        AfterQty = inventory.Qty,
+                        CreateBy = user.UserId,
+                        CreateDate = DateTime.Now,
+                        CreateUser = user.UserName,
+                        IsDel = DeleteFlag.Normal
+                    };
+                    updateRecordList.Add(record);
+                }
             }
 
             if (updateList.Count == 0)
@@ -187,6 +243,13 @@ namespace Services.Outside
             {
                 return RouteData.From(PubMessages.E0002_UPDATE_COUNT_FAIL, "");
             }
+
+            if (client.Insertable(updateRecordList).ExecuteCommand() == 0)
+            {
+                return RouteData.From(PubMessages.E1021_INVENTORYRECORD_FAIL);
+            }
+
+
             return new RouteData();
         }
 
@@ -313,7 +376,7 @@ namespace Services.Outside
                     {
                         continue;
                     }
-                    stockout.StockOutStatus = (int)StockOutStatus.task_confirm;
+                    stockout.StockOutStatus = (int)StockOutStatus.task_finish;
                     stockout.ModifiedBy = user.UserId;
                     stockout.ModifiedUser = user.UserName;
                     stockout.ModifiedDate = DateTime.Now;

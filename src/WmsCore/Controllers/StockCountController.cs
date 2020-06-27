@@ -62,8 +62,18 @@ namespace KopSoftWms.Controllers
         [HttpGet]
         public async Task<IActionResult> StepList(long storeId, string stockCountNo)
         {
-            ViewData["currentStoreId"] = storeId; 
-            return View();
+            ViewData["currentStoreId"] = storeId;
+
+            IWMSOperationApiAccessor operationAccessor =
+                WMSApiManager.GetOperationApiAccessor(storeId.ToString(), _client,this.UserDto);
+            RouteData<OutsideStockCountDto> result = await operationAccessor.BeginStockCount(stockCountNo);
+
+            if (!result.IsSccuess)
+            {
+                return Content(result.Message);
+            }
+
+            return View(result.Data);
         }
 
         [HttpPost]
