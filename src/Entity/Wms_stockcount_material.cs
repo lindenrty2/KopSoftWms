@@ -33,7 +33,7 @@ namespace YL.Core.Entity
         /// 物料Id
         /// </summary>
         [SugarColumn()]
-        public long MaterialId { get; set; }
+        public string MaterialId { get; set; }
 
         /// <summary>
         /// 产品唯一编号

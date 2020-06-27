@@ -840,7 +840,7 @@ namespace Services.Outside
                     {
                         StockCountMaterialId = PubId.SnowflakeId, 
                         StockCountNo = stockcount.StockCountNo,
-                        MaterialId = material.MaterialId,
+                        MaterialId = material.MaterialId.ToString(),
                         MaterialNo = material.MaterialNo,
                         MaterialName = material.MaterialName,
                         MaterialOnlyId = material.MaterialOnlyId,
@@ -932,14 +932,34 @@ namespace Services.Outside
                 x.StockCountNo == stockCountNo
                 && x.IsDel == DeleteFlag.Normal
             ).ToArray();
-            var steps = _sqlClient.Queryable<Wms_stockcount_step>().Where((x) =>
-               x.StockCountNo == stockCountNo
-               && x.IsDel == DeleteFlag.Normal
-            ).ToArray();
+            var steps = _sqlClient.Queryable<Wms_stockcount_step,Wms_inventorybox>(
+                (scs, ib) => new object[] {
+                    JoinType.Left,scs.InventoryBoxId==ib.InventoryBoxId
+                }
+            )
+            .Where(
+                (scs, ib) =>
+                    scs.StockCountNo == stockCountNo
+                    && scs.IsDel == DeleteFlag.Normal
+            )
+            .Select(
+                (scs, ib) =>
+                    new {
+                        StockCount = scs,
+                        InventoryBox = ib
+                    }
+            )
+            .ToArray();
 
             OutsideStockCountDto result = data.CastTo<OutsideStockCountDto>();
             result.MaterialList = materials.CastTo<OutsideStockCountMaterial[]>();
-            result.StepList = materials.CastTo<OutsideStockCountStep[]>();
+            result.StepList = steps.Select(
+                x => {
+                    OutsideStockCountStep step = x.StockCount.CastTo<OutsideStockCountStep>();
+                    step.InventoryBoxStatus = x.InventoryBox.Status;
+                    return step;
+                }
+            ).ToArray();
              
             return RouteData<OutsideStockCountDto>.From(result);
         }

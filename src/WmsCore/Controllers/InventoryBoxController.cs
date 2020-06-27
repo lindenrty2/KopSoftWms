@@ -308,10 +308,24 @@ namespace KopSoftWms.Controllers
             IWMSOperationApiAccessor wmsAccessor = WMSApiManager.GetOperationApiAccessor(storeId.ToString(), _client, this.UserDto);
             RouteData result = await wmsAccessor.DoInventoryBoxOut(inventoryBoxId, pos);
 
-            return result;
-
+            return result; 
         }
-        
+
+        /// <summary>
+        /// 出库指定料箱
+        /// </summary>
+        /// <param name="storeId"></param>
+        /// <param name="inventoryBoxId"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<RouteData> DoInventoryBoxsOut(long storeId, long[] inventoryBoxIds, PLCPosition pos)
+        {
+            IWMSOperationApiAccessor wmsAccessor = WMSApiManager.GetOperationApiAccessor(storeId.ToString(), _client, this.UserDto);
+            RouteData result = await wmsAccessor.DoInventoryBoxOut(inventoryBoxIds, pos);
+
+            return result;
+        }
+
         ///// <summary>
         ///// 归库处理
         ///// </summary>

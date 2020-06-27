@@ -313,3 +313,15 @@ function WCSNotifyStatusFormatter(value, row, index) {
 function DateTimeFormatter (value, row, index) {
     return _self.jsonDateFormat(value);
 }
+
+function YesNoFormatter(value, row, index) {
+    if (value == null) {
+        return null;
+    }
+    else if (value == false) { 
+        return "否";
+    }
+    else if (value == true) {
+        return "是";
+    }
+}

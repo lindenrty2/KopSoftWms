@@ -92,8 +92,36 @@ namespace Services.Outside
             {
                 _sqlClient.Ado.RollbackTran();
                 return YL.Core.Dto.RouteData.From(PubMessages.E2005_STOCKIN_BOXOUT_FAIL);
-            }
+            } 
+        }
 
+        /// <summary>
+        /// 出库料箱
+        /// </summary>
+        /// <param name="inventoryBoxId"></param>
+        /// <returns></returns>
+        public async Task<RouteData> DoInventoryBoxOut(long[] inventoryBoxIds, PLCPosition pos)
+        {
+            int failCount = 0;
+            foreach (long inventoryBoxId in inventoryBoxIds)
+            {
+                try
+                {
+                    _sqlClient.Ado.BeginTran();
+                    RouteData result = await DoInventoryBoxOutCore(inventoryBoxId, pos);
+                    if (!result.IsSccuess)
+                    {
+                        failCount++;
+                        _sqlClient.Ado.RollbackTran(); 
+                    }
+                    _sqlClient.Ado.CommitTran(); 
+                }
+                catch (Exception)
+                {
+                    _sqlClient.Ado.RollbackTran(); 
+                }
+            }
+            return RouteData.From(failCount == 0 ? 0 : -1, $"成功：{inventoryBoxIds.Length - failCount},失败：{failCount}");
         }
 
         /// <summary>
@@ -2210,86 +2238,194 @@ namespace Services.Outside
 
         public async Task<RouteData<OutsideStockCountDto>> BeginStockCountCore(string stockCountNo)
         {
-         
-                Wms_stockcount stockCount = await _sqlClient.Queryable<Wms_stockcount>()
-                    .FirstAsync(x => x.StockCountNo == stockCountNo);
-                if (stockCount.Status > (int)StockCountStatus.task_confirm)
-                {
-                    return RouteData<OutsideStockCountDto>.From(stockCount.CastTo<OutsideStockCountDto>());
-                }
-                
-                List<Wms_stockcount_material> materials = await _sqlClient.Queryable<Wms_stockcount_material>()
-                    .Where(x => x.StockCountNo == stockCountNo)
+
+            Wms_stockcount stockCount = await _sqlClient.Queryable<Wms_stockcount>()
+                .FirstAsync(x => x.StockCountNo == stockCountNo);
+            if (stockCount.Status > (int)StockCountStatus.task_confirm)
+            {
+                return RouteData<OutsideStockCountDto>.From(stockCount.CastTo<OutsideStockCountDto>());
+            }
+
+            List<Wms_stockcount_material> materials = await _sqlClient.Queryable<Wms_stockcount_material>()
+                .Where(x => x.StockCountNo == stockCountNo)
+                .ToListAsync();
+
+            List<Wms_stockcount_step> stepList = new List<Wms_stockcount_step>();
+            foreach (Wms_stockcount_material material in materials)
+            {
+                long materialId = Convert.ToInt64(material.MaterialId);
+                var inventories =
+                    await _sqlClient.Queryable<Wms_inventory, Wms_inventorybox>(
+                        (i, ib) => new object[] {
+                                JoinType.Left,i.InventoryBoxId==ib.InventoryBoxId
+                        }
+                    )
+                    .Where((i, ib) => i.MaterialId == materialId)
+                    .Select((i, ib) => new
+                    {
+                        ib.InventoryBoxId,
+                        ib.InventoryBoxNo,
+                        ib.InventoryBoxName,
+                        i.Position,
+                        i.Qty
+                    })
                     .ToListAsync();
 
-                List<Wms_stockcount_step> stepList = new List<Wms_stockcount_step>();
-                foreach (Wms_stockcount_material material in materials)
+                foreach (var inventory in inventories)
                 {
-                    var inventories =
-                        await _sqlClient.Queryable<Wms_inventory, Wms_inventorybox>(
-                            (i, ib) => new object[] {
-                            JoinType.Left,i.InventoryBoxId==ib.InventoryBoxId
-                            }
-                        )
-                        .Where((i, ib) => i.MaterialId == material.MaterialId)
-                        .Select((i, ib) => new
-                        {
-                            ib.InventoryBoxId,
-                            ib.InventoryBoxNo,
-                            ib.InventoryBoxName,
-                            i.Position,
-                            i.Qty
-                        })
-                        .ToListAsync();
-
-                    foreach (var inventory in inventories)
+                    Wms_stockcount_step step = new Wms_stockcount_step()
                     {
-                        Wms_stockcount_step step = new Wms_stockcount_step()
-                        {
-                            StockCountNo = stockCountNo,
-                            MaterialId = material.MaterialId,
-                            MaterialNo = material.MaterialNo,
-                            MaterialOnlyId = material.MaterialOnlyId,
-                            MaterialName = material.MaterialName,
-                            MaterialTypeName = material.MaterialTypeName,
-                            UnitName = material.UnitName,
-                            InventoryBoxId = inventory.InventoryBoxId,
-                            InventoryBoxNo = inventory.InventoryBoxNo,
-                            InventoryBoxName = inventory.InventoryBoxName,
-                            InventoryPosition = inventory.Position,
-                            BrandNo = null,
-                            BeforeCount = inventory.Qty,
-                            StockCount = null,
-                            DiffCount = null,
-                            PackageCount = null,
-                            IsExteriorPerfect = null,
-                            IsMark = null,
-                            IsMixture = null,
-                            IsDel = DeleteFlag.Normal,
-                            Status = (int)StockCountStatus.task_confirm,
-                            CreateBy = _userDto.UserId,
-                            CreateUser = _userDto.UserName,
-                            CreateDate = DateTime.Now,
-                        };
-                        stepList.Add(step);
-                    }
+                        StockCountNo = stockCountNo,
+                        MaterialId = material.MaterialId,
+                        MaterialNo = material.MaterialNo,
+                        MaterialOnlyId = material.MaterialOnlyId,
+                        MaterialName = material.MaterialName,
+                        MaterialTypeName = material.MaterialTypeName,
+                        UnitName = material.UnitName,
+                        InventoryBoxId = inventory.InventoryBoxId,
+                        InventoryBoxNo = inventory.InventoryBoxNo,
+                        InventoryBoxName = inventory.InventoryBoxName,
+                        InventoryPosition = inventory.Position,
+                        BrandNo = null,
+                        BeforeCount = inventory.Qty,
+                        StockCount = null,
+                        DiffCount = null,
+                        PackageCount = null,
+                        IsExteriorPerfect = null,
+                        IsMark = null,
+                        IsMixture = null,
+                        IsDel = DeleteFlag.Normal,
+                        Status = (int)StockCountStatus.task_confirm,
+                        CreateBy = _userDto.UserId,
+                        CreateUser = _userDto.UserName,
+                        CreateDate = DateTime.Now,
+                    };
+                    stepList.Add(step);
                 }
-                stockCount.ModifiedBy = _userDto.UserId;
-                stockCount.ModifiedUser = _userDto.UserName;
-                stockCount.ModifiedDate = DateTime.Now;
-                stockCount.StepTotalCount = stepList.Count;
-                stockCount.Status = (int)StockCountStatus.task_working;
-                if ((await _sqlClient.Updateable(stockCount).ExecuteCommandAsync()) == 0)
-                {
-                    return RouteData<OutsideStockCountDto>.From(PubMessages.E0004_DATABASE_UPDATE_FAIL, "盘库计划状态更新失败");
-                }
+                material.ProjectedQty = inventories.Sum(x => x.Qty);
+                material.Status = material.ProjectedQty == 0 ? (int)StockCountStatus.task_finish : (int)StockCountStatus.task_working;
+                material.CreateBy = _userDto.UserId;
+                material.CreateUser = _userDto.UserName;
+                material.CreateDate = DateTime.Now;
 
-                if ((await _sqlClient.Insertable(stepList).ExecuteCommandAsync()) == 0)
+            }
+            if ((await _sqlClient.Updateable(materials).ExecuteCommandAsync()) == 0)
+            {
+                return RouteData<OutsideStockCountDto>.From(PubMessages.E0004_DATABASE_UPDATE_FAIL, "盘库物料状态更新失败");
+            }
+
+            stockCount.ModifiedBy = _userDto.UserId;
+            stockCount.ModifiedUser = _userDto.UserName;
+            stockCount.ModifiedDate = DateTime.Now;
+            stockCount.StepTotalCount = stepList.Count;
+            stockCount.Status = (int)StockCountStatus.task_working;
+            if ((await _sqlClient.Updateable(stockCount).ExecuteCommandAsync()) == 0)
+            {
+                return RouteData<OutsideStockCountDto>.From(PubMessages.E0004_DATABASE_UPDATE_FAIL, "盘库计划状态更新失败");
+            }
+
+            if ((await _sqlClient.Insertable(stepList).ExecuteCommandAsync()) == 0)
+            {
+                return RouteData<OutsideStockCountDto>.From(PubMessages.E0005_DATABASE_INSERT_FAIL, "盘库计划分解结果插入失败");
+            }
+            return RouteData<OutsideStockCountDto>.From(stockCount.CastTo<OutsideStockCountDto>());
+
+        }
+
+        public async Task<RouteData> DoStockCount(OutsideStockCountStep step)
+        {
+            try
+            {
+                _sqlClient.Ado.BeginTran();
+                RouteData result = await DoStockCountCore(step);
+                if (!result.IsSccuess)
                 {
-                    return RouteData<OutsideStockCountDto>.From(PubMessages.E0005_DATABASE_INSERT_FAIL, "盘库计划分解结果插入失败");
+                    _sqlClient.Ado.RollbackTran();
                 }
-                return RouteData<OutsideStockCountDto>.From(stockCount.CastTo<OutsideStockCountDto>());
-        
+                else
+                {
+                    _sqlClient.Ado.CommitTran();
+                }
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _sqlClient.Ado.RollbackTran();
+                return RouteData.From(-1, ex.Message);
+            }
+        }
+
+        public async Task<RouteData> DoStockCountCore(OutsideStockCountStep step)
+        {
+
+            Wms_stockcount dbStockCount = await _sqlClient.Queryable<Wms_stockcount>()
+                  .FirstAsync(x => x.StockCountNo == step.StockCountNo);
+            if (dbStockCount == null)
+            {
+                return RouteData.From(PubMessages.E2200_STOCKCOUNT_NOTFOUND);
+            }
+
+            Wms_stockcount_step dbStep = await _sqlClient.Queryable<Wms_stockcount_step>()
+                .FirstAsync(x => x.StockCountStepId == step.StockCountStepId);
+            if (dbStep == null)
+            {
+                return RouteData.From(PubMessages.E2202_STOCKCOUNT_STEP_NOTFOUND);
+            }
+            //是否是第一次成功
+            bool isNewFinish = dbStep.Status != (int)StockCountStatus.task_finish;
+
+            _sqlClient.Ado.BeginTran();
+
+            dbStep.BrandNo = step.BrandNo;
+            dbStep.PackageCount = step.PackageCount;
+            dbStep.StockCount = step.StockCount;
+            dbStep.DiffCount = step.StockCount - dbStep.BeforeCount;
+            dbStep.IsMark = step.IsMark;
+            dbStep.IsMixture = step.IsMixture;
+            dbStep.IsExteriorPerfect = step.IsExteriorPerfect;
+            dbStep.Remark = step.Remark;
+            dbStep.Status = (int)StockCountStatus.task_finish; 
+            dbStep.StockCountBy = _userDto.UserId;
+            dbStep.StockCountUser = _userDto.UserName;
+            dbStep.StockCountDate = DateTime.Now;
+
+            if (_sqlClient.Updateable(dbStep).ExecuteCommand() == 0)
+            {
+                return RouteData.From(PubMessages.E0002_UPDATE_COUNT_FAIL, "盘库任务更新失败");
+            }
+            dbStockCount.StepFinishCount = await _sqlClient.Queryable<Wms_stockcount_step>().Where(
+                x => 
+                    x.StockCountNo == step.StockCountNo
+                    && x.Status == (int)StockCountStatus.task_finish
+                ).CountAsync();
+            if (dbStockCount.StepFinishCount == dbStockCount.StepTotalCount)
+            {
+                dbStockCount.Status = (int)StockCountStatus.task_finish;
+            }
+            if (_sqlClient.Updateable(dbStockCount).ExecuteCommand() == 0)
+            {
+                return RouteData.From(PubMessages.E0002_UPDATE_COUNT_FAIL, "盘库计划更新失败");
+            }
+            List<Wms_stockcount_step> allRelationSteps = await _sqlClient.Queryable<Wms_stockcount_step>()
+                .Where(x => x.StockCountNo == step.StockCountNo && x.MaterialId == step.MaterialId)
+                .ToListAsync();
+            Wms_stockcount_material stockCountMaterial = await _sqlClient.Queryable<Wms_stockcount_material>()
+                .FirstAsync(x => x.StockCountNo == step.StockCountNo && x.MaterialId == step.MaterialId);
+
+            bool materialComplate = !allRelationSteps.Any(x => x.Status != (int)StockCountStatus.task_finish);
+            stockCountMaterial.StockCountQty = allRelationSteps.Sum(x => x.StockCount ?? 0);
+            stockCountMaterial.Status = !materialComplate ? (int)StockCountStatus.task_working : (int)StockCountStatus.task_finish;
+            stockCountMaterial.ModifiedBy = _userDto.UserId;
+            stockCountMaterial.ModifiedUser = _userDto.UserName;
+            stockCountMaterial.ModifiedDate = DateTime.Now;
+
+            if (_sqlClient.Updateable(stockCountMaterial).ExecuteCommand() == 0)
+            {
+                return RouteData.From(PubMessages.E0002_UPDATE_COUNT_FAIL, "盘库物料更新失败");
+            }
+
+            return RouteData.From(1, "盘库完成");
+
         }
     }
      

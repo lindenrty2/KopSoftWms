@@ -29,6 +29,12 @@ namespace IServices.Outside
         /// <returns></returns>
         Task<RouteData> DoInventoryBoxOut(long inventoryBoxId,PLCPosition pos);
         /// <summary>
+        /// 指定料箱出库
+        /// </summary>
+        /// <param name="inventoryBoxId">料箱</param>
+        /// <returns></returns>
+        Task<RouteData> DoInventoryBoxOut(long[] inventoryBoxIds, PLCPosition pos);
+        /// <summary>
         /// 指定出库单出库
         /// </summary>
         /// <param name="stockOutIds">出库单Id列表</param>
@@ -123,6 +129,7 @@ namespace IServices.Outside
         /// <param name="stockOutId"></param>
         /// <returns></returns>
         Task<RouteData> DoStockOutLock(long stockOutId);
+
         /// <summary>
         /// 出库扫描完成
         /// </summary>
@@ -172,5 +179,12 @@ namespace IServices.Outside
         /// <param name="stockCountNo"></param>
         /// <returns></returns>
         Task<RouteData<OutsideStockCountDto>> BeginStockCount(string stockCountNo);
+
+        /// <summary>
+        /// 提交指定盘库信息
+        /// </summary>
+        /// <param name="step"></param>
+        /// <returns></returns>
+        Task<RouteData> DoStockCount(OutsideStockCountStep step);
     }
 }

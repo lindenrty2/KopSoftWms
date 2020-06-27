@@ -96,6 +96,11 @@ namespace YL.Utils.Pub
         public static MessageItem E2124_STOCKOUT_NO_BOX = new MessageItem(-2124, "出库单没有任何符合条件的料箱可以出库");
 
 
+        public static MessageItem E2200_STOCKCOUNT_NOTFOUND = new MessageItem(-2200, "没有找到指定的盘库计划");
+        public static MessageItem E2201_STOCKCOUNT_MATERIAL_NOTFOUND = new MessageItem(-2201, "没有找到指定的盘库物料");
+        public static MessageItem E2202_STOCKCOUNT_STEP_NOTFOUND = new MessageItem(-2202, "没有找到指定的盘库任务");
+
+
         public static MessageItem I2300_WCS_OUTCOMMAND_SCCUESS = new MessageItem(2300, "WCS料箱出库命令成功"); 
         public static MessageItem I2301_WCS_TASKSTATUS_UPDATE_SCCUESS = new MessageItem(2301, "WCS指令状态更新成功");
 

@@ -1,27 +1,61 @@
 ﻿@{
-    Layout = "_LayoutH";
+    Layout = "_LayoutH"; 
 }
 @section styles{
     <link rel="stylesheet" href="~/css/bootstrap-select.min.css" />
+    <style>
+        .stockcount-input input {
+            border-bottom: 1px solid #dbdbdb;
+            border-top: 0px;
+            border-left: 0px;
+            border-right: 0px;
+        }
+        .input-row{
+            height:30px;
+        }
+    </style>
 }
-<div id="app" v-cloak >
+<div id="app" v-cloak>
     <section class="content">
         <div class="row" style="padding-bottom:1px;">
             <div class="col-md-12">
                 <div class="box">
                     <div class="box-header with-border">
-                        <h3 class="box-title">基本信息</h3>
-                        <div class="box-tools pull-right">
-                            <button type="button" id="test" class="btn btn-box-tool" data-widget="" data-toggle="tooltip">
-                                <i class="fa fa-minus"></i>
-                            </button>
-                        </div>
+                        <h3 class="box-title">
+                            <span>盘库编号:</span><label>{{stockCountNo}}</label>&nbsp;&nbsp;
+                            <span>盘库日期:</span><label>{{stockCountDate}}</label>
+                        </h3>
                     </div>
-                    <div class="box-body">
-                        <div class="input-group">
-                            <input type="text" v-model="storeId" ref="storeId" id="storeId" style="display:none">
-                            盘库编号:<span v-model="stockCountNo" />
-                            盘库日期:<span v-model="stockCountDate" /> 
+                    <div class="box-body stockcount-input">
+                        <div class="col-lg-12 input-row">
+                            <span class="col-lg-2 col-sm-4">料箱编号：{{selectedStockCount.inventoryBoxNo}}({{selectedStockCount.inventoryPosition}}格)</span>
+                            <span class="col-lg-2 col-sm-4">物料编号：{{selectedStockCount.materialNo}}</span>
+                            <span class="col-lg-2 col-sm-4">物料唯一Id：{{selectedStockCount.materialOnlyId}}</span>
+                            <span class="col-lg-2 col-sm-4">物料名称：{{selectedStockCount.materialName}}</span>
+                            <span class="col-lg-2 col-sm-4">物料分类：{{selectedStockCount.materialTypeName}}</span>
+                            <span class="col-lg-2 col-sm-4">单位：{{selectedStockCount.unitName}}</span>
+                        </div>
+                        <div class="col-lg-12 input-row">
+                            <span class="col-lg-2 col-sm-3">牌号：<input type="text" style="width:120px" v-model="selectedStockCount.brandNo"></span>
+                            <span class="col-lg-2 col-sm-3">包装数：<input type="text" style="width:100px" v-model="selectedStockCount.packageCount"></span>
+                            <span class="col-lg-3 col-sm-5">
+                                盘库数：<input type="text" style="width:100px" v-model="selectedStockCount.stockCount">{{selectedStockCount.unitName}}
+                                /{{selectedStockCount.beforeCount}}{{selectedStockCount.unitName}}
+                                (差异数：{{selectedStockCount.stockCount == null ? 0 : selectedStockCount.stockCount - selectedStockCount.beforeCount }} )
+                            </span>
+                        </div>
+                        <div class="col-lg-12 input-row">
+                            <span class="col-lg-2 col-sm-4">是否标示：<input type="checkbox" v-model="selectedStockCount.isMark"></span>
+                            <span class="col-lg-2 col-sm-4">是否混料：<input type="checkbox" v-model="selectedStockCount.isMixture"></span>
+                            <span class="col-lg-2 col-sm-4">外观良好：<input type="checkbox" v-model="selectedStockCount.isExteriorPerfect"></span>
+                        </div>
+                        <div class="col-lg-12 input-row">
+                            <span class="col-lg-12 col-sm-12">备注：<input type="text" style="width:80%" v-model="selectedStockCount.remark"></span>
+                        </div>
+                        <div class="col-lg-12 input-row" style="text-align:center" >
+                            <button v-on:click="doStockCount" type="button" class="btn btn-success" :disabled="!canDoStock">
+                                盘点
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -31,31 +65,32 @@
             <div class="col-xs-12">
                 <div class="box">
                     <div class="box-body">
-                        <div id="stepToolbar" class="btn-group"> 
+                        <div id="stepToolbar" class="btn-group">
+                            <button id="btn_boxout" v-on:click="doBoxOut" type="button" class="btn btn-default">
+                                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>出库指定料箱
+                            </button>
                         </div>
                         <table id="stepTable" class="table table-bordered text-nowrap table-hover"></table>
                     </div>
                 </div>
-            </div> 
-        </div>
-        <div class="col-xs-12" style="text-align:center">
-            <button name="ok" v-on:click="okL" type="submit" class="btn btn-success" ><i class="fa fa-search"></i> 确定</button>
-        </div>
+            </div>
+        </div> 
     </section>
 </div>
 @section scripts{
     <script src="~/js/bootstrap-select.min.js"></script>
     <script src="~/js/defaults-zh_CN.min.js"></script>
-    <script src="~/js/common.wms.js?v=20200615"></script>
+    <script src="~/js/common.wms.js?v=20200627"></script>
     <script type="text/javascript">
 
         var app = new Vue({
             el: '#app',
             data: {
-                ReservoirareaId: '',
-                MaterialTypeId: '',
-                MaterialTypeList: '',
-                storeId:'0'
+                stockCountNo:'@ViewData["stockCountNo"]',
+                stockCountDate: '@ViewData["stockCountDate"]',
+                storeId: '0',
+                selectedStockCount: {},
+                canDoStock:false
             },
             mounted: function () {
                 var _self = this;
@@ -69,29 +104,60 @@
                 searchL: function () {
                     _self = this;
                     var columns = [
-                        { field: 'isSelected', checkbox: true, visible: true, sortable: true },
-                        { field: 'inventoryBoxNo', title: '料箱编号', align: 'center', sortable: true }, 
+                        {
+                            field: 'isSelected', checkbox: true, visible: true,
+                            formatter: function (value, row, index) { 
+                                if (row.inventoryBoxStatus === 1) {
+                                    return {
+                                        disabled: false,
+                                    }
+                                } else {
+                                    return {
+                                        disabled: true,
+                                    }
+                                }
+                                return value;
+                            } 
+                        },
+                        { field: 'inventoryBoxStatus', title: '料箱状态', align: 'center', sortable: true, formatter: InventoryBoxStatusFormatter },
+                        { field: 'inventoryBoxNo', title: '料箱编号', align: 'center', sortable: true },
+                        { field: 'inventoryPosition', title: '料格', align: 'center', sortable: true },
+                        { field: 'status', title: '盘库状态', align: 'center', sortable: true, formatter: StockCountStatusFormatter },
                         { field: 'materialNo', title: '物料编号', align: 'center', sortable: true },
                         { field: 'materialOnlyId', title: '物料唯一Id', align: 'center', sortable: true },
-                        { field: 'materialNameName', title: '物料名称', align: 'center', sortable: true },
+                        { field: 'materialName', title: '物料名称', align: 'center', sortable: true },
                         { field: 'materialTypeName', title: '物料分类', align: 'center', sortable: true },
                         { field: 'unitName', title: '单位', align: 'center', sortable: true },
-                        { field: 'brandNo', title: '单位类别', align: 'center', sortable: true },
-                        { field: 'beforeCount', title: '单位类别', align: 'center', sortable: true },
-                        { field: 'stockCount', title: '单位类别', align: 'center', sortable: true },
-                        { field: 'diffCount', title: '单位类别', align: 'center', sortable: true },
-                        { field: 'packageCount', title: '包装数', align: 'center', sortable: true },
-                        { field: 'isMark', title: '是否标示', align: 'center', sortable: true },
-                        { field: 'isMixture', title: '是否混料', align: 'center', sortable: true },
-                        { field: 'isExteriorPerfect', title: '外观良好', align: 'center', sortable: true }, 
+                        { field: 'brandNo', title: '牌号', align: 'center', sortable: true },
+                        { field: 'beforeCount', title: '预计值', align: 'center', sortable: true },
+                        { field: 'stockCount', title: '盘库数', align: 'center', sortable: true },
+                        {
+                            field: 'diffCount', title: '差异数', align: 'center', sortable: true,
+                            formatter: function (value, row, index)
+                            {
+                                if (value == 0) {
+                                    return '<span class="label label-default radius">' + value + '</span>';
+                                }
+                                else if (value < 0) {
+                                    return '<span class="label label-danger radius">' + value + '</span>';
+                                }
+                                else {
+                                    return '<span class="label label-success radius">' + value + '</span>';
+                                }
+                            }
+                        },
+                        { field: 'packageCount', title: '包装数', align: 'center', sortable: true},
+                        { field: 'isMark', title: '是否标示', align: 'center', sortable: true, formatter: YesNoFormatter },
+                        { field: 'isMixture', title: '是否混料', align: 'center', sortable: true, formatter: YesNoFormatter },
+                        { field: 'isExteriorPerfect', title: '外观良好', align: 'center', sortable: true, formatter: YesNoFormatter  },
                         { field: 'remark', align: 'center', title: '备注' },
                         { field: 'stockCountUser', align: 'center', title: '盘库人' },
                         { field: 'remark', align: 'center', title: '盘库时间' },
-                    ]; 
-                        
+                    ];
+
                     $("#stepTable").bootstrapTable({
-                        url: "/StockCount/QueryPlanStepList",
-                        method: "Get",
+                        url: "/StockCount/QueryPlanStepList?stockCountNo=@ViewData["StockCountNo"]",
+                        method: "Post",
                         contentType: "application/x-www-form-urlencoded; charset=UTF-8",
                         toolbar: '#stepToolbar', //工具按钮用哪个容器
                         striped: true, //是否显示行间隔色
@@ -119,7 +185,18 @@
                         singleSelect: false, //设置 true 将禁止多选。
                         clickToSelect: true, //是否启用点击选中行
                         uniqueId: "MaterialId", //每一行的唯一标识，一般为主键列
-                        onCheck: function (row) {
+                        onClickRow: function (row) { 
+                            _self.selectedStockCount = JSON.parse(JSON.stringify(row));
+                            if (_self.selectedStockCount.isMark == null) {
+                                _self.selectedStockCount.isMark = false;
+                            }
+                            if (_self.selectedStockCount.isMixture == null) {
+                                _self.selectedStockCount.isMixture = false;
+                            }
+                            if (_self.selectedStockCount.isExteriorPerfect == null) {
+                                _self.selectedStockCount.isExteriorPerfect = false;
+                            }
+                            _self.canDoStock = true;
                         },
                         queryParams: function (params) {
                             return {
@@ -133,7 +210,72 @@
                         },
                         columns: columns
                     });
-                }
+                },
+                doStockCount: function () {
+                    if (parseInt(_self.selectedStockCount.stockCount).toString() == "NaN") {
+                        layer.msg("请输入正确的盘库数量", { icon: 5 });
+                        return;
+                    }
+                    if (parseInt(_self.selectedStockCount.packageCount).toString() == "NaN") {
+                        layer.msg("请输入正确的包装数", { icon: 5 });
+                        return;
+                    }
+                    var url = "/StockCount/DoStockCount?storeId=@ViewData["currentStoreId"]";
+                    yui.$axiospostform(url, _self.selectedStockCount)
+                        .then(function (response) {
+                            if (response.data.isSccuess) {
+                                layer.msg(response.data.message, { icon: 1, time: 1000 });
+                            }
+                            else {
+                                layer.msg(response.data.message, { icon: 5 });
+                            }
+                            $("#stepTable").bootstrapTable('refresh');
+                        })
+                        .catch(function (error) {
+                        });
+                },
+                doBoxOut: function () {
+                    var idlist = [];
+                    var rows = $("#stepTable").bootstrapTable('getSelections');
+                    for (var i = 0; i < rows.length; i++) {
+                        var inventoryBoxId = rows[i].inventoryBoxId;
+                        if (!idlist.includes(inventoryBoxId) && rows[i].inventoryBoxStatus == 1) {
+                            idlist.push(inventoryBoxId);
+                        }
+                    }
+                    if (idlist.length == 0) {
+                        layer.msg("没有可以出库的料箱", { icon: 5 });
+                        return;
+                    }
+                    var _self = this;
+                    var index = layer.confirm("您确定要出库料箱(总计" + idlist.length + "项)吗？", {
+                        btn: ["平衡出库", "出库左边", "出库右边", "取消"],
+                        btn1: function () { layer.close(index); _self.doBoxOutCoreL(idlist, 0); },
+                        btn2: function () { layer.close(index); _self.doBoxOutCoreL(idlist, 1); },
+                        btn3: function () { layer.close(index); _self.doBoxOutCoreL(idlist, 2); },
+                    });
+                },
+                doBoxOutCoreL: function (ids, pos) {
+                    var url = "/InventoryBox/DoInventoryBoxsOut";
+                    var data = {
+                        storeId: '@ViewData["currentStoreId"]',
+                        inventoryBoxIds: ids,
+                        pos : pos
+                    };
+                    yui.$axiospostform(url, data)
+                        .then(function (response) {
+                            if (response.data.isSccuess) {
+                                layer.msg(response.data.message, { icon: 1, time: 1000 });
+                                return false;
+                            }
+                            else {
+                                layer.msg(response.data.message, { icon: 5 });
+                            }
+                            $("#bootstraptable").bootstrapTable('refresh');
+                        })
+                        .catch(function (error) {
+                        });
+                },
 
             }
         });

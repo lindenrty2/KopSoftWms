@@ -62,7 +62,6 @@ namespace KopSoftWms.Controllers
         [HttpGet]
         public async Task<IActionResult> StepList(long storeId, string stockCountNo)
         {
-            ViewData["currentStoreId"] = storeId;
 
             IWMSOperationApiAccessor operationAccessor =
                 WMSApiManager.GetOperationApiAccessor(storeId.ToString(), _client,this.UserDto);
@@ -73,6 +72,9 @@ namespace KopSoftWms.Controllers
                 return Content(result.Message);
             }
 
+            ViewData["currentStoreId"] = storeId;
+            ViewData["stockCountNo"] = stockCountNo;
+            ViewData["stockCountDate"] = result.Data.StockCountDate;
             return View(result.Data);
         }
 
@@ -110,6 +112,15 @@ namespace KopSoftWms.Controllers
                 return new OutsideStockCountStep[0];
             }
             return result.Data.StepList;
+        }
+
+        [HttpPost]
+        public async Task<RouteData> DoStockCount(long storeId,[FromForm]OutsideStockCountStep step)
+        {
+            IWMSOperationApiAccessor operationAccessor = WMSApiManager.GetOperationApiAccessor(storeId.ToString(), _client, this.UserDto);
+            RouteData result = await operationAccessor.DoStockCount(step);
+        
+            return result;
         }
     }
 }

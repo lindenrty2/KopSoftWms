@@ -14,7 +14,7 @@ namespace YL.Core.Dto
 
     public class OutsideStockCountStep : Wms_stockcount_step
     {
-
+        public int InventoryBoxStatus { get; set; }
     }
 
 

@@ -122,7 +122,7 @@ namespace IServices.Outside
         /// </summary>
         /// <param name="stockOutId"></param>
         /// <returns></returns> 
-        Task<RouteData<OutsideStockOutQueryResult>> QueryStockOut(long stockOutId);
+        Task<RouteData<OutsideStockOutQueryResult>> QueryStockOut(long stockOutId); 
 
         /// <summary>
         /// 获取出库列表
