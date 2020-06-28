@@ -61,6 +61,12 @@ namespace YL.Core.Entity
         public string SuppliesInfoJson { get; set; }
 
         /// <summary>
+        /// 备注
+        /// </summary>
+        [SugarColumn(Length = 1000, DefaultValue = "", IsNullable = false)]
+        public string Remark { get; set; }
+
+        /// <summary>
         /// 操作状态
         /// </summary>
         [SugarColumn(IsNullable = false)] //Length = 2,

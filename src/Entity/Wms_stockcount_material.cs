@@ -20,8 +20,8 @@ namespace YL.Core.Entity
         /// <summary>
         /// 计划项目Id
         /// </summary>
-        [SugarColumn(ColumnName = "Id", IsPrimaryKey = true, IsIdentity = true)]
-        public long StockCountMaterialId { get; set; }
+        [SugarColumn(ColumnName = "Id", IsPrimaryKey = true)]
+        public string StockCountMaterialId { get; set; }
 
         /// <summary>
         /// 盘库任务No

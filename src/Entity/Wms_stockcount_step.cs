@@ -19,8 +19,8 @@ namespace YL.Core.Entity
         /// <summary>
         /// 工作项目Id
         /// </summary>
-        [SugarColumn(ColumnName = "Id", IsPrimaryKey = true, IsIdentity = true)]
-        public long StockCountStepId { get; set; }
+        [SugarColumn(IsPrimaryKey = true)]
+        public string StepId { get; set; }
 
         /// <summary>
         /// 盘库任务No
