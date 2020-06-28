@@ -208,7 +208,7 @@
                     layer.open({
                         type: 2, area: ['1000px', '800px'],
                         fix: false, maxmin: true, shade: 0.4, title: "料箱操作确认",
-                        content: "/InventoryBox/StockOutBoxBack?storeId=@ViewData["currentStoreId"]&inventoryboxtaskid=",
+                        content: "/InventoryBox/StockOutBoxBack?storeId=@ViewData["currentStoreId"]&inventoryboxtaskid=" + taskId,
                         end: function () {
                             $("#bootstraptable").bootstrapTable('refresh');
                         }
