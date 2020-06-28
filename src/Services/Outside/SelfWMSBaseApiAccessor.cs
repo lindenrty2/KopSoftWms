@@ -259,32 +259,31 @@ namespace Services.Outside
             );
 
             RefAsync<int> totalCount = new RefAsync<int>();
-            IEnumerable<OutsideInventoryDto> result = (await query.Select((i, ib) => 
-                new { Inventory = i,InventoryBox = ib }
-            ).ToPageListAsync(pageIndex, pageSize, totalCount)).Select(
-              (x) => new OutsideInventoryDto
+            IEnumerable<OutsideInventoryDto> result = await query.Select(
+              (i, ib) => new OutsideInventoryDto
               {
-                  MaterialId = x.Inventory.MaterialId ?? -1,
-                  MaterialNo = x.Inventory.MaterialNo,
-                  MaterialOnlyId = x.Inventory.MaterialOnlyId,
-                  MaterialName = x.Inventory.MaterialName,
-                  Qty = x.Inventory.Qty,
-                  IsLocked = x.Inventory.IsLocked,
-                  StorageRackId = x.InventoryBox.StorageRackId ?? 0,
-                  //StorageRackNo = x.InventoryBox.StorageRackNo,
-                  StorageRackName = x.InventoryBox.StorageRackName,
-                  InventoryBoxId = x.InventoryBox.InventoryBoxId,
-                  InventoryBoxNo = x.InventoryBox.InventoryBoxNo,
-                  Floor = x.InventoryBox.Floor ?? 0,
-                  Row = x.InventoryBox.Row ?? 0,
-                  Column = x.InventoryBox.Column ?? 0,
-                  Position = x.Inventory.Position,
-                  CreateBy = x.Inventory.CreateUser,
-                  CreateDate = x.Inventory.CreateDate.Value.ToString(PubConst.Format_DateTime),
-                  ModifiedBy = x.Inventory.ModifiedUser,
-                  ModifiedDate = x.Inventory.ModifiedDate.Value.ToString(PubConst.Format_DateTime),
+                  MaterialId = i.MaterialId ?? -1,
+                  MaterialNo = i.MaterialNo,
+                  MaterialOnlyId = i.MaterialOnlyId,
+                  MaterialName = i.MaterialName,
+                  Qty = i.Qty,
+                  IsLocked = i.IsLocked,
+                  StorageRackId = ib.StorageRackId ?? 0,
+                  //StorageRackNo = ib.StorageRackNo,
+                  StorageRackName = ib.StorageRackName,
+                  InventoryBoxId = ib.InventoryBoxId,
+                  InventoryBoxNo = ib.InventoryBoxNo,
+                  Floor = ib.Floor ?? 0,
+                  Row = ib.Row ?? 0,
+                  Column = ib.Column ?? 0,
+                  Position = i.Position,
+                  CreateBy = i.CreateUser,
+                  CreateDate = i.CreateDate.Value.ToString(PubConst.Format_DateTime),
+                  ModifiedBy = i.ModifiedUser,
+                  ModifiedDate = i.ModifiedDate.Value.ToString(PubConst.Format_DateTime),
               })
-              ;
+              .ToPageListAsync(pageIndex, pageSize, totalCount);
+
             return RouteData<OutsideInventoryDto[]>.From(result.ToArray(), totalCount.Value);
         }
 
@@ -829,16 +828,22 @@ namespace Services.Outside
                 List<Wms_stockcount_material> materialList = new List<Wms_stockcount_material>();
                 foreach (OutsideStockCountMaterial om in request.MaterialList)
                 {
-                    string materialOnlyId = om.MaterialOnlyId ?? "";
-                    Wms_material material = await _sqlClient.Queryable<Wms_material>().FirstAsync(
-                        x => x.MaterialNo == om.MaterialNo && x.MaterialOnlyId == materialOnlyId);
-                    if(material == null)
+                    Wms_material material = null;
+                    if (string.IsNullOrEmpty(om.MaterialOnlyId))
+                    {
+                        material = await _sqlClient.Queryable<Wms_material>().FirstAsync(x => x.MaterialNo == om.MaterialNo);
+                    }
+                    else
+                    {
+                        material = await _sqlClient.Queryable<Wms_material>().FirstAsync(x => x.MaterialOnlyId == om.MaterialOnlyId);
+                    }
+                    if (material == null)
                     {
                         return RouteData.From(PubMessages.E1005_MATERIALNO_NOTFOUND);
                     }
                     Wms_stockcount_material sm = new Wms_stockcount_material()
                     {
-                        StockCountMaterialId = PubId.SnowflakeId, 
+                        StockCountMaterialId = PubId.SnowflakeId.ToString(), 
                         StockCountNo = stockcount.StockCountNo,
                         MaterialId = material.MaterialId.ToString(),
                         MaterialNo = material.MaterialNo,
@@ -944,23 +949,47 @@ namespace Services.Outside
             )
             .Select(
                 (scs, ib) =>
-                    new {
-                        StockCount = scs,
-                        InventoryBox = ib
+                    new OutsideStockCountStep
+                    {
+                        StepId = scs.StepId,
+                        StockCountNo = scs.StockCountNo,
+                        MaterialId = scs.MaterialId,
+                        MaterialOnlyId = scs.MaterialOnlyId,
+                        MaterialNo = scs.MaterialNo,
+                        MaterialName = scs.MaterialName,
+                        MaterialTypeName = scs.MaterialTypeName,
+                        UnitName = scs.UnitName,
+                        BrandNo = scs.BrandNo,
+                        BeforeCount = scs.BeforeCount,
+                        StockCount = scs.StockCount,
+                        DiffCount = scs.DiffCount,
+                        PackageCount = scs.PackageCount,
+                        IsMark = scs.IsMark,
+                        IsMixture = scs.IsMixture,
+                        IsExteriorPerfect = scs.IsExteriorPerfect,
+                        InventoryBoxId = scs.InventoryBoxId,
+                        InventoryBoxNo = scs.InventoryBoxNo,
+                        InventoryBoxName = scs.InventoryBoxName,
+                        InventoryPosition = scs.InventoryPosition,
+                        Status = scs.Status,
+                        Remark = scs.Remark,
+                        IsDel = scs.IsDel,
+                        CreateBy = scs.CreateBy,
+                        CreateUser = scs.CreateUser,
+                        CreateDate = scs.CreateDate,
+                        StockCountBy = scs.StockCountBy,
+                        StockCountUser = scs.StockCountUser,
+                        StockCountDate = scs.StockCountDate,
+                        InventoryBoxStatus = ib.Status
                     }
             )
             .ToArray();
 
             OutsideStockCountDto result = data.CastTo<OutsideStockCountDto>();
             result.MaterialList = materials.CastTo<OutsideStockCountMaterial[]>();
-            result.StepList = steps.Select(
-                x => {
-                    OutsideStockCountStep step = x.StockCount.CastTo<OutsideStockCountStep>();
-                    step.InventoryBoxStatus = x.InventoryBox.Status;
-                    return step;
-                }
-            ).ToArray();
-             
+            result.StepList = steps;
+
+
             return RouteData<OutsideStockCountDto>.From(result);
         }
 
