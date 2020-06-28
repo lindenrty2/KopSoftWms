@@ -152,6 +152,11 @@
                 doCheck: function () {
                     for (var i = 0; i < this.tableData.length; i++) {
                         var row = this.tableData[i];
+
+                        if (row.qty > row.beforeQty) {
+                            layer.msg("[" + row.materialNo + "]只有" + row.beforeQty + ",无法出库" + row.qty, { icon: 2 });
+                            return false;
+                        }
                         if (row.qty > row.planQty - row.complateQty) {
                             layer.msg("[" + row.materialNo + "]出库数量已大于计划数量", { icon: 2 });
                             return false;
