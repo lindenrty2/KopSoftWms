@@ -480,7 +480,7 @@ namespace KopSoftWms.Controllers
         }
 
         /// <summary>
-        /// 归库
+        /// 归库(通过TaskId)
         /// </summary>
         /// <param name="mode">1:基于入库单,2:基于出库单,3:手工,4出库任务料箱离库</param>
         /// <param name="inventoryBoxTaskId"></param>
@@ -493,8 +493,6 @@ namespace KopSoftWms.Controllers
             RouteData result = await wmsAccessor.DoInventoryBoxBack(mode, inventoryBoxTaskId, details, pos);
 
             return result;
-        }
-
-         
+        } 
     }
 }

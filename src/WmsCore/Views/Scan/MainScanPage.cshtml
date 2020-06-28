@@ -226,7 +226,8 @@
                         _self.onMaterialNoInputed(inputNo);
                     }
                     else {
-                        layer.msg("未知编码", { icon: 2 });
+                        //未知编码作为物料编号识别
+                        _self.onMaterialNoInputed(inputNo); 
                     }
                     app.InputNo = "";
                 },
@@ -317,7 +318,7 @@
                     }
                     for (var i = 0; i < _self.tableData.length; i++) {
                         var material = _self.tableData[i];
-                        if (material.MaterialNo == no) {
+                        if (material.MaterialNo == no || material.MaterialOnlyId == no) {
                             material.Qty = parseInt(material.Qty) + 1;
                             return;
                         }

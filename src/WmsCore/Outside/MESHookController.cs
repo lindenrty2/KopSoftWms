@@ -739,6 +739,10 @@ namespace WMSCore.Outside
                 Guard.GuardEmpty(() => MaterialList);
 
                 OutsideStockCountMaterial[] materials = JsonConvert.DeserializeObject<OutsideStockCountMaterial[]>(MaterialList);
+                if(materials.Length == 0)
+                {
+                    return YL.Core.Dto.RouteData.From(PubMessages.E2201_STOCKCOUNT_MATERIAL_ZERO);
+                }
 
                 string warehouseNo = string.IsNullOrWhiteSpace(WarehouseId) ? "A00" : WarehouseId;
                 Wms_warehouse warehouse = WMSApiManager.GetWarehouse(warehouseNo);
@@ -748,7 +752,7 @@ namespace WMSCore.Outside
                 }
                 long warehouseId = warehouse.WarehouseId;
                 IWMSBaseApiAccessor proxy = WMSApiManager.GetBaseApiAccessor(warehouseId.ToString(), _sqlClient);
-                
+
                 Wms_mestask mesTask = new Wms_mestask()
                 {
                     MesTaskId = PubId.SnowflakeId,
@@ -765,15 +769,29 @@ namespace WMSCore.Outside
                     NotifyStatus = MESTaskNotifyStatus.Requested, //已接收
                     CreateDate = DateTime.Now
                 };
+                RouteData result = null;
+                try
+                {
+                    result = proxy.StockCount(new OutsideStockCountRequestDto()
+                    {
+                        MesTaskId = mesTask.MesTaskId,
+                        StockCountNo = StockCountNo,
+                        PlanDate = PlanDate,
+                        MaterialList = materials
+                    }).GetAwaiter().GetResult();
+                    if (result == null || !result.IsSccuess)
+                    {
+                        mesTask.WorkStatus = MESTaskWorkStatus.Failed;
+                        mesTask.Remark = result.Message;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    mesTask.WorkStatus = MESTaskWorkStatus.Failed;
+                    mesTask.Remark = ex.Message;
+                }
+                
                 _mastaskServices.Insert(mesTask);
-
-                RouteData result = proxy.StockCount(new OutsideStockCountRequestDto() {
-                    MesTaskId = mesTask.MesTaskId,
-                    StockCountNo = StockCountNo,
-                    PlanDate = PlanDate,
-                    MaterialList = materials 
-                }).GetAwaiter().GetResult();
-
                 return result;
             }
             catch(Exception ex)

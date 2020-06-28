@@ -47,8 +47,9 @@
                     _self.$refs.datemax = "2099-01-01";
                     var columns = [
                         { checkbox: true, visible: false },
-                        { field: 'Detail.MaterialNo', title: '物料编号',  sortable: true },
                         { field: 'Detail.Status', title: '入库状态', width: 60, align: 'center', visible: true, sortable: true, formatter: StockStatusFormatter },
+                        { field: 'Detail.MaterialNo', title: '物料编号', sortable: true },
+                        { field: 'Detail.MaterialOnlyId', title: '物料唯一Id', sortable: true },
                         { field: 'Detail.MaterialName', title: '物料名称', align: 'center', sortable: true },
                         { field: 'Detail.PlanInQty', title: '计划数量', align: 'center', sortable: true },
                         { field: 'Detail.ActInQty', title: '实际数量', align: 'center', sortable: true },

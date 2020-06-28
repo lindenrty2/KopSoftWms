@@ -188,6 +188,9 @@ function MESTaskTypeFormatter(value, row, index) {
         case 2:
         case 'StockOut':
             return '<span class="label label-danger radius">出库任务</span>';
+        case 3:
+        case 'StockCount':
+            return '<span class="label label-success radius">盘库任务</span>';
         default:
             return '<span class="label label-default radius">-</span>';
     }

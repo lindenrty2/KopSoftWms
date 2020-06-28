@@ -28,6 +28,9 @@
                     </div>
                     <div class="box-body stockcount-input">
                         <div class="col-lg-12 input-row">
+                            扫码区域：<input type="text" style="font-size:16px" v-model="inputNo" />
+                        </div>
+                        <div class="col-lg-12 input-row">
                             <span class="col-lg-2 col-sm-4">料箱编号：{{selectedStockCount.inventoryBoxNo}}({{selectedStockCount.inventoryPosition}}格)</span>
                             <span class="col-lg-2 col-sm-4">物料编号：{{selectedStockCount.materialNo}}</span>
                             <span class="col-lg-2 col-sm-4">物料唯一Id：{{selectedStockCount.materialOnlyId}}</span>
@@ -52,9 +55,12 @@
                         <div class="col-lg-12 input-row">
                             <span class="col-lg-12 col-sm-12">备注：<input type="text" style="width:80%" v-model="selectedStockCount.remark"></span>
                         </div>
-                        <div class="col-lg-12 input-row" style="text-align:center" >
-                            <button v-on:click="doStockCount" type="button" class="btn btn-success" :disabled="!canDoStock">
+                        <div class="col-lg-12 input-row" style="text-align:center">
+                            <button v-on:click="doStockCount(false)" type="button" class="btn btn-success" :disabled="!canDoStock">
                                 盘点
+                            </button>
+                            <button v-on:click="doStockCount(true)" type="button" class="btn btn-success" :disabled="!canDoStock">
+                                盘点并归库
                             </button>
                         </div>
                     </div>
@@ -135,7 +141,10 @@
                             field: 'diffCount', title: '差异数', align: 'center', sortable: true,
                             formatter: function (value, row, index)
                             {
-                                if (value == 0) {
+                                if (value == null) {
+                                    return '<span class="label label-default radius">未盘点</span>';
+                                }
+                                else if (value == 0 ) {
                                     return '<span class="label label-default radius">' + value + '</span>';
                                 }
                                 else if (value < 0) {
@@ -211,7 +220,8 @@
                         columns: columns
                     });
                 },
-                doStockCount: function () {
+                doStockCount: function (isBack) {
+                    var _self = this;
                     if (parseInt(_self.selectedStockCount.stockCount).toString() == "NaN") {
                         layer.msg("请输入正确的盘库数量", { icon: 5 });
                         return;
@@ -220,11 +230,25 @@
                         layer.msg("请输入正确的包装数", { icon: 5 });
                         return;
                     }
+                    var inventoryBoxId = _self.selectedStockCount.inventoryBoxId;
                     var url = "/StockCount/DoStockCount?storeId=@ViewData["currentStoreId"]";
                     yui.$axiospostform(url, _self.selectedStockCount)
                         .then(function (response) {
                             if (response.data.isSccuess) {
+                                _self.selectedStockCount = {};
+                                _self.canDoStock = false;
                                 layer.msg(response.data.message, { icon: 1, time: 1000 });
+
+                                if (isBack) {  
+                                    layer.open({
+                                        type: 2, area: ['1000px', '800px'],
+                                        fix: false, maxmin: true, shade: 0.4, title: "料箱归库操作",
+                                        content: "/InventoryBox/BoxBack?storeId=@ViewData["currentStoreId"]&inventoryBoxId=" + inventoryBoxId,
+                                        end: function () {
+                                            $("#stepTable").bootstrapTable('refresh');
+                                        }
+                                    }); 
+                                }
                             }
                             else {
                                 layer.msg(response.data.message, { icon: 5 });
@@ -233,7 +257,7 @@
                         })
                         .catch(function (error) {
                         });
-                },
+                }, 
                 doBoxOut: function () {
                     var idlist = [];
                     var rows = $("#stepTable").bootstrapTable('getSelections');
@@ -265,13 +289,12 @@
                     yui.$axiospostform(url, data)
                         .then(function (response) {
                             if (response.data.isSccuess) {
-                                layer.msg(response.data.message, { icon: 1, time: 1000 });
-                                return false;
+                                layer.msg(response.data.message, { icon: 1, time: 1000 }); 
                             }
                             else {
                                 layer.msg(response.data.message, { icon: 5 });
                             }
-                            $("#bootstraptable").bootstrapTable('refresh');
+                            $("#stepTable").bootstrapTable('refresh');
                         })
                         .catch(function (error) {
                         });

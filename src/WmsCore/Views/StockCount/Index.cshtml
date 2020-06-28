@@ -42,6 +42,11 @@
                 <div class="box">
                     <div class="box-body">
                         <div id="toolbar" class="btn-group">
+                            <input id="fileImport" @@change="onImportPlanL($event)" type="file" style="display:none"
+                                   accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
+                            <button id="btn_importplan" v-on:click="importPlanL" type="button" class="btn btn-default">
+                                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>导入盘库计划
+                            </button>
                             <button id="btn_addplan" v-on:click="deletePlanL" type="button" class="btn btn-default">
                                 <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>删除盘库计划
                             </button>
@@ -203,7 +208,41 @@
                 },
                 searchL: function () {
                     $("#bootstraptable").bootstrapTable('refresh');
-                }, 
+                },
+                importPlanL: function () {
+                    var _self = this;
+                    $('#fileImport').click();
+                },
+                onImportPlanL: function (e) {
+                    _self = this;
+                    var fileName = e.target.value;
+                    if (fileName == '') {
+                        return;
+                    }
+                    this.file = event.target.files;
+                    let formdata = new FormData()
+                    formdata.append('file', this.file[0])
+
+                    $.ajax({
+                        url: "/StockCount/Import", data: formdata, type: "POST", dataType: "json",
+                        cache: false, processData: false, contentType: false,
+                        success: function (res) {
+                            e.target.value = '';
+                            if (res.isSccuess) {
+                                _self.searchL();
+                                layer.alert("导入成功", { icoon: 1, skin: "layer-ext-moon" });
+                            }
+                            else {
+                                _self.searchL();
+                                layer.alert(res.message, { icoon: 3, skin: "layer-ext-moon" });
+                            }
+                        },
+                        error: function (res) {
+                            e.target.value = '';
+                            layer.alert("上传失败", { icoon: 3, skin: "layer-ext-moon" });
+                        }
+                    })
+                },
                 deletePlanL: function (val) {
                 },
                 doStockCountL: function (stockCountNo) {
