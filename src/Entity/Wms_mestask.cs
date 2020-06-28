@@ -64,7 +64,7 @@ namespace YL.Core.Entity
         /// 备注
         /// </summary>
         [SugarColumn(Length = 1000, DefaultValue = "", IsNullable = false)]
-        public string Remark { get; set; }
+        public string Remark { get; set; } = "";
 
         /// <summary>
         /// 操作状态
