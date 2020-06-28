@@ -346,12 +346,12 @@ namespace Services.Outside
                         }
                     }
 
-                    planItem.DetailBoxId = detailbox.DetailBoxId.ToString();
-                    planItem.InventoryBoxId = targetBoxId.ToString();
-                    planItem.InventoryBoxTaskId = targetBoxInfo.Item2.InventoryBoxTaskId.ToString();
-                    planItem.InventoryPosition = inventory.Position;
-                    planItem.PlanQty = planQty;
-                    planItem.Qty = 0;
+                    //planItem.DetailBoxId = detailbox.DetailBoxId.ToString();
+                    //planItem.InventoryBoxId = targetBoxId.ToString();
+                    //planItem.InventoryBoxTaskId = targetBoxInfo.Item2.InventoryBoxTaskId.ToString();
+                    //planItem.InventoryPosition = inventory.Position;
+                    //planItem.PlanQty = planQty;
+                    //planItem.Qty = 0;
 
                     outedQty += planQty;
                     if (outedQty >= needQty)
@@ -1054,12 +1054,12 @@ namespace Services.Outside
                     }
                 }
                 _sqlClient.Ado.CommitTran();
-                return YL.Core.Dto.RouteData.From(PubMessages.I2001_STOCKIN_SCAN_SCCUESS);
+                return YL.Core.Dto.RouteData.From(PubMessages.I1001_BOXBACK_SCCUESS);
             }
             catch (Exception)
             {
                 _sqlClient.Ado.RollbackTran();
-                return YL.Core.Dto.RouteData.From(PubMessages.E2005_STOCKIN_BOXOUT_FAIL);
+                return YL.Core.Dto.RouteData.From(PubMessages.E1028_INVENTORYBOX_BACK_FAIL);
             }
         }
 
@@ -2275,6 +2275,7 @@ namespace Services.Outside
                 {
                     Wms_stockcount_step step = new Wms_stockcount_step()
                     {
+                        StepId = PubId.SnowflakeId.ToString(),
                         StockCountNo = stockCountNo,
                         MaterialId = material.MaterialId,
                         MaterialNo = material.MaterialNo,
@@ -2309,6 +2310,11 @@ namespace Services.Outside
                 material.CreateDate = DateTime.Now;
 
             }
+            if(stepList.Count == 0)
+            {
+                return RouteData<OutsideStockCountDto>.From(PubMessages.E2202_STOCKCOUNT_STEP_ZERO); 
+            }
+
             if ((await _sqlClient.Updateable(materials).ExecuteCommandAsync()) == 0)
             {
                 return RouteData<OutsideStockCountDto>.From(PubMessages.E0004_DATABASE_UPDATE_FAIL, "盘库物料状态更新失败");
@@ -2366,7 +2372,7 @@ namespace Services.Outside
             }
 
             Wms_stockcount_step dbStep = await _sqlClient.Queryable<Wms_stockcount_step>()
-                .FirstAsync(x => x.StockCountStepId == step.StockCountStepId);
+                .FirstAsync(x => x.StepId == step.StepId);
             if (dbStep == null)
             {
                 return RouteData.From(PubMessages.E2202_STOCKCOUNT_STEP_NOTFOUND);
