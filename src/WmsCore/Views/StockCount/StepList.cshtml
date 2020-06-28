@@ -27,41 +27,45 @@
                         </h3>
                     </div>
                     <div class="box-body stockcount-input">
-                        <div class="col-lg-12 input-row">
-                            扫码区域：<input type="text" style="font-size:16px" v-model="inputNo" />
+                        <div class="col-lg-12 input-row" style="font-size:16px">
+                            扫码区域：<input type="text" v-model="inputNo" @@keyup.enter="onInputNo" />
+                            已扫码料箱：{{scanedInventoryBoxNo??'---------------'}}&nbsp;&nbsp;物料：{{scanedMaterialNo??'----------------'}} 
                         </div>
-                        <div class="col-lg-12 input-row">
-                            <span class="col-lg-2 col-sm-4">料箱编号：{{selectedStockCount.inventoryBoxNo}}({{selectedStockCount.inventoryPosition}}格)</span>
-                            <span class="col-lg-2 col-sm-4">物料编号：{{selectedStockCount.materialNo}}</span>
-                            <span class="col-lg-2 col-sm-4">物料唯一Id：{{selectedStockCount.materialOnlyId}}</span>
-                            <span class="col-lg-2 col-sm-4">物料名称：{{selectedStockCount.materialName}}</span>
-                            <span class="col-lg-2 col-sm-4">物料分类：{{selectedStockCount.materialTypeName}}</span>
-                            <span class="col-lg-2 col-sm-4">单位：{{selectedStockCount.unitName}}</span>
-                        </div>
-                        <div class="col-lg-12 input-row">
-                            <span class="col-lg-2 col-sm-3">牌号：<input type="text" style="width:120px" v-model="selectedStockCount.brandNo"></span>
-                            <span class="col-lg-2 col-sm-3">包装数：<input type="text" style="width:100px" v-model="selectedStockCount.packageCount"></span>
-                            <span class="col-lg-3 col-sm-5">
-                                盘库数：<input type="text" style="width:100px" v-model="selectedStockCount.stockCount">{{selectedStockCount.unitName}}
-                                /{{selectedStockCount.beforeCount}}{{selectedStockCount.unitName}}
-                                (差异数：{{selectedStockCount.stockCount == null ? 0 : selectedStockCount.stockCount - selectedStockCount.beforeCount }} )
-                            </span>
-                        </div>
-                        <div class="col-lg-12 input-row">
-                            <span class="col-lg-2 col-sm-4">是否标示：<input type="checkbox" v-model="selectedStockCount.isMark"></span>
-                            <span class="col-lg-2 col-sm-4">是否混料：<input type="checkbox" v-model="selectedStockCount.isMixture"></span>
-                            <span class="col-lg-2 col-sm-4">外观良好：<input type="checkbox" v-model="selectedStockCount.isExteriorPerfect"></span>
-                        </div>
-                        <div class="col-lg-12 input-row">
-                            <span class="col-lg-12 col-sm-12">备注：<input type="text" style="width:80%" v-model="selectedStockCount.remark"></span>
-                        </div>
-                        <div class="col-lg-12 input-row" style="text-align:center">
-                            <button v-on:click="doStockCount(false)" type="button" class="btn btn-success" :disabled="!canDoStock">
-                                盘点
-                            </button>
-                            <button v-on:click="doStockCount(true)" type="button" class="btn btn-success" :disabled="!canDoStock">
-                                盘点并归库
-                            </button>
+                        <div class="col-lg-12" style="border:1px solid silver;margin:5px 0px;padding:10px 0px;border-radius:5px">
+                            <div class="col-lg-12 input-row">
+                                <span class="col-lg-6 col-sm-6">料箱编号：{{selectedStockCount.inventoryBoxNo}}({{selectedStockCount.inventoryPosition}}格)</span>
+                                <span class="col-lg-6 col-sm-6">&nbsp;</span>
+                            </div>
+                            <div class="col-lg-12 input-row">
+                                <span class="col-lg-2 col-sm-4">物料编号：{{selectedStockCount.materialNo}}</span>
+                                <span class="col-lg-2 col-sm-4">物料唯一Id：{{selectedStockCount.materialOnlyId}}</span>
+                                <span class="col-lg-2 col-sm-4">物料名称：{{selectedStockCount.materialName}}</span>
+                                <span class="col-lg-2 col-sm-4">物料分类：{{selectedStockCount.materialTypeName}}</span>
+                                <span class="col-lg-2 col-sm-4">单位：{{selectedStockCount.unitName}}</span>
+                            </div>
+                            <div class="col-lg-12 input-row">
+                                <span class="col-lg-2 col-sm-3">牌号：<input type="text" style="width:120px" v-model="selectedStockCount.brandNo"></span>
+                                <span class="col-lg-2 col-sm-3">包装数：<input type="text" style="width:100px" v-model="selectedStockCount.packageCount"></span>
+                                <span class="col-lg-4 col-sm-5">
+                                    盘库数：<input type="text" style="width:100px" v-model="selectedStockCount.stockCount">{{selectedStockCount.unitName}}
+                                    /{{selectedStockCount.beforeCount}}{{selectedStockCount.unitName}}
+                                    (差异数：{{selectedStockCount.stockCount == null ? 0 : selectedStockCount.stockCount - selectedStockCount.beforeCount }} )
+                                </span>
+                            </div>
+                            <div class="col-lg-12 input-row">
+                                <span class="col-lg-2 col-sm-4">是否标示：<input type="checkbox" v-model="selectedStockCount.isMark"></span>
+                                <span class="col-lg-2 col-sm-4">是否混料：<input type="checkbox" v-model="selectedStockCount.isMixture"></span>
+                                <span class="col-lg-2 col-sm-4">外观良好：<input type="checkbox" v-model="selectedStockCount.isExteriorPerfect"></span>
+                            </div>
+                            <div class="col-lg-12 input-row">
+                                <span class="col-lg-12 col-sm-12">备注：<input type="text" style="width:80%" v-model="selectedStockCount.remark"></span>
+                            </div>
+
+                            <div class="col-lg-12 input-row" style="text-align:center">
+                                <button v-on:click="clearFilter()" type="button" class="btn btn-success">重置</button>
+                                <button v-on:click="doStockCount(false)" type="button" class="btn btn-success" :disabled="!canDoStock">盘点</button>
+                                <button v-on:click="doStockCount(true)" type="button" class="btn btn-success" :disabled="!canDoStock">盘点并归库</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -95,6 +99,9 @@
                 stockCountNo:'@ViewData["stockCountNo"]',
                 stockCountDate: '@ViewData["stockCountDate"]',
                 storeId: '0',
+                tableData:null,
+                scanedInventoryBoxNo: null,
+                scanedMaterialNo: null,
                 selectedStockCount: {},
                 canDoStock:false
             },
@@ -166,7 +173,23 @@
 
                     $("#stepTable").bootstrapTable({
                         url: "/StockCount/QueryPlanStepList?stockCountNo=@ViewData["StockCountNo"]",
-                        method: "Post",
+                        method: "Post", 
+                        responseHandler: function (res) {
+                            var raw = res;
+                            var result = [];
+                            for (var i = 0; i < raw.length; i++) {
+                                var row = raw[i];
+                                if (_self.scanedInventoryBoxNo != null && row.inventoryBoxNo != _self.scanedInventoryBoxNo) {
+                                    continue;
+                                }
+                                if (_self.scanedMaterialNo != null && !(row.materialNo == _self.scanedMaterialNo || row.materialOnlyId == _self.scanedMaterialNo )) {
+                                    continue;
+                                }
+                                result.push(row);
+                            }
+                            _self.tableData = result;
+                            return result;
+                        },
                         contentType: "application/x-www-form-urlencoded; charset=UTF-8",
                         toolbar: '#stepToolbar', //工具按钮用哪个容器
                         striped: true, //是否显示行间隔色
@@ -219,6 +242,39 @@
                         },
                         columns: columns
                     });
+                }, 
+                onInputNo: function (e) {
+                    var inputNo = e.srcElement.value;
+                    this.onInputNoCore(inputNo);
+                },
+                onInputNoCore: function (inputNo) {
+                    var _self = this;
+                    if (inputNo.length == 0) { return; } 
+                    else if (IsInventoryBoxNo(inputNo)) {
+                        inputNo = GetInventoryBoxNo(inputNo);
+                        this.scanedInventoryBoxNo = inputNo;
+                    } 
+                    else {
+                        this.scanedMaterialNo = inputNo;
+                    }
+                    this.inputNo = "";
+                    this.filterStockCountStep();
+                },
+                filterStockCountStep: function () { 
+                    $("#stepTable").bootstrapTable('refresh');
+                    if (this.scanedMaterialNo != null && this.scanedInventoryBoxNo != null) {
+                        if (this.tableData.length == 1) {
+                            this.selectedStockCount = this.tableData[0];
+                            this.scanedInventoryBoxNo = null;
+                            this.scanedMaterialNo = null;
+                        }
+                    }
+                },
+                clearFilter: function () {
+                    this.selectedStockCount = {};
+                    this.scanedInventoryBoxNo = null;
+                    this.scanedMaterialNo = null;
+                    $("#stepTable").bootstrapTable('refresh');
                 },
                 doStockCount: function (isBack) {
                     var _self = this;

@@ -30,7 +30,6 @@ function GetInventoryBoxNo(no) {
     var words = no.split("_");
     if (words.length < 4) return no;
     return words[0] + "_" + words[1] + "_" + words[2];
-    return false;
 }
 
 function IsMaterialNo(no) {
