@@ -11,15 +11,15 @@ namespace YL.Core.Dto
         /// <summary>
         /// 盘库任务编号
         /// </summary>
-        string StockCountNo { get; set; }
+        public string StockCountNo { get; set; }
         /// <summary>
         /// 盘库整体完成日期
         /// </summary>
-        string CompleteDate { get; set; }
+        public string CompleteDate { get; set; }
         /// <summary>
         /// 物料列表
         /// </summary>
-        Wms_stockcount_step[] MaterialList { get; set; }
+        public Wms_stockcount_step[] MaterialList { get; set; }
 
 
     }

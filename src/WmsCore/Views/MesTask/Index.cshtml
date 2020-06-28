@@ -84,6 +84,7 @@
                         {
                             field: 'StockInStatusValue', title: '操作', align: 'center', sortable: false,
                             formatter: function (value, row, index) {
+                                if (row.MesTaskType == "StockCount") return "";
                                 var html = [];
                                 html.push('<button id="showDetailL" type="button" class="btn btn-link" style="margin-top:-8px;">详细</button>');
                                 return html.join('');
@@ -95,9 +96,10 @@
                             },
                         },
                         { field: 'MesTaskId', title: 'Id', visible: false },
-                        { field: 'MesTaskType', title: '任务类型', align: 'center', sortable: true, formatter: MESTaskTypeFormatter },
-                        { field: 'WarehousingType', title: '出入库类型', align: 'center', sortable: true },
-                        { field: 'WarehousingTime', title: '出入库时间', align: 'center', sortable: true, formatter: DateTimeFormatter },
+                        { field: 'MesTaskType', title: '任务种类', align: 'center', sortable: true, formatter: MESTaskTypeFormatter },
+                        { field: 'WarehousingId', title: '任务编号', align: 'center', sortable: true },
+                        { field: 'WarehousingType', title: '任务分类', align: 'center', sortable: true },
+                        { field: 'WarehousingTime', title: '计划时间', align: 'center', sortable: true, formatter: DateTimeFormatter },
                         { field: 'ProductionPlanId', title: '生产令号', align: 'center', sortable: true },
                         { field: 'BatchPlanId', title: '批次号', align: 'center', sortable: true },
                         { field: 'WorkAreaName', title: '作业区', align: 'center', sortable: true },

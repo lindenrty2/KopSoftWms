@@ -1017,24 +1017,24 @@ namespace Services.Outside
                 }
 
 
-                foreach (Wms_stockin stockin in relationStockins)
-                {
-                    if (_sqlClient.Queryable<Wms_stockindetail>().Any(x => x.StockInId == stockin.StockInId && x.Status != StockInStatus.task_finish.ToByte()))
-                    {
-                        //尚有未入库任务
-                    }
-                    else
-                    {
-                        stockin.StockInStatus = StockInStatus.task_finish.ToByte();
-                        stockin.ModifiedBy = UserDto.UserId;
-                        stockin.ModifiedDate = DateTime.Now;
-                        if (_sqlClient.Updateable(stockin).ExecuteCommand() == 0)
-                        {
-                            _sqlClient.Ado.RollbackTran();
-                            return YL.Core.Dto.RouteData.From(PubMessages.E0002_UPDATE_COUNT_FAIL, "更新入库单为入库完成时发生异常");
-                        }
-                    }
-                }
+                //foreach (Wms_stockin stockin in relationStockins)
+                //{
+                //    if (_sqlClient.Queryable<Wms_stockindetail>().Any(x => x.StockInId == stockin.StockInId && x.Status != StockInStatus.task_finish.ToByte()))
+                //    {
+                //        //尚有未入库任务
+                //    }
+                //    else
+                //    {
+                //        stockin.StockInStatus = StockInStatus.task_finish.ToByte();
+                //        stockin.ModifiedBy = UserDto.UserId;
+                //        stockin.ModifiedDate = DateTime.Now;
+                //        if (_sqlClient.Updateable(stockin).ExecuteCommand() == 0)
+                //        {
+                //            _sqlClient.Ado.RollbackTran();
+                //            return YL.Core.Dto.RouteData.From(PubMessages.E0002_UPDATE_COUNT_FAIL, "更新入库单为入库完成时发生异常");
+                //        }
+                //    }
+                //}
                 foreach (Wms_stockout stockout in relationStockouts)
                 {
                     if (_sqlClient.Queryable<Wms_stockoutdetail>().Any(x => x.StockOutId == stockout.StockOutId && x.Status != StockOutStatus.task_finish.ToByte()))
@@ -2430,9 +2430,51 @@ namespace Services.Outside
                 return RouteData.From(PubMessages.E0002_UPDATE_COUNT_FAIL, "盘库物料更新失败");
             }
 
+            if(dbStockCount.Status == (int)StockCountStatus.task_finish)
+            {
+                NotifyStockCountComplete(dbStockCount.StockCountNo);
+            }
+
             return RouteData.From(1, "盘库完成");
 
         }
+
+        private async void NotifyStockCountComplete(string stockCountNo)
+        {
+            try
+            {
+                List<Wms_stockcount_step> allRelationSteps =
+                    await _sqlClient.Queryable<Wms_stockcount_step>()
+                        .Where(x => x.StockCountNo == stockCountNo)
+                        .ToListAsync();
+
+                OutsideStockCountReportDto report = new OutsideStockCountReportDto()
+                {
+                    StockCountNo = stockCountNo,
+                    CompleteDate = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
+                    MaterialList = allRelationSteps.ToArray()
+                };
+
+                RouteData result = await MESApiAccessor.Instance.StockCount(report);
+
+                Wms_mestask mestask = await _sqlClient.Queryable<Wms_mestask>()
+                        .FirstAsync(x => x.WarehousingId == stockCountNo);
+
+                if (mestask == null) return;
+
+                mestask.WorkStatus = MESTaskWorkStatus.WorkComplated;
+                mestask.NotifyStatus = (result == null || !result.IsSccuess) ? MESTaskNotifyStatus.Failed : MESTaskNotifyStatus.Responsed;
+                mestask.Remark = result?.Message;
+                mestask.ModifiedDate = DateTime.Now;
+                if (_sqlClient.Updateable(mestask).ExecuteCommand() == 0)
+                {
+                }
+            }
+            catch 
+            {
+
+            }
+        }
     }
-     
+
 }

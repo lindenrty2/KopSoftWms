@@ -12,4 +12,11 @@
     <ProjectReference Include="..\YL.Utils\YL.Utils.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="System.ServiceModel.Duplex" Version="4.5.*" />
+    <PackageReference Include="System.ServiceModel.Http" Version="4.5.*" />
+    <PackageReference Include="System.ServiceModel.NetTcp" Version="4.5.*" />
+    <PackageReference Include="System.ServiceModel.Security" Version="4.5.*" />
+  </ItemGroup>
+  
 </Project>

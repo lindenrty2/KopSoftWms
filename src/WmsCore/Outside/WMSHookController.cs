@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Services.Outside;
 using SqlSugar;
 using System;
 using System.Collections.Generic;
@@ -119,15 +120,16 @@ namespace WMSCore.Outside
                     return YL.Core.Dto.RouteData.From(PubMessages.E0002_UPDATE_COUNT_FAIL);
                 }
 
-                Wms_stockin[] stockins = _client.Queryable<Wms_stockin>()
-                    .Where(x => x.MesTaskId == mesTask.MesTaskId).ToArray();
+                var anyWorking = await _client.Queryable<Wms_stockin>()
+                       .AnyAsync(x => x.MesTaskId == stockIn.MesTaskId
+                       && x.StockInStatus != (int)StockInStatus.task_finish
+                       && x.StockInStatus != (int)StockInStatus.task_canceled);
 
-                if (!stockins.Any(x => x.StockInStatus != StockInStatus.task_finish.ToInt32() && x.StockInStatus != StockInStatus.task_canceled.ToInt32()))
+                if (!anyWorking)
                 {
-                    await NofityStockIn(mesTask);
+                    await _client.NofityStockIn(mesTask);
                 }
 
-                _client.CommitTran();
                 return new RouteData();
             }
             catch (Exception ex)
@@ -137,91 +139,6 @@ namespace WMSCore.Outside
             }
         }
 
-        /// <summary>
-        /// 通知MES入库完成
-        /// </summary>
-        /// <param name="stockOutId"></param>
-        /// <param name="result"></param>
-        /// <returns></returns>
-        private async Task<RouteData> NofityStockIn(Wms_mestask mesTask)
-        {
-
-
-            mesTask.ModifiedDate = DateTime.Now;
-            mesTask.WorkStatus = MESTaskWorkStatus.WorkComplated;
-            mesTask.NotifyStatus = MESTaskNotifyStatus.WaitResponse;
-
-            bool notifyComplate = false;
-            try
-            {
-                List<Wms_stockin> stockIns = await _client.Queryable<Wms_stockin>().Where(x => x.MesTaskId == mesTask.MesTaskId).ToListAsync();
-
-                List<OutsideStockInResponseWarehouse> warehouseList = new List<OutsideStockInResponseWarehouse>();
-                foreach (Wms_stockin stockIn in stockIns)
-                {
-                    OutsideStockInResponseWarehouse warehouse = warehouseList.FirstOrDefault(x => x.WarehouseId == stockIn.WarehouseId.ToString());
-                    if (warehouse == null)
-                    {
-
-                        warehouse = new OutsideStockInResponseWarehouse()
-                        {
-                            WarehouseId = stockIn.WarehouseId.ToString(),
-                            WarehouseName = "", //TODO
-                            WarehousePosition = "",
-                            WarehousingFinishTime = stockIn.ModifiedDate.Value.ToString("yyyy-MM-dd HH:mm:ss"),
-                        };
-                        warehouseList.Add(warehouse);
-                    }
-                    List<Wms_stockindetail> stockInDetails = await _client.Queryable<Wms_stockindetail>().Where(x => x.StockInId == stockIn.StockInId).ToListAsync();
-                    foreach (Wms_stockindetail stockInDetail in stockInDetails)
-                    {
-                        OutsideMaterialResult material = new OutsideMaterialResult()
-                        {
-                            SuppliesId = stockInDetail.MaterialNo.ToString(),
-                            SuppliesName = stockInDetail.MaterialName,
-                            SuppliesNumber = stockInDetail.ActInQty.ToString(),
-                            RefreshStock = stockInDetail.ActInQty.ToString(),
-                            ErrorId = "", //TODO  stockInDetail.ErrorId,
-                            ErrorInfo = "", //TODO stockInDetail.ErrorInfo
-
-                        };
-                        warehouse.SuppliesInfoList.Add(material);
-                        warehouse.SuppliesKinds = warehouse.SuppliesInfoList.Count;
-                    }
-                }
-
-                OutsideStockInResponse response = new OutsideStockInResponse()
-                {
-                    WarehousingId = mesTask.WarehousingId,
-                    WarehousingEntryNumber = warehouseList.Count,
-                    WarehousingEntryFinishList = JsonConvert.SerializeObject(warehouseList)
-                };
-
-                await MESApiAccessor.Instance.WarehousingFinish(response);
-                notifyComplate = true;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "入库完成通知时发生异常");
-                //逻辑继续,寻找其它时机重新通知
-            }
-            mesTask.NotifyStatus = notifyComplate ? MESTaskNotifyStatus.Responsed : MESTaskNotifyStatus.Failed;
-            if (_client.Updateable(mesTask).ExecuteCommand() == 0)
-            {
-                return YL.Core.Dto.RouteData.From(PubMessages.E0002_UPDATE_COUNT_FAIL);
-
-            }
-
-            if (notifyComplate)
-            {
-                return new RouteData();
-            }
-            else
-            {
-                return YL.Core.Dto.RouteData.From(PubMessages.E3001_MES_STOCKIN_NOFITY_FAIL);
-
-            }
-        }
 
         /// <summary>
         /// 出库任务状态变化通知
@@ -284,12 +201,14 @@ namespace WMSCore.Outside
                     return YL.Core.Dto.RouteData.From(PubMessages.E0002_UPDATE_COUNT_FAIL);
                 }
 
-                Wms_stockout[] stockouts = _client.Queryable<Wms_stockout>()
-                    .Where(x => x.MesTaskId == mesTask.MesTaskId).ToArray();
+                bool anyWorking = await _client.Queryable<Wms_stockout>()
+                    .AnyAsync(x => x.MesTaskId == mesTask.MesTaskId 
+                    && x.StockOutStatus != (int)StockOutStatus.task_finish 
+                    && x.StockOutStatus != (int)StockOutStatus.task_canceled);
 
-                if (!stockouts.Any(x => x.StockOutStatus != StockOutStatus.task_finish.ToInt32() && x.StockOutStatus != StockOutStatus.task_canceled.ToInt32()))
+                if (!anyWorking)
                 {
-                    await NofityStockIn(mesTask);
+                    await _client.NofityStockOut(mesTask);
                 }
 
                 _client.CommitTran();
@@ -304,92 +223,6 @@ namespace WMSCore.Outside
 
 
         /// <summary>
-        /// 通知MES出库完成
-        /// </summary>
-        /// <param name="stockOutId"></param>
-        /// <param name="result"></param>
-        /// <returns></returns>
-        private async Task<RouteData> NofityStockOut(Wms_mestask mesTask)
-        {
-
-
-            mesTask.ModifiedDate = DateTime.Now;
-            mesTask.WorkStatus = MESTaskWorkStatus.WorkComplated;
-            mesTask.NotifyStatus = MESTaskNotifyStatus.WaitResponse;
-
-            bool notifyComplate = false;
-            try
-            {
-                List<Wms_stockout> stockOuts = await _client.Queryable<Wms_stockout>().Where(x => x.MesTaskId == mesTask.MesTaskId).ToListAsync();
-
-                List<OutsideStockOutResponseWarehouse> warehouseList = new List<OutsideStockOutResponseWarehouse>();
-                foreach (Wms_stockout stockOut in stockOuts)
-                {
-                    OutsideStockOutResponseWarehouse warehouse = warehouseList.FirstOrDefault(x => x.WarehouseId == stockOut.WarehouseId.ToString());
-                    if (warehouse == null)
-                    {
-
-                        warehouse = new OutsideStockOutResponseWarehouse()
-                        {
-                            WarehouseId = stockOut.WarehouseId.ToString(),
-                            WarehouseName = "", //TODO
-                            WorkAreaName = mesTask.WorkAreaName,
-                            WarehouseEntryFinishTime = stockOut.ModifiedDate.Value.ToString("yyyy-MM-dd HH:mm:ss"),
-                        };
-                        warehouseList.Add(warehouse);
-                    }
-                    List<Wms_stockoutdetail> stockOutDetails = await _client.Queryable<Wms_stockoutdetail>().Where(x => x.StockOutId == stockOut.StockOutId).ToListAsync();
-                    foreach (Wms_stockoutdetail stockOutDetail in stockOutDetails)
-                    {
-                        OutsideMaterialResult material = new OutsideMaterialResult()
-                        {
-                            SuppliesId = stockOutDetail.MaterialNo.ToString(),
-                            SuppliesName = stockOutDetail.MaterialName,
-                            SuppliesNumber = stockOutDetail.ActOutQty.ToString(),
-                            RefreshStock = stockOutDetail.ActOutQty.ToString(),
-                            ErrorId = "", //TODO  stockInDetail.ErrorId,
-                            ErrorInfo = "", //TODO stockInDetail.ErrorInfo
-
-                        };
-                        warehouse.SuppliesInfoList.Add(material);
-                        warehouse.SuppliesKinds = warehouse.SuppliesInfoList.Count;
-                    }
-                }
-
-                OutsideStockOutResponse response = new OutsideStockOutResponse()
-                {
-                    WarehouseEntryId = mesTask.WarehousingId,
-                    WarehouseEntryFinishCount = warehouseList.Count,
-                    WarehouseEntryFinishList = JsonConvert.SerializeObject(warehouseList)
-                };
-
-                await MESApiAccessor.Instance.WarehouseEntryFinish(response);
-                notifyComplate = true;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "出库完成通知时发生异常");
-                //逻辑继续,寻找其它时机重新通知
-            }
-            mesTask.NotifyStatus = notifyComplate ? MESTaskNotifyStatus.Responsed : MESTaskNotifyStatus.Failed;
-            if (_client.Updateable(mesTask).ExecuteCommand() == 0)
-            {
-                return YL.Core.Dto.RouteData.From(PubMessages.E0002_UPDATE_COUNT_FAIL);
-
-            }
-
-            if (notifyComplate)
-            {
-                return new RouteData();
-            }
-            else
-            {
-                return YL.Core.Dto.RouteData.From(PubMessages.E3101_MES_STOCKOUT_NOFITY_FAIL);
-
-            }
-        }
-
-        /// <summary>
         /// 盘库任务完成通知
         /// </summary>
         /// <param name="result"></param>
@@ -397,8 +230,7 @@ namespace WMSCore.Outside
         [HttpPost("StockCount")]
         public async Task<RouteData> StockCountComplete([FromBody]OutsideStockCountReportDto report)
         {
-
-            return new RouteData();
+            return await MESApiAccessor.Instance.StockCount(report);
         }
     }
 
