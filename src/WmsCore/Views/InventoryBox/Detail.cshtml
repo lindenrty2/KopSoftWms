@@ -33,14 +33,14 @@
                     _self.$refs.datemin = "1900-01-01";
                     _self.$refs.datemax = "2099-01-01";
                     var obj = [
-                        { checkbox: true, visible: true },
-                        { field: 'Position', title: '格号', visible: true },
-                        { field: 'MaterialNo', title: '物料编号', align: 'center', sortable: true },
-                        { field: 'MaterialOnlyId', title: '物料唯一编号', align: 'center', sortable: true },
-                        { field: 'MaterialName', title: '物料编号', align: 'center', sortable: true },
-                        { field: 'OrderNo', title: '生产令号', align: 'center', sortable: true },
+                        { checkbox: true, visible: false },
+                        { field: 'Position', title: '格号', visible: true, sortable: false },
+                        { field: 'MaterialNo', title: '物料编号', align: 'center', sortable: false },
+                        { field: 'MaterialOnlyId', title: '物料唯一编号', align: 'center', sortable: false },
+                        { field: 'MaterialName', title: '物料编号', align: 'center', sortable: false },
+                        { field: 'OrderNo', title: '生产令号', align: 'center', sortable: false },
                         {
-                            field: 'IsLocked', title: '状态', align: 'center', sortable: true, formatter: function (value, row, index) {
+                            field: 'IsLocked', title: '状态', align: 'center', sortable: false, formatter: function (value, row, index) {
                                 if (value) {
                                     return '<span class="label label-danger radius">锁定</span>';
                                 }
@@ -49,14 +49,14 @@
                                 }
                             }
                         },
-                        { field: 'Qty', title: '数量', align: 'center', sortable: true },
-                        { field: 'UserName', title: '更新者', align: 'center', sortable: true },
-                        { field: 'ModifiedDate', title: '最后更新时间', align: 'center', sortable: true, formatter: DateTimeFormatter }
+                        { field: 'Qty', title: '数量', align: 'center', sortable: false },
+                        { field: 'ModifiedUser', title: '更新者', align: 'center', sortable: false },
+                        { field: 'ModifiedDate', title: '最后更新时间', align: 'center', sortable: false, formatter: DateTimeFormatter }
                     ];
                     var qParams = {
                         Id: "@Model.InventoryBoxIdStr"
                     };
-                    yui.table("bootstraptable", "/InventoryBox/DetailList", obj, "GET", "InventoryId", true, qParams);
+                    yui.table("bootstraptable", "/InventoryBox/DetailList", obj, "GET", "Position", true, qParams);
                 })
             },
             computed: {

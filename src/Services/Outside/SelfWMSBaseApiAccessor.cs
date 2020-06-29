@@ -40,10 +40,13 @@ namespace Services.Outside
             return RouteData<Wms_inventorybox>.From(box);
         }
 
-        public Task<RouteData<Wms_inventory[]>> GetInventoryBoxDetail(long inventoryBoxId)
+        public async Task<RouteData<Wms_inventory[]>> GetInventoryBoxDetail(long inventoryBoxId)
         {
-            Wms_inventory[] box = _sqlClient.Queryable<Wms_inventory>().Where(x => x.InventoryBoxId == inventoryBoxId).ToArray();
-            return Task.FromResult(RouteData<Wms_inventory[]>.From(box));
+            List<Wms_inventory> boxDetails = await _sqlClient.Queryable<Wms_inventory>()
+                .Where(x => x.InventoryBoxId == inventoryBoxId)
+                .OrderBy(x => x.Position)
+                .ToListAsync();
+            return RouteData<Wms_inventory[]>.From(boxDetails.ToArray());
         }
 
         public async Task<RouteData<Wms_inventorybox[]>> GetInventoryBoxList(
