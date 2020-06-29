@@ -251,11 +251,12 @@ namespace Services.Outside
             //获取当前出库计划
             Wms_StockOutWorkDetailDto[] currentPlan = await GetStockOutCurrentPlan(stockOutId);
             //获取已关联的可用的料箱的ID的列表
-            IEnumerable<long> relationBoxIds = currentPlan
+            List<long> relationBoxIds = currentPlan
                 .Where(x => x.InventoryBoxStatus != null && x.InventoryBoxStatus != (int)InventoryBoxStatus.Missing)
-                .Select(x => long.Parse(x.InventoryBoxId)).Distinct();
+                .Select(x => long.Parse(x.InventoryBoxId)).Distinct().ToList();
 
             List<Tuple<long, Wms_inventoryboxTask>> targetBoxIdList = new List<Tuple<long, Wms_inventoryboxTask>>();
+            int workCount = 0; //执行成功的数量
             foreach (Wms_StockOutWorkDetailDto planItem in currentPlan)
             {
                 if (planItem.Status == StockOutStatus.task_finish.ToByte()) continue;
@@ -294,16 +295,34 @@ namespace Services.Outside
                     if (usableQty == 0) continue; //已全被占用，跳过
 
                     long targetBoxId = inventory.InventoryBoxId;
-                    Tuple<long, Wms_inventoryboxTask> targetBoxInfo = targetBoxIdList.FirstOrDefault(x => x.Item1 == targetBoxId);
-                    if (targetBoxInfo == null)
+
+                    long inventoryBoxTaskId = 0;
+                    //查询有没有相同料箱的
+                    Wms_StockOutWorkDetailDto sameBoxDetail = currentPlan.FirstOrDefault(x => x.InventoryBoxId == targetBoxId.ToString());
+                    if (sameBoxDetail != null)
                     {
-                        RouteData<Wms_inventoryboxTask> result = await DoInventoryBoxOutCore(targetBoxId, pos);
-                        targetBoxInfo = new Tuple<long, Wms_inventoryboxTask>(targetBoxId, result.IsSccuess ? result.Data : null);
-                        targetBoxIdList.Add(targetBoxInfo);
+                        inventoryBoxTaskId = Convert.ToInt64(sameBoxDetail.InventoryBoxTaskId);
+                        workCount++;
                     }
-                    if (targetBoxInfo.Item2 == null)
+                    else
                     {
-                        continue;
+                        Tuple<long, Wms_inventoryboxTask> targetBoxInfo = targetBoxIdList.FirstOrDefault(x => x.Item1 == targetBoxId);
+                        if (targetBoxInfo == null)
+                        {
+                            RouteData<Wms_inventoryboxTask> result = await DoInventoryBoxOutCore(targetBoxId, pos);
+                            targetBoxInfo = new Tuple<long, Wms_inventoryboxTask>(targetBoxId, result.IsSccuess ? result.Data : null);
+                            targetBoxIdList.Add(targetBoxInfo);
+                        }
+                        if (targetBoxInfo.Item2 == null)
+                        {
+                            continue;
+                        }
+                        if (!relationBoxIds.Contains(targetBoxId))
+                        {
+                            relationBoxIds.Add(targetBoxId);
+                        }
+                        inventoryBoxTaskId = targetBoxInfo.Item2.InventoryBoxTaskId;
+                        workCount++;
                     }
 
                     int planQty = outedQty + usableQty > needQty ? needQty - outedQty : usableQty;
@@ -315,7 +334,7 @@ namespace Services.Outside
                             DetailBoxId = PubId.SnowflakeId,
                             StockOutDetailId = long.Parse(planItem.DetailId),
                             InventoryBoxId = targetBoxId,
-                            InventoryBoxTaskId = targetBoxInfo.Item2.InventoryBoxTaskId,
+                            InventoryBoxTaskId = inventoryBoxTaskId,
                             Position = inventory.Position,
                             PlanQty = planQty,
                             Qty = 0,
@@ -333,7 +352,7 @@ namespace Services.Outside
                     {
                         detailbox = await _sqlClient.Queryable<Wms_stockoutdetail_box>().FirstAsync(x => x.DetailBoxId == long.Parse(planItem.DetailBoxId));
                         detailbox.InventoryBoxId = targetBoxId;
-                        detailbox.InventoryBoxTaskId = targetBoxInfo.Item2.InventoryBoxTaskId;
+                        detailbox.InventoryBoxTaskId = inventoryBoxTaskId;
                         detailbox.Position = inventory.Position;
                         detailbox.PlanQty = planQty;
                         detailbox.Qty = 0;
@@ -362,7 +381,7 @@ namespace Services.Outside
                 }
 
             }
-            if (targetBoxIdList.Where(x => x.Item2 != null).Count() == 0)
+            if (targetBoxIdList.Where(x => x.Item2 != null).Count() == 0 && workCount == 0)
             {
                 return RouteData.From(PubMessages.E2124_STOCKOUT_NO_BOX);
             }
