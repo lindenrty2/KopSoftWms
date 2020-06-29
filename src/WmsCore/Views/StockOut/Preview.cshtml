@@ -1,0 +1,132 @@
+﻿@{
+    Layout = "_LayoutH";
+    @model Wms_stockout
+}
+@section styles{
+}
+<div id="app" v-cloak>
+    <form class="form-horizontal" onsubmit="return false">
+        <div class="box-header">
+            <div class="pull-right box-tools print-hide" style="position:fixed;right:10px;top:10px">
+                <input v-on:click="printL" class="btn btn-primary radius" type="submit" v-model="submit">
+            </div>
+        </div>
+        <div class="box-body" id="print">
+            <div v-for="(item,i) in stockOutDList" >
+                <table class="table" >
+                    <tr>
+                        <th style="white-space:nowrap">出库单号</th>
+                        <th style="white-space:nowrap;margin-left:20px;">出库类型</th>
+                        <th style="width:350px" rowspan="8">
+                            <img style="width:300px;height:300px" :src="item.QRUrl" />
+                        </th>
+                    </tr>
+                    <tr >
+                        <td style="white-space:nowrap">@Model.StockOutNo</td>
+                        <td style="white-space:nowrap">@Model.StockOutTypeName</td>
+                    </tr>
+                    <tr>
+                        <th style="white-space:nowrap;margin-left:20px;">生产令号</th>
+                        <th style="white-space:nowrap;margin-left:20px;">计划出库日期</th>
+                    </tr>
+                    <tr >
+                        <td style="white-space:nowrap">@Model.OrderNo</td>
+                        <td style="white-space:nowrap">@Model.StockOutDate</td>
+                    </tr>
+                    <tr>
+                        <th style="white-space:nowrap;margin-left:20px;">任务创建人</th>
+                        <th style="white-space:nowrap;margin-left:20px;">任务创建日期</th>
+                    </tr>
+                    <tr >
+                        <td style="white-space:nowrap">@Model.CreateUser</td>
+                        <td style="white-space:nowrap">@Model.CreateDate</td>
+                    </tr>
+                    <tr>
+                        <th colspan="2" style="white-space:nowrap;margin-left:20px;">备注</th> 
+                    </tr>
+                    <tr >
+                        <td style="white-space:nowrap">@Model.Remark</td> 
+                    </tr>
+                </table>
+                <br />
+                <table class="table" style="border: 1px solid #ddd;width:100%">
+                    <thead>
+                        <tr>
+                            <th style="white-space:nowrap">子出库单号</th>
+                            <th style="white-space:nowrap">物料编号</th>
+                            <th style="white-space:nowrap">物料唯一编号</th>
+                            <th style="white-space:nowrap">物料名称</th>
+                            <th style="white-space:nowrap">计划数量</th>
+                            <th style="white-space:nowrap">单位</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="white-space:nowrap">{{item.SubWarehousingId}}</td>
+                            <td style="white-space:nowrap">{{item.MaterialNo}}</td>
+                            <td style="white-space:nowrap">{{item.MaterialOnlyId}}</td>
+                            <td style="white-space:nowrap">{{item.MaterialName}}</td>
+                            <td style="white-space:nowrap">{{item.PlanInQty}}</td>
+                            <td style="white-space:nowrap">{{item.UnitName}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="print-hide" style="width:100%;height:1px;background:black;margin:50px 0"></div>
+                <div :style="i===stockOutDList.length-1?'':'page-break-after: always;'"></div>
+            </div>
+        </div>
+        <div class="box-footer">
+        </div>
+    </form>
+</div>
+
+@section scripts{
+    <!--script src="~/lib/lodop/LodopFuncs.js"></script-->
+    <script>
+        var app = new Vue({
+            el: "#app",
+            data: {
+                submit: "打印",
+                stockOutId: "@ViewBag.StockOutId",
+                stockOutList: [],
+                stockOutDList: [],
+                stockOutNo:'@Model.StockOutNo'
+
+            },
+            computed: {
+            },
+            mounted: function () {
+                var _self = this;
+                _self.$nextTick(function () {
+                    _self.loadL();
+                });
+            },
+            methods: {
+                loadL: function () {
+                    var _self = this;
+                    yui.$axiosget('/StockOut/PreviewJson?id=' + _self.stockOutId)
+                        .then(function (response) {
+                            _self.stockOutList = response.data.Item2;
+                            for (var i = 0; i < response.data.Item4.length; i++) {
+                                var detail = response.data.Item4[i];
+                                detail.QRUrl = "QRCode?storeId=@ViewBag.StoreId&pid=@Model.StockOutId&detialId=" + detail.StockOutDetailId;
+                            }
+                            _self.stockOutDList = response.data.Item4;
+                        })
+                        .catch(function (error) {
+                            layer.msg(error.message, { icon: 5 });
+                        });
+                },
+                printL: function () {
+                    $(".print-hide").hide();
+                    window.print();
+                    $(".print-hide").show();
+                },
+                formatL: function (val) {
+                    return this.jsonDateFormat(val);
+                }
+
+            }
+        });
+    </script>
+}

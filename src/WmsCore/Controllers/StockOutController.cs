@@ -17,6 +17,9 @@ using YL.Utils.Extensions;
 using YL.Utils.Pub;
 using YL.Utils.Table;
 using YL.Utils.Json;
+using QRCoder;
+using System.Drawing.Imaging;
+using System.Drawing;
 
 namespace KopSoftWms.Controllers
 {
@@ -432,13 +435,6 @@ namespace KopSoftWms.Controllers
         }
 
         [HttpGet]
-        public IActionResult PreviewJson(string id)
-        {
-            var str = _stockoutServices.PrintList(id);
-            return Content(str);
-        }
-
-        [HttpGet]
         public async Task<RouteData<bool>> HasNofity(long storeId)
         {
             IWMSOperationApiAccessor wmsAccessor = WMSApiManager.GetOperationApiAccessor(storeId.ToString(), _client, this.UserDto);
@@ -488,5 +484,59 @@ namespace KopSoftWms.Controllers
             return result;
         }
 
+        [HttpGet]
+        public IActionResult Preview(long storeId, long pid)
+        {
+            var model = _stockoutServices.QueryableToEntity(
+                c => c.WarehouseId == storeId && c.StockOutId == pid && c.IsDel == 1);
+
+            ViewBag.StockOutId = pid;
+            ViewBag.StoreId = storeId;
+            return View(model);
+        }
+
+        [HttpGet]
+        public void QRCode(long storeId, long pid, long detialId)
+        {
+            var stockIn = _stockoutServices.QueryableToEntity(
+                c => c.WarehouseId == storeId && c.StockOutId == pid && c.IsDel == 1);
+
+            var detail = _stockoutdetailServices.QueryableToEntity(
+                c => c.WarehouseId == storeId && c.StockOutId == pid && c.StockOutDetailId == detialId && c.IsDel == 1);
+
+            string strQR = JsonConvert.SerializeObject(new
+            {
+                stockIn.StockOutId,
+                stockIn.StockOutNo,
+                stockIn.StockOutTypeName,
+                stockIn.StockOutDate,
+                stockIn.Remark,
+                detail = new
+                {
+                    detail.SubWarehouseEntryId,
+                    detail.MaterialId,
+                    detail.MaterialNo,
+                    detail.MaterialOnlyId,
+                    detail.MaterialName,
+                    detail.PlanOutQty,
+                    detail.Remark
+                }
+            }
+            );
+
+            QRCodeGenerator qrGenerator = new QRCodeGenerator();
+            QRCodeData qrCodeData = qrGenerator.CreateQrCode(
+                strQR, QRCodeGenerator.ECCLevel.Q);
+            QRCode qrCode = new QRCode(qrCodeData);
+            Bitmap qrCodeImage = qrCode.GetGraphic(20);
+            qrCodeImage.Save(this.Response.Body, ImageFormat.Png);
+        }
+
+        [HttpGet]
+        public IActionResult PreviewJson(string id)
+        {
+            var str = _stockoutServices.PrintList(id);
+            return Content(str);
+        }
     }
 }

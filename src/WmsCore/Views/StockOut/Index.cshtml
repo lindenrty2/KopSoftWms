@@ -83,7 +83,6 @@
     </section>
 </div>
 @section scripts{
-    <script src="~/lib/lodop/LodopFuncs.js"></script>
     <script src="~/js/common.wms.js?v=20200627"></script>
     <script type="text/javascript">
         var app = new Vue({
@@ -147,8 +146,8 @@
                                         '<button id="workL" type="button" class="btn btn-link" style="margin-top:-8px;margin-left:-10px;">操作</button>'
                                     );
                                 }
-                                html.push('<button id="previewL" type="button" class="btn btn-link" style="margin-top:-8px;margin-left:-10px;">预览</button>'
-                                    , '<button id="printL" type="button" class="btn btn-link" style="margin-top:-8px;margin-left:-10px;">打印</button>'
+                                html.push(
+                                    '<button id="previewL" type="button" class="btn btn-link" style="margin-top:-8px;margin-left:-10px;">打印预览</button>'
                                 );
                                 return html.join('');
                             },
@@ -299,7 +298,7 @@
                 },
                 previewL: function (val) {
                     var _self = this;
-                    _self.htmlL(val, 1);
+                    yui.layershow("预览", "/StockOut/Preview?storeId=@ViewData["currentStoreId"]&pid=" + val, 1000, 900);
                 },
                 printL: function (val) {
                     var _self = this;
