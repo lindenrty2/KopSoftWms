@@ -490,6 +490,10 @@
 
                     for (var i = 0; i < _self.tableData.length; i++) {
                         var material = _self.tableData[i]; 
+                        if (material.Qty <= 0) {
+                            layer.msg("[" + material.MaterialName + "]请输入大于0的数量", { icon: 2 });
+                            return false;
+                        }
                         if (_self.IsStockIn && material.Qty > material.PlanQty) {
                             layer.msg("[" + material.MaterialName + "]实际入库数量大于计划数量", { icon: 2 });
                             return false;
