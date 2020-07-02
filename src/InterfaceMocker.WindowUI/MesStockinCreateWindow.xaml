@@ -57,6 +57,7 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Header="仓库No(WarehouseId)" Binding="{Binding WarehouseId}" Width="100" />
                 <DataGridTextColumn Header="子入库单Id(SubWarehouseId)" Binding="{Binding SubWarehouseId}" Width="100" />
+                <DataGridTextColumn Header="唯一索引(UniqueIndex)" Binding="{Binding UniqueIndex}" Width="100" />
                 <DataGridTextColumn Header="物料唯一编号(SuppliesOnlyId)" Binding="{Binding SuppliesOnlyId}" Width="100" />
                 <DataGridComboBoxColumn x:Name="colSupplies" Header="物料编号/图号(SuppliesId)" SelectedValueBinding="{Binding SuppliesId}" ></DataGridComboBoxColumn>
                 <DataGridTextColumn Header="物料名称(SuppliesName)" Binding="{Binding SuppliesName}" Width="100" />

@@ -9,75 +9,7 @@
 
 namespace WMSService
 {
-    using System.Runtime.Serialization;
     
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="RouteData", Namespace="http://schemas.datacontract.org/2004/07/YL.Core.Dto")]
-    public partial class RouteData : object
-    {
-        
-        private int CodeField;
-        
-        private string CodeStringField;
-        
-        private bool IsSccuessField;
-        
-        private string MessageField;
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public int Code
-        {
-            get
-            {
-                return this.CodeField;
-            }
-            set
-            {
-                this.CodeField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string CodeString
-        {
-            get
-            {
-                return this.CodeStringField;
-            }
-            set
-            {
-                this.CodeStringField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public bool IsSccuess
-        {
-            get
-            {
-                return this.IsSccuessField;
-            }
-            set
-            {
-                this.IsSccuessField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string Message
-        {
-            get
-            {
-                return this.MessageField;
-            }
-            set
-            {
-                this.MessageField = value;
-            }
-        }
-    }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
     [System.ServiceModel.ServiceContractAttribute(ConfigurationName="WMSService.IMESHookController")]
@@ -91,7 +23,7 @@ namespace WMSService
         System.Threading.Tasks.Task<string> WarehousingAsync(string WarehousingId, string WarehousingType, string WarehousingTime, string ProductionPlanId, string BatchPlanId, string WorkAreaName, string SuppliesKinds, string SuppliesInfoList);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IMESHookController/WarehouseEntry", ReplyAction="http://tempuri.org/IMESHookController/WarehouseEntryResponse")]
-        System.Threading.Tasks.Task<string> WarehouseEntryAsync(string WarehouseEntryId, string WarehouseEntryType, string WarehouseEntryTime, string ProductionPlanId, string BatchPlanId, string WorkAreaName, string WorkStationId, string SuppliesKinds, string SuppliesInfoList);
+        System.Threading.Tasks.Task<string> WarehouseEntryAsync(string WarehouseEntryId, string WarehouseEntryType, string WarehouseEntryTime, string ProductionPlanId, string TotalWorkOrder, string BatchNumber, string BatchPlanId, string WorkAreaName, string WorkStationId, string SuppliesKinds, string SuppliesInfoList);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IMESHookController/MaterialStockEnquiry", ReplyAction="http://tempuri.org/IMESHookController/MaterialStockEnquiryResponse")]
         System.Threading.Tasks.Task<string> MaterialStockEnquiryAsync(string SuppliesId, string SuppliesName, string SuppliesType, string SuppliesUnit);
@@ -108,8 +40,8 @@ namespace WMSService
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IMESHookController/WarehouseEntryStatusEnquiry", ReplyAction="http://tempuri.org/IMESHookController/WarehouseEntryStatusEnquiryResponse")]
         System.Threading.Tasks.Task<string> WarehouseEntryStatusEnquiryAsync(string WarehouseEntryId, string WarehouseEntryType);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IMESHookController/StockCount", ReplyAction="http://tempuri.org/IMESHookController/StockCountResponse")]
-        System.Threading.Tasks.Task<WMSService.RouteData> StockCountAsync(string WarehouseId, string stockCountNo, string planDate, string materialList);
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IMESHookController/StockInventory", ReplyAction="http://tempuri.org/IMESHookController/StockInventoryResponse")]
+        System.Threading.Tasks.Task<string> StockInventoryAsync(string StockInventoryId, string Year, string Month, string WarehouseID, string SuppliesInfoList);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.1")]
@@ -172,9 +104,9 @@ namespace WMSService
             return base.Channel.WarehousingAsync(WarehousingId, WarehousingType, WarehousingTime, ProductionPlanId, BatchPlanId, WorkAreaName, SuppliesKinds, SuppliesInfoList);
         }
         
-        public System.Threading.Tasks.Task<string> WarehouseEntryAsync(string WarehouseEntryId, string WarehouseEntryType, string WarehouseEntryTime, string ProductionPlanId, string BatchPlanId, string WorkAreaName, string WorkStationId, string SuppliesKinds, string SuppliesInfoList)
+        public System.Threading.Tasks.Task<string> WarehouseEntryAsync(string WarehouseEntryId, string WarehouseEntryType, string WarehouseEntryTime, string ProductionPlanId, string TotalWorkOrder, string BatchNumber, string BatchPlanId, string WorkAreaName, string WorkStationId, string SuppliesKinds, string SuppliesInfoList)
         {
-            return base.Channel.WarehouseEntryAsync(WarehouseEntryId, WarehouseEntryType, WarehouseEntryTime, ProductionPlanId, BatchPlanId, WorkAreaName, WorkStationId, SuppliesKinds, SuppliesInfoList);
+            return base.Channel.WarehouseEntryAsync(WarehouseEntryId, WarehouseEntryType, WarehouseEntryTime, ProductionPlanId, TotalWorkOrder, BatchNumber, BatchPlanId, WorkAreaName, WorkStationId, SuppliesKinds, SuppliesInfoList);
         }
         
         public System.Threading.Tasks.Task<string> MaterialStockEnquiryAsync(string SuppliesId, string SuppliesName, string SuppliesType, string SuppliesUnit)
@@ -202,9 +134,9 @@ namespace WMSService
             return base.Channel.WarehouseEntryStatusEnquiryAsync(WarehouseEntryId, WarehouseEntryType);
         }
         
-        public System.Threading.Tasks.Task<WMSService.RouteData> StockCountAsync(string WarehouseId, string stockCountNo, string planDate, string materialList)
+        public System.Threading.Tasks.Task<string> StockInventoryAsync(string StockInventoryId, string Year, string Month, string WarehouseID, string SuppliesInfoList)
         {
-            return base.Channel.StockCountAsync(WarehouseId, stockCountNo, planDate, materialList);
+            return base.Channel.StockInventoryAsync(StockInventoryId, Year, Month, WarehouseID, SuppliesInfoList);
         }
         
         public virtual System.Threading.Tasks.Task OpenAsync()

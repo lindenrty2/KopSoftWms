@@ -11,6 +11,7 @@ using System.ServiceModel;
 using System.Threading.Tasks;
 using YL.Core.Dto;
 using YL.Core.Entity;
+using YL.Utils;
 using YL.Utils.Check;
 using YL.Utils.Extensions;
 using YL.Utils.Pub;
@@ -189,6 +190,7 @@ namespace WMSCore.Outside
                 {
                     MaterialId = "-1",
                     SubWarehousingId = materialDto.SubWarehouseId,
+                    UniqueIndex = materialDto.UniqueIndex,
                     MaterialOnlyId = materialDto.SuppliesOnlyId,
                     MaterialNo = materialDto.SuppliesId,
                     MaterialName = materialDto.SuppliesName,
@@ -246,14 +248,16 @@ namespace WMSCore.Outside
         [HttpPost("WarehouseEntry")]
         //public OutsideStockOutResult WarehouseEntry([FromBody]OutsideStockOutDto data)
         public string WarehouseEntry(String WarehouseEntryId,
-            String WarehouseEntryType,
-            String WarehouseEntryTime,
-            String ProductionPlanId,
-            String BatchPlanId,
-            String WorkAreaName,
-            String WorkStationId,
-            String SuppliesKinds,
-            String SuppliesInfoList)
+            string WarehouseEntryType,
+            string WarehouseEntryTime,
+            string ProductionPlanId,
+            string TotalWorkOrder,
+            string BatchNumber,
+            string BatchPlanId,
+            string WorkAreaName,
+            string WorkStationId,
+            string SuppliesKinds,
+            string SuppliesInfoList)
         {
             try
             {
@@ -262,6 +266,8 @@ namespace WMSCore.Outside
                        Guard.GuardEmpty(() => WarehouseEntryType),
                        Guard.GuardEmpty(() => WarehouseEntryTime),
                        Guard.GuardEmpty(() => ProductionPlanId),
+                       Guard.GuardEmpty(() => TotalWorkOrder),
+                       Guard.GuardEmpty(() => BatchNumber),
                        Guard.GuardEmpty(() => BatchPlanId),
                        Guard.GuardEmpty(() => WorkAreaName),
                        Guard.GuardEmpty(() => WorkStationId),
@@ -281,6 +287,8 @@ namespace WMSCore.Outside
                     WarehousingType = data.WarehouseEntryType, //入库类型
                     WarehousingTime = data.WarehouseEntryTime.SerialNumberToDateTime(),   //入库时间
                     ProductionPlanId = data.ProductionPlanId, //生产令号
+                    TotalWorkOrder = data.TotalWorkOrder,
+                    BatchNumber = data.BatchNumber,
                     BatchPlanId = data.BatchPlanId, //批次号
                     WorkAreaName = data.WorkAreaName, //作业区
                     WorkStationId = data.WorkStationId, //工位号
@@ -379,6 +387,7 @@ namespace WMSCore.Outside
                 {
                     MaterialId = "-1",
                     SubWarehouseEntryId = materialDto.SubWarehouseEntryId,
+                    UniqueIndex = materialDto.UniqueIndex,
                     MaterialOnlyId = materialDto.SuppliesOnlyId,
                     MaterialNo = materialDto.SuppliesId,
                     MaterialName = materialDto.SuppliesName,
@@ -402,6 +411,8 @@ namespace WMSCore.Outside
                         WarehousingType = mesTask.WarehousingType,
                         WarehouseId = keyValue.Key,
                         OrderNo = mesTask.ProductionPlanId,
+                        WorkNo = mesTask.TotalWorkOrder,
+                        BatchNumber = mesTask.BatchNumber,
                         WorkAreaName = mesTask.WorkAreaName,
                         WorkStationId = mesTask.WorkStationId,
                         BatchPlanId = mesTask.BatchPlanId,
@@ -495,7 +506,7 @@ namespace WMSCore.Outside
                 result.MaterialStockInfo = items.ToArray();
                 return JsonConvert.SerializeObject(result);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 OutsideMaterialStockEnquiryResult result = new OutsideMaterialStockEnquiryResult()
                 {
@@ -582,6 +593,8 @@ namespace WMSCore.Outside
                 .Select((sid, sidb, ib, m) => new
                 {
                     sid.WarehouseId,
+                    sid.SubWarehousingId,
+                    sid.UniqueIndex,
                     sid.MaterialId,
                     m.MaterialNo,
                     m.MaterialOnlyId,
@@ -607,6 +620,8 @@ namespace WMSCore.Outside
                         InventoryBoxNo = detail.InventoryBoxNo,
                         Position = Convert.ToString(detail.Position),//TODO
                         StorageRackPosition = "",
+                        SubWarehousingId = detail.SubWarehousingId,
+                        UniqueIndex = detail.UniqueIndex,
                         SuppliesId = string.IsNullOrWhiteSpace(detail.MaterialOnlyId) ? detail.MaterialId.ToString() : detail.MaterialOnlyId.ToString(),
                         RefreshStock = 0, //TODO
                         WarehousingStep = ((StockInStatus)detail.Status).ToString(),
@@ -664,7 +679,7 @@ namespace WMSCore.Outside
                      s.StockOutType
                  })
                 .ToList();
-            List<WarehousingStatusInfo> statusInfoList = new List<WarehousingStatusInfo>();
+            List<WarehouseEntryStatusInfo> statusInfoList = new List<WarehouseEntryStatusInfo>();
             foreach (var stockin in stockoutList)
             {
                 var stockoutDetailList = _sqlClient.Queryable<Wms_stockoutdetail, Wms_stockoutdetail_box, Wms_inventorybox, Wms_material>(
@@ -674,39 +689,38 @@ namespace WMSCore.Outside
                        JoinType.Left,sid.MaterialId == m.MaterialId,
                    }
                 )
-                .Where((sid, sidb, ib, m) => sid.StockOutId == stockin.StockOutId)
-                .Select((sid, sidb, ib, m) => new
+                .Where((sod, sodb, ib, m) => sod.StockOutId == stockin.StockOutId)
+                .Select((sod, sodb, ib, m) => new
                 {
-                    sid.WarehouseId,
-                    sid.MaterialId,
+                    sod.WarehouseId,
+                    sod.SubWarehouseEntryId,
+                    sod.UniqueIndex,
+                    sod.MaterialId,
                     m.MaterialNo,
                     m.MaterialOnlyId,
-                    sid.StockOutDetailId,
-                    sidb.InventoryBoxId,
+                    sod.StockOutDetailId,
+                    sodb.InventoryBoxId,
                     ib.InventoryBoxNo,
-                    sidb.Position,
-                    sidb.Qty,
-                    sid.Status,
-                    sid.CreateBy,
-                    sid.CreateDate,
-                    sid.ModifiedBy,
-                    sid.ModifiedDate
+                    sodb.Position,
+                    sodb.Qty,
+                    sod.Status,
+                    sod.CreateBy,
+                    sod.CreateDate,
+                    sod.ModifiedBy,
+                    sod.ModifiedDate
                 }).MergeTable().ToList();
                 foreach (var detail in stockoutDetailList)
                 {
-                    statusInfoList.Add(new WarehousingStatusInfo()
+                    statusInfoList.Add(new WarehouseEntryStatusInfo()
                     {
-                        IsNormalWarehousing = detail.Status == StockInStatus.task_finish.ToByte(),
-                        WarehouseId = detail.WarehouseId.ToString(),
-                        WarehousePosition = null,
-                        WarehouseName = stockin.WarehouseName,
-                        InventoryBoxNo = detail.InventoryBoxNo,
-                        Position = Convert.ToString(detail.Position),
-                        StorageRackPosition = "",
+                        IsNormalWarehouseEntry = detail.Status == StockInStatus.task_finish.ToByte(), 
+                        SubWarehouseEntryId = detail.SubWarehouseEntryId,
+                        UniqueIndex = detail.UniqueIndex,
                         SuppliesId = string.IsNullOrWhiteSpace(detail.MaterialOnlyId) ? detail.MaterialId.ToString() : detail.MaterialOnlyId.ToString(),
-                        RefreshStock = 0,
-                        WarehousingStep = ((StockInStatus)detail.Status).ToString(),
-                        WarehousingFinishTime = detail.ModifiedDate?.ToString("yyyyMMddHHmmss")
+                        RefreshStock = 0, //TODO
+                        WorkAreaName = "", //TODO
+                        WarehouseEntryStep = ((StockInStatus)detail.Status).ToString(),
+                        WarehouseEntryFinishTime = detail.ModifiedDate?.ToString("yyyyMMddHHmmss")
                     });
                 }
             }
@@ -726,78 +740,104 @@ namespace WMSCore.Outside
         }
 
         /// <summary>
-        /// 出库状态查询
+        /// 盘库任务下发
         /// </summary>
-        [HttpPost("StockCount")]
-        public RouteData StockCount(
-            string WarehouseId, string StockCountNo, string PlanDate, [FromForm]string MaterialList)
+        /// <param name="StockInventoryId">盘点单号</param>
+        /// <param name="Year">年份</param>
+        /// <param name="Month">月份</param>
+        /// <param name="WarehouseID">仓库编号</param>
+        /// <param name="SuppliesInfoList">物料信息</param>
+        /// <returns></returns>
+        [HttpPost("StockInventory")]
+        public string StockInventory(
+            string StockInventoryId, string Year, string Month, string WarehouseID, string SuppliesInfoList)
         {
             try
             {
-                Guard.GuardEmpty(() => StockCountNo);
-                Guard.GuardEmpty(() => PlanDate);
-                Guard.GuardEmpty(() => MaterialList);
+                Guard.GuardEmpty(() => StockInventoryId);
+                Guard.GuardEmpty(() => WarehouseID); 
+                DateTime stockCountDate = Guard.GuardDate(() => Year, () => Month);
+                OutsideStockCountMaterial[] materialList = Guard.GuardType<OutsideStockCountMaterial[]>(() => SuppliesInfoList);
 
-                OutsideStockCountMaterial[] materials = JsonConvert.DeserializeObject<OutsideStockCountMaterial[]>(MaterialList);
-                if(materials.Length == 0)
+                RouteData routedata = StockCountCore(StockInventoryId, stockCountDate, WarehouseID, materialList);
+                return JsonConvert.SerializeObject(new OutsideStockCountResultDto_MES()
                 {
-                    return YL.Core.Dto.RouteData.From(PubMessages.E2201_STOCKCOUNT_MATERIAL_ZERO);
-                }
+                    Success = true,
+                    StockInventoryId = StockInventoryId,
+                    ErrorId = routedata.Code.ToString(),
+                    ErrorInfo = routedata.Message
+                });
+            }
+            catch (WMSException ex)
+            {
+                return JsonConvert.SerializeObject(new OutsideStockCountResultDto_MES() {
+                    Success = false,
+                    StockInventoryId = StockInventoryId,
+                    ErrorId = ex.ErrorMessage.Code.ToString(),
+                    ErrorInfo = ex.ErrorMessage.Message
+                });
+            }
+        }
+         
+        public RouteData StockCountCore(
+            string StockInventoryId, DateTime StockCountDate, string WarehouseID, OutsideStockCountMaterial[] materials)
+        {
 
-                string warehouseNo = string.IsNullOrWhiteSpace(WarehouseId) ? "A00" : WarehouseId;
-                Wms_warehouse warehouse = WMSApiManager.GetWarehouse(warehouseNo);
-                if (warehouse == null)
-                {
-                    return RouteData<Wms_material>.From(PubMessages.E1026_SUPPLIES_WAREHOUSEID_NOTFOUND, $"warehouseId = {warehouseNo}");
-                }
-                long warehouseId = warehouse.WarehouseId;
-                IWMSBaseApiAccessor proxy = WMSApiManager.GetBaseApiAccessor(warehouseId.ToString(), _sqlClient);
+            if (materials.Length == 0)
+            {
+                return YL.Core.Dto.RouteData.From(PubMessages.E2201_STOCKCOUNT_MATERIAL_ZERO);
+            }
 
-                Wms_mestask mesTask = new Wms_mestask()
+            string warehouseNo = string.IsNullOrWhiteSpace(WarehouseID) ? "A00" : WarehouseID;
+            Wms_warehouse warehouse = WMSApiManager.GetWarehouse(warehouseNo);
+            if (warehouse == null)
+            {
+                return YL.Core.Dto.RouteData.From(PubMessages.E1026_SUPPLIES_WAREHOUSEID_NOTFOUND, $"warehouseId = {warehouseNo}");
+            }
+            long warehouseId = warehouse.WarehouseId;
+            IWMSBaseApiAccessor proxy = WMSApiManager.GetBaseApiAccessor(warehouseId.ToString(), _sqlClient);
+
+            Wms_mestask mesTask = new Wms_mestask()
+            {
+                MesTaskId = PubId.SnowflakeId,
+                MesTaskType = MESTaskTypes.StockCount,
+                WarehousingId = StockInventoryId, //入库单编号
+                WarehousingType = String.Empty, //入库类型
+                WarehousingTime = StockCountDate,   //入库时间
+                ProductionPlanId = String.Empty, //生产令号
+                BatchPlanId = String.Empty, //批次号
+                WorkAreaName = String.Empty, //作业区
+                SuppliesKinds = materials.Length, //物料种类
+                SuppliesInfoJson = "", // jsonSuppliesInfoStr, //物料信息
+                WorkStatus = MESTaskWorkStatus.WaitPlan,      //等待计划
+                NotifyStatus = MESTaskNotifyStatus.Requested, //已接收
+                CreateDate = DateTime.Now
+            };
+            RouteData result = null;
+            try
+            {
+                result = proxy.StockCount(new OutsideStockCountRequestDto()
                 {
-                    MesTaskId = PubId.SnowflakeId,
-                    MesTaskType = MESTaskTypes.StockCount,
-                    WarehousingId = StockCountNo, //入库单编号
-                    WarehousingType = String.Empty, //入库类型
-                    WarehousingTime = PlanDate.SerialNumberToDateTime(),   //入库时间
-                    ProductionPlanId = String.Empty, //生产令号
-                    BatchPlanId = String.Empty, //批次号
-                    WorkAreaName = String.Empty, //作业区
-                    SuppliesKinds = materials.Length, //物料种类
-                    SuppliesInfoJson = "", // jsonSuppliesInfoStr, //物料信息
-                    WorkStatus = MESTaskWorkStatus.WaitPlan,      //等待计划
-                    NotifyStatus = MESTaskNotifyStatus.Requested, //已接收
-                    CreateDate = DateTime.Now
-                };
-                RouteData result = null;
-                try
-                {
-                    result = proxy.StockCount(new OutsideStockCountRequestDto()
-                    {
-                        MesTaskId = mesTask.MesTaskId,
-                        StockCountNo = StockCountNo,
-                        PlanDate = PlanDate,
-                        MaterialList = materials
-                    }).GetAwaiter().GetResult();
-                    if (result == null || !result.IsSccuess)
-                    {
-                        mesTask.WorkStatus = MESTaskWorkStatus.Failed;
-                        mesTask.Remark = result.Message;
-                    }
-                }
-                catch (Exception ex)
+                    MesTaskId = mesTask.MesTaskId,
+                    StockCountNo = StockInventoryId,
+                    PlanDate = StockCountDate.ToString(PubConst.Format_Date),
+                    MaterialList = materials
+                }).GetAwaiter().GetResult();
+                if (result == null || !result.IsSccuess)
                 {
                     mesTask.WorkStatus = MESTaskWorkStatus.Failed;
-                    mesTask.Remark = ex.Message;
+                    mesTask.Remark = result.Message;
                 }
-                
-                _mastaskServices.Insert(mesTask);
-                return result;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                return YL.Core.Dto.RouteData.From(-1, ex.Message);
+                mesTask.WorkStatus = MESTaskWorkStatus.Failed;
+                mesTask.Remark = ex.Message;
             }
+
+            _mastaskServices.Insert(mesTask);
+            return result;
+
         }
     }
 
@@ -827,7 +867,10 @@ namespace WMSCore.Outside
         /// <returns></returns>
         [OperationContract]
         //OutsideStockOutResult WarehouseEntry(OutsideStockOutDto data);
-        string WarehouseEntry(String WarehouseEntryId, String WarehouseEntryType, String WarehouseEntryTime, String ProductionPlanId, String BatchPlanId, String WorkAreaName, String WorkStationId,  String SuppliesKinds, String SuppliesInfoList);
+        string WarehouseEntry(
+            String WarehouseEntryId, String WarehouseEntryType, String WarehouseEntryTime,
+            String ProductionPlanId, string TotalWorkOrder, string BatchNumber, String BatchPlanId, String WorkAreaName, String WorkStationId,
+            String SuppliesKinds, String SuppliesInfoList);
 
         /// <summary>
         /// 物料库存查询
@@ -866,11 +909,10 @@ namespace WMSCore.Outside
         //OutsideWarehouseEntryStatusEnquiryResult WarehouseEntryStatusEnquiry(OutsideWarehouseEntryStatusEnquiryArg arg);
         string WarehouseEntryStatusEnquiry(string WarehouseEntryId, string WarehouseEntryType);
 
-
         /// <summary>
-        /// 出库状态查询
+        /// 盘库任务下发
         /// </summary>
         [OperationContract] 
-        RouteData StockCount(string WarehouseId, string stockCountNo, string planDate, string materialList);
+        string StockInventory(string StockInventoryId, string Year, string Month, string WarehouseID, string SuppliesInfoList);
     }
 }

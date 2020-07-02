@@ -56,6 +56,13 @@ namespace YL.Core.Entity
         [SugarColumn(IsNullable = true)]
         public string SubWarehousingId { get; set; }
         /// <summary>
+        /// Desc:唯一索引
+        /// Default:
+        /// Nullable:True
+        /// </summary>
+        [SugarColumn(Length =80, IsNullable = true)]
+        public string UniqueIndex { get; set; } 
+        /// <summary>
         /// Desc:物料
         /// Default:
         /// Nullable:True

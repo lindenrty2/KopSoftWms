@@ -13,14 +13,13 @@ namespace InterfaceMocker.WindowUI
 {
     public class MesStockCountTaskItemViewModel : TaskItemViewModel
     {
-        private OutsideStockCountRequestDto _data;
+        private OutsideStockCountDto_MES _data;
         private WMSService.IMESHookController _mesHook = null;
-
-
-        public MesStockCountTaskItemViewModel(OutsideStockCountRequestDto data)
+        
+        public MesStockCountTaskItemViewModel(OutsideStockCountDto_MES data)
         {
             _data = data;
-            this.Title = "盘库任务:" + data.StockCountNo;
+            this.Title = "盘库任务:" + data.StockInventoryId;
             this.Datas.Add(new TaskItemData("发送", JsonConvert.SerializeObject(data)));
             var binding = new BasicHttpBinding();
             binding.SendTimeout = new TimeSpan(1, 0, 0);
@@ -57,7 +56,7 @@ namespace InterfaceMocker.WindowUI
             //};
             try
             {
-                var result = await _mesHook.StockCountAsync(_data.WarehouseId, _data.StockCountNo, _data.PlanDate, JsonConvert.SerializeObject(_data.MaterialList));
+                var result = await _mesHook.StockInventoryAsync(_data.StockInventoryId, _data.Year, _data.Month, _data.WarehouseID, _data.SuppliesInfoList);
                 this.Datas.Add(new TaskItemData("发送结果", JsonConvert.SerializeObject(result)));
             }
             catch(Exception ex)

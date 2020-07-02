@@ -8,6 +8,10 @@ namespace YL.Core.Dto
     {
         public bool IsSelected { get; set; }
         /// <summary>
+        /// 唯一索引
+        /// </summary>
+        public string UniqueIndex { get; set; }
+        /// <summary>
         /// 对接用唯一物料定义Id
         /// </summary>
         public string MaterialId { get; set; }
@@ -49,6 +53,7 @@ namespace YL.Core.Dto
         /// 子(出库/入库)单号
         /// </summary>
         public string SubWarehouseEntryId { get; set; } 
+
     }
 
     public class Wms_WarehousingMaterialInventoryDto : Wms_MaterialInventoryDto

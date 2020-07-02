@@ -17,5 +17,4 @@ namespace YL.Core.Dto
         public int InventoryBoxStatus { get; set; }
     }
 
-
 }

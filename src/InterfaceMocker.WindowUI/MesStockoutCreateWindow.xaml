@@ -20,6 +20,8 @@
             <RowDefinition Height="30"/>
             <RowDefinition Height="30"/>
             <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="30"/>
         </Grid.RowDefinitions>
@@ -37,10 +39,16 @@
         <TextBox Grid.Row="2" Grid.Column="1" x:Name="ctlWarehouseEntryTime" Text="{Binding WarehouseEntryTime}" />
         <Label Grid.Row="3" Grid.Column="0">生产令号(ProductionPlanId)</Label>
         <TextBox Grid.Row="3" Grid.Column="1" x:Name="ctlProductionPlanId" Text="{Binding ProductionPlanId}" />
-        <Label Grid.Row="4" Grid.Column="0">批次号(BatchPlanId)</Label>
-        <TextBox Grid.Row="4" Grid.Column="1" x:Name="ctlBatchPlanId" Text="{Binding BatchPlanId}" />
-        <Label Grid.Row="5" Grid.Column="0">作业区(WorkAreaName)</Label> 
-        <ComboBox Grid.Row="5" Grid.Column="1" x:Name="ctlWorkAreaName" SelectedValue="{Binding WorkAreaName}" >
+
+        <Label Grid.Row="4" Grid.Column="0">工作令号(TotalWorkOrder)</Label>
+        <TextBox Grid.Row="4" Grid.Column="1" x:Name="ctlTotalWorkOrder" Text="{Binding TotalWorkOrder}" />
+        <Label Grid.Row="5" Grid.Column="0">齐套批次号(BatchNumber)</Label>
+        <TextBox Grid.Row="5" Grid.Column="1" x:Name="ctlBatchNumber" Text="{Binding BatchNumber}" />
+
+        <Label Grid.Row="6" Grid.Column="0">计划批次号(BatchPlanId)</Label>
+        <TextBox Grid.Row="6" Grid.Column="1" x:Name="ctlBatchPlanId" Text="{Binding BatchPlanId}" />
+        <Label Grid.Row="7" Grid.Column="0">作业区(WorkAreaName)</Label> 
+        <ComboBox Grid.Row="7" Grid.Column="1" x:Name="ctlWorkAreaName" SelectedValue="{Binding WorkAreaName}" >
             <ComboBox.ItemsSource>
                 <x:Array Type="sys:String">
                     <sys:String>工作区1</sys:String>
@@ -51,11 +59,12 @@
                 </x:Array>
             </ComboBox.ItemsSource>
         </ComboBox>
-        <Label Grid.Row="6" Grid.Column="0">物料列表(Supplies)</Label>
-        <DataGrid Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="2" x:Name="ctlSuppliesInfoList" AutoGenerateColumns="False" ItemsSource="{Binding SuppliesInfoList}" >
+        <Label Grid.Row="8" Grid.Column="0">物料列表(Supplies)</Label>
+        <DataGrid Grid.Row="8" Grid.Column="1" Grid.ColumnSpan="2" x:Name="ctlSuppliesInfoList" AutoGenerateColumns="False" ItemsSource="{Binding SuppliesInfoList}" >
             <DataGrid.Columns>
                 <DataGridTextColumn Header="仓库No(WarehouseId)" Binding="{Binding WarehouseId}" Width="100" />
                 <DataGridTextColumn Header="子出库单Id(SubWarehouseEntryId)" Binding="{Binding SubWarehouseEntryId}" Width="100" />
+                <DataGridTextColumn Header="唯一索引(UniqueIndex)" Binding="{Binding UniqueIndex}" Width="100" />
                 <DataGridTextColumn Header="物料唯一编号(SuppliesOnlyId)" Binding="{Binding SuppliesOnlyId}" Width="100" />
                 <DataGridComboBoxColumn x:Name="colSupplies" Header="物料编号/图号(SuppliesId)" SelectedValueBinding="{Binding SuppliesId}" ></DataGridComboBoxColumn>
                 <DataGridTextColumn Header="物料名称(SuppliesName)" Binding="{Binding SuppliesName}" Width="100" />
@@ -82,7 +91,7 @@
             </DataGrid.Columns>
         </DataGrid>
 
-        <StackPanel Grid.Row="7" Grid.ColumnSpan="3" Orientation="Horizontal" HorizontalAlignment="Stretch">
+        <StackPanel Grid.Row="9" Grid.ColumnSpan="3" Orientation="Horizontal" HorizontalAlignment="Stretch">
             <Button Width="100" Content="添加物料" Click="AddMaterial_Click" />
             <Button Margin="20,0,0,0" Width="100" Content="添加自制件" Click="AddSingleMaterial_Click" />
             <Button Margin="20,0,0,0" Width="100" Content="确定" Click="Confirm_Click" />

@@ -21,9 +21,17 @@ namespace YL.Core.Dto
         /// <summary>
         /// 生产令号
         /// </summary>
-        public string ProductionPlanId { get; set; }
+        public string ProductionPlanId { get; set; } 
         /// <summary>
-        /// 批次号
+        /// 工作令号
+        /// </summary>
+        public string TotalWorkOrder { get; set; }
+        /// <summary>
+        /// 齐套批次号
+        /// </summary>
+        public string BatchNumber { get; set; }
+        /// <summary>
+        /// 计划批次号
         /// </summary>
         public string BatchPlanId { get; set; }
         /// <summary>
@@ -44,15 +52,17 @@ namespace YL.Core.Dto
         public string SuppliesInfoList { get; set; } //OutsideMaterialDto[]
 
         public static OutsideStockOutDto Create(
-            String warehouseEntryid,
-            String warehouseEntryType,
-            String warehouseEntryTime,
-            String productionPlanId,
-            String batchPlanId,
-            String workStationId,
-            String workAreaName,
+            string warehouseEntryid,
+            string warehouseEntryType,
+            string warehouseEntryTime,
+            string productionPlanId,
+            string totalWorkOrder,
+            string batchNumber,
+            string batchPlanId,
+            string workStationId,
+            string workAreaName,
             int suppliesKinds,
-            String suppliesInfoList)
+            string suppliesInfoList)
         {
             OutsideStockOutDto data = new OutsideStockOutDto()
             {
@@ -60,6 +70,8 @@ namespace YL.Core.Dto
                 WarehouseEntryType = warehouseEntryType,
                 WarehouseEntryTime = warehouseEntryTime,
                 ProductionPlanId = productionPlanId,
+                TotalWorkOrder = totalWorkOrder,
+                BatchNumber = batchNumber,
                 BatchPlanId = batchPlanId,
                 WorkAreaName = workAreaName,
                 WorkStationId = workStationId,

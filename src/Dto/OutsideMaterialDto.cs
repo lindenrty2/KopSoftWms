@@ -38,6 +38,10 @@ namespace YL.Core.Dto
         /// </summary>
         public string WarehouseId { get; set; }
         /// <summary>
+        /// 唯一索引
+        /// </summary>
+        public string UniqueIndex { get; set; }
+        /// <summary>
         /// 物料唯一编号
         /// </summary>
         public string SuppliesOnlyId { get; set; }

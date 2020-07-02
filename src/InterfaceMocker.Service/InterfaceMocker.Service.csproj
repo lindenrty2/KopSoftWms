@@ -15,6 +15,7 @@
     <Compile Include="..\Dto\OutsideLogisticsFinishDto.cs" Link="Do\OutsideLogisticsFinishDto.cs" />
     <Compile Include="..\Dto\OutsideMaterialDto.cs" Link="Do\OutsideMaterialDto.cs" />
     <Compile Include="..\Dto\OutsideMaterialStockEnquiryDto.cs" Link="Do\OutsideMaterialStockEnquiryDto.cs" />
+    <Compile Include="..\Dto\OutsideStockCountDto_MES.cs" Link="Do\OutsideStockCountDto_MES.cs" />
     <Compile Include="..\Dto\OutsideStockInDto.cs" Link="Do\OutsideStockInDto.cs" />
     <Compile Include="..\Dto\OutsideStockOutDto.cs" Link="Do\OutsideStockOutDto.cs" />
     <Compile Include="..\Dto\OutsideWarehouseEntryStatusEnquiryDto.cs" Link="Do\OutsideWarehouseEntryStatusEnquiryDto.cs" />

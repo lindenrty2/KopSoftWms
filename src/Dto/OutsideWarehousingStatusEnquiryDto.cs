@@ -59,7 +59,14 @@ namespace YL.Core.Dto
 
     public class WarehousingStatusInfo
     {
-
+        /// <summary>
+        /// 出库单子单号
+        /// </summary>
+        public string SubWarehousingId { get; set; }
+        /// <summary>
+        /// 唯一索引
+        /// </summary>
+        public string UniqueIndex { get; set; }
         /// <summary>
         /// 物资编号/图号
         /// </summary>

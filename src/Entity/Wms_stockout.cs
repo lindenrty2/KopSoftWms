@@ -56,6 +56,36 @@ namespace YL.Core.Entity
         public string OrderNo { get; set; }
 
         /// <summary>
+        /// 工作令号
+        /// </summary>
+        [SugarColumn(Length = 32/*, IsIdentity = true*/)]
+        public string WorkNo { get; set; }
+
+        /// <summary>
+        /// 齐套批次号
+        /// </summary>
+        [SugarColumn(Length = 32/*, IsIdentity = true*/)]
+        public string BatchNumber { get; set; }
+
+        /// <summary>
+        /// 批次号
+        /// </summary>
+        [SugarColumn(Length = 32/*, IsIdentity = true*/)]
+        public string BatchPlanId { get; set; }
+
+        /// <summary>
+        /// 作业区
+        /// </summary>
+        [SugarColumn(Length = 32/*, IsIdentity = true*/)]
+        public string WorkAreaName { get; set; }
+
+        /// <summary>
+        /// 工位号
+        /// </summary>
+        [SugarColumn(Length = 32/*, IsIdentity = true*/)]
+        public string WorkStationId { get; set; }
+
+        /// <summary>
         /// Desc:出库类型Id
         /// Default:
         /// Nullable:True

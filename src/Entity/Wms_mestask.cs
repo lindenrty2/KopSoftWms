@@ -40,6 +40,16 @@ namespace YL.Core.Entity
         [SugarColumn(Length = 80, DefaultValue = "", IsNullable = false)]
         public string ProductionPlanId { get; set; }
         /// <summary>
+        /// 工作令号
+        /// </summary>
+        [SugarColumn(Length = 80, DefaultValue = "", IsNullable = true)]
+        public string TotalWorkOrder { get; set; }
+        /// <summary>
+        /// 齐套批次号
+        /// </summary>
+        [SugarColumn(Length = 80, DefaultValue = "", IsNullable = true)]
+        public string BatchNumber { get; set; }
+        /// <summary>
         /// 批次号
         /// </summary>
         [SugarColumn(Length = 80, DefaultValue = "", IsNullable = false)]

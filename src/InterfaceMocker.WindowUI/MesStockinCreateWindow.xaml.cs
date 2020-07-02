@@ -58,11 +58,13 @@ namespace InterfaceMocker.WindowUI
 
         private void AddMaterial_Click(object sender, RoutedEventArgs e)
         {
+            Random rd = new Random();
             string suppliy = SuppliesItems[SuppliesInfoList.Count % 10];
             IEnumerable<YL.Core.Dto.OutsideWarehousingMaterialDto> newItem = new YL.Core.Dto.OutsideWarehousingMaterialDto[] {
                 new YL.Core.Dto.OutsideWarehousingMaterialDto()
                 { 
                     WarehouseId = "",
+                    UniqueIndex = "UII-" + DateTime.Now.ToString("yyyyMMddHHmmss") + rd.Next(0,1000).ToString().PadLeft(3,'0'),
                     SubWarehouseId = "SW-"+ DateTime.Now.ToString("yyyyMMddHHmmss"),
                     SuppliesOnlyId =  null,
                     SuppliesId = suppliy,
@@ -78,11 +80,13 @@ namespace InterfaceMocker.WindowUI
 
         private void AddSingleMaterial_Click(object sender, RoutedEventArgs e)
         {
+            Random rd = new Random();
             string onlySuppliy = OnlySuppliesItems[SuppliesInfoList.Count % 10];
             IEnumerable<YL.Core.Dto.OutsideWarehousingMaterialDto> newItem = new YL.Core.Dto.OutsideWarehousingMaterialDto[] {
                 new YL.Core.Dto.OutsideWarehousingMaterialDto()
                 {
                     WarehouseId = "",
+                    UniqueIndex = "UII-" + DateTime.Now.ToString("yyyyMMddHHmmss") + rd.Next(0,1000).ToString().PadLeft(3,'0'),
                     SubWarehouseId = "SW-"+ DateTime.Now.ToString("yyyyMMddHHmmss"),
                     SuppliesOnlyId =  onlySuppliy,
                     SuppliesId = null,

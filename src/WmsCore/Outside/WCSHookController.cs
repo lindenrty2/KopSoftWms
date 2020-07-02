@@ -68,7 +68,20 @@ namespace WMSCore.Outside
         public async Task<ConfirmOutStockResult> ConfirmStockOut([FromBody]WCSStockTaskCallBack result)
         {
             SelfWMSOperationApiAccessor accessor = new SelfWMSOperationApiAccessor(null, _client,this.UserDto);
-            ConfirmOutStockResult apiResult = await accessor.ConfirmOutStock(result);
+            ConfirmOutStockResult apiResult;
+            try
+            {
+                apiResult = await accessor.ConfirmOutStock(result);
+            }
+            catch(Exception ex)
+            {
+                apiResult = new ConfirmOutStockResult()
+                {
+                    Successd = false,
+                    ErrorCode = "-1",
+                    ErrorDesc = "调用MES发生异常:" + ex.Message
+                };
+            }
             return apiResult;
         }
 
@@ -81,14 +94,39 @@ namespace WMSCore.Outside
         public async Task<ConfirmBackStockResult> ConfirmStockIn([FromBody]WCSStockTaskCallBack result)
         {
             SelfWMSOperationApiAccessor accessor = new SelfWMSOperationApiAccessor(null, _client, this.UserDto);
-            ConfirmBackStockResult apiResult = await accessor.ConfirmBackStock(result);
+            ConfirmBackStockResult apiResult;
+            try
+            {
+                 apiResult = await accessor.ConfirmBackStock(result);
+            }
+            catch(Exception ex)
+            {
+                apiResult = new ConfirmBackStockResult()
+                {
+                    ErrorCode = "-1",
+                    ErrorDesc = "调用MES发生异常:" + ex.Message,
+                    Successd = false,
+                };
+            }
             return apiResult;
         }
 
         [HttpPost("LogisticsFinish")]
         public async Task<OutsideLogisticsFinishResponseResult> LogisticsFinish([FromBody]OutsideLogisticsFinishResponse arg)
         {
-            return await MESApiAccessor.Instance.LogisticsFinish(arg);
+            try
+            {
+                return await MESApiAccessor.Instance.LogisticsFinish(arg);
+            }
+            catch(Exception ex)
+            {
+                return new OutsideLogisticsFinishResponseResult()
+                {
+                    ErrorId = "-1:调用MES发生异常",
+                    IsNormalExecution = false,
+                    LogisticsId = arg.LogisticsId
+                };
+            }
         }
 
     } 

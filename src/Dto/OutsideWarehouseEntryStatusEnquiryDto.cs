@@ -57,7 +57,17 @@ namespace YL.Core.Dto
 
     public class WarehouseEntryStatusInfo
     {
-
+        /// <summary>
+        /// 子出库单号
+        /// </summary>
+        public string SubWarehouseEntryId { get; set; }
+        /// <summary>
+        /// 唯一索引
+        /// </summary>
+        public string UniqueIndex { get; set; }
+        /// <summary>
+        /// 物资编号/图号
+        /// </summary>
         public string SuppliesId { get; set; }
         /// <summary>
         /// 出库当前阶段
@@ -67,7 +77,7 @@ namespace YL.Core.Dto
         /// <summary>
         /// 是否出库完成
         /// </summary>
-        public string IsNormalWarehouseEntry { get; set; }
+        public bool IsNormalWarehouseEntry { get; set; }
 
         /// <summary>
         /// 出库完成时间
