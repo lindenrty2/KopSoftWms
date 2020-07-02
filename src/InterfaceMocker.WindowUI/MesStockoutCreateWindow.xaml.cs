@@ -30,6 +30,8 @@ namespace InterfaceMocker.WindowUI
             _data.WarehouseEntryTime = DateTime.Now.ToString("yyyyMMddHHmmss");
             _data.WarehouseEntryType = "成品出库单";
             _data.ProductionPlanId = DateTime.Now.Ticks.ToString();
+            _data.TotalWorkOrder = "TWO" + DateTime.Now.Ticks.ToString();
+            _data.BatchNumber = "BN" + DateTime.Now.Ticks.ToString();
             _data.BatchPlanId = DateTime.Now.TimeOfDay.Ticks.ToString();
             _data.WorkAreaName = "工作区1";
             _data.SuppliesKinds = 1;

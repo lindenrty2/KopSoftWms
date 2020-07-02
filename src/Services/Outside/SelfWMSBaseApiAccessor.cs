@@ -503,6 +503,7 @@ namespace Services.Outside
                 {
                     StockInDetailId = stockInDetail.StockInDetailId.ToString(),
                     SubWarehousingId = stockInDetail.SubWarehousingId,
+                    UniqueIndex = stockInDetail.UniqueIndex,
                     MaterialId = stockInDetail.MaterialId.Value.ToString(),
                     MaterialNo = stockInDetail.MaterialNo,
                     MaterialName = stockInDetail.MaterialName,
@@ -554,6 +555,7 @@ namespace Services.Outside
                 {
                     StockOutDetailId = stockOutDetail.StockOutDetailId.ToString(),
                     SubWarehouseEntryId = stockOutDetail.SubWarehouseEntryId,
+                    UniqueIndex = stockOutDetail.UniqueIndex,
                     MaterialId = stockOutDetail.MaterialId.Value.ToString(),
                     MaterialNo = stockOutDetail.MaterialNo,
                     MaterialName = stockOutDetail.MaterialName,
@@ -622,6 +624,11 @@ namespace Services.Outside
                 StockOutTypeName = s.StockOutTypeName,
                 MesTaskId = s.MesTaskId.ToString(),
                 OrderNo = s.OrderNo,
+                WorkNo = s.WorkNo,
+                BatchNumber = s.BatchNumber,
+                BatchPlanId = s.BatchPlanId,
+                WorkAreaName = s.WorkAreaName,
+                WorkStationId = s.WorkStationId,
                 StockOutNo = s.StockOutNo,
                 StockOutStatus = (StockOutStatus)s.StockOutStatus,
                 CreateBy = s.CreateUser,

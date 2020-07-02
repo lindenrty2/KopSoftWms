@@ -21,6 +21,30 @@ namespace YL.Core.Dto
         /// </summary>
         public string OrderNo { get; set; }
         /// <summary>
+        /// 工作令号
+        /// </summary> 
+        public string WorkNo { get; set; }
+
+        /// <summary>
+        /// 齐套批次号
+        /// </summary> 
+        public string BatchNumber { get; set; }
+
+        /// <summary>
+        /// 批次号
+        /// </summary> 
+        public string BatchPlanId { get; set; }
+
+        /// <summary>
+        /// 作业区
+        /// </summary> 
+        public string WorkAreaName { get; set; }
+
+        /// <summary>
+        /// 工位号
+        /// </summary> 
+        public string WorkStationId { get; set; } 
+        /// <summary>
         /// 出库类型名
         /// </summary>
         public string StockOutTypeName { get; set; }
@@ -72,7 +96,11 @@ namespace YL.Core.Dto
         /// <summary>
         /// 出库详细Id
         /// </summary>
-        public string StockOutDetailId { get; set; }
+        public string StockOutDetailId { get; set; } 
+        /// <summary>
+        /// 唯一索引
+        /// </summary>
+        public string UniqueIndex { get; set; }
         /// <summary>
         /// 对接用物料唯一Id
         /// </summary>

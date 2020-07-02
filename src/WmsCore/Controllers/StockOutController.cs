@@ -121,6 +121,7 @@ namespace KopSoftWms.Controllers
                     InventoryBoxNo = ib.InventoryBoxNo,
                     StockId = sid.StockOutId.ToString(),
                     StockDetailId = sid.StockOutDetailId.ToString(),
+                    UniqueIndex = sid.UniqueIndex,
                     MaterialId = m.MaterialId.ToString(),
                     MaterialNo = m.MaterialNo,
                     MaterialName = m.MaterialName,

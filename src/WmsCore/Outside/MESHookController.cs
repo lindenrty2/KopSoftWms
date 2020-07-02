@@ -64,7 +64,7 @@ namespace WMSCore.Outside
 
         [HttpPost("Warehousing")]
         //public OutsideStockInResult Warehousing([FromBody]OutsideStockInDto data)
-        public string Warehousing(String WarehousingId, String WarehousingType, String WarehousingTime, String ProductionPlanId, String BatchPlanId, String WorkAreaName, String SuppliesKinds, String SuppliesInfoList)
+        public string Warehousing(string WarehousingId, string WarehousingType, string WarehousingTime, string ProductionPlanId, string BatchPlanId, string WorkAreaName, string SuppliesKinds, string SuppliesInfoList)
         {
 
             try
@@ -247,7 +247,8 @@ namespace WMSCore.Outside
         /// <returns></returns>
         [HttpPost("WarehouseEntry")]
         //public OutsideStockOutResult WarehouseEntry([FromBody]OutsideStockOutDto data)
-        public string WarehouseEntry(String WarehouseEntryId,
+        public string WarehouseEntry(
+            string WarehouseEntryId,
             string WarehouseEntryType,
             string WarehouseEntryTime,
             string ProductionPlanId,
@@ -447,7 +448,7 @@ namespace WMSCore.Outside
         /// <returns></returns>
         [HttpGet("MaterialStockEnquiry")]
         //public OutsideMaterialStockEnquiryResult MaterialStockEnquiry(OutsideMaterialStockEnquiryArg arg)
-        public string MaterialStockEnquiry(String SuppliesId, String SuppliesName, String SuppliesType, String SuppliesUnit)
+        public string MaterialStockEnquiry(string SuppliesId, string SuppliesName, string SuppliesType, string SuppliesUnit)
         {
             //TODO 需要其他库的查询
             try
@@ -522,7 +523,7 @@ namespace WMSCore.Outside
         /// </summary>
         [HttpPost("LogisticsControl")]
         //public OutsideLogisticsControlResult LogisticsControl([FromBody]OutsideLogisticsControlArg arg)
-        public string LogisticsControl(String LogisticsId, String StartPoint, String Destination)
+        public string LogisticsControl(string LogisticsId, string StartPoint, string Destination)
         {
             var result = WCSApiAccessor.Instance.LogisticsControl(
                 OutsideLogisticsControlArg.Create(LogisticsId, StartPoint, Destination)).Result;
@@ -536,7 +537,7 @@ namespace WMSCore.Outside
         /// </summary>
         [HttpGet("LogisticsEnquiry")]
         //public OutsideLogisticsEnquiryResult LogisticsEnquiry(OutsideLogisticsEnquiryArg arg)
-        public string LogisticsEnquiry(String LogisticsId, String EquipmentId, String EquipmentName)
+        public string LogisticsEnquiry(string LogisticsId, string EquipmentId, string EquipmentName)
         {
             var result = WCSApiAccessor.Instance.LogisticsEnquiry(
                 OutsideLogisticsEnquiryArg.Create(LogisticsId, EquipmentId, EquipmentName)).Result;
@@ -858,7 +859,7 @@ namespace WMSCore.Outside
         /// <returns></returns>
         [OperationContract]
         //OutsideStockInResult Warehousing(OutsideStockInDto data);
-        string Warehousing(String WarehousingId, String WarehousingType, String WarehousingTime, String ProductionPlanId, String BatchPlanId, String WorkAreaName, String SuppliesKinds, String SuppliesInfoList);
+        string Warehousing(string WarehousingId, string WarehousingType, string WarehousingTime, string ProductionPlanId, string BatchPlanId, string WorkAreaName, string SuppliesKinds, string SuppliesInfoList);
 
         /// <summary>
         /// 出库
@@ -868,9 +869,9 @@ namespace WMSCore.Outside
         [OperationContract]
         //OutsideStockOutResult WarehouseEntry(OutsideStockOutDto data);
         string WarehouseEntry(
-            String WarehouseEntryId, String WarehouseEntryType, String WarehouseEntryTime,
-            String ProductionPlanId, string TotalWorkOrder, string BatchNumber, String BatchPlanId, String WorkAreaName, String WorkStationId,
-            String SuppliesKinds, String SuppliesInfoList);
+            string WarehouseEntryId, string WarehouseEntryType, string WarehouseEntryTime,
+            string ProductionPlanId, string TotalWorkOrder, string BatchNumber, string BatchPlanId, string WorkAreaName, string WorkStationId,
+            string SuppliesKinds, string SuppliesInfoList);
 
         /// <summary>
         /// 物料库存查询
@@ -879,21 +880,21 @@ namespace WMSCore.Outside
         /// <returns></returns>
         [OperationContract]
         //OutsideMaterialStockEnquiryResult MaterialStockEnquiry(OutsideMaterialStockEnquiryArg arg);
-        string MaterialStockEnquiry(String SuppliesId, String SuppliesName, String SuppliesType, String SuppliesUnit);
+        string MaterialStockEnquiry(string SuppliesId, string SuppliesName, string SuppliesType, string SuppliesUnit);
 
         /// <summary>
         /// 物流控制
         /// </summary>
         [OperationContract]
         //OutsideLogisticsControlResult LogisticsControl(OutsideLogisticsControlArg arg);
-        string LogisticsControl(String LogisticsId, String StartPoint, String Destination);
+        string LogisticsControl(string LogisticsId, string StartPoint, string Destination);
 
         /// <summary>
         /// 物流（状态）查询
         /// </summary>
         [OperationContract]
         //OutsideLogisticsEnquiryResult LogisticsEnquiry(OutsideLogisticsEnquiryArg arg);
-        string LogisticsEnquiry(String LogisticsId, String EquipmentId, String EquipmentName);
+        string LogisticsEnquiry(string LogisticsId, string EquipmentId, string EquipmentName);
 
         /// <summary>
         /// 入库状态查询

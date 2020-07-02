@@ -22,6 +22,8 @@ namespace YL.Core.Dto
 
         public int? InventoryBoxStatus { get; set; } = null;
 
+        public string UniqueIndex { get; set; }
+
         public string MaterialId { get; set; }
 
         public string MaterialNo { get; set; }

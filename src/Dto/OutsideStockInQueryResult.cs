@@ -73,6 +73,10 @@ namespace YL.Core.Dto
         /// </summary>
         public string StockInDetailId { get; set; }
         /// <summary>
+        /// 唯一索引
+        /// </summary>
+        public string UniqueIndex { get; set; }
+        /// <summary>
         /// 对接用物料唯一Id
         /// </summary>
         public string MaterialId { get; set; }

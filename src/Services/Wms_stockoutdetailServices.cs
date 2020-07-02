@@ -41,6 +41,7 @@ namespace Services
                 {
                     StockOutId = s.StockOutId.ToString(),
                     StockOutDetailId = s.StockOutDetailId.ToString(),
+                    UniqueIndex = s.UniqueIndex,
                     m.MaterialNo,
                     m.MaterialName, 
                     s.Status,

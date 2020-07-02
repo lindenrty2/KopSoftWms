@@ -429,6 +429,7 @@ namespace Services.Outside
                         InventoryPosition = 0,
                         DetailId = c.StockOutDetailId.ToString(),
                         DetailBoxId = null,
+                        UniqueIndex = c.UniqueIndex,
                         MaterialId = c.MaterialId.ToString(),
                         MaterialNo = c.MaterialNo,
                         MaterialOnlyId = c.MaterialOnlyId,
@@ -443,16 +444,15 @@ namespace Services.Outside
 
             //获取已关联料箱的出库单的物料信息
             List<Wms_StockOutWorkDetailDto> outedResult =
-                   await _sqlClient.Queryable<Wms_stockoutdetail_box, Wms_stockoutdetail, Wms_inventorybox, Sys_user>(
-                       (sodb, sod, ib, cu) => new object[] {
+                   await _sqlClient.Queryable<Wms_stockoutdetail_box, Wms_stockoutdetail, Wms_inventorybox>(
+                       (sodb, sod, ib) => new object[] {
                             JoinType.Left,sodb.StockOutDetailId==sod.StockOutDetailId ,
-                            JoinType.Left,sodb.InventoryBoxId==ib.InventoryBoxId ,
-                            JoinType.Left,sodb.CreateBy==cu.UserId,
+                            JoinType.Left,sodb.InventoryBoxId==ib.InventoryBoxId 
                        }
                    )
-                   .Where((sodb, sod, ib, cu) => sod.StockOutId == stockoutId)
-                   .OrderBy((sodb, sod, ib, cu) => sod.CreateDate, OrderByType.Desc)
-                   .Select((sodb, sod, ib, cu) => new Wms_StockOutWorkDetailDto()
+                   .Where((sodb, sod, ib) => sod.StockOutId == stockoutId)
+                   .OrderBy((sodb, sod, ib) => sod.CreateDate, OrderByType.Desc)
+                   .Select((sodb, sod, ib) => new Wms_StockOutWorkDetailDto()
                    {
                        InventoryBoxTaskId = sodb.InventoryBoxTaskId.ToString(),
                        InventoryBoxId = sodb.InventoryBoxId.ToString(),
@@ -461,6 +461,7 @@ namespace Services.Outside
                        InventoryPosition = sodb.Position,
                        DetailId = sod.StockOutDetailId.ToString(),
                        DetailBoxId = sodb.DetailBoxId.ToString(),
+                       UniqueIndex = sod.UniqueIndex,
                        MaterialId = sod.MaterialId.ToString(),
                        MaterialNo = sod.MaterialNo,
                        MaterialOnlyId = sod.MaterialOnlyId,
@@ -497,6 +498,7 @@ namespace Services.Outside
                         InventoryBoxStatus = null,
                         DetailId = plan.Detail.DetailId.ToString(),
                         DetailBoxId = plan.Detail.DetailBoxId,
+                        UniqueIndex = plan.Detail.UniqueIndex,
                         MaterialId = plan.Detail.MaterialId.ToString(),
                         MaterialNo = plan.Detail.MaterialNo,
                         MaterialOnlyId = plan.Detail.MaterialOnlyId,
