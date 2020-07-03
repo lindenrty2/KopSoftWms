@@ -30,13 +30,13 @@ namespace IServices.Outside
         /// <summary>
         /// 物流控制
         /// </summary>
-        [HttpPost("logisticsControlWCS.ashx")]
+        [HttpPost("logisticsControl.ashx")]
         ITask<OutsideLogisticsControlResult> LogisticsControl([JsonContent] OutsideLogisticsControlArg arg);
 
         /// <summary>
         /// 物流（状态）查询
         /// </summary>
-        [HttpPost("logisticsEnquiryWCS.ashx")]
+        [HttpPost("logisticsEnquiry.ashx")]
         ITask<OutsideLogisticsEnquiryResult> LogisticsEnquiry([JsonContent] OutsideLogisticsEnquiryArg arg);
          
     }
