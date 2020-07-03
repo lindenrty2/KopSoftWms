@@ -50,6 +50,10 @@ namespace YL.Core.Dto
         /// </summary>
         public string UnitName { get; set; }
         /// <summary>
+        /// 期末数量
+        /// </summary>
+        public int PrevNumber { get; set; }
+        /// <summary>
         /// 预计数量
         /// </summary> 
         public int ProjectedQty { get; set; }
