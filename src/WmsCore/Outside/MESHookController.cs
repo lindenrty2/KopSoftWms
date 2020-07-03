@@ -780,7 +780,7 @@ namespace WMSCore.Outside
             }
         }
          
-        public RouteData StockCountCore(
+        private RouteData StockCountCore(
             string StockInventoryId, DateTime StockCountDate, string WarehouseID, OutsideStockCountMaterial[] materials)
         {
 
