@@ -136,38 +136,22 @@ namespace WMSCore.Outside
             {
                 StockCountNo = "SC-000001",
                 CompleteDate = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
-                MaterialList = new OutsideStockCountStep[] {
-                    new OutsideStockCountStep()
+                MaterialList = new OutsideStockCountReportMaterialDto[] {
+                    new OutsideStockCountReportMaterialDto()
                     {
-                        StepId = "1",
-                        StockCountNo = "SC-000001",
-                        MaterialId = "100000000001",
                         MaterialOnlyId = "STDS-0001",
                         MaterialNo = "B001",
                         MaterialName = "物料名",
-                        MaterialTypeName = "物料类型",
-                        UnitName ="单位",
-                        BrandNo = "牌号",
+                        MaterialType = "物料类型",
+                        Unit ="单位",
+                        PrevNumber = 10,
                         BeforeCount = 10,
                         StockCount = 10,
-                        DiffCount = 0,
-                        PackageCount = 1,
-                        IsMark=false,
-                        IsMixture = true,
-                        IsExteriorPerfect = true,
-                        InventoryBoxId = 1000001,
-                        InventoryBoxNo = "LX-0001",
-                        InventoryBoxName = "料箱0001",
-                        InventoryPosition = 1,
                         Status = 4,
                         Remark = "Remark",
-                        IsDel = 1,
-                        CreateBy = 1,
-                        CreateUser = "创建者",
-                        CreateDate = DateTime.Now,
-                        StockCountBy= 1,
                         StockCountUser = "盘库者",
                         StockCountDate= DateTime.Now
+                        
                     }
                 }
             };

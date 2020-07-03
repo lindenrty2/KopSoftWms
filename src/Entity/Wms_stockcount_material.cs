@@ -66,15 +66,21 @@ namespace YL.Core.Entity
         public string UnitName { get; set; }
 
         /// <summary>
+        /// 期末数量
+        /// </summary>
+        [SugarColumn(IsNullable = true)]
+        public int PrevNumber { get; set; }
+
+        /// <summary>
         /// 预计数量
         /// </summary>
-        [SugarColumn()]
+        [SugarColumn(IsNullable = true)]
         public int ProjectedQty { get; set; }
 
         /// <summary>
         /// 盘库数量
         /// </summary>
-        [SugarColumn()]
+        [SugarColumn(IsNullable = true)]
         public int StockCountQty { get; set; }
 
         /// <summary>

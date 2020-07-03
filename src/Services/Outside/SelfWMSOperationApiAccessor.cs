@@ -2464,16 +2464,34 @@ namespace Services.Outside
         {
             try
             {
-                List<Wms_stockcount_step> allRelationSteps =
-                    await _sqlClient.Queryable<Wms_stockcount_step>()
+                IEnumerable < OutsideStockCountReportMaterialDto > materials =
+                    await _sqlClient.Queryable<Wms_stockcount_material>()
                         .Where(x => x.StockCountNo == stockCountNo)
+                        .Select(
+                            x => new OutsideStockCountReportMaterialDto()
+                            {
+                                MaterialNo = x.MaterialNo,
+                                MaterialOnlyId = x.MaterialOnlyId,
+                                MaterialName = x.MaterialName,
+                                MaterialType = x.MaterialTypeName,
+                                PrevNumber = x.PrevNumber,
+                                BeforeCount = x.ProjectedQty,
+                                StockCount = x.StockCountQty,
+                                Status = x.Status,
+                                Remark = x.Remark,
+                                Unit = x.UnitName,
+                                StockCountUser = x.ModifiedUser,
+                                StockCountDate = x.ModifiedDate
+                            }
+                        )
                         .ToListAsync();
+
 
                 OutsideStockCountReportDto report = new OutsideStockCountReportDto()
                 {
                     StockCountNo = stockCountNo,
                     CompleteDate = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
-                    MaterialList = allRelationSteps.ToArray()
+                    MaterialList = materials.ToArray()
                 };
 
                 RouteData result = await MESApiAccessor.Instance.StockCount(report);
