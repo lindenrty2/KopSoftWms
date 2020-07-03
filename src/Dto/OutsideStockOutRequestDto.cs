@@ -16,15 +16,15 @@ namespace YL.Core.Dto
         /// <summary>
         /// 出库Id
         /// </summary>
-        public string WarehousingId { get; set; }
+        public string WarehouseEntryId { get; set; }
         /// <summary>
         /// 出库类型
         /// </summary>
-        public string WarehousingType { get; set; }
+        public string WarehouseEntryType { get; set; }
         /// <summary>
         /// 出库时间
         /// </summary>
-        public string WarehousingTime { get; set; }
+        public string WarehouseEntryTime { get; set; }
         /// <summary>
         /// 生产令号
         /// </summary>

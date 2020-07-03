@@ -407,9 +407,9 @@ namespace WMSCore.Outside
                     OutsideStockOutRequestDto request = new OutsideStockOutRequestDto()
                     {
                         MesTaskId = mesTask.MesTaskId,
-                        WarehousingId = mesTask.WarehousingId,
-                        WarehousingTime = mesTask.WarehousingTime.ToString(PubConst.Format_DateTime),
-                        WarehousingType = mesTask.WarehousingType,
+                        WarehouseEntryId = mesTask.WarehousingId,
+                        WarehouseEntryTime = mesTask.WarehousingTime.ToString(PubConst.Format_DateTime),
+                        WarehouseEntryType = mesTask.WarehousingType,
                         WarehouseId = keyValue.Key,
                         OrderNo = mesTask.ProductionPlanId,
                         WorkNo = mesTask.TotalWorkOrder,

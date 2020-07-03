@@ -656,7 +656,7 @@ namespace Services.Outside
         private async Task<RouteData<Wms_stockout[]>> CreateWMSStockout(OutsideStockOutRequestDto request)
         {
             Sys_dict stockoutDict = await _sqlClient.Queryable<Sys_dict>()
-                .FirstAsync(x => x.DictType == PubDictType.stockout.ToByte().ToString() && x.DictName == request.WarehousingType);
+                .FirstAsync(x => x.DictType == PubDictType.stockout.ToByte().ToString() && x.DictName == request.WarehouseEntryType);
 
             if (stockoutDict == null)
             {
@@ -680,8 +680,8 @@ namespace Services.Outside
                     {
                         MesTaskId = request.MesTaskId,
                         StockOutId = request.StockOutId ?? CreateStockTaskID(request.WarehouseId),
-                        StockOutNo = request.StockOutNo ?? request.WarehousingId,
-                        StockOutDate = Convert.ToDateTime(request.WarehousingTime),
+                        StockOutNo = request.StockOutNo ?? request.WarehouseEntryId,
+                        StockOutDate = Convert.ToDateTime(request.WarehouseEntryTime),
                         StockOutType = stockoutDict.DictId,
                         StockOutTypeName = stockoutDict.DictName,
                         OrderNo = request.OrderNo,
