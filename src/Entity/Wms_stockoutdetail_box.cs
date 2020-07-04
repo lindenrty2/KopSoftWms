@@ -14,6 +14,11 @@ namespace YL.Core.Entity
         public long StockOutDetailId { get; set; }
 
         /// <summary>
+        /// 入库的唯一ID
+        /// </summary>
+        [SugarColumn(IsNullable = true)]
+        public string StockInUniqueIndex { get; set; }
+        /// <summary>
         /// 料箱任务Id
         /// </summary>
         [SugarColumn(DefaultValue = "0", IsNullable = false)]

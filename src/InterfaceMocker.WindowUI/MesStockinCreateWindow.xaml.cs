@@ -37,7 +37,7 @@ namespace InterfaceMocker.WindowUI
             colSupplies.ItemsSource = SuppliesItems;
             _data = new OutsideStockInDto();
             _data.WarehousingId = "RK-" + DateTime.Now.ToString("yyyyMMddHHmmss");
-            _data.WarehousingTime = DateTime.Now.ToString("yyyyMMddHHmmss");
+            _data.WarehousingTime = DateTime.Now.ToString("yyyy-MM-dd");
             _data.WarehousingType = "采购入库单";
             _data.ProductionPlanId = DateTime.Now.Ticks.ToString();
             _data.BatchPlanId = DateTime.Now.TimeOfDay.Ticks.ToString();

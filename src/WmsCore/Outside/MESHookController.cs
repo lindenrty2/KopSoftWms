@@ -89,7 +89,7 @@ namespace WMSCore.Outside
                     MesTaskType = MESTaskTypes.StockIn,
                     WarehousingId = data.WarehousingId, //入库单编号
                     WarehousingType = data.WarehousingType, //入库类型
-                    WarehousingTime = data.WarehousingTime.SerialNumberToDateTime(),   //入库时间
+                    WarehousingTime = Convert.ToDateTime( data.WarehousingTime ),   //入库时间
                     ProductionPlanId = data.ProductionPlanId, //生产令号
                     BatchPlanId = data.BatchPlanId, //批次号
                     WorkAreaName = data.WorkAreaName, //作业区
@@ -286,7 +286,7 @@ namespace WMSCore.Outside
                     MesTaskType = MESTaskTypes.StockOut,
                     WarehousingId = data.WarehouseEntryId, //入库单编号
                     WarehousingType = data.WarehouseEntryType, //入库类型
-                    WarehousingTime = data.WarehouseEntryTime.SerialNumberToDateTime(),   //入库时间
+                    WarehousingTime = Convert.ToDateTime(data.WarehouseEntryTime),   //入库时间
                     ProductionPlanId = data.ProductionPlanId, //生产令号
                     TotalWorkOrder = data.TotalWorkOrder,
                     BatchNumber = data.BatchNumber,

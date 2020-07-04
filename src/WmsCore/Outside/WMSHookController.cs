@@ -103,6 +103,8 @@ namespace WMSCore.Outside
                     localDetail.ModifiedUser = detail.ModifiedBy;
                     localDetail.ModifiedDate = Convert.ToDateTime(detail.ModifiedDate);
                     localDetail.Remark = detail.Remark;
+                    localDetail.ErrorId = detail.ErrorId;
+                    localDetail.ErrorInfo = detail.ErrorInfo;
                 }
 
                 if (_client.Updateable(details).ExecuteCommand() == 0)

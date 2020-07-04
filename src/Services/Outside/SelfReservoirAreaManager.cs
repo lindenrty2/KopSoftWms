@@ -389,8 +389,8 @@ namespace Services.Outside
                             SuppliesName = stockInDetail.MaterialName,
                             SuppliesNumber = stockInDetail.ActInQty.ToString(),
                             RefreshStock = stockInDetail.ActInQty.ToString(),
-                            ErrorId = "", //TODO  stockInDetail.ErrorId,
-                            ErrorInfo = "", //TODO stockInDetail.ErrorInfo
+                            ErrorId = stockInDetail.ErrorId,
+                            ErrorInfo = stockInDetail.ErrorInfo
 
                         };
                         warehouse.SuppliesInfoList.Add(material);
@@ -569,8 +569,8 @@ namespace Services.Outside
                             SuppliesName = stockOutDetail.MaterialName,
                             SuppliesNumber = stockOutDetail.ActOutQty.ToString(),
                             RefreshStock = stockOutDetail.ActOutQty.ToString(),
-                            ErrorId = "", //TODO  stockInDetail.ErrorId,
-                            ErrorInfo = "", //TODO stockInDetail.ErrorInfo
+                            ErrorId = stockOutDetail.ErrorId,
+                            ErrorInfo = stockOutDetail.ErrorInfo
 
                         };
                         warehouse.SuppliesInfoList.Add(material);

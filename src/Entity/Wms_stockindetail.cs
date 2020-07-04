@@ -128,6 +128,18 @@ namespace YL.Core.Entity
         public string Remark { get; set; }
 
         /// <summary>
+        /// 错误Id
+        /// </summary>
+        [SugarColumn(Length = 255, IsNullable = true)]
+        public string ErrorId { get; set; }
+
+        /// <summary>
+        /// 错误信息
+        /// </summary>
+        [SugarColumn(Length = 512, IsNullable = true)]
+        public string ErrorInfo { get; set; }
+
+        /// <summary>
         /// Desc:创建人
         /// Default:
         /// Nullable:True

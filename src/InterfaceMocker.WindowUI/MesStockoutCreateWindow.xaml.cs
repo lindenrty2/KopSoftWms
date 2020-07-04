@@ -27,7 +27,7 @@ namespace InterfaceMocker.WindowUI
             colSupplies.ItemsSource = SuppliesItems;
             _data = new OutsideStockOutDto();
             _data.WarehouseEntryId = "WL-" + DateTime.Now.ToString("yyyyMMddHHmmss");
-            _data.WarehouseEntryTime = DateTime.Now.ToString("yyyyMMddHHmmss");
+            _data.WarehouseEntryTime = DateTime.Now.ToString("yyyy-MM-dd");
             _data.WarehouseEntryType = "成品出库单";
             _data.ProductionPlanId = DateTime.Now.Ticks.ToString();
             _data.TotalWorkOrder = "TWO" + DateTime.Now.Ticks.ToString();
