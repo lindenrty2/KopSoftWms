@@ -364,13 +364,19 @@ namespace Services.Outside
                 return RouteData<Wms_stockin[]>.From(PubMessages.E1004_WAREHOUSETYPE_NOTFOUND);
             }
 
+            string stockInNo = request.StockInNo ?? request.WarehousingId;
+            if(await _sqlClient.Queryable<Wms_stockin>().AnyAsync(x => x.StockInNo == stockInNo))
+            { 
+                return RouteData<Wms_stockin[]>.From(PubMessages.E2021_STOCKIN_DUPLICATE);
+            }
+
             List<Wms_stockin> stockInList = new List<Wms_stockin>();
             List<Wms_stockindetail> stockinDetailList = new List<Wms_stockindetail>();
             Wms_stockin stockin = new Wms_stockin()
             {
                 MesTaskId = request.MesTaskId,
                 StockInId = request.StockInId ?? CreateStockTaskID(request.WarehouseId),
-                StockInNo = request.StockInNo ?? request.WarehousingId,
+                StockInNo = stockInNo,
                 StockInDate = Convert.ToDateTime(request.WarehousingTime),
                 StockInType = stockinDict.DictId,
                 StockInTypeName = stockinDict.DictName,
@@ -655,6 +661,7 @@ namespace Services.Outside
 
         private async Task<RouteData<Wms_stockout[]>> CreateWMSStockout(OutsideStockOutRequestDto request)
         {
+            //TODO 出库单号一至的情况下认为是修改出库单
             Sys_dict stockoutDict = await _sqlClient.Queryable<Sys_dict>()
                 .FirstAsync(x => x.DictType == PubDictType.stockout.ToByte().ToString() && x.DictName == request.WarehouseEntryType);
 
@@ -751,7 +758,7 @@ namespace Services.Outside
             Wms_material material = null;
             if (string.IsNullOrEmpty(materialDto.MaterialOnlyId))
             {
-                material = await _sqlClient.Queryable<Wms_material>().FirstAsync(x => x.MaterialNo == materialDto.MaterialNo);
+                material = await _sqlClient.Queryable<Wms_material>().FirstAsync(x => x.MaterialNo == materialDto.MaterialNo && string.IsNullOrEmpty(x.MaterialOnlyId));
             }
             else
             {
@@ -765,16 +772,37 @@ namespace Services.Outside
                     .FirstAsync(x => x.DictType == PubDictType.material.ToByte().ToString() && x.DictName == materialDto.MaterialType);
                 if (typeDict == null)
                 {
-                    return RouteData<Wms_material>.From(PubMessages.E1001_SUPPLIESTYPE_NOTFOUND);
+                    typeDict = new Sys_dict()
+                    {
+                        DictId = PubId.SnowflakeId,
+                        DictName = materialDto.MaterialType,
+                        DictType = PubDictType.material.ToByte().ToString(),
+                        CreateBy = PubConst.InterfaceUserId,
+                        CreateDate = DateTime.Now,
+                        ModifiedBy = PubConst.InterfaceUserId,
+                        ModifiedDate = DateTime.Now,
+                        IsDel= DeleteFlag.Normal
+                       
+                    };
+                    _sqlClient.Insertable(typeDict).ExecuteCommand();
                 }
-                else if (typeDict.WarehouseId == null)
-                {
-                    return RouteData<Wms_material>.From(PubMessages.E1002_SUPPLIESTYPE_WAREHOUSEID_NOTSET);
-                }
+            
                 Sys_dict unitDict = await _sqlClient.Queryable<Sys_dict>().FirstAsync(x => x.DictType == PubDictType.unit.ToByte().ToString() && x.DictName == materialDto.Unit);
                 if (unitDict == null)
                 {
-                    return RouteData<Wms_material>.From(PubMessages.E1003_UNIT_NOTFOUND);
+                    unitDict = new Sys_dict()
+                    {
+                        DictId = PubId.SnowflakeId,
+                        DictName = materialDto.Unit,
+                        DictType = PubDictType.unit.ToByte().ToString(),
+                        CreateBy = PubConst.InterfaceUserId,
+                        CreateDate = DateTime.Now,
+                        ModifiedBy = PubConst.InterfaceUserId,
+                        ModifiedDate = DateTime.Now,
+                        IsDel = DeleteFlag.Normal
+
+                    };
+                    _sqlClient.Insertable(unitDict).ExecuteCommand();
                 }
 
                 material = new Wms_material()
