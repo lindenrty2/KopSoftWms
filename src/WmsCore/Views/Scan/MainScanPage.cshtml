@@ -318,6 +318,10 @@
                     }
                     for (var i = 0; i < _self.tableData.length; i++) {
                         var material = _self.tableData[i];
+                        if (material.UniqueIndex == no) {
+                            material.Qty = parseInt(material.Qty) + 1;
+                            return;
+                        }
                         if (material.MaterialNo == no || material.MaterialOnlyId == no) {
                             material.Qty = parseInt(material.Qty) + 1;
                             return;
@@ -333,8 +337,9 @@
                     //}
                     if (this.StockDetails != null) {
                         for (var i = 0; i < this.StockDetails.length; i++) {
-                            var stockDetail = this.StockDetails[i];
-                            if (stockDetail.materialNo != no && stockDetail.materialOnlyId != no) {
+                            var stockDetail = this.StockDetails[i]; 
+                            debugger;
+                            if (stockDetail.uniqueIndex != no && stockDetail.materialNo != no && stockDetail.materialOnlyId != no) {
                                 continue;
                             }
                             var pos = 1;
