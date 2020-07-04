@@ -600,10 +600,10 @@ namespace WMSCore.Outside
                     m.MaterialNo,
                     m.MaterialOnlyId,
                     sid.StockInDetailId,
-                    sidb.InventoryBoxId,
+                    InventoryBoxId = (int?)sidb.InventoryBoxId,
                     ib.InventoryBoxNo,
-                    sidb.Position,
-                    sidb.Qty,
+                    Position = (int?)sidb.Position,
+                    Qty = (int?)sidb.Qty,
                     sid.Status,
                     sid.CreateBy,
                     sid.CreateDate,
@@ -684,10 +684,10 @@ namespace WMSCore.Outside
             foreach (var stockin in stockoutList)
             {
                 var stockoutDetailList = _sqlClient.Queryable<Wms_stockoutdetail, Wms_stockoutdetail_box, Wms_inventorybox, Wms_material>(
-                   (sid, sidb, ib, m) => new object[] {
-                       JoinType.Left,sid.StockOutDetailId == sidb.StockOutDetailId,
-                       JoinType.Left,sidb.InventoryBoxId == ib.InventoryBoxId,
-                       JoinType.Left,sid.MaterialId == m.MaterialId,
+                   (sod, sodb, ib, m) => new object[] {
+                       JoinType.Left,sod.StockOutDetailId == sodb.StockOutDetailId,
+                       JoinType.Left,sodb.InventoryBoxId == ib.InventoryBoxId,
+                       JoinType.Left,sod.MaterialId == m.MaterialId,
                    }
                 )
                 .Where((sod, sodb, ib, m) => sod.StockOutId == stockin.StockOutId)
@@ -700,10 +700,10 @@ namespace WMSCore.Outside
                     m.MaterialNo,
                     m.MaterialOnlyId,
                     sod.StockOutDetailId,
-                    sodb.InventoryBoxId,
+                    InventoryBoxId = (int?)sodb.InventoryBoxId,
                     ib.InventoryBoxNo,
-                    sodb.Position,
-                    sodb.Qty,
+                    Position = (int?)sodb.Position,
+                    Qty = (int?)sodb.Qty,
                     sod.Status,
                     sod.CreateBy,
                     sod.CreateDate,

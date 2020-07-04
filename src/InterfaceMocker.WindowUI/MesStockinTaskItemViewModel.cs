@@ -36,8 +36,22 @@ namespace InterfaceMocker.WindowUI
         {
             return new TaskItemCommand[] {
                 new SimpleTaskItemCommand("重发",ReSend),
+                new SimpleTaskItemCommand("查询",Query)
 
             };
+        }
+
+        public async void Query(object parameter)
+        {
+            try
+            {
+                var result = await _mesHook.WarehousingStatusEnquiryAsync(_data.WarehousingId, _data.WarehousingType);
+                this.Datas.Add(new TaskItemData("查询结果", JsonConvert.SerializeObject(result)));
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         public async void ReSend(object parameter)
