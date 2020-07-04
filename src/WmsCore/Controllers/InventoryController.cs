@@ -1,6 +1,7 @@
 ﻿using IServices.Outside;
 using Microsoft.AspNetCore.Mvc;
 using SqlSugar;
+using System;
 using System.Threading.Tasks;
 using WMSCore.Outside;
 using YL.Core.Dto;
@@ -35,19 +36,26 @@ namespace KopSoftWms.Controllers
         [OperationLog(LogType.select)]
         public async Task<string> List([FromForm]PubParams.InventoryBootstrapParams bootstrap)
         {
-            //var sd = _inventoryServices.PageList(bootstrap);
-            //return Content(sd);
-            long? materialId = string.IsNullOrWhiteSpace(bootstrap.MaterialId) ? (long?)null : long.Parse(bootstrap.MaterialId);
-             
-            IWMSBaseApiAccessor wmsAccessor = WMSApiManager.GetBaseApiAccessor(bootstrap.storeId.ToString(), _client);
-            RouteData<OutsideInventoryDto[]> result = (await wmsAccessor.QueryInventory(
-                null,null, null, materialId, bootstrap.pageIndex, bootstrap.limit, bootstrap.search,
-                new string[] { bootstrap.sort + " " + bootstrap.order }, bootstrap.datemin, bootstrap.datemax));
-            if (!result.IsSccuess)
+            try
             {
-                return new PageGridData().JilToJson();
+                //var sd = _inventoryServices.PageList(bootstrap);
+                //return Content(sd);
+                long? materialId = string.IsNullOrWhiteSpace(bootstrap.MaterialId) ? (long?)null : long.Parse(bootstrap.MaterialId);
+
+                IWMSBaseApiAccessor wmsAccessor = WMSApiManager.GetBaseApiAccessor(bootstrap.storeId.ToString(), _client);
+                RouteData<OutsideInventoryDto[]> result = (await wmsAccessor.QueryInventory(
+                    null, null, null, materialId, bootstrap.pageIndex, bootstrap.limit, bootstrap.search,
+                    new string[] { bootstrap.sort + " " + bootstrap.order }, bootstrap.datemin, bootstrap.datemax));
+                if (!result.IsSccuess)
+                {
+                    return new PageGridData().JilToJson();
+                }
+                return result.ToGridJson();
             }
-            return result.ToGridJson();
+            catch(Exception ex)
+            {
+                return ex.ToString();
+            }
         }
     }
 }
