@@ -120,21 +120,22 @@
                         { field: 'materialName', title: '物料名称', align: 'center', sortable: true },
                         { field: 'materialTypeName', title: '物料类型', align: 'center', sortable: true },
                         { field: 'unitName', title: '单位', align: 'center', sortable: true },
-                        { field: 'projectedQty', title: '预计数量', align: 'center', sortable: true },
-                        { field: 'stockCountQty', title: '盘库数量', align: 'center', sortable: true },
                         {
-                            field: '', title: '差异数量', align: 'center', sortable: true,
+                            field: 'prevNumber', title: '期末数量', align: 'center', sortable: true 
+                        },
+                        {
+                            field: 'projectedQty', title: 'WMS预期数量', align: 'center', sortable: true,
                             formatter: function (value, row, index) {
                                 if (row.status == 4) {
-                                    var result = row.stockCountQty - row.projectedQty;
+                                    var result = row.projectedQty - row.prevNumber;
                                     if (result == 0) {
-                                        return '<span class="label label-default radius">' + result + '</span>'; 
+                                        return '<span class="label label-default radius">' + value + '</span>';
                                     }
                                     else if (result < 0) {
-                                        return '<span class="label label-danger radius">' + result + '</span>'; 
+                                        return '<span class="label label-danger radius">' + value + '</span>';
                                     }
                                     else {
-                                        return '<span class="label label-success radius">' + result + '</span>';
+                                        return '<span class="label label-success radius">' + value + '</span>';
                                     }
                                 }
                                 else {
@@ -142,6 +143,26 @@
                                 }
                             }
                         },
+                        {
+                            field: 'stockCountQty', title: '盘库数量', align: 'center', sortable: true,
+                            formatter: function (value, row, index) {
+                                if (row.status == 4) {
+                                    var result = row.stockCountQty - row.projectedQty;
+                                    if (result == 0) {
+                                        return '<span class="label label-default radius">' + value + '</span>';
+                                    }
+                                    else if (result < 0) {
+                                        return '<span class="label label-danger radius">' + value + '</span>';
+                                    }
+                                    else {
+                                        return '<span class="label label-success radius">' + value + '</span>';
+                                    }
+                                }
+                                else {
+                                    return '盘点中';
+                                }
+                            }
+                        }, 
                     ];
                     $("#bootstraptable").bootstrapTable({
                         url: "/StockCount/QueryPlanList",

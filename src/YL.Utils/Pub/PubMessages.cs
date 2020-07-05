@@ -101,8 +101,9 @@ namespace YL.Utils.Pub
         public static MessageItem E2200_STOCKCOUNT_NOTFOUND = new MessageItem(-2200, "没有找到指定的盘库计划");
         public static MessageItem E2201_STOCKCOUNT_MATERIAL_NOTFOUND = new MessageItem(-2201, "没有找到指定的盘库物料");
         public static MessageItem E2202_STOCKCOUNT_STEP_NOTFOUND = new MessageItem(-2202, "没有找到指定的盘库任务");
-        public static MessageItem E2202_STOCKCOUNT_STEP_ZERO = new MessageItem(-2203, "没有任何物料可以盘点");
-        public static MessageItem E2201_STOCKCOUNT_MATERIAL_ZERO = new MessageItem(-2201, "盘库物料数量为0");
+        public static MessageItem E2203_STOCKCOUNT_STEP_ZERO = new MessageItem(-2203, "没有任何物料可以盘点");
+        public static MessageItem E2204_STOCKCOUNT_MATERIAL_ZERO = new MessageItem(-2204, "盘库物料数量为0");
+        public static MessageItem E2205_STOCKCOUNT_DUPLICATE = new MessageItem(-2205, "已存在相同盘库编号的盘库任务");
 
 
         public static MessageItem I2300_WCS_OUTCOMMAND_SCCUESS = new MessageItem(2300, "WCS料箱出库命令成功"); 
