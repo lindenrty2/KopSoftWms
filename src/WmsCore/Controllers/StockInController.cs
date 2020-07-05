@@ -132,7 +132,7 @@ namespace KopSoftWms.Controllers
                 {
                     StockId = sid.StockInId.ToString(),
                     StockDetailId = sid.StockInDetailId.ToString(),
-                    UniqueIndex = sid.UniqueIndex,
+                    StockInUniqueIndex = sid.UniqueIndex,
                     MaterialId = m.MaterialId.ToString(),
                     MaterialNo = m.MaterialNo,
                     MaterialName = m.MaterialName,

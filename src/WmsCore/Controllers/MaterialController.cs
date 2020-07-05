@@ -19,6 +19,7 @@ using YL.Utils.Security;
 using YL.Utils.Table; 
 using YL.Utils.Json;
 using System;
+using System.Collections.Generic;
 
 namespace KopSoftWms.Controllers
 {
@@ -200,9 +201,7 @@ namespace KopSoftWms.Controllers
             }
             return File(buffer, ContentType.ContentTypeFile, DateTimeExt.GetDateTimeS(DateTimeExt.DateTimeFormatString) + "-" + EncoderUtil.UrlHttpUtilityEncoder("物料") + ".xlsx");
         }
-
-
-
+        
         [HttpPost]
         public async Task<RouteData> Import([FromForm]IFormFile file)
         {
@@ -216,5 +215,6 @@ namespace KopSoftWms.Controllers
             }
             return await _materialServices.ImportList(file);
         }
+
     }
 }

@@ -87,6 +87,7 @@
                     <el-table-column label="物料名" prop="MaterialName" align="center"></el-table-column>
                     <el-table-column label="现有数" prop="NowQty" align="center"></el-table-column>
                     <el-table-column label="计划数" prop="PlanQty" align="center"></el-table-column>
+                    <el-table-column label="入库唯一索引" prop="StockInUniqueIndex" align="center"></el-table-column>
                     <el-table-column label="已操作数" prop="ActQty" align="center"></el-table-column>
                     <el-table-column label="物料位置" prop="Position" align="center">
                         <template slot-scope="scope">
@@ -223,13 +224,45 @@
                         _self.onInventoryBoxNoInputed(inputNo);
                     }
                     else if (IsMaterialNo(inputNo)) {
-                        _self.onMaterialNoInputed(inputNo);
+                        if (!_self.IsStockIn) {
+                            layer.msg("出库时不能扫描物料编码/唯一Id,请扫描入库唯一索引", { icon: 2 });
+                        }
+                        else { 
+                            _self.onMaterialNoInputed(inputNo);
+                        }
                     }
                     else {
-                        //未知编码作为物料编号识别
-                        _self.onMaterialNoInputed(inputNo); 
+                        if (_self.IsStockIn)
+                        {
+                            //入库时未知编码作为物料编号识别
+                            _self.onMaterialNoInputed(inputNo); 
+                        }
+                        else {
+                            //出库时未知编码作为入库唯一索引识别
+                            _self.onUnknowInputed(inputNo); 
+                        }
                     }
                     app.InputNo = "";
+                },
+                onUnknowInputed: function (no) {
+                    _self = this;
+                    var url = "/StockOut/QueryStockInMaterial?storeId=@ViewBag.StoreId&no=" + no;
+                    yui.$axiosget(url).then(function (res) {
+                        if (!res.data.isSccuess) {
+                            layer.msg("编码无法识别" + no, { icon: 2 });
+                        }
+                        else {
+                            if (res.data.data.materialOnlyId != null && res.data.data.materialOnlyId != '') {
+                                _self.onMaterialNoInputed(res.data.data.materialOnlyId, res.data.data.uniqueIndex);
+                            }
+                            else {
+                                _self.onMaterialNoInputed(res.data.data.materialNo, res.data.data.uniqueIndex);
+                            }
+                        }
+                    }).catch(function (res) {
+                        layer.msg("识别编码时发生错误" + res, { icon: 2 });
+                    });
+
                 },
                 onStockInNoInputed: function (no) {
                     var url = "/StockIn/Get?storeId=@ViewBag.StoreId&no=" + no;
@@ -253,7 +286,7 @@
                             _self.updateInventoryBoxDetail();
                         }
                     }).catch(function (res) {
-                        layer.msg("入库单查询发生错误" + res.data.message, { icon: 2 });
+                        layer.msg("入库单查询发生错误" + res, { icon: 2 });
                     });
                 },
                 onStockOutNoInputed: function (no) {
@@ -278,7 +311,7 @@
                             _self.updateInventoryBoxDetail();
                         }
                     }).catch(function (res) {
-                        layer.msg("入库单查询发生错误" + res.data.message, { icon: 2 });
+                        layer.msg("入库单查询发生错误" + res, { icon: 2 });
                     });
                 },
                 onInventoryBoxNoInputed: function (no) {
@@ -304,8 +337,13 @@
                         layer.msg("料箱查询发生错误" + res, { icon: 2 });
                     });
                 },
-                onMaterialNoInputed: function (no) {
-                    _self = this;
+                onMaterialNoInputed: function (no, uniqueIndex) {
+                    _self = this; 
+                    if (!_self.IsStockIn && uniqueIndex == null) {
+                        layer.msg("需要扫描入库物料唯一索引", { icon: 2 });
+                        return;
+                    }
+
                     if (_self.InventoryBox == null) {
                         if (_self.IsStockIn) {   
                             yui.layershow("选择料箱", "/Scan/InventoryBoxList?storeId=@ViewBag.StoreId&materialNo=" + no, 1000, 500);
@@ -318,12 +356,16 @@
                     }
                     for (var i = 0; i < _self.tableData.length; i++) {
                         var material = _self.tableData[i];
-                        if (material.UniqueIndex == no) {
-                            material.Qty = parseInt(material.Qty) + 1;
-                            return;
+                        if (_self.IsStockIn) {
+                            if (material.UniqueIndex == no) {
+                                material.Qty = parseInt(material.Qty) + 1;
+                                return;
+                            }
                         }
-                        if (material.MaterialNo == no || material.MaterialOnlyId == no) {
+                        if ((material.MaterialNo == no && (material.MaterialOnlyId == null || material.MaterialOnlyId == ''))
+                            || material.MaterialOnlyId == no) {
                             material.Qty = parseInt(material.Qty) + 1;
+                            material.StockInUniqueIndex = uniqueIndex;
                             return;
                         }
                     }
@@ -505,6 +547,10 @@
                         }
                         else if (!_self.IsStockIn && material.Qty > (material.PlanQty * -1)) {
                             layer.msg("[" + material.MaterialName + "]实际出库库数量大于计划数量", { icon: 2 });
+                            return false;
+                        }
+                        if (!_self.IsStockIn && (material.StockInUniqueIndex == null || material.StockInUniqueIndex == '' )) {
+                            layer.msg("[" + material.MaterialName + "]缺少入库物料唯一索引", { icon: 2 });
                             return false;
                         }
                     }

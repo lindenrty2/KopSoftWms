@@ -20,6 +20,7 @@ using YL.Utils.Json;
 using QRCoder;
 using System.Drawing.Imaging;
 using System.Drawing;
+using YL.Utils.Files;
 
 namespace KopSoftWms.Controllers
 {
@@ -121,7 +122,7 @@ namespace KopSoftWms.Controllers
                     InventoryBoxNo = ib.InventoryBoxNo,
                     StockId = sid.StockOutId.ToString(),
                     StockDetailId = sid.StockOutDetailId.ToString(),
-                    UniqueIndex = sid.UniqueIndex,
+                    StockInUniqueIndex = sid.UniqueIndex,
                     MaterialId = m.MaterialId.ToString(),
                     MaterialNo = m.MaterialNo,
                     MaterialName = m.MaterialName,
@@ -486,44 +487,21 @@ namespace KopSoftWms.Controllers
         }
 
         [HttpGet]
-        public IActionResult Preview(long storeId, long pid)
+        public IActionResult Preview(long storeId, long pid,long? boxId)
         {
             var model = _stockoutServices.QueryableToEntity(
                 c => c.WarehouseId == storeId && c.StockOutId == pid && c.IsDel == 1);
 
-            ViewBag.StockOutId = pid;
             ViewBag.StoreId = storeId;
+            ViewBag.StockOutId = pid;
+            ViewBag.BoxId = boxId;
             return View(model);
         }
 
         [HttpGet]
-        public void QRCode(long storeId, long pid, long detialId)
-        {
-            var stockIn = _stockoutServices.QueryableToEntity(
-                c => c.WarehouseId == storeId && c.StockOutId == pid && c.IsDel == 1);
-
-            var detail = _stockoutdetailServices.QueryableToEntity(
-                c => c.WarehouseId == storeId && c.StockOutId == pid && c.StockOutDetailId == detialId && c.IsDel == 1);
-
-            string strQR = JsonConvert.SerializeObject(new
-            {
-                stockIn.StockOutId,
-                stockIn.StockOutNo,
-                stockIn.StockOutTypeName,
-                stockIn.StockOutDate,
-                stockIn.Remark,
-                detail = new
-                {
-                    detail.SubWarehouseEntryId,
-                    detail.MaterialId,
-                    detail.MaterialNo,
-                    detail.MaterialOnlyId,
-                    detail.MaterialName,
-                    detail.PlanOutQty,
-                    detail.Remark
-                }
-            }
-            );
+        public void StockOutNoQRCode(string stockOutNo)
+        { 
+            string strQR = stockOutNo;
 
             QRCodeGenerator qrGenerator = new QRCodeGenerator();
             QRCodeData qrCodeData = qrGenerator.CreateQrCode(
@@ -534,10 +512,126 @@ namespace KopSoftWms.Controllers
         }
 
         [HttpGet]
-        public IActionResult PreviewJson(string id)
+        public async void MaterialQRCode(long storeId, long detailboxId)
+        { 
+
+            var detailBox = await _client.Queryable<Wms_stockoutdetail_box>()
+                .Where(c => c.DetailBoxId == detailboxId)
+                .FirstAsync();
+
+            var detail = await _client.Queryable<Wms_stockoutdetail>()
+                .Where(c => c.StockOutDetailId == detailBox.StockOutDetailId)
+                .FirstAsync();
+
+            string strQR = $"{detailBox.StockInUniqueIndex}@@{detail.UniqueIndex}";
+
+            QRCodeGenerator qrGenerator = new QRCodeGenerator();
+            QRCodeData qrCodeData = qrGenerator.CreateQrCode(
+                strQR, QRCodeGenerator.ECCLevel.Q);
+            QRCode qrCode = new QRCode(qrCodeData);
+            Bitmap qrCodeImage = qrCode.GetGraphic(20);
+            qrCodeImage.Save(this.Response.Body, ImageFormat.Png);
+        }
+
+        [HttpGet]
+        public IActionResult PreviewJson(long id,long? boxId)
         {
-            var str = _stockoutServices.PrintList(id);
-            return Content(str);
+            var list1 = _client.Queryable<Wms_stockout>()
+                 .Where((s) => s.StockOutId == id && s.IsDel == DeleteFlag.Normal )
+                 .Select((s) => new
+                 {
+                     StockOutId = s.StockOutId.ToString(),
+                     StockOutType = s.StockOutTypeName,
+                     StockOutTypeId = s.StockOutType.ToString(),
+                     s.StockOutStatus,
+                     s.StockOutNo,
+                     s.OrderNo,
+                     s.WorkNo,
+                     s.WorkStationId,
+                     s.WorkAreaName,
+                     s.IsDel,
+                     s.Remark,
+                     CName = s.CreateUser,
+                     s.CreateDate,
+                     UName = s.ModifiedUser,
+                     s.ModifiedDate
+                 }).ToList();
+            bool flag1 = true;
+            bool flag2 = true;
+            if(boxId == null)
+            {
+                return Content((flag1, list1, false , new object[1] { new object()}).JilToJson()); 
+            }
+            var list2 = _client.Queryable<Wms_stockoutdetail_box, Wms_stockoutdetail>((sodb, sod) => new object[] {
+                    JoinType.Left,sodb.StockOutDetailId==sod.StockOutDetailId,
+                })
+                .Where((sodb, sod) => sodb.DetailBoxId == boxId.Value && sod.IsDel == DeleteFlag.Normal)
+                .Select((sodb, sod) => new
+                {
+                    BoxId = sodb.DetailBoxId.ToString(),
+                    StockOutId = sod.StockOutId.ToString(),
+                    StockOutDetailId = sod.StockOutDetailId.ToString(),
+                    sod.SubWarehouseEntryId,
+                    sod.UniqueIndex,
+                    sodb.StockInUniqueIndex,
+                    sod.MaterialNo,
+                    sod.MaterialName, 
+                    Status = SqlFunc.IF(sod.Status == 1).Return(StockOutStatus.initial.GetDescription())
+                    .ElseIF(sod.Status == 2).Return(StockOutStatus.task_confirm.GetDescription())
+                    .ElseIF(sod.Status == 3).Return(StockOutStatus.task_canceled.GetDescription())
+                    .ElseIF(sod.Status == 3).Return(StockOutStatus.task_working.GetDescription())
+                    .End(StockOutStatus.task_finish.GetDescription()),
+                    sod.PlanOutQty,
+                    sod.ActOutQty,
+                    sod.IsDel,
+                    sod.Remark,
+                    CName = sod.CreateUser,
+                    sod.CreateDate,
+                    UName = sod.ModifiedUser,
+                    sod.ModifiedDate
+                })
+                .ToList();
+            if (!list1.Any())
+            {
+                flag1 = false;
+            }
+            if (!list2.Any())
+            {
+                flag2 = false;
+            }
+            return Content((flag1, list1, flag2, list2).JilToJson());
+        }
+
+
+        [HttpGet]
+        public async Task<RouteData<MaterialCode>> QueryStockInMaterial(string no)
+        {
+            Wms_stockindetail targetDetail = await _client.Queryable<Wms_stockindetail>()
+                .FirstAsync(x => x.UniqueIndex == no);
+            if (targetDetail != null)
+            {
+                return RouteData<MaterialCode>.From(
+                    new MaterialCode()
+                    {
+                        UniqueIndex = no,
+                        MaterialId = targetDetail.MaterialId.ToString(),
+                        MaterialNo = targetDetail.MaterialNo,
+                        MaterialOnlyId = targetDetail.MaterialOnlyId,
+                        MaterialName = targetDetail.MaterialName
+                    }
+                );
+            } 
+            return new RouteData<MaterialCode>() { Code = -1 };
+        }
+
+        public class MaterialCode
+        {
+            public string UniqueIndex { get; set; }
+            public string MaterialId { get; set; }
+            public string MaterialName { get; set; }
+            public string MaterialNo { get; set; }
+            public string MaterialOnlyId { get; set; }
+
         }
     }
 }

@@ -459,9 +459,11 @@ namespace Services.Outside
                        InventoryBoxNo = ib.InventoryBoxNo,
                        InventoryBoxStatus = ib.Status,
                        InventoryPosition = sodb.Position,
+                       StockOutId = sod.StockOutId.ToString(),
                        DetailId = sod.StockOutDetailId.ToString(),
                        DetailBoxId = sodb.DetailBoxId.ToString(),
                        UniqueIndex = sod.UniqueIndex,
+                       StockInUniqueIndex = sodb.StockInUniqueIndex,
                        MaterialId = sod.MaterialId.ToString(),
                        MaterialNo = sod.MaterialNo,
                        MaterialOnlyId = sod.MaterialOnlyId,
@@ -2027,7 +2029,7 @@ namespace Services.Outside
                     if (box != null)
                     {
                         box.Qty += material.Qty;
-
+                        box.StockInUniqueIndex = material.StockInUniqueIndex;
                         if (_sqlClient.Updateable(box).ExecuteCommand() == 0)
                         {
                             return YL.Core.Dto.RouteData.From(PubMessages.E0002_UPDATE_COUNT_FAIL);
@@ -2035,6 +2037,7 @@ namespace Services.Outside
                     }
                     else
                     {
+                        //TODO 出库料箱在出库执行时已指定,此分支应该不再使用
                         Wms_inventory[] targetInventories = inventories.Where(x => x.MaterialId == detail.MaterialId).ToArray();
                         if (targetInventories.Length == 0)
                         {

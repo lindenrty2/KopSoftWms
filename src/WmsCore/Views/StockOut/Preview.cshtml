@@ -22,24 +22,24 @@
                         </th>
                     </tr>
                     <tr >
-                        <td style="white-space:nowrap">@Model.StockOutNo</td>
+                        <td style="white-space:nowrap">@Model.StockOutNo ( @Model.StockOutDate )</td>
                         <td style="white-space:nowrap">@Model.StockOutTypeName</td>
                     </tr>
                     <tr>
                         <th style="white-space:nowrap;margin-left:20px;">生产令号</th>
-                        <th style="white-space:nowrap;margin-left:20px;">计划出库日期</th>
+                        <th style="white-space:nowrap;margin-left:20px;">工作令号</th>
                     </tr>
                     <tr >
                         <td style="white-space:nowrap">@Model.OrderNo</td>
-                        <td style="white-space:nowrap">@Model.StockOutDate</td>
+                        <td style="white-space:nowrap">@Model.WorkNo</td>
                     </tr>
                     <tr>
-                        <th style="white-space:nowrap;margin-left:20px;">任务创建人</th>
-                        <th style="white-space:nowrap;margin-left:20px;">任务创建日期</th>
+                        <th style="white-space:nowrap;margin-left:20px;">作业区</th>
+                        <th style="white-space:nowrap;margin-left:20px;">工位号</th>
                     </tr>
                     <tr >
-                        <td style="white-space:nowrap">@Model.CreateUser</td>
-                        <td style="white-space:nowrap">@Model.CreateDate</td>
+                        <td style="white-space:nowrap">@Model.WorkAreaName</td>
+                        <td style="white-space:nowrap">@Model.WorkStationId</td>
                     </tr>
                     <tr>
                         <th colspan="2" style="white-space:nowrap;margin-left:20px;">备注</th> 
@@ -49,25 +49,27 @@
                     </tr>
                 </table>
                 <br />
-                <table class="table" style="border: 1px solid #ddd;width:100%">
+                <table class="table material_table" style="border: 1px solid #ddd;width:100%" v-show="material_visable" >
                     <thead>
                         <tr>
                             <th style="white-space:nowrap">子出库单号</th>
+                            <th style="white-space:nowrap">出库唯一索引</th>
+                            <th style="white-space:nowrap">入库唯一索引</th>
                             <th style="white-space:nowrap">物料编号</th>
                             <th style="white-space:nowrap">物料唯一编号</th>
                             <th style="white-space:nowrap">物料名称</th>
-                            <th style="white-space:nowrap">计划数量</th>
-                            <th style="white-space:nowrap">单位</th>
+                            <th style="white-space:nowrap">计划数量</th> 
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td style="white-space:nowrap">{{item.SubWarehousingId}}</td>
+                            <td style="white-space:nowrap">{{item.SubWarehouseEntryId}}</td>
+                            <td style="white-space:nowrap">{{item.UniqueIndex}}</td>
+                            <td style="white-space:nowrap">{{item.StockInUniqueIndex}}</td>
                             <td style="white-space:nowrap">{{item.MaterialNo}}</td>
                             <td style="white-space:nowrap">{{item.MaterialOnlyId}}</td>
                             <td style="white-space:nowrap">{{item.MaterialName}}</td>
-                            <td style="white-space:nowrap">{{item.PlanInQty}}</td>
-                            <td style="white-space:nowrap">{{item.UnitName}}</td>
+                            <td style="white-space:nowrap">{{item.PlanOutQty}}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -87,6 +89,7 @@
             el: "#app",
             data: {
                 submit: "打印",
+                material_visable: true,
                 stockOutId: "@ViewBag.StockOutId",
                 stockOutList: [],
                 stockOutDList: [],
@@ -104,14 +107,21 @@
             methods: {
                 loadL: function () {
                     var _self = this;
-                    yui.$axiosget('/StockOut/PreviewJson?id=' + _self.stockOutId)
+                    yui.$axiosget('/StockOut/PreviewJson?id=@Model.StockOutId&BoxId=@ViewBag.BoxId')
                         .then(function (response) {
                             _self.stockOutList = response.data.Item2;
-                            for (var i = 0; i < response.data.Item4.length; i++) {
-                                var detail = response.data.Item4[i];
-                                detail.QRUrl = "QRCode?storeId=@ViewBag.StoreId&pid=@Model.StockOutId&detialId=" + detail.StockOutDetailId;
+                            if (response.data.Item3) {
+                                for (var i = 0; i < response.data.Item4.length; i++) {
+                                    var detail = response.data.Item4[i];
+                                    detail.QRUrl = "MaterialQRCode?storeId=@ViewBag.StoreId&detailboxId=" + detail.BoxId;
+                                }
+                                _self.stockOutDList = response.data.Item4;
                             }
-                            _self.stockOutDList = response.data.Item4;
+                            else {
+                                response.data.Item4 = [{ QRUrl: "StockOutNoQRCode?StockOutNo=@Model.StockOutNo" }];
+                                _self.stockOutDList = response.data.Item4;
+                                _self.material_visable = false;
+                            }
                         })
                         .catch(function (error) {
                             layer.msg(error.message, { icon: 5 });

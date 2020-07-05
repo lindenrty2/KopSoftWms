@@ -42,8 +42,7 @@ function IsMaterialNo(no) {
     }
     return false;
 }
-
-
+ 
 function StorageRackStatusFormatter(value, row, index) {
     if (value == 'Normal' || value == '0') {
         return '<span class="label label-default radius">正常</span>';

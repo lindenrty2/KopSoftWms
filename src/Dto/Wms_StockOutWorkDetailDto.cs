@@ -8,6 +8,7 @@ namespace YL.Core.Dto
 {
     public class Wms_StockOutWorkDetailDto 
     {
+        public string StockOutId { get; set; }
         public string DetailId { get; set; }
 
         public string DetailBoxId { get; set; }
@@ -23,6 +24,7 @@ namespace YL.Core.Dto
         public int? InventoryBoxStatus { get; set; } = null;
 
         public string UniqueIndex { get; set; }
+        public string StockInUniqueIndex { get; set; }
 
         public string MaterialId { get; set; }
 

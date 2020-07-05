@@ -14,7 +14,7 @@ namespace YL.Core.Dto
 
         public int Position { get; set; }
 
-        public string UniqueIndex { get; set; }
+        public string StockInUniqueIndex { get; set; }
 
         public string MaterialId { get; set; }
 
