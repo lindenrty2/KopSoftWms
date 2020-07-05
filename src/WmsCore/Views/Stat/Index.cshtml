@@ -1,42 +1,43 @@
 ﻿@{
     Layout = "_LayoutH";
 }
-
-<table style="width:100%;font-size:70px;text-align:center;line-height:160px;" border="1">
-    <tr>
-        <td colspan="4">立库使用情况</td>
-    </tr>
-    <tr>
-        <td width="25%">料箱总数</td>
-        <td width="25%">@ViewBag.TotalInventoryBox</td>
-        <td width="25%">已用料箱</td>
-        <td width="25%">@ViewBag.UsedInventoryBox</td>
-    </tr>
-    <tr>
-        <td>出库中料箱</td>
-        <td>@ViewBag.OutingInventoryBox</td>
-        <td>出库料箱</td>
-        <td>@ViewBag.OutedInventoryBox</td>
-    </tr>
-    <tr>
-        <td>归库中料箱</td>
-        <td>@ViewBag.BackingInventoryBox</td>
-        <td>离库料箱</td>
-        <td>@ViewBag.NoneInventoryBox</td>
-    </tr>
-    <tr>
-        <td>本日入库任务</td>
-        <td>@ViewBag.StockInCount</td>
-        <td>已完成入库</td>
-        <td>@ViewBag.StockInedCount</td>
-    </tr>
-    <tr>
-        <td>本日出库任务</td>
-        <td>@ViewBag.StockOutCount</td>
-        <td>已完成出库</td>
-        <td>@ViewBag.StockOutedCount</td>
-    </tr>
-</table>
+<body style="background:black;color:yellow">
+    <table style="width:100%;font-size:70px;text-align:center;line-height:160px;" border="4">
+        <tr>
+            <td colspan="4">立库使用情况</td>
+        </tr>
+        <tr>
+            <td width="25%">料箱总数</td>
+            <td width="25%">@ViewBag.TotalInventoryBox</td>
+            <td width="25%">已用料箱</td>
+            <td width="25%">@ViewBag.UsedInventoryBox</td>
+        </tr>
+        <tr>
+            <td>出库中料箱</td>
+            <td>@ViewBag.OutingInventoryBox</td>
+            <td>出库料箱</td>
+            <td>@ViewBag.OutedInventoryBox</td>
+        </tr>
+        <tr>
+            <td>归库中料箱</td>
+            <td>@ViewBag.BackingInventoryBox</td>
+            <td>离库料箱</td>
+            <td>@ViewBag.NoneInventoryBox</td>
+        </tr>
+        <tr>
+            <td>本日入库任务</td>
+            <td>@ViewBag.StockInCount</td>
+            <td>已完成入库</td>
+            <td>@ViewBag.StockInedCount</td>
+        </tr>
+        <tr>
+            <td>本日出库任务</td>
+            <td>@ViewBag.StockOutCount</td>
+            <td>已完成出库</td>
+            <td>@ViewBag.StockOutedCount</td>
+        </tr>
+    </table>
+</body>
 <script>
     function refresh() {
         window.location.reload();

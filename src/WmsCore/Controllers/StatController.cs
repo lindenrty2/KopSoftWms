@@ -56,18 +56,22 @@ namespace KopSoftWms.Controllers
                     .Where(x => x.UsedSize != 0)
                     .CountAsync();
                 ViewBag.StockInCount = await _client.Queryable<Wms_stockin>().Where(
-                    x => x.StockInDate >= DateTime.Today && x.StockInDate <= DateTime.Today.AddDays(1))
+                    x => x.StockInDate >= DateTime.Today && x.StockInDate <= DateTime.Today.AddDays(1)
+                    && x.WarehouseId == 1)
                     .CountAsync();
                 ViewBag.StockInedCount = await _client.Queryable<Wms_stockin>().Where(
                     x => x.StockInDate >= DateTime.Today && x.StockInDate <= DateTime.Today.AddDays(1)
-                    && x.StockInStatus == (int)StockInStatus.task_finish)
+                    && x.StockInStatus == (int)StockInStatus.task_finish
+                    && x.WarehouseId == 1)
                     .CountAsync();
                 ViewBag.StockOutCount = await _client.Queryable<Wms_stockout>().Where(
-                    x => x.StockOutDate >= DateTime.Today && x.StockOutDate <= DateTime.Today.AddDays(1))
+                    x => x.StockOutDate >= DateTime.Today && x.StockOutDate <= DateTime.Today.AddDays(1)
+                    && x.WarehouseId == 1)
                     .CountAsync();
                 ViewBag.StockOutedCount = await _client.Queryable<Wms_stockout>().Where(
                     x => x.StockOutDate >= DateTime.Today && x.StockOutDate <= DateTime.Today.AddDays(1)
-                    && x.StockOutStatus == (int)StockOutStatus.task_finish)
+                    && x.StockOutStatus == (int)StockOutStatus.task_finish
+                    && x.WarehouseId == 1)
                     .CountAsync();
             }
             catch (Exception ex)

@@ -458,28 +458,28 @@ namespace KopSoftWms.Controllers
             var stockIn = _stockinServices.QueryableToEntity(
                 c => c.WarehouseId == storeId && c.StockInId == pid && c.IsDel == 1);
 
-            var detail = _stockindetailServices.QueryableToEntity(
-                c => c.WarehouseId == storeId && c.StockInId == pid && c.StockInDetailId == detialId && c.IsDel == 1);
+            //var detail = _stockindetailServices.QueryableToEntity(
+            //    c => c.WarehouseId == storeId && c.StockInId == pid && c.StockInDetailId == detialId && c.IsDel == 1);
 
-            string strQR = JsonConvert.SerializeObject(new {
-                stockIn.StockInId,
-                stockIn.StockInNo,
-                stockIn.StockInTypeName,
-                stockIn.StockInDate,
-                stockIn.Remark,
-                detail = new
-                {
-                    detail.SubWarehousingId,
-                    detail.MaterialId,
-                    detail.MaterialNo,
-                    detail.MaterialOnlyId,
-                    detail.MaterialName,
-                    detail.PlanInQty,
-                    detail.Remark
-                }
-            }
-            );
-
+            //string strQR = JsonConvert.SerializeObject(new {
+            //    stockIn.StockInId,
+            //    stockIn.StockInNo,
+            //    stockIn.StockInTypeName,
+            //    stockIn.StockInDate,
+            //    stockIn.Remark,
+            //    detail = new
+            //    {
+            //        detail.SubWarehousingId,
+            //        detail.MaterialId,
+            //        detail.MaterialNo,
+            //        detail.MaterialOnlyId,
+            //        detail.MaterialName,
+            //        detail.PlanInQty,
+            //        detail.Remark
+            //    }
+            //}
+            //);
+            string strQR = stockIn.StockInNo;
             QRCodeGenerator qrGenerator = new QRCodeGenerator();
             QRCodeData qrCodeData = qrGenerator.CreateQrCode(
                 strQR, QRCodeGenerator.ECCLevel.Q);
@@ -494,6 +494,36 @@ namespace KopSoftWms.Controllers
             var str = _stockinServices.PrintList(id);
             return Content(str);
         }
+         
+        [HttpGet]
+        public async Task<RouteData<MaterialCode>> QueryStockInMaterial(string no)
+        {
+            Wms_stockindetail targetDetail = await _client.Queryable<Wms_stockindetail>()
+                .FirstAsync(x => x.UniqueIndex == no);
+            if (targetDetail != null)
+            {
+                return RouteData<MaterialCode>.From(
+                    new MaterialCode()
+                    {
+                        UniqueIndex = no,
+                        MaterialId = targetDetail.MaterialId.ToString(),
+                        MaterialNo = targetDetail.MaterialNo,
+                        MaterialOnlyId = targetDetail.MaterialOnlyId,
+                        MaterialName = targetDetail.MaterialName
+                    }
+                );
+            }
+            return new RouteData<MaterialCode>() { Code = -1 };
+        }
 
+        public class MaterialCode
+        {
+            public string UniqueIndex { get; set; }
+            public string MaterialId { get; set; }
+            public string MaterialName { get; set; }
+            public string MaterialNo { get; set; }
+            public string MaterialOnlyId { get; set; }
+
+        }
     }
 }

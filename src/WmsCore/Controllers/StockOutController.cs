@@ -523,7 +523,7 @@ namespace KopSoftWms.Controllers
                 .Where(c => c.StockOutDetailId == detailBox.StockOutDetailId)
                 .FirstAsync();
 
-            string strQR = $"{detailBox.StockInUniqueIndex}@@{detail.UniqueIndex}";
+            string strQR = $"{detail.UniqueIndex}@@{detailBox.StockInUniqueIndex}";
 
             QRCodeGenerator qrGenerator = new QRCodeGenerator();
             QRCodeData qrCodeData = qrGenerator.CreateQrCode(
@@ -602,36 +602,5 @@ namespace KopSoftWms.Controllers
             return Content((flag1, list1, flag2, list2).JilToJson());
         }
 
-
-        [HttpGet]
-        public async Task<RouteData<MaterialCode>> QueryStockInMaterial(string no)
-        {
-            Wms_stockindetail targetDetail = await _client.Queryable<Wms_stockindetail>()
-                .FirstAsync(x => x.UniqueIndex == no);
-            if (targetDetail != null)
-            {
-                return RouteData<MaterialCode>.From(
-                    new MaterialCode()
-                    {
-                        UniqueIndex = no,
-                        MaterialId = targetDetail.MaterialId.ToString(),
-                        MaterialNo = targetDetail.MaterialNo,
-                        MaterialOnlyId = targetDetail.MaterialOnlyId,
-                        MaterialName = targetDetail.MaterialName
-                    }
-                );
-            } 
-            return new RouteData<MaterialCode>() { Code = -1 };
-        }
-
-        public class MaterialCode
-        {
-            public string UniqueIndex { get; set; }
-            public string MaterialId { get; set; }
-            public string MaterialName { get; set; }
-            public string MaterialNo { get; set; }
-            public string MaterialOnlyId { get; set; }
-
-        }
     }
 }

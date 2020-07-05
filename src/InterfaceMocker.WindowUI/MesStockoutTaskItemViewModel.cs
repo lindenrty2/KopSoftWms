@@ -71,7 +71,8 @@ namespace InterfaceMocker.WindowUI
             //};
             try
             {
-                var result = await _mesHook.WarehouseEntryAsync(_data.WarehouseEntryId, _data.WarehouseEntryType, _data.WarehouseEntryTime,
+                var result = await _mesHook.WarehouseEntryAsync(
+                    _data.WarehouseEntryId, _data.WarehouseEntryType, _data.WarehouseEntryTime,
                     _data.ProductionPlanId, _data.TotalWorkOrder, _data.BatchNumber, _data.BatchPlanId, _data.WorkAreaName, _data.WorkStationId,
                     _data.SuppliesKinds.ToString(), _data.SuppliesInfoList);
                 this.Datas.Add(new TaskItemData("发送结果", JsonConvert.SerializeObject(result)));

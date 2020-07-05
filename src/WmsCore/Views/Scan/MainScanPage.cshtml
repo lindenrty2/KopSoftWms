@@ -232,21 +232,14 @@
                         }
                     }
                     else {
-                        if (_self.IsStockIn)
-                        {
-                            //入库时未知编码作为物料编号识别
-                            _self.onMaterialNoInputed(inputNo); 
-                        }
-                        else {
-                            //出库时未知编码作为入库唯一索引识别
-                            _self.onUnknowInputed(inputNo); 
-                        }
+                        //未知编码作为入库唯一索引识别
+                        _self.onUnknowInputed(inputNo); 
                     }
                     app.InputNo = "";
                 },
                 onUnknowInputed: function (no) {
                     _self = this;
-                    var url = "/StockOut/QueryStockInMaterial?storeId=@ViewBag.StoreId&no=" + no;
+                    var url = "/StockIn/QueryStockInMaterial?storeId=@ViewBag.StoreId&no=" + no;
                     yui.$axiosget(url).then(function (res) {
                         if (!res.data.isSccuess) {
                             layer.msg("编码无法识别" + no, { icon: 2 });
@@ -380,12 +373,15 @@
                     if (this.StockDetails != null) {
                         for (var i = 0; i < this.StockDetails.length; i++) {
                             var stockDetail = this.StockDetails[i]; 
-                            debugger;
-                            if (stockDetail.uniqueIndex != no && stockDetail.materialNo != no && stockDetail.materialOnlyId != no) {
+                            if (stockDetail.stockInUniqueIndex != no && stockDetail.materialNo != no && stockDetail.materialOnlyId != no) {
                                 continue;
                             }
+                            debugger;
                             var pos = 1;
                             var hasPos = false;//是否有可以装载的位置
+                            var inventoryId = null;
+                            var nowQty = 0;
+
                             for (pos = 1; pos <= _self.InventoryBox.size; pos++) {
                                 var pass = true; //是否匹配
                                 for (var idx = 0; idx < this.InventoryDetails.length; idx++ ) {
@@ -393,8 +389,12 @@
                                     if (inventoryDetail.inventoryPosition == pos) {
                                         if (inventoryDetail.materialNo == no && inventoryDetail.materialOnlyId == '') {
                                             //相同物料编号
+                                            inventoryId = inventoryDetail.inventoryId;
+                                            nowQty = inventoryDetail.qty;
                                         }
                                         else if (inventoryDetail.materialOnlyId == no) {
+                                            inventoryId = inventoryDetail.inventoryId;
+                                            nowQty = inventoryDetail.qty;
                                             //相同物料唯一Id
                                         }
                                         else { 
@@ -407,9 +407,13 @@
                                     var inventoryDetail = this.tableData[j];
                                     if (inventoryDetail.Position == pos) {
                                         if (inventoryDetail.materialNo == no && inventoryDetail.materialOnlyId == '') {
+                                            inventoryId = inventoryDetail.inventoryId;
+                                            nowQty = inventoryDetail.qty;
                                             //相同物料编号
                                         }
                                         else if (inventoryDetail.materialOnlyId == no) {
+                                            inventoryId = inventoryDetail.inventoryId;
+                                            nowQty = inventoryDetail.qty;
                                             //相同物料唯一Id
                                         }
                                         else {
@@ -430,13 +434,15 @@
                             var list = {
                                 StockId: stockDetail.stockId,
                                 StockDetailId: stockDetail.stockDetailId,
-                                InventoryId: null,
+                                InventoryId: inventoryId,
+                                StockInUniqueIndex: uniqueIndex,
                                 Position: pos,
                                 OrderNo: _self.OrderNo,
                                 MaterialId: stockDetail.materialId,
                                 MaterialNo: stockDetail.materialNo,
                                 MaterialName: stockDetail.materialName,
                                 IsLocked: false,
+                                NowQty: nowQty,
                                 PlanQty: stockDetail.planQty,
                                 ActQty: stockDetail.actQty,
                                 Qty: 1,
@@ -485,6 +491,7 @@
                                 MaterialNo: inventoryDetail.materialNo,
                                 MaterialName: inventoryDetail.materialName,
                                 IsLocked: inventoryDetail.isLocked,
+                                NowQty: inventoryDetail.qty,
                                 PlanQty: 0,
                                 ActQty: 0,
                                 Qty: 0,
