@@ -672,6 +672,41 @@ namespace Services.Outside
                 return RouteData<Wms_stockout[]>.From(PubMessages.E1004_WAREHOUSETYPE_NOTFOUND);
             }
 
+            string stockOutNo = request.StockOutNo ?? request.WarehouseEntryId;
+            Wms_stockout dbStockout = await _sqlClient.Queryable<Wms_stockout>().FirstAsync(x => x.StockOutNo == stockOutNo);
+            if (dbStockout != null)
+            { 
+                if(dbStockout.StockOutStatus != (int)StockOutStatus.task_confirm)
+                { 
+                    return RouteData<Wms_stockout[]>.From(PubMessages.E2125_STOCKOUT_DUPLICATE);
+                }
+                List<Wms_stockoutdetail> dbStockoutdetails = await _sqlClient.Queryable<Wms_stockoutdetail>()
+                    .Where(x => x.StockOutId == dbStockout.StockOutId)
+                    .ToListAsync();
+                foreach (Wms_WarehouseEntryMaterialInventoryDto materialDto in request.MaterialList)
+                {
+                    Wms_stockoutdetail dbDetail = dbStockoutdetails.FirstOrDefault(x => x.UniqueIndex == materialDto.UniqueIndex);
+                    if(dbDetail == null)
+                    { 
+                        return RouteData<Wms_stockout[]>.From(PubMessages.E2126_STOCKOUTDETAIL_NOTFOUND,$"UniqueIndex={materialDto.UniqueIndex}");
+                    }
+                    dbDetail.PlanOutQty = materialDto.Qty;
+                    if(dbDetail.PlanOutQty == 0)
+                    {
+                        dbDetail.Status = (int)StockOutStatus.task_finish;
+                    }
+                    dbDetail.ModifiedBy = PubConst.InterfaceUserId;
+                    dbDetail.ModifiedUser = PubConst.InterfaceUserName;
+                    dbDetail.ModifiedDate = DateTime.Now;
+                }
+                if(_sqlClient.Updateable(dbStockoutdetails).ExecuteCommand() == 0)
+                {
+                    RouteData<Wms_stockout[]>.From(PubMessages.E0002_UPDATE_COUNT_FAIL,"更新出库详细失败");
+                }
+                return RouteData<Wms_stockout[]>.From(new Wms_stockout[] { dbStockout });
+            }
+
+            //TODO stockOut不再需要列表的形式
             List<Wms_stockout> stockOutList = new List<Wms_stockout>();
             List<Wms_stockoutdetail> stockOutDetailList = new List<Wms_stockoutdetail>();
             foreach (Wms_WarehouseEntryMaterialInventoryDto materialDto in request.MaterialList)

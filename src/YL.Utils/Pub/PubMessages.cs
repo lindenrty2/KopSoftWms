@@ -96,6 +96,8 @@ namespace YL.Utils.Pub
         public static MessageItem E2122_WMS_STOCKOUT_RESPONSE_INVAILD = new MessageItem(-2122, "下发出库任务返回值不合法");
         public static MessageItem E2123_WMS_STOCKOUT_OUTED = new MessageItem(-2123, "出库任务已将料箱下发");
         public static MessageItem E2124_STOCKOUT_NO_BOX = new MessageItem(-2124, "出库单没有任何符合条件的料箱可以出库");
+        public static MessageItem E2125_STOCKOUT_DUPLICATE = new MessageItem(-2125, "出库单编号重复且该处库单不处于可以修改的状态");
+        public static MessageItem E2126_STOCKOUTDETAIL_NOTFOUND = new MessageItem(-2125, "出库单中找不到指定的出库项目");
 
 
         public static MessageItem E2200_STOCKCOUNT_NOTFOUND = new MessageItem(-2200, "没有找到指定的盘库计划");
