@@ -144,7 +144,13 @@ namespace YL.Core.Entity
         /// </summary>
         [SugarColumn(IsNullable = false)]
         public bool IsLocked { get; set; }
-        
+
+        /// <summary>
+        /// 是否暂停
+        /// </summary>
+        [SugarColumn(IsNullable = false)]
+        public bool IsPaused { get; set; } = false;
+
         /// <summary>
         /// Desc:是否已通知
         /// Default:

@@ -123,6 +123,9 @@ function StockInStatusFormatter(value, row, index) {
 }
 
 function StockOutStatusFormatter(value, row, index) {
+    if (row.IsPaused) { 
+        return '<span class="label label-danger radius">暂停</span>';
+    }
     switch (value) {
         case -1:
         case 'task_canceled':
@@ -262,6 +265,9 @@ function WCSTaskTypeFormatter(value, row, index) {
 
 function WCSWorkStatusFormatter(value, row, index) {
     switch (value) {
+        case -2:
+        case 'Paused':
+            return '<span class="label label-danger radius">暂停</span>';
         case -1:
         case 'Failed':
             return '<span class="label label-danger radius">处理失败</span>';

@@ -53,6 +53,10 @@ namespace YL.Core.Dto
         /// </summary>
         public string MesTaskId { get; set; }
         /// <summary>
+        /// 是否处于暂停
+        /// </summary>
+        public bool IsPaused { get; set; }
+        /// <summary>
         /// 出库状态
         /// </summary>
         public StockOutStatus StockOutStatus { get; set; }

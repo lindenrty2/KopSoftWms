@@ -263,6 +263,8 @@ namespace YL.Utils.Pub
 
     public enum WCSTaskWorkStatus
     {
+        [Description("暂停")]
+        Paused = -2,
         [Description("处理失败")]
         Failed = -1,
         [Description("不明")]

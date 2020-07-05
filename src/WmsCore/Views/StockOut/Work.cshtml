@@ -11,6 +11,14 @@
         <!--button id="lockL" type="button" class="btn btn-outL margin-left:20px" onclick="app.lockL(true);">锁定</!button-->
         <button id="box1OutL" type="button" class="btn btn-outL margin-left:20px" onclick="app.boxOutL(true);">料箱出库</button>
         <button id="scanL" type="button" class="btn btn-scanL" onclick="app.scanL();">扫码操作</button>
+        @if (!Model.IsPaused)
+        {
+            <button id="pauseL" type="button" class="btn btn-pauseL" onclick="app.pauseL();">暂停出库</button>
+        }
+        else
+        {
+            <button id="resumeL" type="button" class="btn btn-resumeL" onclick="app.resumeL();">继续出库</button>
+        }
         <span id="ctlOutedBoxList">
 
         </span>
@@ -230,6 +238,36 @@
                         }
                     }); 
                 },
+                pauseL: function () {
+                    yui.$axiospostform("/StockOut/Pause?storeId=@ViewData["currentStoreId"]&id=@Model.StockOutId")
+                        .then(function (response) {
+                            if (response.data.isSccuess) {
+                                window.location.reload();
+                                return false;
+                            }
+                            else {
+                                layer.msg(response.data.message, { icon: 5 });
+                            } 
+                        })
+                        .catch(function (error) {
+                            layer.msg(error, { icon: 1, time: 5000 });
+                        });
+                }, 
+                resumeL: function () {
+                    yui.$axiospostform("/StockOut/Resume?storeId=@ViewData["currentStoreId"]&id=@Model.StockOutId")
+                        .then(function (response) {
+                            if (response.data.isSccuess) {
+                                window.location.reload();
+                                return false;
+                            }
+                            else { 
+                                layer.msg(response.data.message, { icon: 5 });
+                            } 
+                        })
+                        .catch(function (error) {
+                            layer.msg(error, { icon: 1, time: 5000 });
+                        });
+                }, 
                 complateL: function (isfullbox) {
                     var index = layer.confirm("出库单与实际出库数量不匹配，您确定要将出库单标记为完成吗？", { btn: ["确定", "取消"] }, function () {
                         layer.close(index);

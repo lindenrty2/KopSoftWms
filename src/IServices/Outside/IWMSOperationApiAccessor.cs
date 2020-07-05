@@ -53,6 +53,19 @@ namespace IServices.Outside
         /// <param name="pid"></param>
         /// <returns></returns>
         Task<Wms_StockOutWorkDetailDto[]> GetStockOutCurrentPlan(long stockoutId);
+        
+        /// <summary>
+        /// 暂停出库
+        /// </summary>
+        /// <param name="stockOutId"></param>
+        /// <returns></returns>
+        Task<RouteData> PauseStockOut(long stockOutId);
+        /// <summary>
+        /// 恢复出库
+        /// </summary>
+        /// <param name="stockOutId"></param>
+        /// <returns></returns>
+        Task<RouteData> ResumeStockOut(long stockOutId);
 
         /// <summary>
         /// 获取料想入库任务操作详细

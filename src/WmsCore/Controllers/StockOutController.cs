@@ -30,11 +30,11 @@ namespace KopSoftWms.Controllers
         //private readonly IWms_CustomerServices _customerServices;
         private readonly IWms_stockoutServices _stockoutServices;
         private readonly ISys_serialnumServices _serialnumServices;
-        private readonly IWms_stockoutdetailServices _stockoutdetailServices; 
+        private readonly IWms_stockoutdetailServices _stockoutdetailServices;
         //private readonly IWms_stockoutdetailboxServices _stockoutdetailboxServices;
         //private readonly IWms_inventoryBoxServices _inventoryBoxServices;
         //private readonly IWms_inventoryBoxTaskServices _inventoryBoxTaskServices;
-        private readonly IWms_inventoryServices _inventoryServices; 
+        private readonly IWms_inventoryServices _inventoryServices;
         private readonly SqlSugarClient _client;
 
         public StockOutController(
@@ -42,7 +42,7 @@ namespace KopSoftWms.Controllers
             //IWms_CustomerServices customerServices,
             IWms_stockoutServices stockoutServices,
             ISys_serialnumServices serialnumServices,
-            IWms_stockoutdetailServices stockoutdetailServices, 
+            IWms_stockoutdetailServices stockoutdetailServices,
             //IWms_stockoutdetailboxServices stockoutdetailboxServices,
             //IWms_inventoryBoxServices inventoryBoxServices,
             //IWms_inventoryBoxTaskServices inventoryBoxTaskServices,
@@ -74,7 +74,7 @@ namespace KopSoftWms.Controllers
         }
 
         [HttpGet]
-        public async Task<string> Search(string storeId,string text)
+        public async Task<string> Search(string storeId, string text)
         {
             IWMSBaseApiAccessor wmsAccessor = WMSApiManager.GetBaseApiAccessor(storeId.ToString(), _client);
             RouteData<OutsideStockOutQueryResult[]> result = await wmsAccessor.QueryStockOutList(null, null, 1, 20, text, new string[0], null, null);
@@ -102,7 +102,7 @@ namespace KopSoftWms.Controllers
         }
 
         [HttpGet]
-        public async Task<RouteData<Wms_StockOutDto>> Get(long storeId,string no)
+        public async Task<RouteData<Wms_StockOutDto>> Get(long storeId, string no)
         {
             Wms_stockout model = await _client.Queryable<Wms_stockout>().FirstAsync(c => c.StockOutNo == no && c.WarehouseId == storeId && c.IsDel == 1);
             if (model == null)
@@ -110,7 +110,7 @@ namespace KopSoftWms.Controllers
                 RouteData<Wms_stockin>.From(PubMessages.E2013_STOCKIN_NOTFOUND);
             }
             Wms_StockOutDto dto = JsonConvert.DeserializeObject<Wms_StockOutDto>(JsonConvert.SerializeObject(model));
-            List<Wms_StockMaterialDetailDto> details = await _client.Queryable< Wms_stockoutdetail_box, Wms_inventorybox, Wms_stockoutdetail, Wms_material>
+            List<Wms_StockMaterialDetailDto> details = await _client.Queryable<Wms_stockoutdetail_box, Wms_inventorybox, Wms_stockoutdetail, Wms_material>
                 ((sidb, ib, sid, m) => new object[] {
                    JoinType.Left,sidb.InventoryBoxId==ib.InventoryBoxId,
                    JoinType.Left,sidb.StockOutDetailId==sid.StockOutDetailId,
@@ -181,8 +181,8 @@ namespace KopSoftWms.Controllers
 
             IWMSBaseApiAccessor wmsAccessor = WMSApiManager.GetBaseApiAccessor(bootstrap.storeId.ToString(), _client);
             RouteData<OutsideStockOutQueryResult[]> result = await wmsAccessor.QueryStockOutList(
-                null, null, bootstrap.pageIndex, bootstrap.limit, bootstrap.search, 
-                new string[] { bootstrap.sort + " " + bootstrap.order }, 
+                null, null, bootstrap.pageIndex, bootstrap.limit, bootstrap.search,
+                new string[] { bootstrap.sort + " " + bootstrap.order },
                 bootstrap.datemin, bootstrap.datemax);
             if (!result.IsSccuess)
             {
@@ -198,7 +198,7 @@ namespace KopSoftWms.Controllers
         /// <returns></returns>
         [HttpPost]
         [OperationLog(LogType.select)]
-        public async Task<string> ListDetail(int storeId,string pid)
+        public async Task<string> ListDetail(int storeId, string pid)
         {
             //var sd = _stockoutdetailServices.PageList(pid);
             //return Content(sd);
@@ -212,20 +212,20 @@ namespace KopSoftWms.Controllers
             return new PageGridData(result.Data.Details, result.Data.Details.Length).JilToJson();
         }
 
-        
+
         [HttpGet]
         public async Task<IActionResult> Work(string pid)
-        { 
+        {
             var model = await _client.Queryable<Wms_stockout>().FirstAsync(c => c.StockOutId == SqlFunc.ToInt64(pid) && c.IsDel == 1);
             ViewData["currentStoreId"] = model.WarehouseId;
             return View(model);
         }
 
         [HttpGet]
-        public async Task<string> WorkList(long storeId,long pid)
+        public async Task<string> WorkList(long storeId, long pid)
         {
             Wms_stockout stockout = await _client.Queryable<Wms_stockout>().FirstAsync(x => x.StockOutId == pid);
-            if(stockout == null)
+            if (stockout == null)
             {
                 return "";
             }
@@ -237,7 +237,7 @@ namespace KopSoftWms.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> ScanPage(long storeId,long stockOutId)
+        public async Task<IActionResult> ScanPage(long storeId, long stockOutId)
         {
             ViewData["currentStoreId"] = storeId;
             var model = await _client.Queryable<Wms_stockout>().FirstAsync(c => c.StockOutId == SqlFunc.ToInt64(stockOutId) && c.IsDel == 1);
@@ -246,21 +246,21 @@ namespace KopSoftWms.Controllers
 
         [HttpPost]
         [Obsolete]
-        public async Task<RouteData> DoScanComplate(long storeId,long stockOutId,long inventoryBoxId, Wms_StockMaterialDetailDto[] materials,string remark)
+        public async Task<RouteData> DoScanComplate(long storeId, long stockOutId, long inventoryBoxId, Wms_StockMaterialDetailDto[] materials, string remark)
         {
             IWMSOperationApiAccessor wmsAccessor = WMSApiManager.GetOperationApiAccessor(storeId.ToString(), _client, this.UserDto);
             if (wmsAccessor == null)
             {
                 return YL.Core.Dto.RouteData.From(PubMessages.E0007_WAREHOUSE_NOTFOUND);
             }
-            return await wmsAccessor.DoStockOutScanComplate(stockOutId, inventoryBoxId, materials, remark); 
+            return await wmsAccessor.DoStockOutScanComplate(stockOutId, inventoryBoxId, materials, remark);
         }
 
         [HttpPost]
-        public async Task<RouteData> DoLock(long storeId,long stockOutId)
+        public async Task<RouteData> DoLock(long storeId, long stockOutId)
         {
             IWMSOperationApiAccessor wmsAccessor = WMSApiManager.GetOperationApiAccessor(storeId.ToString(), _client, this.UserDto);
-            if(wmsAccessor == null)
+            if (wmsAccessor == null)
             {
                 return YL.Core.Dto.RouteData.From(PubMessages.E0007_WAREHOUSE_NOTFOUND);
             }
@@ -268,7 +268,7 @@ namespace KopSoftWms.Controllers
         }
 
         [HttpPost]
-        public async Task<RouteData> DoComplate(long storeId,long stockOutId)
+        public async Task<RouteData> DoComplate(long storeId, long stockOutId)
         {
             IWMSOperationApiAccessor wmsAccessor = WMSApiManager.GetOperationApiAccessor(storeId.ToString(), _client, this.UserDto);
             if (wmsAccessor == null)
@@ -279,10 +279,10 @@ namespace KopSoftWms.Controllers
         }
 
         [HttpGet]
-        public async Task<RouteData<Wms_StockOutMaterialDetailDto>> SearchMaterial(long storeId,long stockOutId,string materialNo)
+        public async Task<RouteData<Wms_StockOutMaterialDetailDto>> SearchMaterial(long storeId, long stockOutId, string materialNo)
         {
-            Wms_material material = await _client.Queryable<Wms_material>().FirstAsync( x => x.MaterialNo == materialNo);
-            if(material == null)
+            Wms_material material = await _client.Queryable<Wms_material>().FirstAsync(x => x.MaterialNo == materialNo);
+            if (material == null)
             {
                 return RouteData<Wms_StockOutMaterialDetailDto>.From(PubMessages.E1005_MATERIALNO_NOTFOUND);
             }
@@ -292,10 +292,10 @@ namespace KopSoftWms.Controllers
                 return RouteData<Wms_StockOutMaterialDetailDto>.From(PubMessages.E2115_STOCKOUT_HASNOT_MATERIAL);
             }
             Wms_stockoutdetail detail = await _client.Queryable<Wms_stockoutdetail>().FirstAsync(x => x.StockOutId == stockOutId && x.MaterialId == material.MaterialId);
-            if(detail == null)
+            if (detail == null)
             {
                 return RouteData<Wms_StockOutMaterialDetailDto>.From(PubMessages.E2115_STOCKOUT_HASNOT_MATERIAL);
-            } 
+            }
             Wms_StockOutMaterialDetailDto detailDto = new Wms_StockOutMaterialDetailDto()
             {
                 StockOutId = detail.StockOutId.ToString(),
@@ -452,7 +452,7 @@ namespace KopSoftWms.Controllers
         [HttpGet]
         public IActionResult NofityListPage(long storeId)
         {
-            ViewData["currentStoreId"] = storeId; 
+            ViewData["currentStoreId"] = storeId;
             return View();
         }
 
@@ -460,7 +460,7 @@ namespace KopSoftWms.Controllers
         public async Task<Wms_StockOutDto[]> NofityList(long storeId)
         {
             IWMSOperationApiAccessor wmsAccessor = WMSApiManager.GetOperationApiAccessor(storeId.ToString(), _client, this.UserDto);
-            if(wmsAccessor == null)
+            if (wmsAccessor == null)
             {
                 return null;
             }
@@ -487,7 +487,7 @@ namespace KopSoftWms.Controllers
         }
 
         [HttpGet]
-        public IActionResult Preview(long storeId, long pid,long? boxId)
+        public IActionResult Preview(long storeId, long pid, long? boxId)
         {
             var model = _stockoutServices.QueryableToEntity(
                 c => c.WarehouseId == storeId && c.StockOutId == pid && c.IsDel == 1);
@@ -500,7 +500,7 @@ namespace KopSoftWms.Controllers
 
         [HttpGet]
         public void StockOutNoQRCode(string stockOutNo)
-        { 
+        {
             string strQR = stockOutNo;
 
             QRCodeGenerator qrGenerator = new QRCodeGenerator();
@@ -513,7 +513,7 @@ namespace KopSoftWms.Controllers
 
         [HttpGet]
         public async void MaterialQRCode(long storeId, long detailboxId)
-        { 
+        {
 
             var detailBox = await _client.Queryable<Wms_stockoutdetail_box>()
                 .Where(c => c.DetailBoxId == detailboxId)
@@ -534,10 +534,10 @@ namespace KopSoftWms.Controllers
         }
 
         [HttpGet]
-        public IActionResult PreviewJson(long id,long? boxId)
+        public IActionResult PreviewJson(long id, long? boxId)
         {
             var list1 = _client.Queryable<Wms_stockout>()
-                 .Where((s) => s.StockOutId == id && s.IsDel == DeleteFlag.Normal )
+                 .Where((s) => s.StockOutId == id && s.IsDel == DeleteFlag.Normal)
                  .Select((s) => new
                  {
                      StockOutId = s.StockOutId.ToString(),
@@ -558,9 +558,9 @@ namespace KopSoftWms.Controllers
                  }).ToList();
             bool flag1 = true;
             bool flag2 = true;
-            if(boxId == null)
+            if (boxId == null)
             {
-                return Content((flag1, list1, false , new object[1] { new object()}).JilToJson()); 
+                return Content((flag1, list1, false, new object[1] { new object() }).JilToJson());
             }
             var list2 = _client.Queryable<Wms_stockoutdetail_box, Wms_stockoutdetail>((sodb, sod) => new object[] {
                     JoinType.Left,sodb.StockOutDetailId==sod.StockOutDetailId,
@@ -575,7 +575,7 @@ namespace KopSoftWms.Controllers
                     sod.UniqueIndex,
                     sodb.StockInUniqueIndex,
                     sod.MaterialNo,
-                    sod.MaterialName, 
+                    sod.MaterialName,
                     Status = SqlFunc.IF(sod.Status == 1).Return(StockOutStatus.initial.GetDescription())
                     .ElseIF(sod.Status == 2).Return(StockOutStatus.task_confirm.GetDescription())
                     .ElseIF(sod.Status == 3).Return(StockOutStatus.task_canceled.GetDescription())
@@ -602,5 +602,26 @@ namespace KopSoftWms.Controllers
             return Content((flag1, list1, flag2, list2).JilToJson());
         }
 
+        [HttpPost]
+        public async Task<RouteData> Pause(long storeId, long id)
+        {
+            IWMSOperationApiAccessor wmsAccessor = WMSApiManager.GetOperationApiAccessor(storeId.ToString(), _client, this.UserDto);
+            if (wmsAccessor == null)
+            {
+                return YL.Core.Dto.RouteData.From(PubMessages.E0007_WAREHOUSE_NOTFOUND);
+            }
+            return await wmsAccessor.PauseStockOut(id);
+        }
+
+        [HttpPost]
+        public async Task<RouteData> Resume(long storeId, long id)
+        {
+            IWMSOperationApiAccessor wmsAccessor = WMSApiManager.GetOperationApiAccessor(storeId.ToString(), _client, this.UserDto);
+            if (wmsAccessor == null)
+            {
+                return YL.Core.Dto.RouteData.From(PubMessages.E0007_WAREHOUSE_NOTFOUND);
+            }
+            return await wmsAccessor.ResumeStockOut(id);
+        }
     }
 }

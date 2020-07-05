@@ -584,6 +584,7 @@ namespace Services.Outside
                 MesTaskId = stockOut.MesTaskId.ToString(),
                 StockOutTypeName = stockOut.
                 OrderNo = stockOut.OrderNo,
+                IsPaused = stockOut.IsPaused,
                 StockOutStatus = (StockOutStatus)stockOut.StockOutStatus,
                 Remark = stockOut.Remark,
                 Details = details.ToArray(),
@@ -636,6 +637,7 @@ namespace Services.Outside
                 WorkAreaName = s.WorkAreaName,
                 WorkStationId = s.WorkStationId,
                 StockOutNo = s.StockOutNo,
+                IsPaused = s.IsPaused,
                 StockOutStatus = (StockOutStatus)s.StockOutStatus,
                 CreateBy = s.CreateUser,
                 CreateDate = s.CreateDate.Value.ToString(PubConst.Format_DateTime),

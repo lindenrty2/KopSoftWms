@@ -528,6 +528,111 @@ namespace Services.Outside
 
             public int SurplusCount { get; set; }
         }
+        
+        /// <summary>
+        /// 暂停出库
+        /// </summary>
+        /// <param name="stockOutId"></param>
+        /// <returns></returns>
+        public async Task<RouteData> PauseStockOut(long stockOutId)
+        {
+            Wms_stockout stockout = await _sqlClient.Queryable<Wms_stockout>().FirstAsync(x => x.StockOutId == stockOutId);
+            if(stockout == null)
+            {
+                return RouteData.From(PubMessages.E2113_STOCKOUT_NOTFOUND);
+            }
+
+            List<Wms_wcstask> wcsTasks = await _sqlClient.Queryable<Wms_wcstask, Wms_stockoutdetail_box,Wms_stockoutdetail>(
+                (wt,sodb,sod) => new object[] {
+                    JoinType.Left,wt.InventoryBoxTaskId==sodb.InventoryBoxTaskId , 
+                    JoinType.Left,sodb.StockOutDetailId==sod.StockOutDetailId 
+                }
+            )
+            .Where((wt, sodb, sod) => sod.StockOutId == stockOutId && wt.WorkStatus == WCSTaskWorkStatus.Working)
+            .Select((wt, sodb, sod) => wt).ToListAsync();
+
+            if(wcsTasks.Count == 0)
+            {
+                return RouteData.From(PubMessages.E2310_WCS_PAUSECOMMAND_NOTARGET);
+            }
+            try
+            {
+                _sqlClient.Ado.BeginTran();
+                foreach (Wms_wcstask wcstask in wcsTasks)
+                {
+                    await SendWCSOutControlCommand(wcstask, true);
+                }
+
+                stockout.IsPaused = true;
+                stockout.ModifiedBy = UserDto.UserId;
+                stockout.ModifiedUser = UserDto.UserName;
+                stockout.ModifiedDate = DateTime.Now;
+                if (_sqlClient.Updateable(stockout).ExecuteCommand() == 0)
+                {
+                    return RouteData.From(PubMessages.E0002_UPDATE_COUNT_FAIL);
+                }
+                _sqlClient.Ado.CommitTran();
+                return new RouteData();
+            }
+            catch (Exception ex)
+            {
+                _sqlClient.Ado.RollbackTran();
+                return RouteData.From(-1, ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// 恢复出库
+        /// </summary>
+        /// <param name="stockOutId"></param>
+        /// <returns></returns>
+        public async Task<RouteData> ResumeStockOut(long stockOutId)
+        {
+            Wms_stockout stockout = await _sqlClient.Queryable<Wms_stockout>().FirstAsync(x => x.StockOutId == stockOutId);
+            if (stockout == null)
+            {
+                return RouteData.From(PubMessages.E2113_STOCKOUT_NOTFOUND);
+            }
+
+            List<Wms_wcstask> wcsTasks = await _sqlClient.Queryable<Wms_wcstask, Wms_stockoutdetail_box, Wms_stockoutdetail>(
+                (wt, sodb, sod) => new object[] {
+                    JoinType.Left,wt.InventoryBoxTaskId==sodb.InventoryBoxTaskId ,
+                    JoinType.Left,sodb.StockOutDetailId==sod.StockOutDetailId
+                }
+            )
+            .Where((wt, sodb, sod) => sod.StockOutId == stockOutId && wt.WorkStatus == WCSTaskWorkStatus.Paused)
+            .Select((wt, sodb, sod) => wt).ToListAsync();
+
+            if (wcsTasks.Count == 0)
+            {
+                return RouteData.From(PubMessages.E2311_WCS_RESUMECOMMAND_NOTARGET);
+            }
+            try
+            {
+                _sqlClient.Ado.BeginTran();
+                foreach (Wms_wcstask wcstask in wcsTasks)
+                {
+                    await SendWCSOutControlCommand(wcstask, false);
+                }
+
+                stockout.IsPaused = false;
+                stockout.ModifiedBy = UserDto.UserId;
+                stockout.ModifiedUser = UserDto.UserName;
+                stockout.ModifiedDate = DateTime.Now;
+                if (_sqlClient.Updateable(stockout).ExecuteCommand() == 0)
+                {
+                    return RouteData.From(PubMessages.E0002_UPDATE_COUNT_FAIL);
+                }
+                _sqlClient.Ado.CommitTran();
+                return new RouteData();
+            }
+            catch (Exception ex)
+            {
+                _sqlClient.Ado.RollbackTran();
+                return RouteData.From(-1, ex.Message);
+            }
+        }
+
 
         public async Task<RouteData<InventoryDetailDto[]>> InventoryInDetailList(long inventoryBoxTaskId)
         {
@@ -1290,7 +1395,7 @@ namespace Services.Outside
         /// <param name="desc"></param>
         /// <param name="isBackOut">是否是入库异常导致的出库</param>
         /// <returns></returns>
-        private async Task<RouteData> SendWCSOutCommand(Wms_inventoryboxTask task, PLCPosition pos, string desc, bool isBackOut)
+        private async Task<RouteData> SendWCSOutCommand(Wms_inventoryboxTask task, PLCPosition pos, string desc, bool isBackOut )
         {
             try
             {
@@ -1347,6 +1452,41 @@ namespace Services.Outside
                 return RouteData.From(PubMessages.E2300_WCS_OUTCOMMAND_FAIL, e.Message);
             }
         }
+
+        /// <summary>
+        /// WCS出库控制命令(暂停/继续)
+        /// </summary>
+        /// <param name="wcstask"></param>
+        /// <param name="isPause"></param>
+        /// <returns></returns>
+        private async Task<RouteData> SendWCSOutControlCommand(Wms_wcstask wcstask,bool isPause)
+        {
+            try
+            { 
+                StockOutTaskInfo outStockInfo = new StockOutTaskInfo()
+                {
+                    TaskId = wcstask.WcsTaskIdStr, 
+                    TaskStatus = isPause ? "-1" : "0" 
+                };
+
+                CreateOutStockResult result = await WCSApiAccessor.Instance.CreateStockOutTask(outStockInfo);
+                if (!result.Successd)
+                {
+                    return RouteData.From(PubMessages.E2300_WCS_OUTCOMMAND_FAIL, $"ErrorCode={result.ErrorCode}");
+                }
+                wcstask.WorkStatus = isPause ? WCSTaskWorkStatus.Paused : WCSTaskWorkStatus.Working;
+                wcstask.RequestDate = DateTime.Now;
+                wcstask.RequestUser = UserDto.UserName;
+                wcstask.RequestUserId = UserDto.UserId;
+                await _sqlClient.Updateable(wcstask).ExecuteCommandAsync();
+                return new RouteData();
+            }
+            catch (Exception e)
+            {
+                return RouteData.From(PubMessages.E2300_WCS_OUTCOMMAND_FAIL, e.Message);
+            }
+        }
+
         public async Task<ConfirmOutStockResult> ConfirmOutStock(WCSStockTaskCallBack result)
         {
             long taskId = result.TaskId.ToInt64();
@@ -2517,6 +2657,7 @@ namespace Services.Outside
 
             }
         }
+
     }
 
 }
