@@ -121,13 +121,16 @@
                         { field: 'materialTypeName', title: '物料类型', align: 'center', sortable: true },
                         { field: 'unitName', title: '单位', align: 'center', sortable: true },
                         {
-                            field: 'prevNumber', title: '期末数量', align: 'center', sortable: true 
+                            field: 'prevNumber', title: 'ERP数量', align: 'center', sortable: true 
                         },
                         {
-                            field: 'projectedQty', title: 'WMS预期数量', align: 'center', sortable: true,
+                            field: 'projectedQty', title: 'WMS数量', align: 'center', sortable: true 
+                        },
+                        {
+                            field: 'stockCountQty', title: '实际数量', align: 'center', sortable: true,
                             formatter: function (value, row, index) {
                                 if (row.status == 4) {
-                                    var result = row.projectedQty - row.prevNumber;
+                                    var result = row.stockCountQty - row.projectedQty;
                                     if (result == 0) {
                                         return '<span class="label label-default radius">' + value + '</span>';
                                     }
@@ -144,18 +147,18 @@
                             }
                         },
                         {
-                            field: 'stockCountQty', title: '盘库数量', align: 'center', sortable: true,
+                            field: '', title: '差异数量', align: 'center', sortable: true, visible:false, 
                             formatter: function (value, row, index) {
                                 if (row.status == 4) {
                                     var result = row.stockCountQty - row.projectedQty;
                                     if (result == 0) {
-                                        return '<span class="label label-default radius">' + value + '</span>';
+                                        return '<span class="label label-default radius">' + result + '</span>';
                                     }
                                     else if (result < 0) {
-                                        return '<span class="label label-danger radius">' + value + '</span>';
+                                        return '<span class="label label-danger radius">' + result + '</span>';
                                     }
                                     else {
-                                        return '<span class="label label-success radius">' + value + '</span>';
+                                        return '<span class="label label-success radius">' + result + '</span>';
                                     }
                                 }
                                 else {
@@ -222,6 +225,11 @@
                                 pageNumber: 1,
                                 pageSize: 10,
                                 pageList: [10, 25, 50, 100, 'All'],
+                                showRefresh: true, //是否显示刷新按钮
+                                search: true, //是否显示表格搜索
+                                strictSearch: false, //设置为 true启用全匹配搜索，否则为模糊搜索。
+                                trimOnSearch: true, //设置为 true 将自动去掉搜索字符的前后空格。
+                                showColumns: true, //是否显示所有的列（选择显示的列）
                                 columns: subColumns, 
                             });
                         }
