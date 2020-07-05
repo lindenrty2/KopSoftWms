@@ -756,11 +756,21 @@ namespace WMSCore.Outside
             try
             {
                 Guard.GuardEmpty(() => StockInventoryId);
-                Guard.GuardEmpty(() => WarehouseID); 
+                //Guard.GuardEmpty(() => WarehouseID); 
                 DateTime stockCountDate = Guard.GuardDate(() => Year, () => Month);
-                OutsideStockCountMaterial[] materialList = Guard.GuardType<OutsideStockCountMaterial[]>(() => SuppliesInfoList);
-
-                RouteData routedata = StockCountCore(StockInventoryId, stockCountDate, WarehouseID, materialList);
+                OutsideStockCountMaterialDto_MES[] materialList = Guard.GuardType<OutsideStockCountMaterialDto_MES[]>(() => SuppliesInfoList);
+                OutsideStockCountMaterial[] wmsMaterialList = materialList.Select(
+                    x => new OutsideStockCountMaterial()
+                    {
+                        MaterialNo = x.SuppliesId,
+                        MaterialOnlyId = x.SuppliesOnlyId,
+                        MaterialName = x.SuppliesName,
+                        PrevNumber = Guard.GuardInteger(() => x.PrevNumber),
+                        MaterialTypeName = x.SuppliesType,
+                        UnitName = x.Unit
+                    }
+                ).ToArray();
+                RouteData routedata = StockCountCore(StockInventoryId, stockCountDate, WarehouseID, wmsMaterialList);
                 return JsonConvert.SerializeObject(new OutsideStockCountResultDto_MES()
                 {
                     Success = true,

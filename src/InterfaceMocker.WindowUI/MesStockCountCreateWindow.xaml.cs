@@ -62,7 +62,9 @@ namespace InterfaceMocker.WindowUI
                     SuppliesId = suppliy,
                     SuppliesName =  "物料-" + suppliy,
                     SuppliesType = "型号A",
-                    Unit = "个"
+                    Unit = "个",
+                    PrevNumber = "10"
+
                 } };
             this.SuppliesInfoList.AddRange(newItem);
             ctlSuppliesInfoList.ItemsSource = null;
@@ -79,7 +81,8 @@ namespace InterfaceMocker.WindowUI
                     SuppliesId = null,
                     SuppliesName = "物料-" + DateTime.Now.ToString("yyyyMMddHHmmss"), 
                     SuppliesType = "型号A",
-                    Unit = "个"
+                    Unit = "个",
+                    PrevNumber = "10"
                 } };
             this.SuppliesInfoList.AddRange(newItem);
             ctlSuppliesInfoList.ItemsSource = null;

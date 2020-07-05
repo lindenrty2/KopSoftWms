@@ -34,7 +34,7 @@
         <DataGrid Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" x:Name="ctlSuppliesInfoList" AutoGenerateColumns="False" ItemsSource="{Binding SuppliesInfoList}" >
             <DataGrid.Columns>
                 <DataGridTextColumn Header="物料唯一编号" Binding="{Binding SuppliesOnlyId}" Width="100" />
-                <DataGridComboBoxColumn x:Name="colSupplies" Header="物料编号/图号" SelectedValueBinding="{Binding SuppliesNo}" ></DataGridComboBoxColumn>
+                <DataGridComboBoxColumn x:Name="colSupplies" Header="物料编号/图号" SelectedValueBinding="{Binding SuppliesId}" ></DataGridComboBoxColumn>
                 <DataGridTextColumn Header="物料名称" Binding="{Binding SuppliesName}" Width="100" />
                 <DataGridComboBoxColumn Header="型号" SelectedValueBinding="{Binding SuppliesType}" >
                     <DataGridComboBoxColumn.ItemsSource>
@@ -44,7 +44,8 @@
                             <sys:String>型号C</sys:String>
                         </x:Array>
                     </DataGridComboBoxColumn.ItemsSource>
-                </DataGridComboBoxColumn> 
+                </DataGridComboBoxColumn>
+                <DataGridTextColumn Header="期末数量" Binding="{Binding PrevNumber}" Width="100" /> 
                 <DataGridComboBoxColumn Header="单位(Unit)" SelectedValueBinding="{Binding Unit}" >
                     <DataGridComboBoxColumn.ItemsSource>
                         <x:Array Type="sys:String">
