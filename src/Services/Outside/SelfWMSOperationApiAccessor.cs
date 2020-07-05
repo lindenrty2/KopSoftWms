@@ -2336,7 +2336,7 @@ namespace Services.Outside
             }
             if(stepList.Count == 0)
             {
-                return RouteData<OutsideStockCountDto>.From(PubMessages.E2202_STOCKCOUNT_STEP_ZERO); 
+                return RouteData<OutsideStockCountDto>.From(PubMessages.E2203_STOCKCOUNT_STEP_ZERO); 
             }
 
             if ((await _sqlClient.Updateable(materials).ExecuteCommandAsync()) == 0)

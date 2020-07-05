@@ -59,8 +59,8 @@ namespace YL.Core.Dto
             string totalWorkOrder,
             string batchNumber,
             string batchPlanId,
-            string workStationId,
             string workAreaName,
+            string workStationId,
             int suppliesKinds,
             string suppliesInfoList)
         {

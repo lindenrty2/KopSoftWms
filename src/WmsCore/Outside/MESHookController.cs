@@ -796,7 +796,7 @@ namespace WMSCore.Outside
 
             if (materials.Length == 0)
             {
-                return YL.Core.Dto.RouteData.From(PubMessages.E2201_STOCKCOUNT_MATERIAL_ZERO);
+                return YL.Core.Dto.RouteData.From(PubMessages.E2204_STOCKCOUNT_MATERIAL_ZERO);
             }
 
             string warehouseNo = string.IsNullOrWhiteSpace(WarehouseID) ? "A00" : WarehouseID;

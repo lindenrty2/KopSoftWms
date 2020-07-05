@@ -850,6 +850,10 @@ namespace Services.Outside
         {
             try
             {
+                if( await _sqlClient.Queryable<Wms_stockcount>().AnyAsync(x => x.StockCountNo == request.StockCountNo))
+                {
+                    return RouteData.From(PubMessages.E2205_STOCKCOUNT_DUPLICATE, "盘库任务添加失败"); 
+                }
                 _sqlClient.Ado.BeginTran();
                 Wms_stockcount stockcount = new Wms_stockcount()
                 { 
@@ -896,6 +900,7 @@ namespace Services.Outside
                         MaterialOnlyId = material.MaterialOnlyId,
                         MaterialTypeName = material.MaterialTypeName,
                         UnitName = material.UnitName,
+                        PrevNumber = om.PrevNumber,
                         ProjectedQty = 0,
                         StockCountQty = 0,
                         Status = (int)StockCountStatus.task_confirm,
