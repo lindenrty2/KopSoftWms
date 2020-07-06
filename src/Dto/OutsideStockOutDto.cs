@@ -138,7 +138,12 @@ namespace YL.Core.Dto
         /// <summary>
         /// 仓库名称
         /// </summary>
-        public string WarehouseName { get; set; } 
+        public string WarehouseName { get; set; }
+
+        /// <summary>
+        /// 具体库区
+        /// </summary>
+        public string WarehousePosition { get; set; }
         /// <summary>
         /// 作业区
         /// </summary>

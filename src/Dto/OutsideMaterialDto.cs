@@ -73,6 +73,11 @@ namespace YL.Core.Dto
     /// </summary>
     public class OutsideMaterialResult
     {
+
+        /// <summary>
+        /// 唯一索引
+        /// </summary>
+        public string UniqueIndex { get; set; }
         /// <summary>
         /// 物料编号/图号
         /// </summary>

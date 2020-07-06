@@ -50,7 +50,8 @@ namespace YL.Core.Dto
         /// </summary>
         public string WarehouseEntryId { get; set; }
 
-        public string WarehouseEntryStatusInfoList { get; set; } //WarehouseEntryStatusInfo[]
+        //public string WarehouseEntryStatusInfoList { get; set; } //WarehouseEntryStatusInfo[]
+        public WarehouseEntryStatusInfo[] WarehouseEntryStatusInfoList { get; set; } //
 
 
     }

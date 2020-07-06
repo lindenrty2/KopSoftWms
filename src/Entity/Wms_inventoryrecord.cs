@@ -69,12 +69,12 @@ namespace YL.Core.Entity
         /// Default:
         /// Nullable:False
         /// </summary>
-        [SugarColumn(Length = 30, IsNullable = true)]
+        [SugarColumn(Length = 60, IsNullable = true)]
         public string MaterialOnlyId { get; set; }
         /// <summary>
         /// 物料编号
         /// </summary>
-        [SugarColumn(Length = 30, IsNullable = true)]
+        [SugarColumn(Length = 60, IsNullable = true)]
         public string MaterialNo { get; set; } 
 
         /// <summary>
@@ -104,7 +104,7 @@ namespace YL.Core.Entity
         /// <summary>
         /// 入库/出库编号
         /// </summary>
-        [SugarColumn(Length =30, IsNullable = true)]
+        [SugarColumn(Length = 60, IsNullable = true)]
         public string StockNo { get; set; }
 
         /// <summary>

@@ -615,7 +615,8 @@ namespace WMSCore.Outside
                     statusInfoList.Add(new WarehousingStatusInfo()
                     {
                         IsNormalWarehousing = detail.Status == StockInStatus.task_finish.ToByte(),
-                        WarehouseId = detail.WarehouseId.ToString(),
+                        //WarehouseId = detail.WarehouseId.ToString(),
+                        WarehouseId = WMSApiManager.GetWarehouse(detail.WarehouseId).WarehouseNo,
                         WarehousePosition = null,
                         WarehouseName = stockin.WarehouseName,
                         InventoryBoxNo = detail.InventoryBoxNo,
@@ -623,10 +624,10 @@ namespace WMSCore.Outside
                         StorageRackPosition = "",
                         SubWarehousingId = detail.SubWarehousingId,
                         UniqueIndex = detail.UniqueIndex,
-                        SuppliesId = string.IsNullOrWhiteSpace(detail.MaterialOnlyId) ? detail.MaterialId.ToString() : detail.MaterialOnlyId.ToString(),
+                        SuppliesId = string.IsNullOrWhiteSpace(detail.MaterialOnlyId) ? detail.MaterialNo.ToString() : detail.MaterialOnlyId.ToString(),
                         RefreshStock = 0, //TODO
                         WarehousingStep = ((StockInStatus)detail.Status).ToString(),
-                        WarehousingFinishTime = detail.ModifiedDate?.ToString("yyyyMMddHHmmss")
+                        WarehousingFinishTime = detail.ModifiedDate?.ToString("yyyy-MM-dd HH:mm:ss")
                     });
                 }
             }
@@ -638,7 +639,7 @@ namespace WMSCore.Outside
                 ErrorInfo = null,
                 //WarehousingId = WarehousingId,
                 //WarehousingType = warehousingType,
-                WarehousingStatusInfoList = JsonConvert.SerializeObject(statusInfoList.ToArray()),
+                WarehousingStatusInfoList = statusInfoList.ToArray(),
                 IsNormalWarehousing = mesTask.WorkStatus == MESTaskWorkStatus.WorkComplated,
             };
             return JsonConvert.SerializeObject(result);
@@ -717,11 +718,11 @@ namespace WMSCore.Outside
                         IsNormalWarehouseEntry = detail.Status == StockInStatus.task_finish.ToByte(), 
                         SubWarehouseEntryId = detail.SubWarehouseEntryId,
                         UniqueIndex = detail.UniqueIndex,
-                        SuppliesId = string.IsNullOrWhiteSpace(detail.MaterialOnlyId) ? detail.MaterialId.ToString() : detail.MaterialOnlyId.ToString(),
+                        SuppliesId = string.IsNullOrWhiteSpace(detail.MaterialOnlyId) ? detail.MaterialNo.ToString() : detail.MaterialOnlyId.ToString(),
                         RefreshStock = 0, //TODO
                         WorkAreaName = "", //TODO
                         WarehouseEntryStep = ((StockInStatus)detail.Status).ToString(),
-                        WarehouseEntryFinishTime = detail.ModifiedDate?.ToString("yyyyMMddHHmmss")
+                        WarehouseEntryFinishTime = detail.ModifiedDate?.ToString("yyyy-MM-dd HH:mm:ss")
                     });
                 }
             }
@@ -733,7 +734,7 @@ namespace WMSCore.Outside
                 ErrorInfo = null,
                 //WarehouseEntryId = arg.WarehouseEntryId,
                 //WarehouseEntryType = arg.WarehouseEntryType,
-                WarehouseEntryStatusInfoList = JsonConvert.SerializeObject(statusInfoList.ToArray()),
+                WarehouseEntryStatusInfoList = statusInfoList.ToArray(),
                 IsNormalWarehouseEntry = mesTask.WorkStatus == MESTaskWorkStatus.WorkComplated,
             };
             return JsonConvert.SerializeObject(result);

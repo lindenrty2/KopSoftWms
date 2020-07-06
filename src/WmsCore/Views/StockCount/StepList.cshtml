@@ -226,6 +226,13 @@
                             if (_self.selectedStockCount.isExteriorPerfect == null) {
                                 _self.selectedStockCount.isExteriorPerfect = false;
                             }
+                            if (_self.selectedStockCount.stockCount == null) {
+                                _self.selectedStockCount.stockCount = row.beforeCount;
+                            }
+                            if (_self.selectedStockCount.packageCount == null) {
+                                _self.selectedStockCount.packageCount = 1;
+                            }
+
                             _self.canDoStock = true;
                         },
                         queryParams: function (params) {

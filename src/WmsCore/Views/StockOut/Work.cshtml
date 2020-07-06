@@ -232,7 +232,7 @@
                     layer.open({
                         type: 2, area: ['1000px', '800px'],
                         fix: false, maxmin: true, shade: 0.4, title: "扫码操作",
-                        content: "/Scan/MainScanPage?stockNo=@Model.StockOutNo&storeId=@ViewData["currentStoreId"]",
+                        content: "/Scan/MainScanPage?stockNo=@Model.StockOutNo&storeId=@ViewData["currentStoreId"]&mode=2",
                         end: function () {
                             $("#bootstraptable").bootstrapTable('refresh');
                         }

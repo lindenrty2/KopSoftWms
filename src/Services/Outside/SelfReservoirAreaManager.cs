@@ -373,7 +373,8 @@ namespace Services.Outside
 
                         warehouse = new OutsideStockInResponseWarehouse()
                         {
-                            WarehouseId = stockIn.WarehouseId.ToString(),
+                            //WarehouseId = stockIn.WarehouseId.ToString(),
+                            WarehouseId = WMSApiManager.GetWarehouse(stockIn.WarehouseId).WarehouseNo,
                             WarehouseName = "", //TODO
                             WarehousePosition = "",
                             WarehousingFinishTime = stockIn.ModifiedDate.Value.ToString("yyyy-MM-dd HH:mm:ss"),
@@ -385,6 +386,7 @@ namespace Services.Outside
                     {
                         OutsideMaterialResult material = new OutsideMaterialResult()
                         {
+                            UniqueIndex = stockInDetail.UniqueIndex,
                             SuppliesId = stockInDetail.MaterialNo.ToString(),
                             SuppliesName = stockInDetail.MaterialName,
                             SuppliesNumber = stockInDetail.ActInQty.ToString(),
@@ -412,7 +414,7 @@ namespace Services.Outside
                 }
                 else
                 {
-                    mesTask.Remark = $"ErrorId={result.ErrorId}";
+                    mesTask.Remark = $"Error={result.IsNormalExecution}";
                     mesTask.NotifyStatus = MESTaskNotifyStatus.Failed;
                 }
             }
@@ -553,8 +555,10 @@ namespace Services.Outside
 
                         warehouse = new OutsideStockOutResponseWarehouse()
                         {
-                            WarehouseId = stockOut.WarehouseId.ToString(),
+                            //WarehouseId = stockOut.WarehouseId.ToString(),
+                            WarehouseId = WMSApiManager.GetWarehouse(stockOut.WarehouseId).WarehouseNo,
                             WarehouseName = "", //TODO
+                            WarehousePosition ="",//TODO
                             WorkAreaName = mesTask.WorkAreaName,
                             WarehouseEntryFinishTime = stockOut.ModifiedDate.Value.ToString("yyyy-MM-dd HH:mm:ss"),
                         };
@@ -565,6 +569,7 @@ namespace Services.Outside
                     {
                         OutsideMaterialResult material = new OutsideMaterialResult()
                         {
+                            UniqueIndex = stockOutDetail.UniqueIndex,
                             SuppliesId = stockOutDetail.MaterialNo.ToString(),
                             SuppliesName = stockOutDetail.MaterialName,
                             SuppliesNumber = stockOutDetail.ActOutQty.ToString(),
@@ -594,7 +599,7 @@ namespace Services.Outside
                 else
                 {
                     mesTask.NotifyStatus = MESTaskNotifyStatus.Failed;
-                    mesTask.Remark = $"ErrorId={result.ErrorId}";
+                    mesTask.Remark = $"Error={result.IsNormalExecution}";
                 }
             }
             catch (Exception ex)

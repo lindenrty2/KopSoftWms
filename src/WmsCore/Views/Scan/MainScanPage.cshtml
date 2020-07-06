@@ -39,7 +39,7 @@
                 <label class="control-label">操作区</label>
             </div>
             <div class="group-body" style="font-size:24px">
-                <el-switch v-model="IsStockIn" class="control-label " active-text="" inactive-text=""></el-switch> 
+                <el-switch v-model="IsStockIn" class="control-label " style="visibility:hidden" active-text="" inactive-text=""></el-switch> 
                 <label>{{ModeName}}</label>
                 <input type="tel" v-model="InputNo" style="width:80%" @@keyup.enter="onInputNo">
             </div>
@@ -189,16 +189,20 @@
             },
             mounted: function () {
                 var _self = this;
-                _self.$nextTick(function () {
+                _self.$nextTick(function () { 
                     if (_self.ScanMode == 'StockIn') {
                         this.IsStockIn = true;
+                        if (_self.StockNo != '') {
+                            _self.onStockInNoInputed(_self.StockNo);
+                        }
                     }
                     else if (_self.ScanMode == 'StockOut') {
                         this.IsStockIn = false;
+                        if (_self.StockNo != '') {
+                            _self.onStockOutNoInputed(_self.StockNo);
+                        }
                     }
-                    if (_self.StockNo != '') {
-                        _self.onInputNoCore(_self.StockNo);
-                    }
+                
                 });
             },
             methods: { 
@@ -213,24 +217,25 @@
                 onInputNoCore: function (inputNo) {
                     var _self = this;
                     if (inputNo.length == 0) { return; }
-                    else if (IsStockInNo(inputNo)) {
-                        _self.onStockInNoInputed(inputNo);
-                    }
-                    else if (IsStockOutNo(inputNo)) {
-                        _self.onStockOutNoInputed(inputNo);
-                    }
-                    else if (IsInventoryBoxNo(inputNo)) {
+                    //else if (IsStockInNo(inputNo)) {
+                    //    _self.onStockInNoInputed(inputNo);
+                    //}
+                    //else if (IsStockOutNo(inputNo)) {
+                    //    _self.onStockOutNoInputed(inputNo);
+                    //}
+                    //else
+                    if (IsInventoryBoxNo(inputNo)) {
                         inputNo = GetInventoryBoxNo(inputNo);
                         _self.onInventoryBoxNoInputed(inputNo);
                     }
-                    else if (IsMaterialNo(inputNo)) {
-                        if (!_self.IsStockIn) {
-                            layer.msg("出库时不能扫描物料编码/唯一Id,请扫描入库唯一索引", { icon: 2 });
-                        }
-                        else { 
-                            _self.onMaterialNoInputed(inputNo);
-                        }
-                    }
+                    //else if (IsMaterialNo(inputNo)) {
+                    //    if (!_self.IsStockIn) {
+                    //        layer.msg("出库时不能扫描物料编码/唯一Id,请扫描入库唯一索引", { icon: 2 });
+                    //    }
+                    //    else { 
+                    //        _self.onMaterialNoInputed(inputNo);
+                    //    }
+                    //}
                     else {
                         //未知编码作为入库唯一索引识别
                         _self.onUnknowInputed(inputNo); 

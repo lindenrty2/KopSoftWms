@@ -49,13 +49,14 @@ namespace YL.Core.Dto
         /// 入库类型
         /// </summary>
         public string WarehousingType { get; set; }
-       
+
         /// <summary>
         /// 入库状态信息
         /// </summary>
-        public string WarehousingStatusInfoList { get; set; } //WarehousingStatusInfo[]
+        // public string WarehousingStatusInfoList { get; set; } //WarehousingStatusInfo[]
 
-}
+        public WarehousingStatusInfo[] WarehousingStatusInfoList { get; set; } //WarehousingStatusInfo[]
+    }
 
     public class WarehousingStatusInfo
     {

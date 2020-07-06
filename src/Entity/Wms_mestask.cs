@@ -27,7 +27,7 @@ namespace YL.Core.Entity
         /// <summary>
         /// 入库类型
         /// </summary>
-        [SugarColumn(Length = 30, DefaultValue = "", IsNullable = false)]
+        [SugarColumn(Length = 60, DefaultValue = "", IsNullable = false)]
         public string WarehousingType { get; set; }
         /// <summary>
         /// 入库时间

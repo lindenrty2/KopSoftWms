@@ -205,7 +205,7 @@
                     yui.layershow("料箱归库", "/InventoryBox/StockInBoxBack?storeId=@ViewData["currentStoreId"]&inventoryboxtaskid=" + taskId, 1000, 800);
                 },
                 scanL: function (detailId) {
-                    yui.layershow("扫码操作", "/Scan/MainScanPage?stockNo=@Model.StockInNo&storeId=@ViewData["currentStoreId"]", 1000, 800);
+                    yui.layershow("扫码操作", "/Scan/MainScanPage?stockNo=@Model.StockInNo&storeId=@ViewData["currentStoreId"]&mode=1", 1000, 800);
                 },
                 complateL: function (isfullbox) {
                     var index = layer.confirm("入库单与实际入库数量不匹配，您确定要将入库单标记为完成吗？", { btn: ["确定", "取消"] }, function () {
