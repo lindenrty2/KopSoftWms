@@ -104,6 +104,6 @@ namespace YL.Core.Dto
 
     }
 
- 
+  
 
 }

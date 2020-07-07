@@ -776,7 +776,8 @@ namespace WMSCore.Outside
                 {
                     Success = true,
                     StockInventoryId = StockInventoryId,
-                    ErrorId = routedata.Code.ToString(),
+                    //ErrorId = routedata.Code.ToString(),
+                    ErrorId = routedata.Code==0 ? "":routedata.Code.ToString(),
                     ErrorInfo = routedata.Message
                 });
             }

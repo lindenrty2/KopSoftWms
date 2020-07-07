@@ -442,12 +442,19 @@ namespace KopSoftWms.Controllers
         }
 
         [HttpGet]
-        public IActionResult Preview(long storeId, long pid)
+        public async Task<IActionResult> Preview(long storeId, long pid,long? detailId)
         {
+            long id = pid;
+            if(id == 0 && detailId != null)
+            {
+                Wms_stockindetail detail = await _client.Queryable<Wms_stockindetail>().FirstAsync( x => x.StockInDetailId == detailId);
+                id = detail.StockInId.Value;
+            }
             var model = _stockinServices.QueryableToEntity(
-                c => c.WarehouseId == storeId && c.StockInId == pid && c.IsDel == 1);
+                c => c.WarehouseId == storeId && c.StockInId == id && c.IsDel == 1);
 
-            ViewBag.StockInId = pid;
+            ViewBag.StockInId = id;
+            ViewBag.StockInDetailId = detailId;
             ViewBag.StoreId = storeId;
             return View(model);
         }
@@ -489,15 +496,17 @@ namespace KopSoftWms.Controllers
         }
 
         [HttpGet]
-        public IActionResult PreviewJson(string id)
+        public IActionResult PreviewJson(string id,long? detailId)
         {
-            var str = _stockinServices.PrintList(id);
+            var str = _stockinServices.PrintList(id, detailId);
             return Content(str);
         }
          
         [HttpGet]
         public async Task<RouteData<MaterialCode>> QueryStockInMaterial(string no)
         {
+            no = no.Split('@')[0];
+
             Wms_stockindetail targetDetail = await _client.Queryable<Wms_stockindetail>()
                 .FirstAsync(x => x.UniqueIndex == no);
             if (targetDetail != null)

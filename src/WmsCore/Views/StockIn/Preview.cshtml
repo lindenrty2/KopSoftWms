@@ -104,12 +104,12 @@
             methods: {
                 loadL: function () {
                     var _self = this;
-                    yui.$axiosget('/StockIn/PreviewJson?id=' + _self.stockInId)
+                    yui.$axiosget('/StockIn/PreviewJson?id=@ViewBag.StockInId&detailId=@ViewBag.StockInDetailId')
                         .then(function (response) {
                             _self.stockInList = response.data.Item2;
                             for (var i = 0; i < response.data.Item4.length; i++) {
                                 var detail = response.data.Item4[i];
-                                detail.QRUrl = "QRCode?storeId=@ViewBag.StoreId&pid=@Model.StockInId&detialId=" + detail.StockInDetailId;
+                                detail.QRUrl = "QRCode?storeId=@ViewBag.StoreId&pid=@ViewBag.StockInId&detialId=" + detail.StockInDetailId;
                             }
                             _self.stockInDList = response.data.Item4;
                         })

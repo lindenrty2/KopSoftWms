@@ -103,8 +103,9 @@ namespace Services
         //    return Bootstrap.GridData(list, totalNumber).JilToJson();
         //}
 
-        public string PrintList(string stockInId)
+        public string PrintList(string stockInId,long? detailId)
         {
+            long id = long.Parse(stockInId);
             var list1 = _client.Queryable<Wms_stockin, Wms_supplier, Sys_dict, Sys_user, Sys_user>
                 ((s, p, d, c, u) => new object[] {
                    JoinType.Left,s.SupplierId==p.SupplierId,
@@ -133,15 +134,14 @@ namespace Services
                  }).MergeTable().Where(s => s.StockInId == stockInId).ToList();
             bool flag1 = true;
             bool flag2 = true;
-            var list2 = _client.Queryable<Wms_stockindetail, Wms_material, Wms_stockin, Sys_user, Sys_user >
-                 ((s, m, p,  c, u) => new object[] {
+            var list2 = _client.Queryable<Wms_stockindetail, Wms_material, Wms_stockin>
+                 ((s, m, p) => new object[] {
                    JoinType.Left,s.MaterialId==m.MaterialId && m.IsDel == 1,
-                   JoinType.Left,s.StockInId==p.StockInId && p.IsDel == 1,
-                   JoinType.Left,s.CreateBy==c.UserId && c.IsDel == 1,
-                   JoinType.Left,s.ModifiedBy==u.UserId && u.IsDel == 1
+                   JoinType.Left,s.StockInId==p.StockInId && p.IsDel == 1 
                   })
-                  //.Where((s, m, p, g, c, u, a) => s.IsDel == 1 && p.IsDel == 1 && g.IsDel == 1 && c.IsDel == 1)
-                  .Select((s, m, p, c, u) => new
+                  .Where((s, m, p) => s.StockInId == id && (detailId == null || s.StockInDetailId == detailId))
+                  .OrderBy((s, m, p) => s.CreateDate, OrderByType.Desc)
+                  .Select((s, m, p) => new
                   {
                       StockInId = s.StockInId.ToString(),
                       StockInDetailId = s.StockInDetailId.ToString(),
@@ -158,11 +158,11 @@ namespace Services
                       m.UnitName,
                       s.IsDel,
                       s.Remark,
-                      CName = c.UserNickname,
+                      CName = s.CreateUser,
                       s.CreateDate,
-                      UName = u.UserNickname,
+                      UName = s.ModifiedUser,
                       s.ModifiedDate
-                  }).MergeTable().Where(c => c.StockInId == stockInId).OrderBy(c => c.CreateDate, OrderByType.Desc).ToList();
+                  }).ToList();
             if (!list1.Any())
             {
                 flag1 = false;

@@ -36,13 +36,13 @@ namespace WMSCore.Outside
         /// <param name="inStockInfo"></param>
         /// <returns></returns>
         [HttpPost("WarehousingFinish")]
-        public async Task<string> WarehousingFinish()
+        public async Task<string> WarehousingFinish(string warehouseId,string warehouseName)
         {
             OutsideStockInResponseWarehouse[] list = new OutsideStockInResponseWarehouse[] {
                 new OutsideStockInResponseWarehouse()
                 {
-                    WarehouseId = "",
-                    WarehouseName = "测试仓库",
+                    WarehouseId = warehouseId,
+                    WarehouseName = warehouseName,
                     WarehousePosition = "A",
                     WarehousingFinishTime = DateTime.Now.ToString("yyyyMMddHHmmss"),
                     SuppliesKinds = 2,
@@ -73,13 +73,13 @@ namespace WMSCore.Outside
         /// <param name="outStockInfo"></param>
         /// <returns></returns>
         [HttpPost("WarehouseEntryFinish")]
-        public async Task<string> WarehouseEntryFinish()
+        public async Task<string> WarehouseEntryFinish(string warehouseId, string warehouseName)
         {
             OutsideStockOutResponseWarehouse[] list = new OutsideStockOutResponseWarehouse[] {
                 new OutsideStockOutResponseWarehouse()
                 {
-                    WarehouseId = "",
-                    WarehouseName = "测试仓库", 
+                    WarehouseId = warehouseId,
+                    WarehouseName = warehouseName, 
                     WarehouseEntryFinishTime = DateTime.Now.ToString("yyyyMMddHHmmss"),
                     SuppliesKinds = 2,
                     SuppliesInfoList = new List<OutsideMaterialResult>(){
@@ -126,37 +126,6 @@ namespace WMSCore.Outside
             return JsonConvert.SerializeObject(result);
         }
 
-        /// <summary>
-        /// 盘库完成测试
-        /// </summary>
-        [HttpPost("StockCount")]
-        public async Task<RouteData> StockCount()
-        {
-            OutsideStockCountReportDto arg = new OutsideStockCountReportDto()
-            {
-                StockCountNo = "SC-000001",
-                CompleteDate = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
-                MaterialList = new OutsideStockCountReportMaterialDto[] {
-                    new OutsideStockCountReportMaterialDto()
-                    {
-                        MaterialOnlyId = "STDS-0001",
-                        MaterialNo = "B001",
-                        MaterialName = "物料名",
-                        MaterialType = "物料类型",
-                        Unit ="单位",
-                        PrevNumber = 10,
-                        BeforeCount = 10,
-                        StockCount = 10,
-                        Status = 4,
-                        Remark = "Remark",
-                        StockCountUser = "盘库者",
-                        StockCountDate= DateTime.Now
-                        
-                    }
-                }
-            };
-
-            return await MESApiAccessor.Instance.StockCount(arg);
-        }
+       
     } 
 }

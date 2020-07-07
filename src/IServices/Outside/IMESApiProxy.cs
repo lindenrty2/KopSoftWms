@@ -20,6 +20,8 @@ namespace IServices.Outside
         [HttpPost("LogisticsFinish")]
         ITask<string> LogisticsFinish(string LogisticsId, string LogisticsFinishTime, string WorkAreaName, string ErrorId,string ErrorInfo);
 
-          
+        [HttpPost("StockInventoryFinish")]
+        ITask<string> StockInventoryFinish(string StockInventoryId, string Year, string Month,string WarehouseID,string SuppliesInfoList);
+
     }
 }

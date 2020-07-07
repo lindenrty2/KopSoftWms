@@ -19,7 +19,11 @@ namespace YL.Core.Dto
         /// <summary>
         /// 盘库整体完成日期
         /// </summary>
-        public string CompleteDate { get; set; }
+        public string CompleteDate { get; set; } 
+        /// <summary>
+        /// 仓库Id
+        /// </summary> 
+        public string WarehouseId { get; set; }
         /// <summary>
         /// 物料列表
         /// </summary>
@@ -77,6 +81,15 @@ namespace YL.Core.Dto
         /// 盘库数量
         /// </summary> 
         public int StockCount { get; set; }
+
+        /// <summary>
+        /// 料箱编号
+        /// </summary>
+        public string InventoryBoxNo { get; set; }
+        /// <summary>
+        /// 料箱名
+        /// </summary>
+        public string InventoryBoxName { get; set; }
 
         /// <summary>
         /// 备注

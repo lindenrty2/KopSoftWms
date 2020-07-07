@@ -1,4 +1,5 @@
 ﻿using IServices.Outside;
+using MESService;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -93,22 +94,20 @@ namespace WMSCore.Outside
         }
 
         /// <summary>
-        /// 盘库完成
+        /// 盘库完成通知
         /// </summary>
-        public async Task<RouteData> StockCount(OutsideStockCountReportDto report)
-        {
-            //MESService.LogisticsFinishResponse result = await _apiProxy.StockCount(
-            //    new MESService.OutsideStockCountReportDto()
-            //    {
-            //        arg0 = arg.LogisticsId,
-            //        arg1 = arg.LogisticsFinishTime,
-            //        arg2 = arg.WorkAreaName,
-            //        arg3 = arg.ErrorId,
-            //        arg4 = arg.ErrorInfo
-            //    }
-            //);
-            //return JsonConvert.DeserializeObject<OutsideLogisticsFinishResponseResult>(result.@return);
-            return new RouteData();
+        public async Task<RouteData> StockCount(MESService.StockInventoryFinishRequest request)
+        { 
+            try
+            {
+                StockInventoryFinishResponse result = await _apiProxy.StockInventoryFinishAsync(request);
+                OutsideStockCountResultDto_MES resultData = JsonConvert.DeserializeObject<OutsideStockCountResultDto_MES>(result.@return);
+                return new RouteData() { Code = string.IsNullOrWhiteSpace(resultData.ErrorId) ? 0 : int.Parse(resultData.ErrorId), Message = resultData.ErrorInfo };
+            }
+            catch (Exception ex)
+            {
+                return new RouteData() { Code = -1, Message = ex.Message };
+            }
         }
     }
 }

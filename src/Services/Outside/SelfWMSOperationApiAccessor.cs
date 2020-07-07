@@ -2596,48 +2596,29 @@ namespace Services.Outside
 
             if(dbStockCount.Status == (int)StockCountStatus.task_finish)
             {
-                NotifyStockCountComplete(dbStockCount.StockCountNo);
+                NotifyStockCountComplete(dbStockCount);
             }
 
             return RouteData.From(1, "盘库完成");
 
         }
 
-        private async void NotifyStockCountComplete(string stockCountNo)
+        private async void NotifyStockCountComplete(Wms_stockcount stockcount)
         {
             try
             {
-                IEnumerable < OutsideStockCountReportMaterialDto > materials =
+                string stockCountNo = stockcount.StockCountNo;
+                IEnumerable<Wms_stockcount_material> materials =
                     await _sqlClient.Queryable<Wms_stockcount_material>()
                         .Where(x => x.StockCountNo == stockCountNo)
-                        .Select(
-                            x => new OutsideStockCountReportMaterialDto()
-                            {
-                                MaterialNo = x.MaterialNo,
-                                MaterialOnlyId = x.MaterialOnlyId,
-                                MaterialName = x.MaterialName,
-                                MaterialType = x.MaterialTypeName,
-                                PrevNumber = x.PrevNumber,
-                                BeforeCount = x.ProjectedQty,
-                                StockCount = x.StockCountQty,
-                                Status = x.Status,
-                                Remark = x.Remark,
-                                Unit = x.UnitName,
-                                StockCountUser = x.ModifiedUser,
-                                StockCountDate = x.ModifiedDate
-                            }
-                        )
                         .ToListAsync();
+                IEnumerable<Wms_stockcount_step> steps =
+                    await _sqlClient.Queryable<Wms_stockcount_step>()
+                   .Where(x => x.StockCountNo == stockCountNo)
+                   .ToListAsync();
 
 
-                OutsideStockCountReportDto report = new OutsideStockCountReportDto()
-                {
-                    StockCountNo = stockCountNo,
-                    CompleteDate = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
-                    MaterialList = materials.ToArray()
-                };
-
-                RouteData result = await MESApiAccessor.Instance.StockCount(report);
+                RouteData result = null;
 
                 Wms_mestask mestask = await _sqlClient.Queryable<Wms_mestask>()
                         .FirstAsync(x => x.WarehousingId == stockCountNo);
@@ -2645,9 +2626,45 @@ namespace Services.Outside
                 if (mestask == null) return;
 
                 mestask.WorkStatus = MESTaskWorkStatus.WorkComplated;
-                mestask.NotifyStatus = (result == null || !result.IsSccuess) ? MESTaskNotifyStatus.Failed : MESTaskNotifyStatus.Responsed;
-                mestask.Remark = result?.Message;
+                try
+                { 
+                    OutsideStockCountMaterialDto_MES[] reportMaterials = materials.Select(x => {
+                        return new OutsideStockCountMaterialDto_MES()
+                        {
+                            SuppliesId = x.MaterialNo,
+                            SuppliesOnlyId = x.MaterialOnlyId,
+                            SuppliesName = x.MaterialName,
+                            SuppliesType = x.MaterialTypeName,
+                            PrevNumber = x.PrevNumber.ToString(),
+                            InventoryNumber = x.StockCountQty.ToString(),
+                            StoreId = string.Join( ",", steps.Where(y => y.MaterialId == y.MaterialId).Select(y => y.InventoryBoxNo) ),
+                            StoreName = string.Join(",", steps.Where(y => y.MaterialId == y.MaterialId).Select(y => y.InventoryBoxName)),
+                            Unit = x.UnitName,
+                            StoreMan = x.ModifiedUser,
+                            StockCountDate = x.ModifiedDate.Value.ToString("yyyy/MM/dd HH:mm:ss"),
+
+                        };
+                    }).ToArray();
+                    MESService.StockInventoryFinishRequest request = new MESService.StockInventoryFinishRequest()
+                    {
+                        arg0 = stockcount.StockCountNo,
+                        arg1 = stockcount.StockCountDate.Year.ToString(),
+                        arg2 = stockcount.StockCountDate.Month.ToString(),
+                        arg3 = "A00",
+                        arg4 = JsonConvert.SerializeObject(materials)
+                    };
+
+                    result = await MESApiAccessor.Instance.StockCount(request);
+                    mestask.NotifyStatus = (result == null || !result.IsSccuess) ? MESTaskNotifyStatus.Failed : MESTaskNotifyStatus.Responsed;
+                    mestask.Remark = result?.Message;
+                }
+                catch (Exception ex)
+                {
+                    mestask.NotifyStatus = MESTaskNotifyStatus.Failed;
+                    mestask.Remark = ex.Message;
+                }
                 mestask.ModifiedDate = DateTime.Now;
+
                 if (_sqlClient.Updateable(mestask).ExecuteCommand() == 0)
                 {
                 }

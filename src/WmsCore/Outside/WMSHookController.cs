@@ -234,7 +234,40 @@ namespace WMSCore.Outside
         [HttpPost("StockCount")]
         public async Task<RouteData> StockCountComplete([FromBody]OutsideStockCountReportDto report)
         {
-            return await MESApiAccessor.Instance.StockCount(report);
+            try
+            {
+                DateTime completeDate = Convert.ToDateTime(report.CompleteDate);
+                OutsideStockCountMaterialDto_MES[] materials = report.MaterialList.Select(x => {
+                    return new OutsideStockCountMaterialDto_MES()
+                    {
+                        SuppliesId = x.MaterialNo,
+                        SuppliesOnlyId = x.MaterialOnlyId,
+                        SuppliesName = x.MaterialName,
+                        SuppliesType = x.MaterialType,
+                        PrevNumber = x.PrevNumber.ToString(),
+                        InventoryNumber = x.StockCount.ToString(),
+                        StoreId = x.InventoryBoxNo,
+                        StoreName = x.InventoryBoxName,
+                        Unit = x.Unit,
+                        StoreMan = x.StockCountUser,
+                        StockCountDate = x.StockCountDate.Value.ToString("yyyy/MM/dd HH:mm:ss"),
+
+                    };
+                }).ToArray();
+                MESService.StockInventoryFinishRequest request = new MESService.StockInventoryFinishRequest()
+                {
+                    arg0 = report.StockCountNo,
+                    arg1 = completeDate.Year.ToString(),
+                    arg2 = completeDate.Month.ToString(),
+                    arg3 = report.WarehouseId,
+                    arg4 = JsonConvert.SerializeObject(materials)
+                };
+                return await MESApiAccessor.Instance.StockCount(request);
+            }
+            catch(Exception ex)
+            {
+                return new RouteData() { Code = -1, Message = ex.Message };
+            }
         }
     }
 

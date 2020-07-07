@@ -895,7 +895,7 @@ namespace Services.Outside
                 Wms_stockcount stockcount = new Wms_stockcount()
                 { 
                     StockCountNo = request.StockCountNo,
-                    StockCountDate = request.PlanDate.SerialNumberToDateTime(),
+                    StockCountDate = Convert.ToDateTime( request.PlanDate ),
                     MesTaskId = request.MesTaskId,
                     WarehouseId = this.Warehouse.WarehouseId,
                     StepTotalCount = null,

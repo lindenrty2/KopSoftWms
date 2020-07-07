@@ -10,7 +10,7 @@ namespace IServices
     {
         //string PageList(PubParams.StockInBootstrapParams bootstrap);
 
-        string PrintList(string stockInId);
+        string PrintList(string stockInId,long? detailId);
 
         bool Auditin(long UserId, long stockInId);
 

@@ -201,18 +201,23 @@
                         {
                             field: 'StatusValue', title: '操作', align: 'center', sortable: false,
                             formatter: function (value, row, index) {
-                                if (value < 2) {
-                                    return [
-                                        '<button id="deleteDetailL" type="button" class="btn btn-link" style="margin-top:-8px;">删除</button>',
-                                        '<button id="editDetailL" type="button" class="btn btn-link" style="margin-top:-8px;">修改</button>'
-                                    ].join('');
-                                } else if (value < 4) {
-                                    return ['<button id="editDetailL" type="button" class="btn btn-link" style="margin-top:-8px;">修改</button>'].join('');
-                                }else {
-                                    return '';
-                                }
+                                return '<button id="previewL" type="button" class="btn btn-link" style="margin-top:-8px;margin-left:-10px;">打印预览</button>';
+                                //if (value < 2) {
+                                //    return [
+                                //        '<button id="deleteDetailL" type="button" class="btn btn-link" style="margin-top:-8px;">删除</button>',
+                                //        '<button id="editDetailL" type="button" class="btn btn-link" style="margin-top:-8px;">修改</button>'
+                                //    ].join('');
+                                //} else if (value < 4) {
+                                //    return ['<button id="editDetailL" type="button" class="btn btn-link" style="margin-top:-8px;">修改</button>'].join('');
+                                //}else {
+                                //    return '';
+                                //}
                             },
                             events: {
+                                'click #previewL': function (e, value, row, index) {
+                                    app.previewL(row.StockInId, row.StockInDetailId);
+
+                                },
                                 'click #deleteDetailL': function (e, value, row, index) {
                                     if (value === 1) {
                                         app.deleteDetailL(row.StockInDetailId);
@@ -256,9 +261,9 @@
                 workL: function (val,no) {
                     yui.layershow("入库操作(" + no + ")", "/StockIn/Work?storeId=@ViewData["currentStoreId"]&pid=" + val, 1600, 900);
                 },
-                previewL: function (val) {
+                previewL: function (stockInId,stockInDetailId) {
                     var _self = this;
-                    yui.layershow("预览", "/StockIn/Preview?storeId=@ViewData["currentStoreId"]&pid=" + val, 1000, 900);
+                    yui.layershow("预览", "/StockIn/Preview?storeId=@ViewData["currentStoreId"]&pid=" + stockInId + "&detailId=" + stockInDetailId, 1000, 900);
                 },
                 printL: function (val) {
                     var _self = this;
