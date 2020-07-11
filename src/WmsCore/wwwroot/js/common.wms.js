@@ -317,8 +317,14 @@ function WCSNotifyStatusFormatter(value, row, index) {
 }
 
 
-function DateTimeFormatter (value, row, index) {
+function DateTimeFormatter(value, row, index) { 
     return _self.jsonDateFormat(value);
+}
+
+function DateTimeFormatter2(value, row, index) {
+    if (value == null) return "";
+    value = value.replace("T", " ");
+    return value;
 }
 
 function YesNoFormatter(value, row, index) {

@@ -166,7 +166,7 @@
                         { field: 'isExteriorPerfect', title: '外观良好', align: 'center', sortable: true, formatter: YesNoFormatter  },
                         { field: 'remark', align: 'center', title: '备注' },
                         { field: 'stockCountUser', align: 'center', title: '盘库人' },
-                        { field: 'remark', align: 'center', title: '盘库时间' },
+                        { field: 'stockCountDate', align: 'center', title: '盘库时间', formatter: DateTimeFormatter2 },
                     ];
 
                     $("#stepTable").bootstrapTable({
