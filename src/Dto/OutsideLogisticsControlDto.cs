@@ -17,15 +17,26 @@ namespace YL.Core.Dto
         /// <summary>
         /// 终点位置
         /// </summary>
-        public string Destination { get; set; }
+        public string Destination1 { get; set; }
+        /// <summary>
+        /// 终点位置
+        /// </summary>
+        public string Destination2 { get; set; }
 
-        public static OutsideLogisticsControlArg Create(string logisticsId,string startpoint, string destination)
+        /// <summary>
+        /// 料箱大小
+        /// </summary>
+        public string InventoryBoxSize { get; set; }
+
+        public static OutsideLogisticsControlArg Create(string logisticsId,string startpoint, string destination1, string destination2,String inventoryBoxSize)
         {
             return new OutsideLogisticsControlArg()
             {
                 LogisticsId = logisticsId,
                 StartPoint = startpoint,
-                Destination = destination 
+                Destination1 = destination1,
+                Destination2 = destination2,
+                InventoryBoxSize = inventoryBoxSize
             };
             
         }

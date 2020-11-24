@@ -523,10 +523,10 @@ namespace WMSCore.Outside
         /// </summary>
         [HttpPost("LogisticsControl")]
         //public OutsideLogisticsControlResult LogisticsControl([FromBody]OutsideLogisticsControlArg arg)
-        public string LogisticsControl(string LogisticsId, string StartPoint, string Destination)
+        public string LogisticsControl(string LogisticsId, string StartPoint, string Destination1, string Destination2, string InventoryBoxSize)
         {
             var result = WCSApiAccessor.Instance.LogisticsControl(
-                OutsideLogisticsControlArg.Create(LogisticsId, StartPoint, Destination)).Result;
+                OutsideLogisticsControlArg.Create(LogisticsId, StartPoint, Destination1, Destination2, InventoryBoxSize)).Result;
 
             //var result = new OutsideLogisticsControlResult() { EquipmentId = "1", EquipmentName = "EquipmentName-1" };
             return JsonConvert.SerializeObject(result);
@@ -899,7 +899,7 @@ namespace WMSCore.Outside
         /// </summary>
         [OperationContract]
         //OutsideLogisticsControlResult LogisticsControl(OutsideLogisticsControlArg arg);
-        string LogisticsControl(string LogisticsId, string StartPoint, string Destination);
+        string LogisticsControl(string LogisticsId, string StartPoint, string Destination1, string Destination2, string InventoryBoxSize);
 
         /// <summary>
         /// 物流（状态）查询
