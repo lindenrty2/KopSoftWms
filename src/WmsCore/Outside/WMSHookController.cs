@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using WebApiClient;
 using YL.Core.Dto;
 using YL.Core.Entity;
+using YL.NetCore.Attributes;
 using YL.Utils.Extensions;
 using YL.Utils.Pub;
 
@@ -59,6 +60,7 @@ namespace WMSCore.Outside
         /// </summary>
         /// <param name="result"></param>
         /// <returns></returns>
+        [OutsideLog]
         [HttpPost("StockIn/{stockInId}/Status")]
         public async Task<RouteData> StockInReport(long stockInId, [FromBody]OutsideStockInReportDto result)
         {
@@ -148,6 +150,7 @@ namespace WMSCore.Outside
         /// </summary>
         /// <param name="result"></param>
         /// <returns></returns>
+        [OutsideLog]
         [HttpPost("StockOut/{stockOutId}/Status")]
         public async Task<RouteData> StockOutReport(long stockOutId, [FromBody]OutsideStockOutReportDto result)
         {
@@ -231,6 +234,7 @@ namespace WMSCore.Outside
         /// </summary>
         /// <param name="result"></param>
         /// <returns></returns>
+        [OutsideLog]
         [HttpPost("StockCount")]
         public async Task<RouteData> StockCountComplete([FromBody]OutsideStockCountReportDto report)
         {

@@ -10,20 +10,21 @@ using YL.Core.Entity;
 using YL.Utils.Pub;
 using YL.Utils.Extensions;
 using System.Linq;
-using Newtonsoft.Json;
-using Microsoft.Extensions.Logging;
+using Newtonsoft.Json; 
 using YL.Utils.Json;
+using YL.Utils.Log;
 
 namespace Services.Outside
 {
     public class SelfWMSOperationApiAccessor : IWMSOperationApiAccessor
     {
-
+        NLog.ILogger _logger = NLog.LogManager.GetCurrentClassLogger(); 
         private ISqlSugarClient _sqlClient;
         private Wms_warehouse _warehouse;
         public Wms_warehouse Warehouse { get { return _warehouse; } }
         private SysUserDto _userDto;
         private SysUserDto UserDto { get { return _userDto; } }
+
 
         public SelfWMSOperationApiAccessor(Wms_warehouse warehouse, SqlSugar.ISqlSugarClient sqlClient, SysUserDto userDto)
         {
@@ -58,14 +59,18 @@ namespace Services.Outside
         /// <returns></returns>
         public async Task<RouteData> DoAutoSelectBoxOut(long? reservoirAreaId, int requestSize, PLCPosition pos)
         {
+
+            _logger.Info($">>开始:自动选择料箱出库reservoirAreaId={reservoirAreaId},requestSize={requestSize},pos={pos}");
             RouteData<Wms_inventorybox> searchResult = await _sqlClient.GetBestInvertoryBox(
                 reservoirAreaId, requestSize, pos);
             if (!searchResult.IsSccuess)
             {
+                _logger.Error($"****异常:自动选择料箱出库,searchResult={searchResult.Message}");
                 return searchResult;
             }
             RouteData result = await DoInventoryBoxOut(searchResult.Data.InventoryBoxId, pos);
 
+            _logger.Info($"<<结束:自动选择料箱出库reservoirAreaId={reservoirAreaId},requestSize={requestSize},pos={pos}");
             return result;
         }
 
@@ -78,14 +83,17 @@ namespace Services.Outside
         {
             try
             {
+                _logger.Info($">>开始:出库料箱inventoryBoxId={inventoryBoxId},pos={pos}");
                 _sqlClient.Ado.BeginTran();
                 RouteData result = await DoInventoryBoxOutCore(inventoryBoxId, pos);
                 if (!result.IsSccuess)
                 {
+                    _logger.Error($"****异常:出库料箱,searchResult={result.Message}");
                     _sqlClient.Ado.RollbackTran();
                     return result;
                 }
                 _sqlClient.Ado.CommitTran();
+                _logger.Info($"<<结束:出库料箱inventoryBoxId={inventoryBoxId},pos={pos}");
                 return result;
             }
             catch (Exception)
@@ -103,6 +111,7 @@ namespace Services.Outside
         public async Task<RouteData> DoInventoryBoxOut(long[] inventoryBoxIds, PLCPosition pos)
         {
             int failCount = 0;
+            _logger.Info($">>开始:出库料箱inventoryBoxIds={inventoryBoxIds},pos={pos}");
             foreach (long inventoryBoxId in inventoryBoxIds)
             {
                 try
@@ -112,15 +121,18 @@ namespace Services.Outside
                     if (!result.IsSccuess)
                     {
                         failCount++;
+                        _logger.Error($"****异常:出库料箱,result={result.Message}");
                         _sqlClient.Ado.RollbackTran(); 
                     }
                     _sqlClient.Ado.CommitTran(); 
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    _logger.Error($"****异常:出库料箱,ex={ex.Message}");
                     _sqlClient.Ado.RollbackTran(); 
                 }
             }
+            _logger.Info($">>结束:出库料箱inventoryBoxIds={inventoryBoxIds},pos={pos}");
             return RouteData.From(failCount == 0 ? 0 : -1, $"成功：{inventoryBoxIds.Length - failCount},失败：{failCount}");
         }
 
@@ -205,14 +217,17 @@ namespace Services.Outside
         {
             try
             {
+                _logger.Info($">>开始:根据出库单出库料箱stockOutId={stockOutId},pos={pos}");
                 _sqlClient.Ado.BeginTran();
                 RouteData result = await DoStockOutBoxOutCore(stockOutId, pos);
                 if (!result.IsSccuess)
                 {
+                    _logger.Error($"****异常:根据出库单出库料箱,result={result.Message}");
                     _sqlClient.Ado.RollbackTran();
                     return result;
                 }
                 _sqlClient.Ado.CommitTran();
+                _logger.Info($"<<结束:根据出库单出库料箱stockOutId={stockOutId},pos={pos}");
                 return result;
             }
             catch (Exception ex)
@@ -536,6 +551,7 @@ namespace Services.Outside
         /// <returns></returns>
         public async Task<RouteData> PauseStockOut(long stockOutId)
         {
+            _logger.Info($">>开始:暂停出库stockOutId={stockOutId} ");
             Wms_stockout stockout = await _sqlClient.Queryable<Wms_stockout>().FirstAsync(x => x.StockOutId == stockOutId);
             if(stockout == null)
             {
@@ -572,10 +588,12 @@ namespace Services.Outside
                     return RouteData.From(PubMessages.E0002_UPDATE_COUNT_FAIL);
                 }
                 _sqlClient.Ado.CommitTran();
+                _logger.Info($"<<结束:暂停出库stockOutId={stockOutId} ");
                 return new RouteData();
             }
             catch (Exception ex)
             {
+                _logger.Error($"****异常:暂停出库ex={ex.Message} ");
                 _sqlClient.Ado.RollbackTran();
                 return RouteData.From(-1, ex.Message);
             }
@@ -588,6 +606,7 @@ namespace Services.Outside
         /// <returns></returns>
         public async Task<RouteData> ResumeStockOut(long stockOutId)
         {
+            _logger.Info($">>开始:恢复出库stockOutId={stockOutId} ");
             Wms_stockout stockout = await _sqlClient.Queryable<Wms_stockout>().FirstAsync(x => x.StockOutId == stockOutId);
             if (stockout == null)
             {
@@ -605,6 +624,7 @@ namespace Services.Outside
 
             if (wcsTasks.Count == 0)
             {
+                _logger.Info(PubMessages.E2311_WCS_RESUMECOMMAND_NOTARGET.Message);
                 return RouteData.From(PubMessages.E2311_WCS_RESUMECOMMAND_NOTARGET);
             }
             try
@@ -624,10 +644,12 @@ namespace Services.Outside
                     return RouteData.From(PubMessages.E0002_UPDATE_COUNT_FAIL);
                 }
                 _sqlClient.Ado.CommitTran();
+                _logger.Info($"<<结束:恢复出库stockOutId={stockOutId} ");
                 return new RouteData();
             }
             catch (Exception ex)
             {
+                _logger.Error($"****异常:恢复出库stockOutId={stockOutId} ");
                 _sqlClient.Ado.RollbackTran();
                 return RouteData.From(-1, ex.Message);
             }
@@ -851,6 +873,7 @@ namespace Services.Outside
         {
             try
             {
+                _logger.Info($">>开始:料箱归库 mode={mode},inventoryBoxTaskId={inventoryBoxTaskId},details={details},pos={pos}");
                 Wms_inventoryboxTask task = await _sqlClient.Queryable<Wms_inventoryboxTask>().FirstAsync(x => x.InventoryBoxTaskId == inventoryBoxTaskId);
                 if (task == null) { return YL.Core.Dto.RouteData.From(PubMessages.E1013_INVENTORYBOXTASK_NOTFOUND); }
                 if (task.Status < InventoryBoxTaskStatus.task_outed.ToByte()) { return YL.Core.Dto.RouteData.From(PubMessages.E1016_INVENTORYBOX_NOTOUTED); }
@@ -1181,6 +1204,7 @@ namespace Services.Outside
                         }
                     }
                 }
+                _logger.Info($">>结束:料箱归库 mode={mode},inventoryBoxTaskId={inventoryBoxTaskId},details={details},pos={pos}");
                 _sqlClient.Ado.CommitTran();
                 return YL.Core.Dto.RouteData.From(PubMessages.I1001_BOXBACK_SCCUESS);
             }
@@ -1399,6 +1423,7 @@ namespace Services.Outside
         {
             try
             {
+                _logger.Info($">>开始:发送WCS出库指令,desc={desc}pos={pos},isBackOut={isBackOut}");
                 Wms_storagerack storagerack = _sqlClient.Queryable<Wms_storagerack>().First(x => x.StorageRackId == task.StoragerackId);
                 if (storagerack == null)
                 {
@@ -1445,6 +1470,7 @@ namespace Services.Outside
                     Params = JsonConvert.SerializeObject(outStockInfo)
                 };
                 await _sqlClient.Insertable(wcsTask).ExecuteCommandAsync();
+                _logger.Info($"<<结束:发送WCS出库指令,desc={desc}pos={pos},isBackOut={isBackOut}");
                 return new RouteData();
             }
             catch (Exception e)
@@ -1462,7 +1488,8 @@ namespace Services.Outside
         private async Task<RouteData> SendWCSOutControlCommand(Wms_wcstask wcstask,bool isPause)
         {
             try
-            { 
+            {
+                _logger.Info($">>开始:WCS出库控制命令(暂停/继续),isPause={isPause}");
                 StockOutTaskInfo outStockInfo = new StockOutTaskInfo()
                 {
                     TaskId = wcstask.WcsTaskIdStr, 
@@ -1479,16 +1506,19 @@ namespace Services.Outside
                 wcstask.RequestUser = UserDto.UserName;
                 wcstask.RequestUserId = UserDto.UserId;
                 await _sqlClient.Updateable(wcstask).ExecuteCommandAsync();
+                _logger.Info($"<<结束:WCS出库控制命令(暂停/继续),isPause={isPause}");
                 return new RouteData();
             }
             catch (Exception e)
             {
+                _logger.Error($"****异常:WCS出库控制命令(暂停/继续),ex={e.Message}");
                 return RouteData.From(PubMessages.E2300_WCS_OUTCOMMAND_FAIL, e.Message);
             }
         }
 
         public async Task<ConfirmOutStockResult> ConfirmOutStock(WCSStockTaskCallBack result)
         {
+            _logger.Info($">>开始:ConfirmOutStock,result={result}");
             long taskId = result.TaskId.ToInt64();
             try
             {
@@ -1507,10 +1537,12 @@ namespace Services.Outside
                     };
                 }
                 _sqlClient.Ado.CommitTran();
+                _logger.Info($"<<结束:ConfirmOutStock,result={result}");
                 return new ConfirmOutStockResult();
             }
             catch (Exception ex)
             {
+                _logger.Error($"****异常:ConfirmOutStock,ex={ex.Message}");
                 _sqlClient.Ado.RollbackTran();
                 return new ConfirmOutStockResult()
                 {
@@ -1601,6 +1633,7 @@ namespace Services.Outside
         {
             try
             {
+                _logger.Info($">>开始:发送入库(归库)指令,pos={pos},desc={desc},isReBack={isReBack}");
                 long taskId = PubId.SnowflakeId;
                 Wms_storagerack storagerack = await _sqlClient.Queryable<Wms_storagerack>().FirstAsync(x => x.StorageRackId == task.StoragerackId);
                 if (storagerack == null)
@@ -1647,11 +1680,13 @@ namespace Services.Outside
                     RequestDate = DateTime.Now
                 };
                 await _sqlClient.Insertable(wcsTask).ExecuteCommandAsync();
+                _logger.Info($"<<结束:发送入库(归库)指令,pos={pos},desc={desc},isReBack={isReBack}");
                 return new RouteData();
 
             }
             catch (Exception ex)
             {
+                _logger.Error($"****异常:发送入库(归库)指令,pos={pos},desc={desc},isReBack={isReBack}");
                 return RouteData.From(PubMessages.E2310_WCS_BACKCOMMAND_FAIL, ex.Message);
             }
         }
@@ -1665,12 +1700,15 @@ namespace Services.Outside
         {
             try
             {
-                long taskId = callback.TaskId.ToInt64();
+                long taskId = callback.TaskId.ToInt64(); 
+                _logger.Info($">>开始:归库完成taskId={taskId}");
                 _sqlClient.Ado.BeginTran();
                 RouteData confirmResult = await ConfirmBackStockCore(taskId, callback.Code, false);
                 if (!confirmResult.IsSccuess)
                 {
                     _sqlClient.Ado.RollbackTran();
+
+                    _logger.Error($"****异常:归库完成发生taskId={taskId}");
                     return new ConfirmBackStockResult
                     {
                         Successd = false,
@@ -1680,6 +1718,7 @@ namespace Services.Outside
                     };
                 }
                 _sqlClient.Ado.CommitTran();
+                _logger.Info($"结束:归库完成taskId={taskId}");
                 return new ConfirmBackStockResult();
             }
             catch (Exception ex)
@@ -1817,6 +1856,7 @@ namespace Services.Outside
                         box.Floor = idleStoragerackResult.Data.Floor;
                         boxTask.ModifiedBy = PubConst.InterfaceUserId;
                         boxTask.ModifiedUser = PubConst.InterfaceUserName;
+                        box.ModifiedBy = PubConst.InterfaceUserId;
                         box.ModifiedDate = DateTime.Now;
                         if (await _sqlClient.Updateable(box).ExecuteCommandAsync() == 0)
                         {
@@ -1858,6 +1898,17 @@ namespace Services.Outside
                     if (!confirmStockOut.IsSccuess)
                     {
                         return confirmStockOut;
+                    }
+                    Wms_storagerack rack = await _sqlClient.Queryable<Wms_storagerack>().FirstAsync(x => x.StorageRackId == box.StorageRackId);
+                    if (rack == null)
+                    {
+                        _logger.Error($"料箱归库时指定的库位信息({box.StorageRackId},{box.StorageRackId})无效");
+                    }
+                    else
+                    {
+                        box.Floor = rack.Floor;
+                        box.Row = rack.Row;
+                        box.Column = rack.Column;
                     }
                     box.Status = (int)InventoryBoxStatus.InPosition;
                     box.ModifiedBy = PubConst.InterfaceUserId;

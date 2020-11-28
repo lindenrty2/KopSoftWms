@@ -6,15 +6,19 @@ using Newtonsoft.Json;
 using SqlSugar;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.ServiceModel;
 using System.Threading.Tasks;
 using YL.Core.Dto;
 using YL.Core.Entity;
+using YL.NetCore.Attributes;
 using YL.Utils;
 using YL.Utils.Check;
+using YL.Utils.Env;
 using YL.Utils.Extensions;
 using YL.Utils.Pub;
+using static YL.NetCore.Attributes.OutsideLogAttribute;
 
 namespace WMSCore.Outside
 {
@@ -62,14 +66,16 @@ namespace WMSCore.Outside
             return "OK";
         }
 
+        [OutsideLog]
         [HttpPost("Warehousing")]
         //public OutsideStockInResult Warehousing([FromBody]OutsideStockInDto data)
         public string Warehousing(string WarehousingId, string WarehousingType, string WarehousingTime, string ProductionPlanId, string BatchPlanId, string WorkAreaName, string SuppliesKinds, string SuppliesInfoList)
         {
-
+            OutsideStockInDto data = null;
+            string resultStr = null;
             try
             {
-                OutsideStockInDto data = OutsideStockInDto.Create(
+                data = OutsideStockInDto.Create(
                     Guard.GuardEmpty(() => WarehousingId),
                     Guard.GuardEmpty(() => WarehousingType),
                     Guard.GuardEmpty(() => WarehousingTime),
@@ -89,7 +95,7 @@ namespace WMSCore.Outside
                     MesTaskType = MESTaskTypes.StockIn,
                     WarehousingId = data.WarehousingId, //入库单编号
                     WarehousingType = data.WarehousingType, //入库类型
-                    WarehousingTime = Convert.ToDateTime( data.WarehousingTime ),   //入库时间
+                    WarehousingTime = Convert.ToDateTime(data.WarehousingTime),   //入库时间
                     ProductionPlanId = data.ProductionPlanId, //生产令号
                     BatchPlanId = data.BatchPlanId, //批次号
                     WorkAreaName = data.WorkAreaName, //作业区
@@ -113,8 +119,8 @@ namespace WMSCore.Outside
                         WarehousingId = data.WarehousingId,
                         WarehousingTime = data.WarehousingTime
                     };
-
-                    return JsonConvert.SerializeObject(result);
+                    resultStr = JsonConvert.SerializeObject(result);
+                    return resultStr;
                 }
                 else
                 {
@@ -127,11 +133,12 @@ namespace WMSCore.Outside
                         WarehousingId = data.WarehousingId,
                         WarehousingTime = data.WarehousingTime
                     };
-                    return JsonConvert.SerializeObject(result);
+                    resultStr = JsonConvert.SerializeObject(result);
+                    return resultStr;
                 }
             }
             catch (Exception ex)
-            {
+            { 
                 _sqlClient.RollbackTran();
                 OutsideStockInResult result = new OutsideStockInResult()
                 {
@@ -141,7 +148,11 @@ namespace WMSCore.Outside
                     //  WarehousingId = Warehousingid,
                     //  WarehousingTime = Warehousingtime
                 };
-                return JsonConvert.SerializeObject(result);
+                resultStr = JsonConvert.SerializeObject(result);
+                return resultStr;
+            }
+            finally {
+                LogRequest("Warehousing", data, resultStr);
             }
 
         }
@@ -245,6 +256,7 @@ namespace WMSCore.Outside
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
+        [OutsideLog]
         [HttpPost("WarehouseEntry")]
         //public OutsideStockOutResult WarehouseEntry([FromBody]OutsideStockOutDto data)
         public string WarehouseEntry(
@@ -260,9 +272,11 @@ namespace WMSCore.Outside
             string SuppliesKinds,
             string SuppliesInfoList)
         {
+            string resultStr = null;
+            OutsideStockOutDto data = null;
             try
             {
-                OutsideStockOutDto data = OutsideStockOutDto.Create(
+                data = OutsideStockOutDto.Create(
                        Guard.GuardEmpty(() => WarehouseEntryId),
                        Guard.GuardEmpty(() => WarehouseEntryType),
                        Guard.GuardEmpty(() => WarehouseEntryTime),
@@ -329,7 +343,8 @@ namespace WMSCore.Outside
                         WarehouseEntryId = data.WarehouseEntryId,
                         //WarehouseEntryTime = data.WarehouseEntryTime
                     };
-                    return JsonConvert.SerializeObject(result);
+                    resultStr = JsonConvert.SerializeObject(result);
+                    return resultStr;
                 }
             }
             catch (Exception ex)
@@ -343,7 +358,11 @@ namespace WMSCore.Outside
                     //WarehouseEntryId = warehouseEntryid,
                     //WarehouseEntryTime = data.WarehouseEntryTime
                 };
-                return JsonConvert.SerializeObject(result);
+                resultStr = JsonConvert.SerializeObject(result);
+                return resultStr;
+            }
+            finally {
+                this.LogRequest("WarehouseEntry", data, resultStr);
             }
         }
 
@@ -446,10 +465,13 @@ namespace WMSCore.Outside
         /// </summary>
         /// <param name="arg"></param>
         /// <returns></returns>
+        [OutsideLog]
         [HttpGet("MaterialStockEnquiry")]
         //public OutsideMaterialStockEnquiryResult MaterialStockEnquiry(OutsideMaterialStockEnquiryArg arg)
         public string MaterialStockEnquiry(string SuppliesId, string SuppliesName, string SuppliesType, string SuppliesUnit)
         {
+            var request = new { SuppliesId, SuppliesName, SuppliesType, SuppliesUnit };
+            string resultStr = null;
             //TODO 需要其他库的查询
             try
             {
@@ -505,7 +527,8 @@ namespace WMSCore.Outside
                 result.SuppliesType = SuppliesType;
                 result.SuppliesUnit = SuppliesUnit;
                 result.MaterialStockInfo = items.ToArray();
-                return JsonConvert.SerializeObject(result);
+                resultStr = JsonConvert.SerializeObject(result);
+                return resultStr;
             }
             catch (Exception)
             {
@@ -514,13 +537,18 @@ namespace WMSCore.Outside
                     ErrorID = "-1",
                     Success = false,
                 };
-                return JsonConvert.SerializeObject(result);
+                resultStr = JsonConvert.SerializeObject(result);
+                return resultStr;
+            }
+            finally {
+                this.LogRequest("MaterialStockEnquiry", request, resultStr);
             }
         }
 
         /// <summary>
         /// 物流控制
         /// </summary>
+        [OutsideLog]
         [HttpPost("LogisticsControl")]
         //public OutsideLogisticsControlResult LogisticsControl([FromBody]OutsideLogisticsControlArg arg)
         public string LogisticsControl(string LogisticsId, string StartPoint, string Destination1, string Destination2, string InventoryBoxSize)
@@ -548,10 +576,13 @@ namespace WMSCore.Outside
         /// <summary>
         /// 入库状态查询
         /// </summary>
+        [OutsideLog]
         [HttpGet("WarehousingStatusEnquiry")]
         //public OutsideWarehousingStatusEnquiryResult WarehousingStatusEnquiry(OutsideWarehousingStatusEnquiryArg arg)
         public string WarehousingStatusEnquiry(string WarehousingId, string WarehousingType)
         {
+            var request = new { WarehousingId, WarehousingType };
+            string resultStr = null;
             Wms_mestask mesTask = _sqlClient.Queryable<Wms_mestask>().First(x => x.WarehousingId == WarehousingId && x.WarehousingType == WarehousingType);
             if (mesTask == null)
             {
@@ -642,18 +673,23 @@ namespace WMSCore.Outside
                 WarehousingStatusInfoList = statusInfoList.ToArray(),
                 IsNormalWarehousing = mesTask.WorkStatus == MESTaskWorkStatus.WorkComplated,
             };
-            return JsonConvert.SerializeObject(result);
+            resultStr = JsonConvert.SerializeObject(result);
+            this.LogRequest("WarehousingStatusEnquiry", request, result);
+            return resultStr;
 
         }
 
         /// <summary>
         /// 出库状态查询
         /// </summary>
+        [OutsideLog]
         [HttpGet("WarehouseEntryStatusEnquiry")]
         //public OutsideWarehouseEntryStatusEnquiryResult WarehouseEntryStatusEnquiry(OutsideWarehouseEntryStatusEnquiryArg arg)
         public string WarehouseEntryStatusEnquiry(string WarehouseEntryId, string WarehouseEntryType)
         {
-
+            var request = new { WarehouseEntryId, WarehouseEntryType };
+            string resultStr = null;
+            
             Wms_mestask mesTask = _sqlClient.Queryable<Wms_mestask>().First(x => x.WarehousingId == WarehouseEntryId && x.WarehousingType == WarehouseEntryType);
             if (mesTask == null)
             {
@@ -737,7 +773,10 @@ namespace WMSCore.Outside
                 WarehouseEntryStatusInfoList = statusInfoList.ToArray(),
                 IsNormalWarehouseEntry = mesTask.WorkStatus == MESTaskWorkStatus.WorkComplated,
             };
-            return JsonConvert.SerializeObject(result);
+            resultStr = JsonConvert.SerializeObject(result);
+            LogRequest("WarehouseEntryStatusEnquiry", request,resultStr);
+            return resultStr;
+
 
         }
 
@@ -750,10 +789,13 @@ namespace WMSCore.Outside
         /// <param name="WarehouseID">仓库编号</param>
         /// <param name="SuppliesInfoList">物料信息</param>
         /// <returns></returns>
+        [OutsideLog]
         [HttpPost("StockInventory")]
         public string StockInventory(
             string StockInventoryId, string Year, string Month, string WarehouseID, string SuppliesInfoList)
         {
+            var request = new { StockInventoryId, Year , Month, WarehouseID, SuppliesInfoList };
+            string resultStr = null;
             try
             {
                 Guard.GuardEmpty(() => StockInventoryId);
@@ -772,23 +814,29 @@ namespace WMSCore.Outside
                     }
                 ).ToArray();
                 RouteData routedata = StockCountCore(StockInventoryId, stockCountDate, WarehouseID, wmsMaterialList);
-                return JsonConvert.SerializeObject(new OutsideStockCountResultDto_MES()
+                resultStr = JsonConvert.SerializeObject(new OutsideStockCountResultDto_MES()
                 {
                     Success = true,
                     StockInventoryId = StockInventoryId,
                     //ErrorId = routedata.Code.ToString(),
-                    ErrorId = routedata.Code==0 ? "":routedata.Code.ToString(),
+                    ErrorId = routedata.Code == 0 ? "" : routedata.Code.ToString(),
                     ErrorInfo = routedata.Message
                 });
+                return resultStr;
             }
             catch (WMSException ex)
             {
-                return JsonConvert.SerializeObject(new OutsideStockCountResultDto_MES() {
+                resultStr = JsonConvert.SerializeObject(new OutsideStockCountResultDto_MES()
+                {
                     Success = false,
                     StockInventoryId = StockInventoryId,
                     ErrorId = ex.ErrorMessage.Code.ToString(),
                     ErrorInfo = ex.ErrorMessage.Message
                 });
+                return resultStr;
+            }
+            finally {
+                this.LogRequest("StockInventory", request,resultStr);
             }
         }
          
@@ -851,6 +899,28 @@ namespace WMSCore.Outside
             _mastaskServices.Insert(mesTask);
             return result;
 
+        }
+
+        private void LogRequest(string target, object parameter,object result) {
+            try
+            {
+                LogData logData = new LogData();
+                logData.parameters = parameter;
+                logData.logIp = GlobalCore.GetIp();
+                logData.target = target;
+                logData.result = result;
+
+                String dir = Path.Combine(AppContext.BaseDirectory, "OutsideLog", target);
+                if (!Directory.Exists(dir))
+                {
+                    Directory.CreateDirectory(dir);
+                }
+                String path = Path.Combine(dir, DateTime.Now.Ticks.ToString() + "_" + logData.logId.ToString());
+                System.IO.File.WriteAllText(path, JsonConvert.SerializeObject(logData));
+            }
+            catch (Exception)
+            {
+            }
         }
     }
 
