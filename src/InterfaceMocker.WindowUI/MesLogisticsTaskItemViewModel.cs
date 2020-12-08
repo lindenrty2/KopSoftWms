@@ -41,7 +41,7 @@ namespace InterfaceMocker.WindowUI
         public async void ReSend(object parameter)
         {
             this.Datas.Add(new TaskItemData("发送控制", JsonConvert.SerializeObject(_data)));
-            string response = await _mesHook.LogisticsControlAsync(_data.LogisticsId, _data.StartPoint, _data.Destination);
+            string response = await _mesHook.LogisticsControlAsync(_data.LogisticsId, _data.StartPoint, _data.Destination1, _data.Destination2, "1");
             _result = JsonConvert.DeserializeObject<OutsideLogisticsControlResult>(response);
             this.Datas.Add(new TaskItemData("发送结果", JsonConvert.SerializeObject(_result)));
         }

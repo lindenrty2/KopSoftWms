@@ -29,7 +29,7 @@ namespace WMSService
         System.Threading.Tasks.Task<string> MaterialStockEnquiryAsync(string SuppliesId, string SuppliesName, string SuppliesType, string SuppliesUnit);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IMESHookController/LogisticsControl", ReplyAction="http://tempuri.org/IMESHookController/LogisticsControlResponse")]
-        System.Threading.Tasks.Task<string> LogisticsControlAsync(string LogisticsId, string StartPoint, string Destination);
+        System.Threading.Tasks.Task<string> LogisticsControlAsync(string LogisticsId, string StartPoint, string Destination1, string Destination2, string InventoryBoxSize);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IMESHookController/LogisticsEnquiry", ReplyAction="http://tempuri.org/IMESHookController/LogisticsEnquiryResponse")]
         System.Threading.Tasks.Task<string> LogisticsEnquiryAsync(string LogisticsId, string EquipmentId, string EquipmentName);
@@ -114,9 +114,9 @@ namespace WMSService
             return base.Channel.MaterialStockEnquiryAsync(SuppliesId, SuppliesName, SuppliesType, SuppliesUnit);
         }
         
-        public System.Threading.Tasks.Task<string> LogisticsControlAsync(string LogisticsId, string StartPoint, string Destination)
+        public System.Threading.Tasks.Task<string> LogisticsControlAsync(string LogisticsId, string StartPoint, string Destination1, string Destination2, string InventoryBoxSize)
         {
-            return base.Channel.LogisticsControlAsync(LogisticsId, StartPoint, Destination);
+            return base.Channel.LogisticsControlAsync(LogisticsId, StartPoint, Destination1, Destination2, InventoryBoxSize);
         }
         
         public System.Threading.Tasks.Task<string> LogisticsEnquiryAsync(string LogisticsId, string EquipmentId, string EquipmentName)

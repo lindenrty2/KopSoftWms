@@ -76,7 +76,9 @@ namespace InterfaceMocker.WindowUI
                 {
                     LogisticsId = "L" + DateTime.Now.Ticks.ToString(),
                     StartPoint = "Start1",
-                    Destination = "Dest1"
+                    Destination1 = "Dest1",
+                    Destination2 = "Dest1",
+                    InventoryBoxSize = "2"
                 };
                 TaskItemControl taskControl = new TaskItemControl(new MesLogisticsTaskItemViewModel(data));
                 ctlMESTasks.Children.Add(taskControl);

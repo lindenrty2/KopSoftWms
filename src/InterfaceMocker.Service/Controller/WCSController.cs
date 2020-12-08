@@ -55,7 +55,7 @@ namespace InterfaceMocker.Service
         /// <summary>
         /// 物流控制
         /// </summary>
-        [HttpPost("LogisticsControlWCS.ashx")]
+        [HttpPost("logisticsControl.ashx")]
         public async Task<OutsideLogisticsControlResult> LogisticsControl([FromBody]OutsideLogisticsControlArg arg)
         {
             string equipmentId = "E" + DateTime.Now.ToString("HHmmss");
