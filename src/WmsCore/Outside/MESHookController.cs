@@ -232,8 +232,13 @@ namespace WMSCore.Outside
                     RouteData<OutsideStockInRequestResult[]> data = proxy.StockIn(request).GetAwaiter().GetResult();
                     if (!data.IsSccuess)
                     {
-                        _logger.LogError($"仓库{keyValue.Key}下发入库任务失败,Code={data.Code},Message={data.Message}");
+                        string message = $"仓库{keyValue.Key}下发入库任务失败,Code={data.Code},Message={data.Message}";
+                        _logger.LogError(message);
                         result.Add(data);
+                        return new RouteData() {
+                            Code = -1,
+                            Message = message
+                        };
                     }
                     else
                     {
@@ -242,7 +247,13 @@ namespace WMSCore.Outside
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, $"仓库{keyValue.Key}下发入库任务发生异常");
+                    string message = $"仓库{keyValue.Key}下发入库任务发生异常";
+                    _logger.LogError(ex, message);
+                    return new RouteData()
+                    {
+                        Code = -1,
+                        Message = message
+                    };
                 }
             }
 
@@ -441,8 +452,14 @@ namespace WMSCore.Outside
                     RouteData data = proxy.StockOut(request).GetAwaiter().GetResult();
                     if (!data.IsSccuess)
                     {
-                        _logger.LogError($"仓库{keyValue.Key}下发出库任务失败,Code={data.Code},Message={data.Message}");
+                        string message = $"仓库{keyValue.Key}下发出库任务失败,Code={data.Code},Message={data.Message}";
+                        _logger.LogError(message);
                         result.Add(data);
+                        return new RouteData()
+                        {
+                            Code = -1,
+                            Message = message
+                        };
                     }
                     else
                     {
@@ -451,7 +468,13 @@ namespace WMSCore.Outside
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, $"仓库{keyValue.Key}下发出库任务发生异常");
+                    string message = $"仓库{keyValue.Key}下发出库任务发生异常";
+                    _logger.LogError(ex, message);
+                    return new RouteData()
+                    {
+                        Code = -1,
+                        Message = message
+                    };
                 }
             }
 

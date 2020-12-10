@@ -25,6 +25,7 @@ using YL.Core.Orm.SqlSugar;
 using YL.NetCore.Attributes;
 using YL.NetCore.Conventions;
 using YL.NetCore.DI;
+using YL.NetCore.Middlewares;
 using YL.NetCoreApp.Extensions;
 using YL.Utils.Json;
 
@@ -244,6 +245,7 @@ namespace YL
                 app.UseExceptionHandler("/Home/Error");
             }
 
+            app.UseRequestResponseLogging();
             app.UseGlobalCore();
             app.UseExecuteTime();
             app.UseTimedJob();
