@@ -527,6 +527,7 @@ namespace Services.Outside
                 query = query.Where((si, sid) => si.StockInDate <= maxDate);
             }
             query = query.Sort(order, new string[,] {
+                {"DETAILSTATUS", "sid.STATUS" },
                 {"CREATEDATE", "si.CREATEDATE" },
                 {"CREATEBY", "si.CREATEUSER" },
                 {"MODIFIEDDATE", "si.MODIFIEDDATE" },

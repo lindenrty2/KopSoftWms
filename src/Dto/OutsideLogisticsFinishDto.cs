@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -35,14 +36,17 @@ namespace YL.Core.Dto
         /// <summary>
         /// 物流任务编号
         /// </summary>
+        [JsonProperty("LogisticsId")]
         public string LogisticsId { get; set; }
         /// <summary>
         /// 是否正常接收
         /// </summary>
+        [JsonProperty("IsNormalExecution")]
         public bool IsNormalExecution { get; set; }
         /// <summary>
         /// 错误编号
         /// </summary>
+        [JsonProperty("ErrorId")]
         public string ErrorId { get; set; }
 
     }
