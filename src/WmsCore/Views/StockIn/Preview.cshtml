@@ -3,6 +3,12 @@
     @model Wms_stockin
 }
 @section styles{
+<style>
+    .table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th{
+        margin:2px;
+        padding:2px;
+    }
+</style>
 }
 <div id="app" v-cloak>
     <form class="form-horizontal" onsubmit="return false">
@@ -12,51 +18,51 @@
             </div>
         </div>
         <div class="box-body" id="print">
-            <div v-for="(item,i) in stockInDList" >
-                <table class="table" >
+            <div v-for="(item,i) in stockInDList">
+                <table class="table" style="font-size:18pt;word-break: break-word;">
                     <tr>
-                        <th style="white-space:nowrap">入库单号</th>
-                        <th style="white-space:nowrap;margin-left:20px;">入库类型</th>
-                        <th style="width:350px" rowspan="8">
-                            <img style="width:300px;height:300px" :src="item.QRUrl" />
+                        <th style="">入库单号</th>
+                        <th style="margin-left:20px;">入库类型</th>
+                        <th style="width:500px" rowspan="8">
+                            <img style="width:500px;height:500px" :src="item.QRUrl" />
                         </th>
                     </tr>
-                    <tr >
-                        <td style="white-space:nowrap">@Model.StockInNo</td>
-                        <td style="white-space:nowrap">@Model.StockInTypeName</td>
+                    <tr>
+                        <td style="">@Model.StockInNo</td>
+                        <td style="">@Model.StockInTypeName</td>
                     </tr>
                     <tr>
                         <th style="white-space:nowrap;margin-left:20px;">生产令号</th>
                         <th style="white-space:nowrap;margin-left:20px;">计划入库日期</th>
                     </tr>
-                    <tr >
-                        <td style="white-space:nowrap">@Model.OrderNo</td>
-                        <td style="white-space:nowrap">@Model.StockInDate</td>
+                    <tr>
+                        <td style="">@Model.OrderNo</td>
+                        <td style="">@Model.StockInDate</td>
                     </tr>
                     <tr>
                         <th style="white-space:nowrap;margin-left:20px;">任务创建人</th>
                         <th style="white-space:nowrap;margin-left:20px;">任务创建日期</th>
                     </tr>
-                    <tr >
+                    <tr>
                         <td style="white-space:nowrap">@Model.CreateUser</td>
                         <td style="white-space:nowrap">@Model.CreateDate</td>
                     </tr>
                     <tr>
-                        <th colspan="2" style="white-space:nowrap;margin-left:20px;">备注</th> 
+                        <th colspan="2" style="white-space:nowrap;margin-left:20px;">料箱编号</th>
                     </tr>
-                    <tr >
-                        <td style="white-space:nowrap">@Model.Remark</td> 
+                    <tr>
+                        <td style="">{{item.InventoryBoxNo}}</td>
                     </tr>
                 </table>
                 <br />
-                <table class="table" style="border: 1px solid #ddd;width:100%">
+                <table class="table" style="border: 1px solid #ddd;width:100%;font-size:18pt">
                     <thead>
                         <tr>
                             <th style="white-space:nowrap">子入库单号</th>
                             <th style="white-space:nowrap">物料编号</th>
                             <th style="white-space:nowrap">物料唯一编号</th>
                             <th style="white-space:nowrap">物料名称</th>
-                            <th style="white-space:nowrap">计划数量</th>
+                            <th style="white-space:nowrap">实际数量</th>
                             <th style="white-space:nowrap">单位</th>
                         </tr>
                     </thead>
@@ -66,11 +72,14 @@
                             <td style="white-space:nowrap">{{item.MaterialNo}}</td>
                             <td style="white-space:nowrap">{{item.MaterialOnlyId}}</td>
                             <td style="white-space:nowrap">{{item.MaterialName}}</td>
-                            <td style="white-space:nowrap">{{item.PlanInQty}}</td>
+                            <td style="white-space:nowrap">{{item.Qty}}</td>
                             <td style="white-space:nowrap">{{item.UnitName}}</td>
                         </tr>
                     </tbody>
                 </table>
+                <div style="font-size:18pt" >
+                    备注: @Model.Remark
+                </div>
                 <div class="print-hide" style="width:100%;height:1px;background:black;margin:50px 0"></div>
                 <div :style="i===stockInDList.length-1?'':'page-break-after: always;'"></div>
             </div>
@@ -107,11 +116,19 @@
                     yui.$axiosget('/StockIn/PreviewJson?id=@ViewBag.StockInId&detailId=@ViewBag.StockInDetailId')
                         .then(function (response) {
                             _self.stockInList = response.data.Item2;
+                            var list = [];
                             for (var i = 0; i < response.data.Item4.length; i++) {
                                 var detail = response.data.Item4[i];
+                                if ("@ViewBag.TaskId" != "") {
+                                    if ("@ViewBag.StockInDetailId" != detail.StockInDetailId || "@ViewBag.TaskId" != detail.TaskId) {
+                                        continue;
+                                    }
+                                }
                                 detail.QRUrl = "QRCode?storeId=@ViewBag.StoreId&pid=@ViewBag.StockInId&detialId=" + detail.StockInDetailId;
+                                list.push(detail);
                             }
-                            _self.stockInDList = response.data.Item4;
+                                
+                            _self.stockInDList = list;
                         })
                         .catch(function (error) {
                             layer.msg(error.message, { icon: 5 });

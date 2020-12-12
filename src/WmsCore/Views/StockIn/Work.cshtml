@@ -59,7 +59,8 @@
                         {
                             field: 'Tasks', title: '操作', visible: true, sortable: false,
                             formatter: function (value, row, index) {
-                                var html = [];
+                                var html = []; 
+
                                 for (var i = 0; i < value.length; i++) {
                                     var item = value[i];
                                     if (item.TaskStatus == 1) { //任务已确认
@@ -69,9 +70,9 @@
                                             '<span class="label label-primary radius">料箱[' + item.InventoryBoxName + ']出库中</span>'
                                         );
                                     }
-                                    else if (item.TaskStatus == 3) { //出库完成
+                                    else if (item.TaskStatus == 3) { //出库完成 
                                         html.push(
-                                            '<span class="label label-primary radius">料箱[' + item.InventoryBoxName + ']出库完成</span>'
+                                            '<span class="label label-primary radius preview" inventoryBoxTaskId=' + item.InventoryBoxTaskId + '>料箱[' + item.InventoryBoxName + ']出库完成</span>'
                                         );
                                         app.addOutedBox(item.InventoryBoxTaskId, item.InventoryBoxName);
                                     }
@@ -91,6 +92,11 @@
                                 return html.join('<br/>');
                             },
                             events: {
+                                'click .preview': function (e, value, row, index) {
+                                    debugger;
+                                    app.previewL(row.Detail.StockInId, row.Detail.StockInDetailId, e.target.attributes.inventoryboxtaskid.value);
+
+                                },
                             },
                         }
                     ]; 
@@ -239,7 +245,11 @@
                 },
                 refreshL: function () {
                     $("button[name='refresh']").click();
-                }
+                },
+                previewL: function (stockInId,stockInDetailId,taskId) {
+                    var _self = this;
+                    yui.layershow("预览", "/StockIn/Preview?storeId=@ViewData["currentStoreId"]&pid=" + stockInId + "&detailId=" + stockInDetailId + "&taskId=" + taskId, 1000, 900);
+                },
             }
         });
     </script>

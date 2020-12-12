@@ -526,7 +526,11 @@ namespace Services.Outside
             {
                 query = query.Where((si, sid) => si.StockInDate <= maxDate);
             }
-            query = query.Sort(order); 
+            query = query.Sort(order, new string[,] {
+                {"CREATEDATE", "si.CREATEDATE" },
+                {"CREATEBY", "si.CREATEUSER" },
+                {"MODIFIEDDATE", "si.MODIFIEDDATE" },
+                {"MODIFIEDBY", "si.MODIFIEDUSER" } } ); 
             RefAsync<int> totalNumber = 0;
             
             List<OutsideStockInQueryResult> result = await query.Select((si, sid) => new OutsideStockInQueryResult()

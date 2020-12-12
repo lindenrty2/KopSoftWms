@@ -461,7 +461,7 @@ namespace KopSoftWms.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Preview(long storeId, long pid,long? detailId)
+        public async Task<IActionResult> Preview(long storeId, long pid,long? detailId,long? taskId)
         {
             long id = pid;
             if(id == 0 && detailId != null)
@@ -469,12 +469,13 @@ namespace KopSoftWms.Controllers
                 Wms_stockindetail detail = await _client.Queryable<Wms_stockindetail>().FirstAsync( x => x.StockInDetailId == detailId);
                 id = detail.StockInId.Value;
             }
-            var model = _stockinServices.QueryableToEntity(
+            Wms_stockin model = _stockinServices.QueryableToEntity(
                 c => c.WarehouseId == storeId && c.StockInId == id && c.IsDel == 1);
 
             ViewBag.StockInId = id;
-            ViewBag.StockInDetailId = detailId;
+            ViewBag.StockInDetailId = detailId; 
             ViewBag.StoreId = storeId;
+            ViewBag.TaskId = taskId;
             return View(model);
         }
 

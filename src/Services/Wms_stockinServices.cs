@@ -134,18 +134,23 @@ namespace Services
                  }).MergeTable().Where(s => s.StockInId == stockInId).ToList();
             bool flag1 = true;
             bool flag2 = true;
-            var list2 = _client.Queryable<Wms_stockindetail, Wms_material, Wms_stockin>
-                 ((s, m, p) => new object[] {
+            var query = _client.Queryable<Wms_stockindetail, Wms_stockindetail_box, Wms_inventorybox, Wms_material, Wms_stockin>
+                 ((s, sb, ib, m, p) => new object[] {
+                   JoinType.Left,s.StockInDetailId== sb.StockinDetailId ,
+                   JoinType.Left,sb.InventoryBoxId==ib.InventoryBoxId ,
                    JoinType.Left,s.MaterialId==m.MaterialId && m.IsDel == 1,
-                   JoinType.Left,s.StockInId==p.StockInId && p.IsDel == 1 
+                   JoinType.Left,s.StockInId==p.StockInId && p.IsDel == 1
                   })
-                  .Where((s, m, p) => s.StockInId == id && (detailId == null || s.StockInDetailId == detailId))
-                  .OrderBy((s, m, p) => s.CreateDate, OrderByType.Desc)
-                  .Select((s, m, p) => new
+                  .Where((s, sb, ib, m, p) => s.StockInId == id && (detailId == null || s.StockInDetailId == detailId))
+                  .OrderBy((s, sb, ib, m, p) => s.CreateDate, OrderByType.Desc)
+                  .Select((s, sb, ib, m, p) => new
                   {
                       StockInId = s.StockInId.ToString(),
                       StockInDetailId = s.StockInDetailId.ToString(),
                       s.SubWarehousingId,
+                      TaskId = sb.InventoryBoxTaskId.ToString(),
+                      DetailBoxId = sb.DetailBoxId.ToString(),
+                      ib.InventoryBoxNo,
                       m.MaterialNo,
                       m.MaterialName,
                       Status = SqlFunc.IF(s.Status == 1).Return(StockInStatus.initial.GetDescription())
@@ -155,6 +160,7 @@ namespace Services
                       .End(StockInStatus.task_finish.GetDescription()),
                       s.PlanInQty,
                       s.ActInQty,
+                      sb.Qty,
                       m.UnitName,
                       s.IsDel,
                       s.Remark,
@@ -162,7 +168,9 @@ namespace Services
                       s.CreateDate,
                       UName = s.ModifiedUser,
                       s.ModifiedDate
-                  }).ToList();
+                  });
+            var sql = query.ToSql();
+            var list2 = query.ToList();
             if (!list1.Any())
             {
                 flag1 = false;
