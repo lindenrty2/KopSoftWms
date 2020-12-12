@@ -685,7 +685,7 @@ namespace WMSCore.Outside
                         SuppliesId = string.IsNullOrWhiteSpace(detail.MaterialOnlyId) ? detail.MaterialNo.ToString() : detail.MaterialOnlyId.ToString(),
                         RefreshStock = 0, //TODO
                         WarehousingStep = ((StockInStatus)detail.Status).ToString(),
-                        WarehousingFinishTime = detail.ModifiedDate?.ToString("yyyy-MM-dd HH:mm:ss")
+                        WarehousingFinishTime = detail.Status == StockInStatus.task_finish.ToByte() ? detail.ModifiedDate?.ToString("yyyy-MM-dd HH:mm:ss") : ""
                     });
                 }
             }
@@ -785,7 +785,7 @@ namespace WMSCore.Outside
                         RefreshStock = 0, //TODO
                         WorkAreaName = "", //TODO
                         WarehouseEntryStep = ((StockInStatus)detail.Status).ToString(),
-                        WarehouseEntryFinishTime = detail.ModifiedDate?.ToString("yyyy-MM-dd HH:mm:ss")
+                        WarehouseEntryFinishTime = detail.Status == StockInStatus.task_finish.ToByte() ? detail.ModifiedDate?.ToString("yyyy-MM-dd HH:mm:ss") : ""
                     });
                 }
             }

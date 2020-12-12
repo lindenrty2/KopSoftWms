@@ -370,12 +370,12 @@ namespace Services.Outside
                     OutsideStockInResponseWarehouse warehouse = warehouseList.FirstOrDefault(x => x.WarehouseId == stockIn.WarehouseId.ToString());
                     if (warehouse == null)
                     {
-
+                        Wms_warehouse warehouseData = WMSApiManager.GetWarehouse(stockIn.WarehouseId);
                         warehouse = new OutsideStockInResponseWarehouse()
                         {
                             //WarehouseId = stockIn.WarehouseId.ToString(),
-                            WarehouseId = WMSApiManager.GetWarehouse(stockIn.WarehouseId).WarehouseNo,
-                            WarehouseName = "", //TODO
+                            WarehouseId = warehouseData?.WarehouseNo, 
+                            WarehouseName = warehouseData?.WarehouseName,
                             WarehousePosition = "",
                             WarehousingFinishTime = stockIn.ModifiedDate.Value.ToString("yyyy-MM-dd HH:mm:ss"),
                         };

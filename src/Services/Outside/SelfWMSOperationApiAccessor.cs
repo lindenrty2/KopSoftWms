@@ -2702,7 +2702,7 @@ namespace Services.Outside
                         arg1 = stockcount.StockCountDate.Year.ToString(),
                         arg2 = stockcount.StockCountDate.Month.ToString(),
                         arg3 = "A00",
-                        arg4 = JsonConvert.SerializeObject(materials)
+                        arg4 = JsonConvert.SerializeObject(reportMaterials)
                     };
 
                     result = await MESApiAccessor.Instance.StockCount(request);

@@ -20,8 +20,11 @@ namespace WMSCore.Outside
     public class MESAccessorTestController : Controller
     {
         MESService.MyMethodImpl _apiProxy;
-        public MESAccessorTestController()
+        SqlSugarClient _sqlClient;
+        public MESAccessorTestController(
+            SqlSugarClient sqlClient)
         {
+            _sqlClient = sqlClient;
             var binding = new BasicHttpBinding();
             binding.SendTimeout = new TimeSpan(1, 0, 0);
             binding.ReceiveTimeout = new TimeSpan(1, 0, 0);
@@ -29,7 +32,14 @@ namespace WMSCore.Outside
             _apiProxy = factory.CreateChannel();
         }
 
+        [HttpPost("NofityStockIn")]
+        public async Task<string> NofityStockIn(long mesTaskId) {
+            Wms_mestask mesTask = await _sqlClient.Queryable<Wms_mestask>().FirstAsync(x => x.MesTaskId == mesTaskId);
 
+            RouteData result = await _sqlClient.NofityStockIn(mesTask);
+
+            return JsonConvert.SerializeObject(result);
+        }
         /// <summary>
         /// 入库完成测试
         /// </summary>
@@ -114,16 +124,23 @@ namespace WMSCore.Outside
                 LogisticsFinishTime = DateTime.Now.ToString("yyyyMMddHHmmss"),
                 WorkAreaName = "库区X"
             };
-            //string result = await _apiProxy.LogisticsFinishAsync(arg.LogisticsId, arg.LogisticsFinishTime, arg.WorkAreaName, arg.ErrorId, arg.ErrorInfo);
-            var result = await _apiProxy.LogisticsFinishAsync( new MESService.LogisticsFinishRequest(){
-                arg0 = arg.LogisticsId,
-                arg1 = arg.LogisticsFinishTime,
-                arg2 = arg.WorkAreaName,
-                arg3 = arg.ErrorId,
-                arg4 = arg.ErrorInfo
-            });
+            try
+            {
+                //string result = await _apiProxy.LogisticsFinishAsync(arg.LogisticsId, arg.LogisticsFinishTime, arg.WorkAreaName, arg.ErrorId, arg.ErrorInfo);
+                var result = await _apiProxy.LogisticsFinishAsync(new MESService.LogisticsFinishRequest()
+                {
+                    arg0 = arg.LogisticsId,
+                    arg1 = arg.LogisticsFinishTime,
+                    arg2 = arg.WorkAreaName,
+                    arg3 = arg.ErrorId,
+                    arg4 = arg.ErrorInfo
+                });
+                return JsonConvert.SerializeObject(result);
+            }
+            catch (Exception ex) {
+                return ex.Message;
+            }
 
-            return JsonConvert.SerializeObject(result);
         }
 
        

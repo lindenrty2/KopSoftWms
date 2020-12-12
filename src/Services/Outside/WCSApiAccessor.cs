@@ -66,12 +66,32 @@ namespace WMSCore.Outside
 
         public async Task<OutsideLogisticsEnquiryResult> LogisticsEnquiry([JsonContent]OutsideLogisticsEnquiryArg arg)
         {
-            return await _apiProxy.LogisticsEnquiry(arg);
+            try
+            {
+                return await _apiProxy.LogisticsEnquiry(arg);
+            }
+            catch (Exception ex) {
+                return new OutsideLogisticsEnquiryResult()
+                {
+                    Status = ex.Message
+                };
+            }
         }
 
         public async Task<OutsideLogisticsControlResult> LogisticsControl([JsonContent]OutsideLogisticsControlArg arg)
         {
-            return await _apiProxy.LogisticsControl(arg);
+            try
+            {
+                return await _apiProxy.LogisticsControl(arg);
+            }
+            catch (Exception ex)
+            {
+                return new OutsideLogisticsControlResult()
+                {
+                    ErrorId = "-1",
+                    ErrorInfo = ex.Message
+                };
+            }
         }
     }
 }

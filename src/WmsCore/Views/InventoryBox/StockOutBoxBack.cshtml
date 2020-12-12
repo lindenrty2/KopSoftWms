@@ -138,7 +138,7 @@
                         return;
                     }
                     var _self = this;
-                    var index = layer.confirm("您确定要归库吗？", {
+                    var index = layer.confirm("请人工确认接驳台上料箱是: @Model.InventoryBoxNo <br> 您确定要归库吗？", {
                         btn: ["归库左边", "归库右边", "取消"],
                         btn1: function () {
                             _self.doBack(true,1);

@@ -5,7 +5,7 @@
     "Uri": "https://go.microsoft.com/fwlink/?linkid=858517"
   },
   "ExtendedData": {
-    "Uri": "http://192.163.136.200:8200/WS_Server/MyMethod?wsdl",
+    "Uri": "http://192.163.10.70:8200/WS_Server/MyMethod?wsdl",
     "Namespace": "MESService",
     "SelectedAccessLevelForGeneratedClass": "Public",
     "GenerateMessageContract": false,

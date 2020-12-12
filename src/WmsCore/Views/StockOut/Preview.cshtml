@@ -13,43 +13,37 @@
         </div>
         <div class="box-body" id="print">
             <div v-for="(item,i) in stockOutDList" >
-                <table class="table" >
+                <table class="table" style="font-size:18pt;word-break: break-word;" >
                     <tr>
                         <th style="white-space:nowrap">出库单号</th>
                         <th style="white-space:nowrap;margin-left:20px;">出库类型</th>
-                        <th style="width:350px" rowspan="8">
-                            <img style="width:300px;height:300px" :src="item.QRUrl" />
+                        <th style="width:500px" rowspan="8">
+                            <img style="width:500px;height:500px" :src="item.QRUrl" />
                         </th>
                     </tr>
                     <tr >
-                        <td style="white-space:nowrap">@Model.StockOutNo ( @Model.StockOutDate )</td>
-                        <td style="white-space:nowrap">@Model.StockOutTypeName</td>
+                        <td >@Model.StockOutNo ( @Model.StockOutDate )</td>
+                        <td >@Model.StockOutTypeName</td>
                     </tr>
                     <tr>
                         <th style="white-space:nowrap;margin-left:20px;">生产令号</th>
                         <th style="white-space:nowrap;margin-left:20px;">工作令号</th>
                     </tr>
                     <tr >
-                        <td style="white-space:nowrap">@Model.OrderNo</td>
-                        <td style="white-space:nowrap">@Model.WorkNo</td>
+                        <td>@Model.OrderNo</td>
+                        <td >@Model.WorkNo</td>
                     </tr>
                     <tr>
                         <th style="white-space:nowrap;margin-left:20px;">作业区</th>
                         <th style="white-space:nowrap;margin-left:20px;">工位号</th>
                     </tr>
                     <tr >
-                        <td style="white-space:nowrap">@Model.WorkAreaName</td>
-                        <td style="white-space:nowrap">@Model.WorkStationId</td>
-                    </tr>
-                    <tr>
-                        <th colspan="2" style="white-space:nowrap;margin-left:20px;">备注</th> 
-                    </tr>
-                    <tr >
-                        <td style="white-space:nowrap">@Model.Remark</td> 
-                    </tr>
+                        <td >@Model.WorkAreaName</td>
+                        <td >@Model.WorkStationId</td>
+                    </tr> 
                 </table>
                 <br />
-                <table class="table material_table" style="border: 1px solid #ddd;width:100%" v-show="material_visable" >
+                <table class="table material_table" style="font-size:18pt;border: 1px solid #ddd;width:100%" v-show="material_visable" >
                     <thead>
                         <tr>
                             <th style="white-space:nowrap">子出库单号</th>
@@ -73,6 +67,9 @@
                         </tr>
                     </tbody>
                 </table>
+                <div style="font-size:18pt">
+                    备注: @Model.Remark
+                </div>
                 <div class="print-hide" style="width:100%;height:1px;background:black;margin:50px 0"></div>
                 <div :style="i===stockOutDList.length-1?'':'page-break-after: always;'"></div>
             </div>

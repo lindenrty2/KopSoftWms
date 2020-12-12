@@ -37,13 +37,13 @@ namespace YL.Core.Entity
         /// <summary>
         /// 产品唯一编号
         /// </summary>
-        [SugarColumn(Length = 20, IsNullable = true)]
+        [SugarColumn(Length = 60, IsNullable = true)]
         public string MaterialOnlyId { get; set; }
 
         /// <summary>
         /// 产品编号
         /// </summary>
-        [SugarColumn(Length = 20)]
+        [SugarColumn(Length = 60)]
         public string MaterialNo { get; set; }
 
         /// <summary>
