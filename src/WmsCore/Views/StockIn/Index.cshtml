@@ -184,8 +184,17 @@
                         { field: 'OrderNo', title: '订单号', align: 'center', sortable: true },
                         { field: 'StockInTypeName', title: '入库类型', align: 'center', sortable: true },
                         { field: 'OrderNo', title: '生产令号', align: 'center', sortable: true }, 
-                        { field: 'StockInStatus', title: '状态', align: 'center', sortable: true, formatter: StockInStatusFormatter },
+                        { field: 'DetailStatus', title: '状态', align: 'center', sortable: true, formatter: StockInStatusFormatter },
                         { field: 'Remark', align: 'center', title: '备注' },
+
+
+                        { field: 'UniqueIndex', title: '唯一索引', align: 'center', sortable: true },
+                        { field: 'MaterialNo', title: '物料编号', align: 'center', sortable: true },
+                        { field: 'MaterialOnlyId', title: '物料唯一Id', align: 'center', sortable: true },
+                        { field: 'MaterialName', title: '物料名称', align: 'center', sortable: true },
+                        { field: 'PlanInQty', title: '计划入库数量', align: 'center', sortable: true },
+                        { field: 'ActInQty', title: '完成入库数量', align: 'center', sortable: true },
+                         
                         { field: 'CreateBy', title: '创建人', align: 'center', sortable: true },
                         { field: 'CreateDate', align: 'center', title: '创建时间', sortable: true },
                         { field: 'ModifiedBy', align: 'center', title: '修改人', sortable: true },
@@ -249,7 +258,7 @@
                         { field: 'ModifiedDate', title: '修改时间', align: 'center', sortable: true }
                     ];
 
-                    yui.table2("bootstraptable", "/StockIn/List", "/StockIn/ListDetail?storeId=@ViewData["currentStoreId"]", obj, objSub, "POST", "StockInId", "StockInId", true, qParams);
+                    yui.table2("bootstraptable", "/StockIn/ListNew", "/StockIn/ListDetail?storeId=@ViewData["currentStoreId"]", obj, objSub, "POST", "StockInId", "StockInId", true, qParams);
                     //yui.table("bootstraptable", "/StockIn/List", obj, "POST", "StockInId", true, qParams);
                 },
                 showL: function () {

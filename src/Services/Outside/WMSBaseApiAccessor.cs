@@ -156,6 +156,11 @@ namespace WMSCore.Outside
         {
             return _apiProxy.QueryStockInList(stockInType, stockInStatus, pageIndex, pageSize, search, order, datemin, datemax);
         }
+    
+        public Task<RouteData<OutsideStockInQueryResult[]>> QueryStockInListNew(long? stockInType, StockInStatus? stockInStatus, int pageIndex, int pageSize, string search, string[] order, string datemin, string datemax)
+        {
+            return _apiProxy.QueryStockInList(stockInType,stockInStatus, pageIndex, pageSize, search, order, datemin, datemax);
+        }
 
         public Task<RouteData> StockCount(OutsideStockCountRequestDto request)
         {

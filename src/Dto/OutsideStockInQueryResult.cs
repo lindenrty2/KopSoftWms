@@ -60,6 +60,56 @@ namespace YL.Core.Dto
         /// 详细进度列表
         /// </summary>
         public OutsideStockInQueryResultDetail[] Details { get; set; }
+
+
+
+        /// <summary>
+        /// 入库单子编号
+        /// </summary>
+        public string SubWarehousingId { get; set; }
+        /// <summary>
+        /// 入库详细Id
+        /// </summary>
+        public string StockInDetailId { get; set; }
+        /// <summary>
+        /// 唯一索引
+        /// </summary>
+        public string UniqueIndex { get; set; }
+        /// <summary>
+        /// 对接用物料唯一Id
+        /// </summary>
+        public string MaterialId { get; set; }
+        /// <summary>
+        /// 物料编号
+        /// </summary>
+        public string MaterialNo { get; set; }
+        /// <summary>
+        /// 物料唯一Id
+        /// </summary>
+        public string MaterialOnlyId { get; set; }
+        /// <summary>
+        /// 物料名称
+        /// </summary>
+        public string MaterialName { get; set; }
+        /// <summary>
+        /// 计划入库数量
+        /// </summary>
+        public int PlanInQty { get; set; }
+        /// <summary>
+        /// 完成入库数量
+        /// </summary>
+        public int ActInQty { get; set; }
+        /// <summary>
+        /// 状态
+        /// </summary>
+        public StockInStatus DetailStatus { get; set; }
+        /// <summary>
+        /// 状态值
+        /// </summary>
+        public int DetailStatusValue { get { return (int)DetailStatus; } }
+ 
+
+
     }
 
     public class OutsideStockInQueryResultDetail

@@ -96,6 +96,25 @@ namespace KopSoftWms.Controllers
             return result.ToGridJson();
         }
 
+        [HttpPost]
+        [OperationLog(LogType.select)]
+        public async Task<string> ListNew([FromForm]PubParams.StockInBootstrapParams bootstrap)
+        {
+            //var sd = _stockinServices.PageList(bootstrap);
+            //return Content(sd);
+
+            IWMSBaseApiAccessor wmsAccessor = WMSApiManager.GetBaseApiAccessor(bootstrap.storeId.ToString(), _client);
+            RouteData<OutsideStockInQueryResult[]> result = await wmsAccessor.QueryStockInListNew(
+                null, null, bootstrap.pageIndex, bootstrap.limit, bootstrap.search,
+                new string[] { bootstrap.sort + " " + bootstrap.order },
+                bootstrap.datemin, bootstrap.datemax);
+            if (!result.IsSccuess)
+            {
+                return new PageGridData().JilToJson();
+            }
+            return result.ToGridJson();
+        }
+
         /// <summary>
         /// 明细
         /// </summary>
@@ -469,11 +488,11 @@ namespace KopSoftWms.Controllers
                 c => c.WarehouseId == storeId && c.StockInId == pid && c.StockInDetailId == detialId && c.IsDel == 1);
              
             string strQR = detail.UniqueIndex;
-            QRCodeGenerator qrGenerator = new QRCodeGenerator();
+            QRCodeGenerator qrGenerator = new QRCodeGenerator(); 
             QRCodeData qrCodeData = qrGenerator.CreateQrCode(
                 strQR, QRCodeGenerator.ECCLevel.Q);
-            QRCode qrCode = new QRCode(qrCodeData);
-            Bitmap qrCodeImage = qrCode.GetGraphic(20);
+            QRCode qrCode = new QRCode(qrCodeData); 
+            Bitmap qrCodeImage = qrCode.GetGraphic(40,Color.Black,Color.White,false);
             qrCodeImage.Save( this.Response.Body , ImageFormat.Png );
         }
 

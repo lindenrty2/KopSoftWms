@@ -229,7 +229,9 @@ namespace WMSCore.Outside
                         BatchPlanId = mesTask.BatchPlanId,
                         MaterialList = keyValue.Value.ToArray(),
                     };
+                    _logger.LogInformation("小WMS的StockIn开始", "");
                     RouteData<OutsideStockInRequestResult[]> data = proxy.StockIn(request).GetAwaiter().GetResult();
+                    _logger.LogInformation("小WMS的StockIn结束", "");
                     if (!data.IsSccuess)
                     {
                         string message = $"仓库{keyValue.Key}下发入库任务失败,Code={data.Code},Message={data.Message}";
@@ -449,7 +451,9 @@ namespace WMSCore.Outside
                         BatchPlanId = mesTask.BatchPlanId,
                         MaterialList = keyValue.Value.ToArray(),
                     };
+                    _logger.LogInformation("小WMS的StockOut开始", "");
                     RouteData data = proxy.StockOut(request).GetAwaiter().GetResult();
+                    _logger.LogInformation("小WMS的StockOut结束", "");
                     if (!data.IsSccuess)
                     {
                         string message = $"仓库{keyValue.Key}下发出库任务失败,Code={data.Code},Message={data.Message}";

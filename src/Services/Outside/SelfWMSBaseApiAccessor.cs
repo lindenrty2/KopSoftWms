@@ -494,6 +494,68 @@ namespace Services.Outside
             return RouteData<OutsideStockInQueryResult[]>.From(result, totalNumber.Value);
         }
 
+        public async Task<RouteData<OutsideStockInQueryResult[]>> QueryStockInListNew(long? stockInType, StockInStatus? stockInStatus, int pageIndex, int pageSize, string search, string[] order, string datemin, string datemax)
+        {
+            var query = _sqlClient.Queryable<Wms_stockin,Wms_stockindetail>((si, sid) => new object[] {
+                    JoinType.Right,si.StockInId==sid.StockInId
+                })
+               .Where((si, sid) => si.WarehouseId == this.Warehouse.WarehouseId && si.IsDel == 1)
+               ;
+            if (!string.IsNullOrEmpty(search))
+            {
+                query.Where((si, sid) => si.StockInNo.Contains(search) || si.OrderNo.Contains(search) 
+                    || sid.MaterialNo.Contains(search) || sid.MaterialOnlyId.Contains(search) || sid.MaterialName.Contains(search)
+                    || sid.UniqueIndex.Contains(search)
+                    || sid.PlanInQty.ToString().Contains(search));
+            }
+            if (stockInType != null)
+            {
+                query.Where((si, sid) => si.StockInType == stockInType);
+            }
+            if (stockInStatus != null)
+            {
+                query.Where((si, sid) => si.StockInStatus == stockInStatus.ToByte());
+            }
+            DateTime minDate;
+            if (!string.IsNullOrWhiteSpace(datemin) && DateTime.TryParse(datemin, out minDate))
+            {
+                query = query.Where((si, sid) => si.StockInDate >= minDate);
+            }
+            DateTime maxDate;
+            if (!string.IsNullOrWhiteSpace(datemax) && DateTime.TryParse(datemax, out maxDate))
+            {
+                query = query.Where((si, sid) => si.StockInDate <= maxDate);
+            }
+            query = query.Sort(order); 
+            RefAsync<int> totalNumber = 0;
+            
+            List<OutsideStockInQueryResult> result = await query.Select((si, sid) => new OutsideStockInQueryResult()
+            {
+                StockInId = si.StockInId.ToString(),
+                StockInTypeName = si.StockInTypeName,
+                MesTaskId = si.MesTaskId.ToString(),
+                OrderNo = si.OrderNo,
+                StockInNo = si.StockInNo,
+                StockInStatus = (StockInStatus)si.StockInStatus,
+
+                SubWarehousingId = sid.SubWarehousingId,
+                StockInDetailId = sid.StockInDetailId.ToString(),
+                UniqueIndex = sid.UniqueIndex,
+                MaterialId = sid.MaterialId.ToString(),
+                MaterialNo = sid.MaterialNo,
+                MaterialOnlyId = sid.MaterialOnlyId,
+                MaterialName = sid.MaterialName,
+                PlanInQty = sid.PlanInQty,
+                ActInQty = sid.ActInQty,
+                DetailStatus = (StockInStatus)sid.Status,
+
+                CreateBy = si.CreateUser,
+                CreateDate = si.CreateDate.Value.ToString(PubConst.Format_DateTime),
+                ModifiedBy = si.ModifiedUser,
+                ModifiedDate = si.ModifiedDate.Value.ToString(PubConst.Format_DateTime)
+            }).ToPageListAsync(pageIndex, pageSize, totalNumber);
+            return RouteData<OutsideStockInQueryResult[]>.From(result.ToArray(), totalNumber.Value);
+        }
 
         public async Task<RouteData<OutsideStockInQueryResult>> QueryStockIn(long stockInId)
         {

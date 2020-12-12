@@ -116,7 +116,6 @@ namespace IServices.Outside
         /// <returns></returns> 
         Task<RouteData<OutsideStockOutRequestResult[]>> StockOut(OutsideStockOutRequestDto request);
 
-
         /// <summary>
         /// 出库任务进度查询
         /// </summary>
@@ -163,6 +162,18 @@ namespace IServices.Outside
         /// <param name="datemax"></param>
         /// <returns></returns> 
         Task<RouteData<OutsideStockInQueryResult[]>> QueryStockInList(long? stockInType, StockInStatus? stockInStatus, int pageIndex, int pageSize, string search, string[] order, string datemin, string datemax);
+
+        /// <summary>
+        /// 获取入库列表(新：入库单和物料在一行)
+        /// </summary>
+        /// <param name="offset"></param>
+        /// <param name="limit"></param>
+        /// <param name="search"></param>
+        /// <param name="v"></param>
+        /// <param name="datemin"></param>
+        /// <param name="datemax"></param>
+        /// <returns></returns> 
+        Task<RouteData<OutsideStockInQueryResult[]>> QueryStockInListNew(long? stockInType, StockInStatus? stockInStatus, int pageIndex, int pageSize, string search, string[] order, string datemin, string datemax);
 
 
         //-----------------------------------------------------------------
