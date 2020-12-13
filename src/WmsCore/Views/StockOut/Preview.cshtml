@@ -12,58 +12,68 @@
             </div>
         </div>
         <div class="box-body" id="print">
-            <div v-for="(item,i) in stockOutDList" >
-                <table class="table" style="font-size:18pt;word-break: break-word;" >
+            <div v-for="(item,i) in stockOutDList">
+                <table class="table" style="font-size:18pt;word-break: break-word;">
                     <tr>
-                        <th style="white-space:nowrap">出库单号</th>
-                        <th style="white-space:nowrap;margin-left:20px;">出库类型</th>
+                        <th style="width:260px;white-space:nowrap">出库单号</th>
+                        <th style="width:260px;white-space:nowrap;margin-left:20px;">出库类型</th>
                         <th style="width:500px" rowspan="8">
                             <img style="width:500px;height:500px" :src="item.QRUrl" />
                         </th>
                     </tr>
-                    <tr >
-                        <td >@Model.StockOutNo ( @Model.StockOutDate )</td>
-                        <td >@Model.StockOutTypeName</td>
+                    <tr>
+                        <td>@Model.StockOutNo ( @Model.StockOutDate )</td>
+                        <td>@Model.StockOutTypeName</td>
                     </tr>
                     <tr>
                         <th style="white-space:nowrap;margin-left:20px;">生产令号</th>
                         <th style="white-space:nowrap;margin-left:20px;">工作令号</th>
                     </tr>
-                    <tr >
+                    <tr>
                         <td>@Model.OrderNo</td>
-                        <td >@Model.WorkNo</td>
+                        <td>@Model.WorkNo</td>
                     </tr>
                     <tr>
                         <th style="white-space:nowrap;margin-left:20px;">作业区</th>
                         <th style="white-space:nowrap;margin-left:20px;">工位号</th>
                     </tr>
-                    <tr >
-                        <td >@Model.WorkAreaName</td>
-                        <td >@Model.WorkStationId</td>
-                    </tr> 
+                    <tr>
+                        <td>@Model.WorkAreaName</td>
+                        <td>@Model.WorkStationId</td>
+                    </tr>
                 </table>
                 <br />
-                <table class="table material_table" style="font-size:18pt;border: 1px solid #ddd;width:100%" v-show="material_visable" >
+                <table class="table material_table" style="font-size:16pt;border: 1px solid #ddd;width:100%" v-show="material_visable">
                     <thead>
                         <tr>
                             <th style="white-space:nowrap">子出库单号</th>
                             <th style="white-space:nowrap">出库唯一索引</th>
-                            <th style="white-space:nowrap">入库唯一索引</th>
-                            <th style="white-space:nowrap">物料编号</th>
-                            <th style="white-space:nowrap">物料唯一编号</th>
-                            <th style="white-space:nowrap">物料名称</th>
-                            <th style="white-space:nowrap">计划数量</th> 
+                            <th style="white-space:nowrap">入库唯一索引</th> 
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td style="white-space:nowrap">{{item.SubWarehouseEntryId}}</td>
-                            <td style="white-space:nowrap">{{item.UniqueIndex}}</td>
-                            <td style="white-space:nowrap">{{item.StockInUniqueIndex}}</td>
-                            <td style="white-space:nowrap">{{item.MaterialNo}}</td>
-                            <td style="white-space:nowrap">{{item.MaterialOnlyId}}</td>
-                            <td style="white-space:nowrap">{{item.MaterialName}}</td>
-                            <td style="white-space:nowrap">{{item.PlanOutQty}}</td>
+                            <td>{{item.SubWarehouseEntryId}}</td>
+                            <td>{{item.UniqueIndex}}</td>
+                            <td>{{item.StockInUniqueIndex}}</td> 
+                        </tr>
+                    </tbody>
+                </table>
+                <table class="table material_table" style="font-size:16pt;border: 1px solid #ddd;width:100%" v-show="material_visable">
+                    <thead>
+                        <tr> 
+                            <th style="white-space:nowrap">物料编号</th>
+                            <th style="white-space:nowrap">物料唯一编号</th>
+                            <th style="white-space:nowrap">物料名称</th>
+                            <th style="white-space:nowrap">计划数量</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr> 
+                            <td>{{item.MaterialNo}}</td>
+                            <td>{{item.MaterialOnlyId}}</td>
+                            <td>{{item.MaterialName}}</td>
+                            <td>{{item.PlanOutQty}}</td>
                         </tr>
                     </tbody>
                 </table>
