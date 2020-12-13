@@ -523,7 +523,7 @@ namespace KopSoftWms.Controllers
                 .Where(c => c.StockOutDetailId == detailBox.StockOutDetailId)
                 .FirstAsync();
 
-            string strQR = $"{detail.SubWarehouseEntryId}@@{detail.UniqueIndex}";
+            string strQR = $"{detail.UniqueIndex}@@{detailBox.StockInUniqueIndex}";
 
             QRCodeGenerator qrGenerator = new QRCodeGenerator();
             QRCodeData qrCodeData = qrGenerator.CreateQrCode(
