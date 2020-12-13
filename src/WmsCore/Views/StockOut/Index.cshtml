@@ -141,14 +141,11 @@
                                         , '<button id="auditinL" type="button" class="btn btn-link" style="margin-top:-8px;margin-left:-10px;">审核</button>'
                                     );
                                 }
-                                else if (value == 2 || value == 3) {
+                                else {
                                     html.push(
                                         '<button id="workL" type="button" class="btn btn-link" style="margin-top:-8px;margin-left:-10px;">操作</button>'
                                     );
                                 }
-                                html.push(
-                                    '<button id="previewL" type="button" class="btn btn-link" style="margin-top:-8px;margin-left:-10px;">打印预览</button>'
-                                );
                                 return html.join('');
                             },
                             events: {
@@ -199,20 +196,19 @@
                     };
                     var objSub = [
                         { checkbox: true, visible: true },
-                        { field: 'StockOUtDetailId', title: 'Id', visible: false },
+                        { field: 'StockOutDetailId', title: 'Id', visible: false },
                         {
                             field: 'StatusValue', title: '操作', align: 'center',
                             sortable: false,
                             formatter: function (value, row, index) {
+                                var html = []; 
                                 if (value < 2) {
-                                    return ['<button id="deleteDetailL" type="button" class="btn btn-link" style="margin-top:-8px;">删除</button>'
-                                        , '<button id="editDetailL" type="button" class="btn btn-link" style="margin-top:-8px;">修改</button>'
-                                    ].join('');
-                                } else {
-                                    return '';
+                                    html.push('<button id="deleteDetailL" type="button" class="btn btn-link" style="margin-top:-8px;">删除</button>');
+                                    html.push('<button id="editDetailL" type="button" class="btn btn-link" style="margin-top:-8px;">修改</button>');
                                 }
+                                return html.join('');
                             },
-                            events: {
+                            events: { 
                                 'click #deleteDetailL': function (e, value, row, index) {
                                     if (value === 1) {
                                         app.deleteDetailL(row.StockOutDetailId);
