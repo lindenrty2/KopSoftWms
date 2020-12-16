@@ -3,6 +3,19 @@
     @model Wms_stockout
 }
 @section styles{
+<style>
+    .box-body {
+        padding:0;
+    }
+    .table {
+        padding: 0;
+        margin:0;
+    }
+    .table > tbody > tr > td {
+        padding: 0;
+        margin: 0px;
+    }
+</style>
 }
 <div id="app" v-cloak>
     <form class="form-horizontal" onsubmit="return false">
@@ -13,11 +26,11 @@
         </div>
         <div class="box-body" id="print">
             <div v-for="(item,i) in stockOutDList">
-                <table class="table" style="font-size:18pt;word-break: break-word;">
+                <table class="table" style="font-size:16pt;word-break: break-word;">
                     <tr>
                         <th style="width:260px;white-space:nowrap">出库单号</th>
                         <th style="width:260px;white-space:nowrap;margin-left:20px;">出库类型</th>
-                        <th style="width:500px" rowspan="8">
+                        <th style="width:500px" rowspan="14">
                             <img style="width:500px;height:500px" :src="item.QRUrl" />
                         </th>
                     </tr>
@@ -41,24 +54,26 @@
                         <td>@Model.WorkAreaName</td>
                         <td>@Model.WorkStationId</td>
                     </tr>
+                    <tr>
+                        <th style="white-space:nowrap;margin-left:20px;" colspan="2">子出库单号</th>
+                    </tr>
+                    <tr>
+                        <td colspan="2">{{item.SubWarehouseEntryId}}</td>
+                    </tr>
+                    <tr>
+                        <th style="white-space:nowrap;margin-left:20px;" colspan="2">出库唯一索引</th>
+                    </tr>
+                    <tr>
+                        <td colspan="2">{{item.UniqueIndex}}</td>
+                    </tr>
+                    <tr>
+                        <th style="white-space:nowrap;margin-left:20px;" colspan="2">入库唯一索引</th>
+                    </tr>
+                    <tr>
+                        <td colspan="2">{{item.StockInUniqueIndex}}</td>
+                    </tr>
                 </table>
-                <br />
-                <table class="table material_table" style="font-size:16pt;border: 1px solid #ddd;width:100%" v-show="material_visable">
-                    <thead>
-                        <tr>
-                            <th style="white-space:nowrap">子出库单号</th>
-                            <th style="white-space:nowrap">出库唯一索引</th>
-                            <th style="white-space:nowrap">入库唯一索引</th> 
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>{{item.SubWarehouseEntryId}}</td>
-                            <td>{{item.UniqueIndex}}</td>
-                            <td>{{item.StockInUniqueIndex}}</td> 
-                        </tr>
-                    </tbody>
-                </table>
+                <br /> 
                 <table class="table material_table" style="font-size:16pt;border: 1px solid #ddd;width:100%" v-show="material_visable">
                     <thead>
                         <tr> 
@@ -77,7 +92,7 @@
                         </tr>
                     </tbody>
                 </table>
-                <div style="font-size:18pt">
+                <div style="font-size:16pt">
                     备注: @Model.Remark
                 </div>
                 <div class="print-hide" style="width:100%;height:1px;background:black;margin:50px 0"></div>

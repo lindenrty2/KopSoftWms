@@ -668,7 +668,17 @@ namespace Services.Outside
               ;
             if (!string.IsNullOrEmpty(search))
             {
-                query.Where((s) => s.StockOutNo.Contains(search) || s.OrderNo.Contains(search));
+                query.Where((s) => s.StockOutNo.Contains(search) || s.OrderNo.Contains(search) || 
+                SqlFunc.Subqueryable<Wms_stockoutdetail>().Where( 
+                    sod => sod.StockOutId == s.StockOutId && (
+                        sod.MaterialNo.Contains(search)
+                        || sod.MaterialOnlyId.Contains(search)
+                        || sod.MaterialName.Contains(search)
+                        || sod.UniqueIndex.Contains(search) 
+                        || sod.SubWarehouseEntryId.Contains(search) 
+
+                    ) ).Any()
+                );
             }
             if (stockOutType != null)
             {
