@@ -512,16 +512,14 @@ namespace KopSoftWms.Controllers
         }
 
         [HttpGet]
-        public async void MaterialQRCode(long storeId, long detailboxId)
+        public void MaterialQRCode(long storeId, long detailboxId)
         {
 
-            var detailBox = await _client.Queryable<Wms_stockoutdetail_box>()
-                .Where(c => c.DetailBoxId == detailboxId)
-                .FirstAsync();
+            Wms_stockoutdetail_box detailBox = _client.Queryable<Wms_stockoutdetail_box>()
+                .First(c => c.DetailBoxId == detailboxId);
 
-            var detail = await _client.Queryable<Wms_stockoutdetail>()
-                .Where(c => c.StockOutDetailId == detailBox.StockOutDetailId)
-                .FirstAsync();
+            Wms_stockoutdetail detail = _client.Queryable<Wms_stockoutdetail>()
+                .First(c => c.StockOutDetailId == detailBox.StockOutDetailId);
 
             string strQR = $"{detail.UniqueIndex}@@{detailBox.StockInUniqueIndex}";
 
@@ -583,6 +581,7 @@ namespace KopSoftWms.Controllers
                     .End(StockOutStatus.task_finish.GetDescription()),
                     sod.PlanOutQty,
                     sod.ActOutQty,
+                    sodb.Qty,
                     sod.IsDel,
                     sod.Remark,
                     CName = sod.CreateUser,
