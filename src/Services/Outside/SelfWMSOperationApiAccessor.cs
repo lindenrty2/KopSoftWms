@@ -1056,7 +1056,7 @@ namespace Services.Outside
                         {
                             return idleStoragerackResult;
                         }
-                        
+
                         task.StoragerackId = idleStoragerackResult.Data.StorageRackId;
                         task.ModifiedBy = PubConst.InterfaceUserId;
                         task.ModifiedUser = PubConst.InterfaceUserName;
@@ -1087,6 +1087,16 @@ namespace Services.Outside
                         return RouteData.From(PubMessages.E2309_WCS_INVERTORYBOX_STORGERACK_NOTSET);
                     }
 
+                    if(inventoryBox.StorageRackId != task.StoragerackId) {
+                        task.StoragerackId = inventoryBox.StorageRackId.Value;
+                        task.ModifiedBy = PubConst.InterfaceUserId;
+                        task.ModifiedUser = PubConst.InterfaceUserName;
+                        task.ModifiedDate = DateTime.Now;
+                        if (await _sqlClient.Updateable(task).ExecuteCommandAsync() == 0)
+                        {
+                            return RouteData.From(PubMessages.E0004_DATABASE_UPDATE_FAIL);
+                        }
+                    }
 
                     RouteData backResult = await SendWCSBackCommand(task, pos, $"料箱编号:{inventoryBox.InventoryBoxNo}", false);
                     if (!backResult.IsSccuess)
@@ -1651,7 +1661,7 @@ namespace Services.Outside
 
                     return RouteData.From(PubMessages.E0012_DATA_MISSING, $"发送归库指令时库位信息找不到,StoragerackId = {task.StoragerackId}");
                 }
-
+                _logger.Info($"WCS指令:由行{storagerack.Row}-列{storagerack.Column}-层{storagerack.Floor}出库");
                 int channel = ((int)Math.Ceiling(storagerack.Row / 2.0));
                 StockInTaskInfo backStockInfo = new StockInTaskInfo()
                 {
