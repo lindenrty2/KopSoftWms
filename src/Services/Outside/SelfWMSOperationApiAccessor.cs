@@ -1056,9 +1056,19 @@ namespace Services.Outside
                         {
                             return idleStoragerackResult;
                         }
+                        
+                        task.StoragerackId = idleStoragerackResult.Data.StorageRackId;
+                        task.ModifiedBy = PubConst.InterfaceUserId;
+                        task.ModifiedUser = PubConst.InterfaceUserName;
+                        task.ModifiedDate = DateTime.Now;
+                        if (await _sqlClient.Updateable(task).ExecuteCommandAsync() == 0)
+                        {
+                            return RouteData.From(PubMessages.E0004_DATABASE_UPDATE_FAIL);
+                        }
 
                         inventoryBox.ReservoirAreaId = reservoirAreaId;
                         inventoryBox.StorageRackId = idleStoragerackResult.Data.StorageRackId;
+                        inventoryBox.StorageRackName = idleStoragerackResult.Data.StorageRackName;
                         inventoryBox.Row = idleStoragerackResult.Data.Row;
                         inventoryBox.Column = idleStoragerackResult.Data.Column;
                         inventoryBox.Floor = idleStoragerackResult.Data.Floor;
@@ -1851,6 +1861,7 @@ namespace Services.Outside
                             return RouteData.From(PubMessages.E0004_DATABASE_UPDATE_FAIL);
                         }
                         box.StorageRackId = idleStoragerackResult.Data.StorageRackId;
+                        box.StorageRackName = idleStoragerackResult.Data.StorageRackName;
                         box.Row = idleStoragerackResult.Data.Row;
                         box.Column = idleStoragerackResult.Data.Column;
                         box.Floor = idleStoragerackResult.Data.Floor;
