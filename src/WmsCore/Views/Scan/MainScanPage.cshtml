@@ -511,8 +511,9 @@
                             var inventoryDetail = this.InventoryDetails[ii];
                             var canOutput = false;
                             var detailLength = this.StockDetails.length;
+                            var stockDetail = null;
                             for (var i = 0; i < detailLength; i++) {
-                                var stockDetail = this.StockDetails[i];
+                                stockDetail = this.StockDetails[i];
                                 if (stockDetail.inventoryBoxNo != _self.InventoryBoxNo) continue;
                                 if (stockDetail.materialId != inventoryDetail.materialId) continue;
                                 //if (this.OrderNo != inventoryDetail.orderNo) continue; TODO 暂时屏蔽OrderNo判断
