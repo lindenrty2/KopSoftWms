@@ -1228,8 +1228,9 @@ namespace Services.Outside
                 _sqlClient.Ado.CommitTran();
                 return YL.Core.Dto.RouteData.From(PubMessages.I1001_BOXBACK_SCCUESS);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.Error(PubMessages.E1028_INVENTORYBOX_BACK_FAIL.Message, ex.ToString()); 
                 _sqlClient.Ado.RollbackTran();
                 return YL.Core.Dto.RouteData.From(PubMessages.E1028_INVENTORYBOX_BACK_FAIL);
             }
