@@ -521,7 +521,11 @@ namespace KopSoftWms.Controllers
             Wms_stockoutdetail detail = _client.Queryable<Wms_stockoutdetail>()
                 .First(c => c.StockOutDetailId == detailBox.StockOutDetailId);
 
-            string strQR = $"{detail.UniqueIndex}@@{detailBox.StockInUniqueIndex}";
+            Wms_stockout stockout = _client.Queryable<Wms_stockout>()
+                .First(c => c.StockOutId == detailBox.StockOutId);
+            
+            String dateStr = stockout.StockOutDate.ToString("yyyyMMddhhmmssfff");
+            string strQR = $"{detail.UniqueIndex}@@{detailBox.StockInUniqueIndex}@@{dateStr}@@{detailBox.PlanQty} "; 
 
             QRCodeGenerator qrGenerator = new QRCodeGenerator();
             QRCodeData qrCodeData = qrGenerator.CreateQrCode(
