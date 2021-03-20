@@ -80,7 +80,7 @@ namespace YL.Utils.Pub
     /// <summary>
     /// 入出库单状态
     /// </summary>
-    public enum StockInStatus
+    public enum StockInStatus : int
     {
         [Description("任务取消")]
         task_canceled = -1,

@@ -564,7 +564,7 @@ namespace Services.Outside
 
         public async Task<RouteData<OutsideStockInQueryResult>> QueryStockIn(long stockInId)
         {
-            Wms_stockin stockIn = await _sqlClient.Queryable<Wms_stockin>().FirstAsync();
+            Wms_stockin stockIn = await _sqlClient.Queryable<Wms_stockin>().FirstAsync(x => x.StockInId == stockInId);
             List<Wms_stockindetail> stockInDetails = await _sqlClient.Queryable<Wms_stockindetail>()
                 .Where(x => x.StockInId == stockInId)
                 .ToListAsync();
@@ -616,7 +616,7 @@ namespace Services.Outside
 
         public async Task<RouteData<OutsideStockOutQueryResult>> QueryStockOut(long stockOutId)
         {
-            Wms_stockout stockOut = await _sqlClient.Queryable<Wms_stockout>().FirstAsync();
+            Wms_stockout stockOut = await _sqlClient.Queryable<Wms_stockout>().FirstAsync(x => x.StockOutId == stockOutId);
             List<Wms_stockoutdetail> stockOutDetails = await _sqlClient.Queryable<Wms_stockoutdetail>()
                 .Where(x => x.StockOutId == stockOutId)
                 .ToListAsync();
@@ -750,7 +750,8 @@ namespace Services.Outside
             }
 
             string stockOutNo = request.StockOutNo ?? request.WarehouseEntryId;
-            Wms_stockout dbStockout = await _sqlClient.Queryable<Wms_stockout>().FirstAsync(x => x.StockOutNo == stockOutNo);
+            Wms_stockout dbStockout = await _sqlClient.Queryable<Wms_stockout>().FirstAsync(x =>
+            x.WarehouseId == this.Warehouse.WarehouseId && x.StockOutNo == stockOutNo);
             if (dbStockout != null)
             { 
                 if(dbStockout.StockOutStatus != (int)StockOutStatus.task_confirm)

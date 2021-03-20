@@ -15,6 +15,7 @@ using YL.Utils.Json;
 using YL.Utils.Pub;
 using YL.Utils.Table;
 using Services.Outside;
+using Newtonsoft.Json;
 
 namespace WMSCore.Controllers
 {
@@ -99,7 +100,7 @@ namespace WMSCore.Controllers
                     result.Data.WarehouseName = warehouse.WarehouseName;
                     totalResult.Add(result.Data);
                 }
-                return Bootstrap.GridData(totalResult, totalResult.Count).JilToJson();
+                return JsonConvert.SerializeObject(Bootstrap.GridData(totalResult, totalResult.Count));
             }
             else if (mesTaskType == MESTaskTypes.StockOut)
             {
