@@ -522,7 +522,7 @@ namespace KopSoftWms.Controllers
                 .First(c => c.StockOutDetailId == detailBox.StockOutDetailId);
 
             Wms_stockout stockout = _client.Queryable<Wms_stockout>()
-                .First(c => c.StockOutId == detailBox.StockOutId);
+                .First(c => c.StockOutId == detail.StockOutId);
             
             String dateStr = stockout.StockOutDate.ToString("yyyyMMddhhmmssfff");
             string strQR = $"{detail.UniqueIndex}@@{detailBox.StockInUniqueIndex}@@{dateStr}@@{detailBox.PlanQty} "; 

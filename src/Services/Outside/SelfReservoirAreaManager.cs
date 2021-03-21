@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using NLog;
 using SqlSugar;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,8 @@ namespace Services.Outside
     {
         private static int _count1 = 0;
         private static int _count2 = 0;
+
+        public static Logger _logger = LogManager.GetCurrentClassLogger();
 
         /// <summary>
         /// 默认非固定库位库区
@@ -268,7 +271,7 @@ namespace Services.Outside
             List<Wms_stockindetail_box> stockInDeltailBoxs =
                 await client.Queryable<Wms_stockindetail_box>().Where(x => x.InventoryBoxTaskId == inventoryBoxTaskId ).ToListAsync();
             if(stockInDeltailBoxs.Count == 0)
-            {
+            { 
                 return new RouteData(); //如果没有相关任务则不做处理
             }
             List<long> confiredStockInIds = new List<long>();
@@ -407,7 +410,9 @@ namespace Services.Outside
                     WarehousingEntryFinishList = JsonConvert.SerializeObject(warehouseList)
                 };
 
+                SelfReservoirAreaManager._logger.Info($"[通知MES入库完成]开始通知MES,param={JsonConvert.SerializeObject(response)}"); 
                 OutsideStockInResponseResult result = await MESApiAccessor.Instance.WarehousingFinish(response);
+                SelfReservoirAreaManager._logger.Info($"[通知MES入库完成]通知MES成功,result={JsonConvert.SerializeObject(result)}");
                 if (result.IsNormalExecution)
                 {
                     mesTask.NotifyStatus = MESTaskNotifyStatus.Responsed;
@@ -424,13 +429,15 @@ namespace Services.Outside
                 mesTask.NotifyStatus = MESTaskNotifyStatus.Failed;
                 //_logger.LogError(ex, "入库完成通知时发生异常");
                 //逻辑继续,寻找其它时机重新通知
+                SelfReservoirAreaManager._logger.Error($"[通知MES入库完成]通知MES时发生异常,{ex.ToString()}");
             }
             if (client.Updateable(mesTask).ExecuteCommand() == 0)
             {
-                return YL.Core.Dto.RouteData.From(PubMessages.E0002_UPDATE_COUNT_FAIL);
-
+                SelfReservoirAreaManager._logger.Error($"[通知MES入库完成]E-0002-更新状态失败");
+                return YL.Core.Dto.RouteData.From(PubMessages.E0002_UPDATE_COUNT_FAIL); 
             }
 
+            SelfReservoirAreaManager._logger.Info($"[通知MES入库完成]更新状态成功,NotifyStatus={mesTask.NotifyStatus}");
             if (mesTask.NotifyStatus == MESTaskNotifyStatus.Responsed)
             {
                 return new RouteData();
@@ -590,7 +597,9 @@ namespace Services.Outside
                     WarehouseEntryFinishList = JsonConvert.SerializeObject(warehouseList)
                 };
 
+                SelfReservoirAreaManager._logger.Info($"[通知MES出库完成]开始通知MES,param={JsonConvert.SerializeObject(response)}");
                 OutsideStockOutResponseResult result = await MESApiAccessor.Instance.WarehouseEntryFinish(response);
+                SelfReservoirAreaManager._logger.Info($"[通知MES出库完成]通知MES成功,result={JsonConvert.SerializeObject(result)}");
                 if (result.IsNormalExecution)
                 {
                     mesTask.NotifyStatus = MESTaskNotifyStatus.Responsed;
@@ -608,14 +617,17 @@ namespace Services.Outside
                 //逻辑继续,寻找其它时机重新通知
                 mesTask.NotifyStatus = MESTaskNotifyStatus.Failed;
                 mesTask.Remark = $"Error={ex.Message}";
+                SelfReservoirAreaManager._logger.Error($"[通知MES出库完成]通知MES时发生异常,{ex.ToString()}");
             }
             
             if (client.Updateable(mesTask).ExecuteCommand() == 0)
             {
+                SelfReservoirAreaManager._logger.Error($"[通知MES入库完成]E-0002-更新状态失败");
                 return YL.Core.Dto.RouteData.From(PubMessages.E0002_UPDATE_COUNT_FAIL);
 
             }
 
+            SelfReservoirAreaManager._logger.Info($"[通知MES入库完成]更新状态成功,NotifyStatus={mesTask.NotifyStatus}");
             if (mesTask.NotifyStatus == MESTaskNotifyStatus.Responsed)
             {
                 return new RouteData();

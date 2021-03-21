@@ -1910,7 +1910,7 @@ namespace Services.Outside
                         return confirmInventory;
                     }
                     //更新相关入库任务
-                    RouteData confirmStockIn = await _sqlClient.ConfirmRelationStockIn(boxTask.InventoryBoxTaskId, this.UserDto);
+                    RouteData confirmStockIn = await _sqlClient.ConfirmRelationStockIn(boxTask.InventoryBoxTaskId, this.UserDto );
                     if (!confirmStockIn.IsSccuess)
                     {
                         return confirmStockIn;

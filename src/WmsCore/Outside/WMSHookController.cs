@@ -204,7 +204,7 @@ namespace WMSCore.Outside
                     if (localDetail == null)
                     {
                         _client.RollbackTran();
-                        _logger.LogError($"[出库任务状态变化通知]E2115-没有找到相应的物料,StockOutId={stockOutId}, StockOutNo={stockOut.StockOutNo} ,UniqueOutdex ={ detail.UniqueOutdex}");
+                        _logger.LogError($"[出库任务状态变化通知]E2115-没有找到相应的物料,StockOutId={stockOutId}, StockOutNo={stockOut.StockOutNo} ,UniqueOutdex ={ detail.UniqueIndex}");
                         return YL.Core.Dto.RouteData.From(PubMessages.E2115_STOCKOUT_HASNOT_MATERIAL, $"MaterialId={detail.MaterialId}");
                     }
                     localDetail.PlanOutQty = detail.PlanOutQty;

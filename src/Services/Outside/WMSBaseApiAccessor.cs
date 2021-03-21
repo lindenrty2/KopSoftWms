@@ -1,4 +1,6 @@
 ﻿using IServices.Outside;
+using Newtonsoft.Json;
+using NLog;
 using Services.Outside;
 using SqlSugar;
 using System;
@@ -22,6 +24,8 @@ namespace WMSCore.Outside
 
         private IWMSApiProxy _apiProxy = null;
         private SelfWMSBaseApiAccessor _selfAccessor = null;
+
+        public static Logger _logger = LogManager.GetCurrentClassLogger();
 
         public WMSBaseApiAccessor(Wms_warehouse warehouse,ISqlSugarClient client, SysUserDto userDto)
         {
@@ -88,21 +92,24 @@ namespace WMSCore.Outside
 
         public async Task<RouteData<OutsideStockOutRequestResult[]>> StockOut( OutsideStockOutRequestDto request)
         {
-
+            _logger.Info($"[下发出库任务]开始下发,param={JsonConvert.SerializeObject(request)}");
             RouteData<OutsideStockOutRequestResult[]> result = await _apiProxy.StockOut(request);
-    
+            _logger.Info($"[下发出库任务]收到下发结果,result={JsonConvert.SerializeObject(result)}");
             if (!result.IsSccuess)
             {
+                _logger.Error($"[下发出库任务]判定下发失败");
                 return result;
             }
             if(result.Data.Length != 1)
             {
+                _logger.Error($"[下发出库任务]E-2122-下发出库任务返回值不合法");
                 return RouteData<OutsideStockOutRequestResult[]>.From(PubMessages.E2122_WMS_STOCKOUT_RESPONSE_INVAILD);
 
             }
             request.StockOutId = result.Data[0].StockOutId;
             request.StockOutNo = result.Data[0].StockOutNo;
 
+            _logger.Info($"[下发出库任务]下发任务回馈StockOutId={request.StockOutId},StockOutNo={request.StockOutNo}");
             await _selfAccessor.StockOut(request);
             return result;
         }
@@ -114,20 +121,25 @@ namespace WMSCore.Outside
 
         public async Task<RouteData<OutsideStockInRequestResult[]>> StockIn( OutsideStockInRequestDto request)
         {
+            _logger.Info($"[下发入库任务]开始下发,param={JsonConvert.SerializeObject(request)}");
             RouteData<OutsideStockInRequestResult[]> result = await _apiProxy.StockIn(request);
+            _logger.Info($"[下发入库任务]收到下发结果,result={JsonConvert.SerializeObject(result)}");
 
             if (!result.IsSccuess)
             {
+                _logger.Error($"[下发入库任务]判定下发失败");
                 return result;
             }
             if (result.Data.Length != 1)
             {
-                return RouteData<OutsideStockInRequestResult[]>.From(PubMessages.E2122_WMS_STOCKOUT_RESPONSE_INVAILD);
+                _logger.Error($"[下发入库任务]E-2122-下发出库任务返回值不合法");
+                return RouteData<OutsideStockInRequestResult[]>.From(PubMessages.E2020_WMS_STOCKIN_RESPONSE_INVAILD);
 
             }
             request.StockInId = result.Data[0].StockInId;
             request.StockInNo = result.Data[0].StockInNo;
 
+            _logger.Info($"[下发入库任务]下发任务回馈StockInId={request.StockInId},StockInNo={request.StockInNo}");
             await _selfAccessor.StockIn(request);
             return result;
         }
@@ -162,9 +174,12 @@ namespace WMSCore.Outside
             return _apiProxy.QueryStockInList(stockInType,stockInStatus, pageIndex, pageSize, search, order, datemin, datemax);
         }
 
-        public Task<RouteData> StockCount(OutsideStockCountRequestDto request)
+        public async Task<RouteData> StockCount(OutsideStockCountRequestDto request)
         {
-            return _apiProxy.StockCount(request);
+            _logger.Info($"[下发盘库任务]开始下发,param={JsonConvert.SerializeObject(request)}");
+            RouteData result = await _apiProxy.StockCount(request);
+            _logger.Info($"[下发盘库任务]下发成功,result={JsonConvert.SerializeObject(result)}");
+            return result;
         }
 
         public Task<RouteData<OutsideStockCountDto[]>> QueryStockCountList(StockCountStatus? stockCountStatus, int pageIndex, int pageSize, string search, string[] order, string datemin, string datemax)
