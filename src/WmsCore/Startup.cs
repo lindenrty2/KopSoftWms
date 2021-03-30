@@ -251,7 +251,7 @@ namespace YL
             app.UseTimedJob();
             app.UseResponseCompression();  //使用压缩
             app.UseResponseCaching();    //使用缓存
-
+           
             app.UseStaticFiles(); //使用静态文件
             app.UseCookiePolicy();
             app.UseAuthentication();
