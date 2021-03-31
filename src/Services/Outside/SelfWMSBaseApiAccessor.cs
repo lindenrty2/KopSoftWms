@@ -789,7 +789,7 @@ namespace Services.Outside
             List<Wms_stockoutdetail> stockOutDetailList = new List<Wms_stockoutdetail>();
             foreach (Wms_WarehouseEntryMaterialInventoryDto materialDto in request.MaterialList)
             {
-                RouteData<Wms_material> materialResult = await GetMaterial(materialDto, false);
+                RouteData<Wms_material> materialResult = await GetMaterial(materialDto, true);
                 if (!materialResult.IsSccuess)
                 {
                     return RouteData<Wms_stockout[]>.From(materialResult);
