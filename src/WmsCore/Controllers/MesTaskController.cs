@@ -16,15 +16,18 @@ using YL.Utils.Pub;
 using YL.Utils.Table;
 using Services.Outside;
 using Newtonsoft.Json;
+using Microsoft.Extensions.Logging;
 
 namespace WMSCore.Controllers
 {
     public class MesTaskController : BaseController
     {
         private readonly SqlSugarClient _client;
-        public MesTaskController(SqlSugarClient client)
+        private readonly ILogger _logger;
+        public MesTaskController(SqlSugarClient client,ILogger<MesTaskController> logger)
         {
             _client = client;
+            _logger = logger;
         }
 
 
@@ -96,9 +99,27 @@ namespace WMSCore.Controllers
                 {
                     IWMSBaseApiAccessor proxy = WMSApiManager.GetBaseApiAccessor(stockin.WarehouseId.ToString(), _client, this.UserDto);
                     Wms_warehouse warehouse = proxy.Warehouse;
-                    RouteData<OutsideStockInQueryResult> result = await proxy.QueryStockIn(stockin.StockInId);
-                    result.Data.WarehouseName = warehouse.WarehouseName;
-                    totalResult.Add(result.Data);
+                    try
+                    {
+                        RouteData<OutsideStockInQueryResult> result = await proxy.QueryStockIn(stockin.StockInId);
+                        result.Data.WarehouseName = warehouse.WarehouseName;
+                        totalResult.Add(result.Data);
+                    }
+                    catch (Exception ex) {
+                        this._logger.LogError(ex, $"查询入库信息失败,WarhouseId={stockin.WarehouseId},StockInId={stockin.StockInId}");
+                        OutsideStockInQueryResult resultData = new OutsideStockInQueryResult()
+                        {
+                            WarehouseName = warehouse.WarehouseName,
+                            StockInId = stockin.StockInId.ToString(),
+                            StockInNo = stockin.StockInNo,
+                            StockInTypeName = stockin.StockInTypeName,
+                            StockInStatus = (StockInStatus)stockin.StockInStatus, 
+                            MesTaskId = stockin.MesTaskId.ToString(), 
+                            OrderNo = stockin.OrderNo, 
+                            Remark = "详细信息查询失败,仅显示本地信息"
+                        };
+                        totalResult.Add(resultData);
+                    }
                 }
                 return JsonConvert.SerializeObject(Bootstrap.GridData(totalResult, totalResult.Count));
             }
@@ -110,9 +131,32 @@ namespace WMSCore.Controllers
                 {
                     IWMSBaseApiAccessor proxy = WMSApiManager.GetBaseApiAccessor(stockout.WarehouseId.ToString(), _client, this.UserDto);
                     Wms_warehouse warehouse = proxy.Warehouse;
-                    RouteData<OutsideStockOutQueryResult> result = await proxy.QueryStockOut(stockout.StockOutId);
-                    result.Data.WarehouseName = warehouse.WarehouseName;
-                    totalResult.Add(result.Data);
+                    try
+                    {
+                        RouteData<OutsideStockOutQueryResult> result = await proxy.QueryStockOut(stockout.StockOutId);
+                        result.Data.WarehouseName = warehouse.WarehouseName;
+                        totalResult.Add(result.Data);
+                    }
+                    catch (Exception ex) {
+                        this._logger.LogError(ex, $"查询出库信息失败,WarhouseId={stockout.WarehouseId},StockOutId={stockout.StockOutId}");
+                        OutsideStockOutQueryResult resultData = new OutsideStockOutQueryResult()
+                        {
+                            WarehouseName = warehouse.WarehouseName,
+                            StockOutId = stockout.StockOutId.ToString(),
+                            StockOutNo = stockout.StockOutNo,
+                            StockOutTypeName = stockout.StockOutTypeName,
+                            StockOutStatus = (StockOutStatus)stockout.StockOutStatus.Value ,
+                            BatchNumber = stockout.BatchNumber,
+                            BatchPlanId = stockout.BatchPlanId,
+                            MesTaskId = stockout.MesTaskId.ToString(),
+                            WorkNo = stockout.WorkNo,
+                            WorkAreaName = stockout.WorkAreaName,
+                            WorkStationId = stockout.WorkStationId,
+                            OrderNo = stockout.OrderNo,
+                            Remark = "详细信息查询失败,仅显示本地信息"
+                        };
+                        totalResult.Add(resultData);
+                    }
                 }
                 return Bootstrap.GridData(totalResult, totalResult.Count).JilToJson();
             }
