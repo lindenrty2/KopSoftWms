@@ -637,7 +637,7 @@ namespace Services.Outside
                     ActOutQty = stockOutDetail.ActOutQty,
                     Remark = stockOutDetail.Remark,
                     ModifiedBy = stockOutDetail.ModifiedUser,
-                    ModifiedDate = stockOutDetail.ModifiedDate.Value.ToString(PubConst.Format_DateTime),
+                    ModifiedDate = stockOutDetail.ModifiedDate?.ToString(PubConst.Format_DateTime),
 
                     Status = (StockOutStatus)stockOutDetail.Status
                 };

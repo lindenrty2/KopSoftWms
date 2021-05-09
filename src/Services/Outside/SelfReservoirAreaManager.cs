@@ -249,7 +249,7 @@ namespace Services.Outside
                 return RouteData.From(PubMessages.E0002_UPDATE_COUNT_FAIL, "");
             }
 
-            if (client.Insertable(updateRecordList).ExecuteCommand() == 0)
+            if (updateRecordList.Count > 0 && client.Insertable(updateRecordList).ExecuteCommand() == 0)
             {
                 return RouteData.From(PubMessages.E1021_INVENTORYRECORD_FAIL);
             }
