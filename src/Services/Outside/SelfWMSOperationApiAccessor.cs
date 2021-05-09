@@ -2669,14 +2669,14 @@ namespace Services.Outside
 
             if(dbStockCount.Status == (int)StockCountStatus.task_finish)
             {
-                NotifyStockCountComplete(dbStockCount);
+                await NotifyStockCountComplete(dbStockCount);
             }
 
             return RouteData.From(1, "盘库完成");
 
         }
 
-        private async void NotifyStockCountComplete(Wms_stockcount stockcount)
+        private async Task NotifyStockCountComplete(Wms_stockcount stockcount)
         {
             try
             {
